@@ -1,0 +1,22 @@
+<h2>Agendar Serviço</h2>
+
+<form method="post" action="/Agendamento/Salvar">
+    
+    <input type="hidden" name="profissionalId" value="@ViewBag.ProfissionalId" />
+
+    <label>Data:</label>
+    <input type="date" name="data" required />
+    <br />
+    
+    <label>Hora:</label>
+    <input type="time" name="hora" required />
+    <br />
+
+    <label>Descrição:</label>
+    <textarea name="descricao"></textarea>
+
+    <br />
+
+    <button type="submit">Confirmar</button>
+
+</form>

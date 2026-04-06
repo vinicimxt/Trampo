@@ -1,0 +1,52 @@
+<h2>Meus Agendamentos</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Profissional</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Serviço</th>
+            <th>Status</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var ag in Model)
+        {
+            <tr>
+                
+                <td>@ag.NomeProfissional</td>
+                <td>@ag.Data.ToShortDateString()</td>
+                <td>@ag.Hora</td>
+                <td>@ag.Servico</td>
+                
+                <td>
+                    @{
+                        string statusTexto = ag.Status switch
+                        {
+                            "Pendente" => "🟡 Pendente",
+                            "Confirmado" => "🟢 Confirmado",
+                            "CanceladoCliente" => "🔴 Cancelado por você",
+                            "CanceladoProfissional" => "🔴 Cancelado pelo profissional",
+                            _ => ag.Status
+                        };
+                    }
+
+                    @statusTexto
+                </td>
+
+                <td>
+                    @if (ag.Status != "Cancelado")
+                    {
+                        <form asp-action="Cancelar" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@ag.Id" />
+                            <button type="submit">Cancelar</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,15 @@
+@model List<BD_TRAMPO.Profissional>
+
+<h2>Profissionais</h2>
+
+@foreach (var p in Model)
+{
+    <div>
+        <h3>@p.Nome</h3>
+        <p>@p.Servico</p>
+
+        <a asp-action="Perfil" asp-route-id="@p.Id">
+            Ver perfil
+        </a>
+    </div>
+}

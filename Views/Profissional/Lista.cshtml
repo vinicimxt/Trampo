@@ -1,0 +1,14 @@
+@model List<BD_TRAMPO.Profissional>
+<h2>Profissionais disponíveis</h2>
+
+@foreach (var prof in Model)
+{
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <h3>@prof.Nome</h3>
+        <p><strong>Serviço:</strong> @prof.Servico</p>
+        <p><strong>Descrição:</strong> @prof.Descricao</p>
+        <p><strong>Atendimento:</strong> @prof.Atendimento</p>
+        <p><strong>Raio:</strong> @prof.Raio km</p>
+    </div>
+    <a href="/Agendamento/Novo/@prof.Id">Agendar</a>
+}

@@ -1,0 +1,23 @@
+@model List<BD_TRAMPO.Profissional>
+
+<h2>Meu Dashboard</h2>
+
+<a href="/Profissional/Criar">➕ Cadastrar Serviço</a>
+
+<hr />
+
+@if (Model.Count == 0)
+{
+    <p>Você ainda não cadastrou nenhum serviço.</p>
+}
+else
+{
+    @foreach (var p in Model)
+    {
+        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+            <h3>@p.Servico</h3>
+            <p>@p.Descricao</p>
+            <p><b>Atendimento:</b> @p.Atendimento</p>
+        </div>
+    }
+}

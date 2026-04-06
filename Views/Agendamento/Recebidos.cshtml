@@ -1,0 +1,43 @@
+<h2>Pedidos Recebidos</h2>
+
+<table>
+    <tr>
+        <th>Cliente</th>
+        <th>Data</th>
+        <th>Hora</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+
+    @foreach (var ag in Model)
+    {
+        <tr>
+            <td>@ag.NomeCliente</td>
+            <td>@ag.Data.ToShortDateString()</td>
+            <td>@ag.Hora</td>
+            <td>@ag.Status</td>
+            <td>
+                <td>
+                    @if (ag.Status == "Pendente")
+                    {
+                        <a asp-action="Confirmar" asp-route-id="@ag.Id">✔</a>
+                        <a asp-action="Recusar" asp-route-id="@ag.Id">❌</a>
+                    }
+                    else
+                    {
+                        <span>@ag.Status</span>
+                    }
+                    <td>
+                        @if (ag.Status != "Cancelado")
+                        {
+                            <form asp-controller="Agendamento" asp-action="Cancelar" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@ag.Id" />
+                                <button type="submit">Cancelar</button>
+                            </form>
+                        }
+                    </td>
+                </td>
+            </td>
+        </tr>
+    }
+</table>

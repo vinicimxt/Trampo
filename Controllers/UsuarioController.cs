@@ -1,0 +1,97 @@
+﻿namespace BD_TRAMPO.Controllers
+{
+    using Microsoft.AspNetCore.Mvc;
+    using BD_TRAMPO;
+    using BD_TRAMPO.Models;
+    public class UsuarioController : Controller
+    {
+        public IActionResult Cadastro()
+        {
+            return View("~/Views/Usuario/Cadastro.cshtml");
+        }
+        public IActionResult Login()
+        {
+            return View("~/Views/Usuario/Login.cshtml");
+        }
+
+        [HttpPost]
+        public IActionResult Cadastrar(
+            string nome, string email, string senha, string tipo,
+            string servico, string descricao, string atendimento,
+            int? raio, string tipoDocumento, string documento)
+        {
+            string senhaHash = Seguranca.GerarHash(senha);
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+            int usuarioId = usuarioDAO.Inserir(nome, email, senhaHash, tipo);
+
+            // 🔥 SE FOR PROFISSIONAL
+            if (tipo == "profissional")
+            {
+                ProfissionalDAO profDAO = new ProfissionalDAO();
+
+                profDAO.Inserir(usuarioId, servico, descricao, atendimento, raio, tipoDocumento, documento);
+            }
+            else // 🔥 SE FOR CLIENTE
+            {
+                ClienteDAO clienteDAO = new ClienteDAO();
+                clienteDAO.Inserir(usuarioId);
+            }
+
+            ViewBag.Mensagem = "Usuário cadastrado com sucesso!";
+            return View("Cadastro");
+        }
+        
+        [HttpPost]
+        public IActionResult Logar(string email, string senha)
+        {
+            string senhaHash = Seguranca.GerarHash(senha);
+
+            UsuarioDAO dao = new UsuarioDAO();
+
+            var usuario = dao.BuscarLogin(email, senhaHash);
+
+            if (usuario != null)
+            {
+                HttpContext.Session.SetString("UsuarioId", usuario.Id.ToString());
+                HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+                HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
+                HttpContext.Session.SetString("UsuarioTipo", usuario.Tipo);
+
+                //  Redirecionamento de page para pro 
+                if (usuario.Tipo == "profissional")
+                {
+                    return RedirectToAction("Dashboard", "Profissional");
+                }
+                else
+                {
+                    return RedirectToAction("Lista", "Profissional");
+                }
+            }
+            ViewBag.Mensagem = "Email ou senha inválidos";
+            return View("Login");
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult AreaRestrita()
+        {
+            var usuario = HttpContext.Session.GetString("UsuarioEmail");
+
+            if (usuario == null)
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+
+            return View();
+        }
+
+
+    }
+}

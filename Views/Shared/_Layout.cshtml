@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Xamou</title>
+    <link rel="stylesheet" href="~/css/style.css?v=2" />
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>Xamou</h1>
+        <nav>
+            <a asp-controller="Home" asp-action="Index">Home</a>
+
+            <a asp-controller="Profissional" asp-action="Lista">
+                Profissionais
+            </a>
+            
+            @{
+                var usuario = Context.Session.GetString("UsuarioEmail");
+                var tipo = Context.Session.GetString("UsuarioTipo");
+            }
+
+            @if (usuario != null)
+            {
+                <span>Bem-vindo, @usuario</span>
+
+                <a asp-controller="Usuario" asp-action="Logout">
+                    Sair
+                </a>
+
+                @if (tipo == "cliente")
+                {
+                    <a asp-controller="Agendamento" asp-action="Meus">
+                        Meus Agendamentos
+                    </a>
+                }
+
+                @if (tipo == "profissional")
+                {
+                    <a asp-controller="Agendamento" asp-action="Recebidos">
+                        Pedidos
+                    </a>
+
+                    <a asp-controller="Profissional" asp-action="MeusServicos">
+                        Dashboard
+                    </a>
+
+                    <a asp-controller="Profissional" asp-action="MeusServicos">
+                        Meus Serviços
+                    </a>
+                }
+            }
+            else
+            {
+                <a asp-controller="Usuario" asp-action="Login">Login</a>
+                <a asp-controller="Usuario" asp-action="Cadastro">Cadastro</a>
+            }
+
+        </nav>
+    </header>
+
+
+    <main class="container">
+        @RenderBody()
+    </main>
+
+    
+
+</body>
+
+</html>

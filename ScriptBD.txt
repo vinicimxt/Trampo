@@ -1,0 +1,81 @@
+
+USE master;
+GO
+
+ALTER DATABASE Xamou SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+
+DROP DATABASE Xamou;
+GO
+
+create database Xamou;
+use Xamou;
+
+
+CREATE TABLE Usuarios (
+    Id INT PRIMARY KEY IDENTITY,
+    Nome VARCHAR(100),
+    Email VARCHAR(100) UNIQUE,
+    Senha VARCHAR(100),
+    Tipo VARCHAR(20) -- Cliente ou Profissional
+);
+
+CREATE TABLE Clientes (
+    Id INT PRIMARY KEY IDENTITY,
+    UsuarioId INT,
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+);
+
+CREATE TABLE Profissionais (
+    Id INT PRIMARY KEY IDENTITY,
+    Documento VARCHAR(20),
+    TipoDocumento VARCHAR(10),
+    UsuarioId INT,
+    TipoServico VARCHAR(100),
+    Descricao VARCHAR(255),
+    Atendimento VARCHAR(50), -- domicilio ou local
+    RaioAtendimento INT,
+    Latitude FLOAT,
+    Longitude FLOAT,
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+);
+
+CREATE TABLE Disponibilidade (
+    Id INT PRIMARY KEY IDENTITY,
+    ProfissionalId INT,
+    DiaSemana INT, -- 1 a 7
+    HoraInicio TIME,
+    HoraFim TIME,
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id)
+);
+
+CREATE TABLE Agendamentos (
+    Id INT PRIMARY KEY IDENTITY,
+    ClienteId INT,
+    ProfissionalId INT,
+    Data DATE,
+    Hora TIME,
+    Status VARCHAR(20), -- Pendente, Confirmado, Cancelado
+    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id)
+);
+
+ALTER TABLE Agendamentos
+ADD Descricao VARCHAR(255);
+
+ALTER TABLE Agendamentos 
+ADD DataCancelamento DATETIME NULL;
+
+ALTER TABLE Clientes ADD BloqueadoAte DATETIME NULL;
+
+DELETE FROM Usuarios WHERE id = 4;
+
+select * from Profissionais;
+select * from Disponibilidade;
+select * from Agendamentos;
+select * from Usuarios;
+select * from Clientes;
+drop table Usuarios;
+
+drop database Xamou;
+
