@@ -60,16 +60,49 @@ CREATE TABLE Agendamentos (
     FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id)
 );
 
+CREATE TABLE Servicos (
+    Id INT IDENTITY PRIMARY KEY,
+    ProfissionalId INT,
+    Nome NVARCHAR(100),
+    Descricao NVARCHAR(255),
+    Preco DECIMAL(10,2),
+    Duracao INT, -- minutos
+
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id)
+);
+
+ALTER TABLE Profissionais
+DROP COLUMN TipoServico;
+
+ALTER TABLE Agendamentos
+ADD ServicoId INT;
+
+ALTER TABLE Agendamentos
+ADD FOREIGN KEY (ServicoId) REFERENCES Servicos(Id);
+
+ALTER TABLE Agendamentos
+ALTER COLUMN Status VARCHAR(50);
+
 ALTER TABLE Agendamentos
 ADD Descricao VARCHAR(255);
 
 ALTER TABLE Agendamentos 
 ADD DataCancelamento DATETIME NULL;
 
+ALTER TABLE Servicos
+DROP COLUMN Preco;
+
+ALTER TABLE Servicos
+DROP COLUMN Duracao;
+
+ALTER TABLE Servicos
+ADD Contato VARCHAR(100);
+
 ALTER TABLE Clientes ADD BloqueadoAte DATETIME NULL;
 
 DELETE FROM Usuarios WHERE id = 4;
 
+select * from Servicos;
 select * from Profissionais;
 select * from Disponibilidade;
 select * from Agendamentos;

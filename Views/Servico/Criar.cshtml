@@ -1,0 +1,18 @@
+@model Servico
+
+<h2>Novo Serviço</h2>
+
+<form asp-action="Criar" asp-controller="Servico" method="post">
+
+    <label>Nome do Serviço</label>
+    <input type="text" name="Nome" required />
+
+    <label>Descrição</label>
+    <textarea name="Descricao"></textarea>
+
+    <label>Contato</label>
+    <input type="text" name="Contato" placeholder="WhatsApp, telefone..." />
+
+    <button type="submit">Salvar</button>
+
+</form>

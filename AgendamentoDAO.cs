@@ -97,6 +97,35 @@ namespace BD_TRAMPO
             return lista;
         }
 
+        public Agendamento BuscarPorId(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "SELECT * FROM Agendamentos WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return new Agendamento
+                    {
+                        Id = (int)reader["Id"],
+                        ClienteId = (int)reader["ClienteId"],
+                        ProfissionalId = (int)reader["ProfissionalId"],
+                        Data = (DateTime)reader["Data"],
+                        Hora = (TimeSpan)reader["Hora"],
+                        Status = reader["Status"].ToString(),
+                        Descricao = reader["Descricao"].ToString()
+                    };
+                }
+            }
+
+            return null;
+        }
+
         public void AtualizarStatus(int id, string status)
         {
             using (SqlConnection conn = conexao.Conectar())
@@ -112,22 +141,21 @@ namespace BD_TRAMPO
             }
         }
 
-        public void Cancelar(int id)
+        public void Cancelar(int id, string status)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = @"
-                UPDATE Agendamentos 
-                SET Status = 'CanceladoCliente',
-                DataCancelamento = GETDATE()
-                WHERE Id = @Id";
+                string query = "UPDATE Agendamentos SET Status = @Status WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
+                cmd.Parameters.AddWithValue("@Status", status);
 
                 cmd.ExecuteNonQuery();
             }
         }
+
+
         public int ContarPendentes(int clienteId)
         {
             using (SqlConnection conn = conexao.Conectar())
@@ -164,18 +192,23 @@ namespace BD_TRAMPO
             }
         }
 
-        public (int total, int pendentes, int confirmados, int cancelados) DashboardProfissional(int profissionalId)
+        public (int total, int pendentes, int confirmados, int finalizados, int cancelados) DashboardProfissional(int profissionalId)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        SELECT 
-            COUNT(*) AS Total,
-            SUM(CASE WHEN Status = 'Pendente' THEN 1 ELSE 0 END) AS Pendentes,
-            SUM(CASE WHEN Status = 'Confirmado' THEN 1 ELSE 0 END) AS Confirmados,
-            SUM(CASE WHEN Status LIKE 'Cancelado%' THEN 1 ELSE 0 END) AS Cancelados
-        FROM Agendamentos
-        WHERE ProfissionalId = @ProfissionalId";
+                SELECT 
+                    COUNT(*) AS Total,
+                    ISNULL(SUM(CASE WHEN Status = 'Pendente' THEN 1 ELSE 0 END), 0) AS Pendentes,
+                    ISNULL(SUM(CASE WHEN Status = 'Confirmado' THEN 1 ELSE 0 END), 0) AS Confirmados,
+                    ISNULL(SUM(CASE WHEN Status = 'Finalizado' THEN 1 ELSE 0 END), 0) AS Finalizados,
+                    ISNULL(SUM(CASE 
+                        WHEN Status LIKE 'Cancelado%' THEN 1 
+                        ELSE 0 
+                    END), 0) AS Cancelados
+                FROM Agendamentos
+                WHERE ProfissionalId = @ProfissionalId
+        ";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
@@ -185,14 +218,28 @@ namespace BD_TRAMPO
                 if (reader.Read())
                 {
                     return (
-                        total: (int)reader["Total"],
-                        pendentes: (int)reader["Pendentes"],
-                        confirmados: (int)reader["Confirmados"],
-                        cancelados: (int)reader["Cancelados"]
+                        (int)reader["Total"],
+                        (int)reader["Pendentes"],
+                        (int)reader["Confirmados"],
+                        (int)reader["Finalizados"],
+                        (int)reader["Cancelados"]
                     );
                 }
+            }
 
-                return (0, 0, 0, 0);
+            return (0, 0, 0, 0, 0);
+        }
+
+        public void Finalizar(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "UPDATE Agendamentos SET Status = 'Finalizado' WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                cmd.ExecuteNonQuery();
             }
         }
 

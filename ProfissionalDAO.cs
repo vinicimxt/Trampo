@@ -7,21 +7,19 @@ namespace BD_TRAMPO
     {
         Conexao conexao = new Conexao();
 
-        public void Inserir(int usuarioId, string servico, string descricao, string atendimento, int? raio, string tipoDocumento, string documento)
+        public void Inserir(int usuarioId, string atendimento, int? raio, string tipoDocumento, string documento)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                INSERT INTO Profissionais 
-                (UsuarioId, TipoServico, Descricao, Atendimento, RaioAtendimento, TipoDocumento, Documento)
-                VALUES 
-                (@UsuarioId, @Servico, @Descricao, @Atendimento, @Raio, @TipoDocumento, @Documento)";
+               INSERT INTO Profissionais 
+                   (UsuarioId, Atendimento, Raio, TipoDocumento, Documento)
+                   VALUES 
+                   (@UsuarioId, @Atendimento, @Raio, @TipoDocumento, @Documento)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
-                cmd.Parameters.AddWithValue("@Servico", servico);
-                cmd.Parameters.AddWithValue("@Descricao", descricao);
                 cmd.Parameters.AddWithValue("@Atendimento", atendimento);
                 cmd.Parameters.AddWithValue("@Raio", (object?)raio ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@TipoDocumento", tipoDocumento);

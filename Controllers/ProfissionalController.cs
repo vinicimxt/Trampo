@@ -15,16 +15,6 @@ namespace BD_TRAMPO.Controllers
             return View(lista);
         }
 
-        [HttpPost]
-        public IActionResult Criar(string servico, string descricao, string atendimento, int? raio, string tipoDocumento, string documento)
-        {
-            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
-
-            ProfissionalDAO dao = new ProfissionalDAO();
-            dao.Inserir(usuarioId, servico, descricao, atendimento, raio, tipoDocumento, documento);
-
-            return RedirectToAction("Lista");
-        }
 
         public IActionResult Dashboard()
         {
@@ -47,7 +37,6 @@ namespace BD_TRAMPO.Controllers
             return View(dados);
         }
 
-
         public IActionResult MeusServicos()
         {
             string usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -59,12 +48,18 @@ namespace BD_TRAMPO.Controllers
 
             int usuarioId = int.Parse(usuarioIdStr);
 
-            ProfissionalDAO dao = new ProfissionalDAO();
+            // 🔥 pega o profissional do usuário
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
-            var lista = dao.ListarPorUsuario(usuarioId);
+            // 🔥 agora busca os SERVIÇOS
+            ServicoDAO servDAO = new ServicoDAO();
+            var lista = servDAO.ListarPorProfissional(profissionalId);
 
             return View(lista);
         }
+
+  
 
 
     }

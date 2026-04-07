@@ -16,24 +16,26 @@
 
         [HttpPost]
         public IActionResult Cadastrar(
-            string nome, string email, string senha, string tipo,
-            string servico, string descricao, string atendimento,
-            int? raio, string tipoDocumento, string documento)
+     string nome, string email, string senha, string tipo,
+     string atendimento,
+     int? raio, string tipoDocumento, string documento)
         {
             string senhaHash = Seguranca.GerarHash(senha);
 
             UsuarioDAO usuarioDAO = new UsuarioDAO();
-
             int usuarioId = usuarioDAO.Inserir(nome, email, senhaHash, tipo);
 
-            // 🔥 SE FOR PROFISSIONAL
             if (tipo == "profissional")
             {
                 ProfissionalDAO profDAO = new ProfissionalDAO();
 
-                profDAO.Inserir(usuarioId, servico, descricao, atendimento, raio, tipoDocumento, documento);
+                // 🚀 SEM serviço agora
+                profDAO.Inserir(usuarioId, atendimento, raio, tipoDocumento, documento);
+
+                // 👉 já manda ele criar o primeiro serviço
+                return RedirectToAction("Criar", "Servico");
             }
-            else // 🔥 SE FOR CLIENTE
+            else
             {
                 ClienteDAO clienteDAO = new ClienteDAO();
                 clienteDAO.Inserir(usuarioId);
@@ -42,7 +44,7 @@
             ViewBag.Mensagem = "Usuário cadastrado com sucesso!";
             return View("Cadastro");
         }
-        
+
         [HttpPost]
         public IActionResult Logar(string email, string senha)
         {

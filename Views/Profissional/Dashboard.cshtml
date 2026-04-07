@@ -1,0 +1,32 @@
+@model (int total, int pendentes, int confirmados, int finalizados, int cancelados)
+
+<h2>📊 Dashboard</h2>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+    <div style="padding:20px; background:#eee; border-radius:10px;">
+        <h3>Total</h3>
+        <p>@Model.total</p>
+    </div>
+
+    <div style="padding:20px; background:#fff3cd; border-radius:10px;">
+        <h3>🟡 Pendentes</h3>
+        <p>@Model.pendentes</p>
+    </div>
+
+    <div style="padding:20px; background:#d4edda; border-radius:10px;">
+        <h3>🟢 Confirmados</h3>
+        <p>@Model.confirmados</p>
+    </div>
+
+    <div style="padding:20px; background:#cce5ff; border-radius:10px;">
+        <h3>🔵 Finalizados</h3>
+        <p>@Model.finalizados</p>
+    </div>
+
+    <div style="padding:20px; background:#f8d7da; border-radius:10px;">
+        <h3>🔴 Cancelados</h3>
+        <p>@Model.cancelados</p>
+    </div>
+
+</div>

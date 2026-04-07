@@ -28,25 +28,30 @@
                         {
                             "Pendente" => "🟡 Pendente",
                             "Confirmado" => "🟢 Confirmado",
+                            "Finalizado" => "🔵 Finalizado",
                             "CanceladoCliente" => "🔴 Cancelado por você",
                             "CanceladoProfissional" => "🔴 Cancelado pelo profissional",
                             _ => ag.Status
                         };
+                    
                     }
 
                     @statusTexto
                 </td>
 
                 <td>
-                    @if (ag.Status != "Cancelado")
+                 @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
                     {
                         <form asp-action="Cancelar" method="post" style="display:inline;">
                             <input type="hidden" name="id" value="@ag.Id" />
                             <button type="submit">Cancelar</button>
                         </form>
                     }
+                 
+                    
                 </td>
             </tr>
+     
         }
     </tbody>
 </table>

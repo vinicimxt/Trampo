@@ -99,25 +99,89 @@ namespace BD_TRAMPO.Controllers
             return RedirectToAction("Recebidos");
         }
 
+        public IActionResult Finalizar(int id)
+        {
+            AgendamentoDAO dao = new AgendamentoDAO();
+
+            var ag = dao.BuscarPorId(id);
+
+            // 1️⃣ EXISTE?
+            if (ag == null)
+            {
+                return Content("Agendamento não encontrado.");
+            }
+
+            // 2️⃣ 🔐 SEGURANÇA (ANTES DE TUDO)
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+
+            if (ag.ProfissionalId != profissionalId)
+            {
+                return Content("Você não tem permissão para isso.");
+            }
+
+            // 3️⃣ REGRA DE NEGÓCIO
+            if (ag.Status != "Confirmado")
+            {
+                return Content("Só é possível finalizar agendamentos confirmados.");
+            }
+
+            // 4️⃣ REGRA DE TEMPO
+            DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
+
+            if (dataHoraAgendamento > DateTime.Now)
+            {
+                return Content("Você só pode finalizar após o horário do atendimento.");
+            }
+
+            // 5️⃣ EXECUTA
+            dao.Finalizar(id);
+
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
         [HttpPost]
         public IActionResult Cancelar(int id)
         {
             AgendamentoDAO dao = new AgendamentoDAO();
             ClienteDAO clienteDAO = new ClienteDAO();
+            ProfissionalDAO profDAO = new ProfissionalDAO();
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
-            int clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
 
-            dao.Cancelar(id);
+            var ag = dao.BuscarPorId(id);
 
-            // 🚨 verifica excesso de cancelamentos
-            if (dao.ContarCancelamentosHoje(clienteId) >= 3)
+            if (ag.Status != "Pendente" && ag.Status != "Confirmado")
             {
-                clienteDAO.BloquearCliente(clienteId);
-                return Content("Você foi bloqueado por excesso de cancelamentos.");
+                return Content("Esse agendamento não pode ser cancelado.");
+            }
+            if (ag == null)
+                return Content("Agendamento não encontrado.");
+
+            string status = "";
+
+            // 🔐 VERIFICA SE É CLIENTE
+            int clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
+            if (clienteId == ag.ClienteId)
+            {
+                status = "CanceladoCliente";
             }
 
-            
+            // 🔐 VERIFICA SE É PROFISSIONAL
+            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+            if (profissionalId == ag.ProfissionalId)
+            {
+                status = "CanceladoProfissional";
+            }
+
+            if (string.IsNullOrEmpty(status))
+            {
+                return Content("Você não tem permissão para cancelar.");
+            }
+
+            dao.Cancelar(id, status);
 
             return Redirect(Request.Headers["Referer"].ToString());
         }

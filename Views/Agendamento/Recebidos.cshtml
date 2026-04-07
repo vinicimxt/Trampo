@@ -1,22 +1,40 @@
 <h2>Pedidos Recebidos</h2>
 
 <table>
-    <tr>
-        <th>Cliente</th>
-        <th>Data</th>
-        <th>Hora</th>
-        <th>Status</th>
-        <th>Ações</th>
-    </tr>
-
-    @foreach (var ag in Model)
-    {
+    <thead>
         <tr>
-            <td>@ag.NomeCliente</td>
-            <td>@ag.Data.ToShortDateString()</td>
-            <td>@ag.Hora</td>
-            <td>@ag.Status</td>
-            <td>
+            <th>Cliente</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var ag in Model)
+        {
+            <tr>
+                <td>@ag.NomeCliente</td>
+                <td>@ag.Data.ToShortDateString()</td>
+                <td>@ag.Hora</td>
+
+                <td>
+                    @{
+                        string statusTexto = ag.Status switch
+                        {
+                            "Pendente" => "🟡 Pendente",
+                            "Confirmado" => "🟢 Confirmado",
+                            "Finalizado" => "🔵 Finalizado",
+                            "CanceladoCliente" => "🔴 Cancelado por você",
+                            "CanceladoProfissional" => "🔴 Cancelado pelo profissional",
+                            _ => ag.Status
+                        };
+                    }
+
+                    @statusTexto
+                </td>
+
                 <td>
                     @if (ag.Status == "Pendente")
                     {
@@ -27,17 +45,24 @@
                     {
                         <span>@ag.Status</span>
                     }
-                    <td>
-                        @if (ag.Status != "Cancelado")
-                        {
-                            <form asp-controller="Agendamento" asp-action="Cancelar" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="@ag.Id" />
-                                <button type="submit">Cancelar</button>
-                            </form>
-                        }
-                    </td>
+
+                    @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
+                    {
+                        <form asp-action="Cancelar" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@ag.Id" />
+                            <button type="submit">Cancelar</button>
+                        </form>
+                    }
+
+                    @if (ag.Status == "Confirmado")
+                    {
+                        <form asp-action="Finalizar" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@ag.Id"/>
+                            <button type="submit">Finalizar</button>
+                        </form>
+                    }
                 </td>
-            </td>
-        </tr>
-    }
+            </tr>
+        }
+    </tbody>
 </table>

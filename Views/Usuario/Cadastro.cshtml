@@ -22,17 +22,12 @@
             <input type="password" name="senha" placeholder="Senha" required>
 
             <select id="tipo" name="tipo" onchange="mostrarCampos()" required>
-                <option value="">Selecione o tipo</option>
                 <option value="cliente">Cliente</option>
                 <option value="profissional">Profissional</option>
             </select>
 
             <!-- CAMPOS DO PROFISSIONAL -->
             <div id="camposProfissional" style="display: none;">
-
-                <input type="text" name="servico" placeholder="Tipo de serviço (Ex: Eletricista)">
-
-                <input type="text" name="descricao" placeholder="Descrição do serviço">
 
                 <select name="atendimento">
                     <option value="domicilio">Atende a domicílio</option>

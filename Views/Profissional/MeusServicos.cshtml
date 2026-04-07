@@ -1,10 +1,8 @@
-@model List<BD_TRAMPO.Profissional>
+@model List<Servico>
 
-<h2>Meu Dashboard</h2>
+<h2>Meus Serviços</h2>
 
-<a href="/Profissional/Criar">➕ Cadastrar Serviço</a>
-
-<hr />
+<a href="/Servico/Criar">➕ Novo Serviço</a>
 
 @if (Model.Count == 0)
 {
@@ -12,12 +10,12 @@
 }
 else
 {
-    @foreach (var p in Model)
+    foreach (var s in Model)
     {
         <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-            <h3>@p.Servico</h3>
-            <p>@p.Descricao</p>
-            <p><b>Atendimento:</b> @p.Atendimento</p>
+            <h3>@s.Nome</h3>
+            <p>@s.Descricao</p>
+            <p><b>Contato:</b> @s.Contato</p>
         </div>
     }
 }
