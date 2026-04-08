@@ -16,33 +16,45 @@
 
         [HttpPost]
         public IActionResult Cadastrar(
-     string nome, string email, string senha, string tipo,
-     string atendimento,
-     int? raio, string tipoDocumento, string documento)
+           string nome, string email, string senha, string tipo,
+           string tipoDocumento, string documento)
         {
             string senhaHash = Seguranca.GerarHash(senha);
 
             UsuarioDAO usuarioDAO = new UsuarioDAO();
             int usuarioId = usuarioDAO.Inserir(nome, email, senhaHash, tipo);
 
+            // 🔥 AUTENTICA AQUI
+            HttpContext.Session.SetString("UsuarioId", usuarioId.ToString());
+            HttpContext.Session.SetString("UsuarioNome", nome);
+            HttpContext.Session.SetString("UsuarioEmail", email);
+            HttpContext.Session.SetString("UsuarioTipo", tipo);
+
             if (tipo == "profissional")
             {
                 ProfissionalDAO profDAO = new ProfissionalDAO();
+                profDAO.Inserir(usuarioId, tipoDocumento, documento);
 
-                // 🚀 SEM serviço agora
-                profDAO.Inserir(usuarioId, atendimento, raio, tipoDocumento, documento);
-
-                // 👉 já manda ele criar o primeiro serviço
+                // 👉 AGORA FUNCIONA
                 return RedirectToAction("Criar", "Servico");
             }
             else
             {
                 ClienteDAO clienteDAO = new ClienteDAO();
                 clienteDAO.Inserir(usuarioId);
-            }
 
-            ViewBag.Mensagem = "Usuário cadastrado com sucesso!";
-            return View("Cadastro");
+                return RedirectToAction("Home");
+            }
+        }
+
+        public IActionResult RedirecionarPorTipo()
+        {
+            var tipo = Sessao.Tipo(HttpContext);
+
+            if (tipo == "profissional")
+                return RedirectToAction("Dashboard", "Profissional");
+
+            return RedirectToAction("Home", "Home");
         }
 
         [HttpPost]

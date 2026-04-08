@@ -5,19 +5,19 @@ namespace BD_TRAMPO.Controllers
 {
     public class AgendamentoController : Controller
     {
-        public IActionResult Novo(int id)
+        public IActionResult Novo(int servicoId)
         {
             if (HttpContext.Session.GetString("UsuarioId") == null)
             {
                 return RedirectToAction("Login", "Usuario");
             }
 
-            ViewBag.ProfissionalId = id;
+            ViewBag.ServicoId = servicoId;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Salvar(int profissionalId, DateTime data, TimeSpan hora, string descricao)
+        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao)
         {
 
             // 🔥 pegar cliente real
@@ -38,9 +38,13 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Você já tem muitos agendamentos pendentes.");
             }
+            ServicoDAO servicoDAO = new ServicoDAO();
+            int profissionalId = servicoDAO.BuscarProfissionalId(servicoId);
+            
             var agendamento = new Agendamento
             {
                 ClienteId = clienteId,
+                ServicoId = servicoId,
                 ProfissionalId = profissionalId,
                 Data = data,
                 Hora = hora,

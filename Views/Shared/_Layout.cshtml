@@ -23,9 +23,9 @@
                 var tipo = Context.Session.GetString("UsuarioTipo");
             }
 
-            @if (usuario != null)
+            @if (Context.Session.GetString("UsuarioNome") != null)
             {
-                <span>Bem-vindo, @usuario</span>
+                <span>Bem-vindo, @Context.Session.GetString("UsuarioNome")</span>
 
                 <a asp-controller="Usuario" asp-action="Logout">
                     Sair

@@ -9,8 +9,8 @@ namespace BD_TRAMPO.Controllers
         public IActionResult Lista()
         {
 
-            ProfissionalDAO dao = new ProfissionalDAO();
-            var lista = dao.Listar();
+            ServicoDAO dao = new ServicoDAO();
+            var lista = dao.ListarServicos();
 
             return View(lista);
         }
@@ -54,12 +54,13 @@ namespace BD_TRAMPO.Controllers
 
             // 🔥 agora busca os SERVIÇOS
             ServicoDAO servDAO = new ServicoDAO();
-            var lista = servDAO.ListarPorProfissional(profissionalId);
+            var lista = servDAO.ListarServicos();
 
             return View(lista);
         }
 
   
+
 
 
     }

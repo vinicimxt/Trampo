@@ -4,14 +4,21 @@
 
 <form asp-action="Criar" asp-controller="Servico" method="post">
 
-    <label>Nome do Serviço</label>
-    <input type="text" name="Nome" required />
+    <input type="text" name="Nome" placeholder="Nome do serviço" required />
 
-    <label>Descrição</label>
-    <textarea name="Descricao"></textarea>
+    <textarea name="Descricao" placeholder="Descrição"></textarea>
 
-    <label>Contato</label>
-    <input type="text" name="Contato" placeholder="WhatsApp, telefone..." />
+    <input type="text" name="Contato" placeholder="Contato" />
+
+    <label>Atendimento</label>
+    <select name="Atendimento">
+        <option value="Domicilio">Domicílio</option>
+        <option value="Local">Local fixo</option>
+        <option value="Online">Online</option>
+    </select>
+
+    <label>Raio (km)</label>
+    <input type="number" name="Raio" />
 
     <button type="submit">Salvar</button>
 

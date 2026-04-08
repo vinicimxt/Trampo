@@ -7,82 +7,43 @@ namespace BD_TRAMPO
     {
         Conexao conexao = new Conexao();
 
-        public void Inserir(int usuarioId, string atendimento, int? raio, string tipoDocumento, string documento)
+        public void Inserir(int usuarioId, string tipoDocumento, string documento)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
                INSERT INTO Profissionais 
-                   (UsuarioId, Atendimento, Raio, TipoDocumento, Documento)
+                   (UsuarioId, TipoDocumento, Documento)
                    VALUES 
-                   (@UsuarioId, @Atendimento, @Raio, @TipoDocumento, @Documento)";
+                   (@UsuarioId, @TipoDocumento, @Documento)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
-                cmd.Parameters.AddWithValue("@Atendimento", atendimento);
-                cmd.Parameters.AddWithValue("@Raio", (object?)raio ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@TipoDocumento", tipoDocumento);
                 cmd.Parameters.AddWithValue("@Documento", documento);
 
                 cmd.ExecuteNonQuery();
             }
         }
-        public List<Profissional> Listar()
+
+
+        public List<Servico> ListarPorUsuario(int usuarioId)
         {
-            List<Profissional> lista = new List<Profissional>();
+            List<Servico> lista = new List<Servico>();
 
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
         SELECT 
-            p.Id,
-            u.Nome,
-            p.TipoServico,
-            p.Descricao,
-            p.Atendimento,
-            p.RaioAtendimento
-        FROM Profissionais p
-        INNER JOIN Usuarios u ON p.UsuarioId = u.Id";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-#pragma warning disable CS8601 // Possible null reference assignment.
-                    lista.Add(new Profissional
-                    {
-                        Id = (int)reader["Id"],
-                        Nome = reader["Nome"].ToString(),
-                        Servico = reader["TipoServico"].ToString(),
-                        Descricao = reader["Descricao"].ToString(),
-                        Atendimento = reader["Atendimento"].ToString(),
-                        Raio = reader["RaioAtendimento"] != DBNull.Value ? (int)reader["RaioAtendimento"] : 0
-                    });
-
-                }
-            }
-
-            return lista;
-        }
-
-        public List<Profissional> ListarPorUsuario(int usuarioId)
-        {
-            List<Profissional> lista = new List<Profissional>();
-
-            using (SqlConnection conn = conexao.Conectar())
-            {
-                string query = @"
-        SELECT 
-            p.Id,
-            u.Nome,
-            p.TipoServico,
-            p.Descricao,
-            p.Atendimento,
-            p.RaioAtendimento
-        FROM Profissionais p
-        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+            s.Id,
+            s.Nome,
+            s.Descricao,
+            s.Atendimento,
+            s.RaioAtendimento,
+            s.Contato
+        FROM Servicos s
+        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
         WHERE p.UsuarioId = @UsuarioId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -92,14 +53,16 @@ namespace BD_TRAMPO
 
                 while (reader.Read())
                 {
-                    lista.Add(new Profissional
+                    lista.Add(new Servico
                     {
                         Id = (int)reader["Id"],
                         Nome = reader["Nome"].ToString(),
-                        Servico = reader["TipoServico"].ToString(),
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
-                        Raio = reader["RaioAtendimento"] != DBNull.Value ? (int)reader["RaioAtendimento"] : 0
+                        RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
+                            ? (int)reader["RaioAtendimento"]
+                            : 0,
+                        Contato = reader["Contato"].ToString()
                     });
                 }
             }

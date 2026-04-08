@@ -12,95 +12,103 @@ create database Xamou;
 use Xamou;
 
 
+-- 🔥 LIMPA BANCO (CUIDADO EM PRODUÇÃO)
+DROP TABLE IF EXISTS Agendamentos;
+DROP TABLE IF EXISTS Disponibilidade;
+DROP TABLE IF EXISTS Servicos;
+DROP TABLE IF EXISTS Clientes;
+DROP TABLE IF EXISTS Profissionais;
+DROP TABLE IF EXISTS Usuarios;
+
+-- 👤 USUÁRIOS
 CREATE TABLE Usuarios (
     Id INT PRIMARY KEY IDENTITY,
-    Nome VARCHAR(100),
-    Email VARCHAR(100) UNIQUE,
-    Senha VARCHAR(100),
-    Tipo VARCHAR(20) -- Cliente ou Profissional
+    Nome VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Senha VARCHAR(255) NOT NULL,
+    Tipo VARCHAR(20) NOT NULL -- Cliente ou Profissional
 );
 
+-- 👤 CLIENTES
 CREATE TABLE Clientes (
     Id INT PRIMARY KEY IDENTITY,
-    UsuarioId INT,
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+    UsuarioId INT NOT NULL,
+    BloqueadoAte DATETIME NULL,
+
+    FOREIGN KEY (UsuarioId) 
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
 );
 
+-- 🧑‍🔧 PROFISSIONAIS (AGORA SÓ PERFIL)
 CREATE TABLE Profissionais (
     Id INT PRIMARY KEY IDENTITY,
-    Documento VARCHAR(20),
+    UsuarioId INT NOT NULL,
     TipoDocumento VARCHAR(10),
-    UsuarioId INT,
-    TipoServico VARCHAR(100),
-    Descricao VARCHAR(255),
-    Atendimento VARCHAR(50), -- domicilio ou local
-    RaioAtendimento INT,
-    Latitude FLOAT,
-    Longitude FLOAT,
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+    Documento VARCHAR(20),
+
+    FOREIGN KEY (UsuarioId) 
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
 );
 
+-- 🛠 SERVIÇOS (AGORA É O CORAÇÃO)
+CREATE TABLE Servicos (
+    Id INT PRIMARY KEY IDENTITY,
+    ProfissionalId INT NOT NULL,
+
+    Nome NVARCHAR(100) NOT NULL,
+    Descricao NVARCHAR(255),
+    Contato VARCHAR(100),
+
+    Atendimento VARCHAR(50), -- Domicilio / Local / Online
+    RaioAtendimento INT NULL,
+
+    FOREIGN KEY (ProfissionalId) 
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
+);
+
+-- 📅 DISPONIBILIDADE
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
-    ProfissionalId INT,
-    DiaSemana INT, -- 1 a 7
-    HoraInicio TIME,
-    HoraFim TIME,
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id)
+    ProfissionalId INT NOT NULL,
+
+    DiaSemana INT NOT NULL, -- 1 a 7
+    HoraInicio TIME NOT NULL,
+    HoraFim TIME NOT NULL,
+
+    FOREIGN KEY (ProfissionalId) 
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
 );
 
+-- 📌 AGENDAMENTOS (AGORA LIGADO AO SERVIÇO)
 CREATE TABLE Agendamentos (
     Id INT PRIMARY KEY IDENTITY,
-    ClienteId INT,
-    ProfissionalId INT,
-    Data DATE,
-    Hora TIME,
-    Status VARCHAR(20), -- Pendente, Confirmado, Cancelado
-    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id)
+
+    ClienteId INT NOT NULL,
+    ProfissionalId INT NOT NULL,
+    ServicoId INT NOT NULL,
+
+    Data DATE NOT NULL,
+    Hora TIME NOT NULL,
+
+    Status VARCHAR(50) NOT NULL, 
+    -- Pendente, Confirmado, CanceladoCliente, CanceladoProfissional, Finalizado
+
+    Descricao VARCHAR(255),
+    DataCancelamento DATETIME NULL,
+
+    FOREIGN KEY (ClienteId) 
+        REFERENCES Clientes(Id),
+
+    FOREIGN KEY (ProfissionalId) 
+        REFERENCES Profissionais(Id),
+
+    FOREIGN KEY (ServicoId) 
+        REFERENCES Servicos(Id)
 );
-
-CREATE TABLE Servicos (
-    Id INT IDENTITY PRIMARY KEY,
-    ProfissionalId INT,
-    Nome NVARCHAR(100),
-    Descricao NVARCHAR(255),
-    Preco DECIMAL(10,2),
-    Duracao INT, -- minutos
-
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id)
-);
-
-ALTER TABLE Profissionais
-DROP COLUMN TipoServico;
-
-ALTER TABLE Agendamentos
-ADD ServicoId INT;
-
-ALTER TABLE Agendamentos
-ADD FOREIGN KEY (ServicoId) REFERENCES Servicos(Id);
-
-ALTER TABLE Agendamentos
-ALTER COLUMN Status VARCHAR(50);
-
-ALTER TABLE Agendamentos
-ADD Descricao VARCHAR(255);
-
-ALTER TABLE Agendamentos 
-ADD DataCancelamento DATETIME NULL;
-
-ALTER TABLE Servicos
-DROP COLUMN Preco;
-
-ALTER TABLE Servicos
-DROP COLUMN Duracao;
-
-ALTER TABLE Servicos
-ADD Contato VARCHAR(100);
-
-ALTER TABLE Clientes ADD BloqueadoAte DATETIME NULL;
-
-DELETE FROM Usuarios WHERE id = 4;
 
 select * from Servicos;
 select * from Profissionais;
@@ -109,6 +117,4 @@ select * from Agendamentos;
 select * from Usuarios;
 select * from Clientes;
 drop table Usuarios;
-
-drop database Xamou;
 

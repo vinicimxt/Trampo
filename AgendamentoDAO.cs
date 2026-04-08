@@ -12,14 +12,15 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                INSERT INTO Agendamentos 
-                (ClienteId, ProfissionalId, Data, Hora, Status, Descricao)
-                VALUES (@ClienteId, @ProfissionalId, @Data, @Hora, @Status, @Descricao)";
+        INSERT INTO Agendamentos 
+        (ClienteId, ServicoId, ProfissionalId, Data, Hora, Status, Descricao)
+        VALUES (@ClienteId, @ServicoId, @ProfissionalId, @Data, @Hora, @Status, @Descricao)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@ClienteId", ag.ClienteId);
-                cmd.Parameters.AddWithValue("@ProfissionalId", ag.ProfissionalId);
+                cmd.Parameters.AddWithValue("@ServicoId", ag.ServicoId);
+                cmd.Parameters.AddWithValue("@ProfissionalId", ag.ProfissionalId); // 🔥 AQUI
                 cmd.Parameters.AddWithValue("@Data", ag.Data);
                 cmd.Parameters.AddWithValue("@Hora", ag.Hora);
                 cmd.Parameters.AddWithValue("@Status", ag.Status);
@@ -36,7 +37,22 @@ namespace BD_TRAMPO
 
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "SELECT A.*, U.Nome AS NomeProfissional , P.TipoServico FROM Agendamentos A INNER JOIN Profissionais P ON A.ProfissionalId = P.Id INNER JOIN Usuarios U ON P.UsuarioId = U.Id WHERE A.ClienteId = @ClienteId";
+                string query = @"
+        SELECT 
+            a.Id,
+            a.ClienteId,
+            p.Id AS ProfissionalId,
+            u.Nome AS ProfissionalNome,
+            s.Nome AS Servico,
+            a.Data,
+            a.Hora,
+            a.Status,
+            a.Descricao
+        FROM Agendamentos a
+        INNER JOIN Servicos s ON a.ServicoId = s.Id
+        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+        WHERE a.ClienteId = @ClienteId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ClienteId", clienteId);
@@ -50,8 +66,8 @@ namespace BD_TRAMPO
                         Id = (int)reader["Id"],
                         ClienteId = (int)reader["ClienteId"],
                         ProfissionalId = (int)reader["ProfissionalId"],
-                        NomeProfissional = reader["NomeProfissional"].ToString(),
-                        Servico = reader["TipoServico"].ToString(),
+                        NomeProfissional = reader["ProfissionalNome"].ToString(),
+                        Servico = reader["Servico"].ToString(),
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
@@ -96,6 +112,8 @@ namespace BD_TRAMPO
 
             return lista;
         }
+
+
 
         public Agendamento BuscarPorId(int id)
         {
