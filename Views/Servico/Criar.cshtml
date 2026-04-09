@@ -2,24 +2,60 @@
 
 <h2>Novo Serviço</h2>
 
-<form asp-action="Criar" asp-controller="Servico" method="post">
+<form method="post" action="/Servico/Salvar">
 
-    <input type="text" name="Nome" placeholder="Nome do serviço" required />
-
-    <textarea name="Descricao" placeholder="Descrição"></textarea>
-
-    <input type="text" name="Contato" placeholder="Contato" />
-
-    <label>Atendimento</label>
-    <select name="Atendimento">
-        <option value="Domicilio">Domicílio</option>
-        <option value="Local">Local fixo</option>
-        <option value="Online">Online</option>
+    <label>Categoria:</label>
+    <select id="categoria">
+        <option value="">Selecione</option>
+        @foreach (var c in ViewBag.Categorias)
+        {
+            <option value="@c.Id">@c.Nome</option>
+        }
     </select>
 
-    <label>Raio (km)</label>
-    <input type="number" name="Raio" />
+    <label>Subcategoria:</label>
+    <select name="subcategoriaId" id="subcategoria" required>
+        <option value="">Selecione uma categoria</option>
+    </select>
+    
+    <label>Nome do Serviço:</label>
+    <input type="text" name="nome" required />
 
-    <button type="submit">Salvar</button>
+    <label>Descrição:</label>
+    <textarea name="descricao"></textarea>
+
+    <label>Contato:</label>
+    <input type="text" name="contato" />
+
+    <label>Atendimento:</label>
+    <select name="atendimento">
+        <option value="Local">Local</option>
+        <option value="Domicilio">Domicílio</option>
+    </select>
+
+    <label>Raio (km):</label>
+    <input type="number" name="raioAtendimento" />
+
+    <button type="submit">Cadastrar</button>
 
 </form>
+
+<script>
+    document.getElementById("categoria").addEventListener("change", function () {
+        let categoriaId = this.value;
+
+        fetch(`/Servico/Subcategorias?categoriaId=${categoriaId}`)
+            .then(res => res.json())
+            .then(data => {
+                let select = document.getElementById("subcategoria");
+                select.innerHTML = "<option value=''>Selecione</option>";
+
+                data.forEach(item => {
+                    let option = document.createElement("option");
+                    option.value = item.id;
+                    option.text = item.nome;
+                    select.appendChild(option);
+                });
+            });
+    });
+</script>

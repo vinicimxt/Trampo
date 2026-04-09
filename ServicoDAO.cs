@@ -71,6 +71,50 @@ namespace BD_TRAMPO
             return lista;
         }
 
+        public List<Servico> ListarPorProfissional(int profissionalId)
+        {
+            List<Servico> lista = new List<Servico>();
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"SELECT 
+            s.Id,
+            s.Nome,
+            s.Descricao,
+            s.Contato,
+            s.Atendimento,
+            s.RaioAtendimento,
+            sc.Nome AS Subcategoria,
+            c.Nome AS Categoria
+        FROM Servicos s
+        INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
+        INNER JOIN Categorias c ON sc.CategoriaId = c.Id
+        WHERE s.ProfissionalId = @ProfissionalId";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId); // 🔥 ESSENCIAL
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add(new Servico
+                    {
+                        Id = (int)reader["Id"],
+                        Nome = reader["Nome"].ToString(),
+                        Descricao = reader["Descricao"].ToString(),
+                        Contato = reader["Contato"].ToString(),
+                        Atendimento = reader["Atendimento"].ToString(),
+                        Categoria = reader["Categoria"].ToString(),
+                        Subcategoria = reader["Subcategoria"].ToString()
+                    });
+                }
+            }
+
+            return lista;
+        }
+
         public int BuscarProfissionalId(int servicoId)
         {
             using (SqlConnection conn = conexao.Conectar())
@@ -82,6 +126,56 @@ namespace BD_TRAMPO
 
                 return (int)cmd.ExecuteScalar();
             }
+        }
+
+        public List<Categoria> Listar()
+        {
+            List<Categoria> lista = new List<Categoria>();
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "SELECT * FROM Categorias";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add(new Categoria
+                    {
+                        Id = (int)reader["Id"],
+                        Nome = reader["Nome"].ToString()
+                    });
+                }
+            }
+
+            return lista;
+        }
+
+        public List<Subcategoria> ListarPorCategoria(int categoriaId)
+        {
+            List<Subcategoria> lista = new List<Subcategoria>();
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "SELECT * FROM Subcategorias WHERE CategoriaId = @CategoriaId";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@CategoriaId", categoriaId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add(new Subcategoria
+                    {
+                        Id = (int)reader["Id"],
+                        Nome = reader["Nome"].ToString()
+                    });
+                }
+            }
+
+            return lista;
         }
 
 

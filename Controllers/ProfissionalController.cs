@@ -46,7 +46,7 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
 
-            int usuarioId = int.Parse(usuarioIdStr);
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
             // 🔥 pega o profissional do usuário
             ProfissionalDAO profDAO = new ProfissionalDAO();

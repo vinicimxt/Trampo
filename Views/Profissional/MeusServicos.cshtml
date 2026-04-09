@@ -12,10 +12,24 @@ else
 {
     foreach (var s in Model)
     {
-        <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+        <div style="border:1px solid #ccc; margin:10px; padding:10px; border-radius:10px;">
+            
             <h3>@s.Nome</h3>
+
+            <p><b>Categoria:</b> @s.Categoria</p>
+            <p><b>Subcategoria:</b> @s.Subcategoria</p>
+
             <p>@s.Descricao</p>
+
             <p><b>Contato:</b> @s.Contato</p>
+
+            <p><b>Atendimento:</b> @s.Atendimento</p>
+
+            @if (s.Atendimento == "Domicilio")
+            {
+                <p><b>Raio:</b> @s.RaioAtendimento km</p>
+            }
+
         </div>
     }
 }

@@ -5,30 +5,65 @@ namespace BD_TRAMPO.Controllers
 {
     public class AgendamentoController : Controller
     {
-        public IActionResult Novo(int servicoId)
+        
+        public IActionResult Novo(int servicoId, DateTime? data)
         {
             if (HttpContext.Session.GetString("UsuarioId") == null)
             {
                 return RedirectToAction("Login", "Usuario");
             }
 
+            DateTime dia = data ?? DateTime.Today;
+
+            AgendamentoDAO dao = new AgendamentoDAO();
+
+            var ocupados = dao.BuscarHorariosOcupados(servicoId, dia);
+
+            List<TimeSpan> todos = new List<TimeSpan>();
+
+            for (int h = 8; h <= 18; h++) // horário comercial
+            {
+                todos.Add(new TimeSpan(h, 0, 0));
+            }
+
             ViewBag.ServicoId = servicoId;
+            ViewBag.Data = dia;
+            ViewBag.Horarios = todos;
+            ViewBag.Ocupados = ocupados;
+
             return View();
         }
+
 
         [HttpPost]
         public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao)
         {
 
-            // 🔥 pegar cliente real
+            //  pegar cliente real
             ClienteDAO clienteDAO = new ClienteDAO();
             AgendamentoDAO dao = new AgendamentoDAO();
+            ServicoDAO servicoDAO = new ServicoDAO();
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
             int clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
 
+            //Buscar profissional por ID
+            int profissionalId = servicoDAO.BuscarProfissionalId(servicoId);
+
             var bloqueio = clienteDAO.BuscarBloqueio(clienteId);
 
+            DateTime hoje = DateTime.Today;
+            DateTime limiteFuturo = hoje.AddDays(366);
+
+            if (data < hoje)
+            {
+                return Content("Não é possível agendar no passado.");
+            }
+
+            if (data > limiteFuturo)
+            {
+                return Content("Você só pode agendar até 1 ano à frente.");
+            }
             if (bloqueio != null && bloqueio > DateTime.Now)
             {
                 return Content("Você está bloqueado temporariamente.");
@@ -38,9 +73,12 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Você já tem muitos agendamentos pendentes.");
             }
-            ServicoDAO servicoDAO = new ServicoDAO();
-            int profissionalId = servicoDAO.BuscarProfissionalId(servicoId);
-            
+
+            if (dao.HorarioOcupado(servicoId, data, hora))
+            {
+                return Content("Esse horário já está ocupado.");
+            }
+
             var agendamento = new Agendamento
             {
                 ClienteId = clienteId,

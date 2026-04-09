@@ -5,11 +5,36 @@
     <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
 
     <label>Data:</label>
-    <input type="date" name="data" required />
-    <br />
+    <input type="date" name="data" value="@ViewBag.Data.ToString("yyyy-MM-dd")"
+           min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(366).ToString("yyyy-MM-dd")"
+           onchange="location.href='?servicoId=@ViewBag.ServicoId&data=' + this.value" required />
     
-    <label>Hora:</label>
-    <input type="time" name="hora" required />
+    <h3>Escolha um horário</h3>
+
+    @foreach (var hora in ViewBag.Horarios)
+    {
+        bool ocupado = ViewBag.Ocupados.Contains(hora);
+
+        if (ocupado)
+        {
+            <button disabled style="background:red;color:white;margin:5px;">
+                @hora.ToString(@"hh\:mm") ❌
+            </button>
+        }
+        else
+        {
+            <form method="post" action="/Agendamento/Salvar" style="display:inline;">
+            
+                <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
+                <input type="hidden" name="data" value="@ViewBag.Data.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="hora" value="@hora" />
+
+                <button style="background:green;color:white;margin:5px;">
+                    @hora.ToString(@"hh\:mm") ✅
+                </button>
+            </form>
+        }
+    }
     <br />
 
     <label>Descrição:</label>

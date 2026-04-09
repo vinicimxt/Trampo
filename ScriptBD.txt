@@ -9,6 +9,7 @@ DROP DATABASE Xamou;
 GO
 
 create database Xamou;
+
 use Xamou;
 
 
@@ -69,6 +70,20 @@ CREATE TABLE Servicos (
         ON DELETE CASCADE
 );
 
+CREATE TABLE Categorias (
+    Id INT PRIMARY KEY IDENTITY,
+    Nome VARCHAR(100)
+);
+
+
+CREATE TABLE Subcategorias (
+    Id INT PRIMARY KEY IDENTITY,
+    Nome VARCHAR(100),
+    CategoriaId INT,
+    FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id)
+);
+
+
 -- 📅 DISPONIBILIDADE
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
@@ -109,6 +124,39 @@ CREATE TABLE Agendamentos (
     FOREIGN KEY (ServicoId) 
         REFERENCES Servicos(Id)
 );
+
+INSERT INTO Categorias (Nome) VALUES
+('Manutenção'),
+('Beleza'),
+('Tecnologia'),
+('Aulas'),
+('Eventos');
+
+INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
+('Elétrica', 1),
+('Hidráulica', 1),
+('Construção', 1),
+('Jardinagem', 1),
+
+('Cabelo', 2),
+('Estética', 2),
+
+('Informática', 3),
+('Desenvolvimento', 3),
+
+('Idiomas', 4),
+('Música', 4),
+
+('Fotografia', 5),
+('Buffet', 5);
+
+ALTER TABLE Servicos
+ADD SubcategoriaId INT;
+
+ALTER TABLE Servicos
+ADD FOREIGN KEY (SubcategoriaId) REFERENCES Ssubcategorias(Id);
+
+/* ALTER TABLE Agendamentos DROP COLUMN ProfissionalId; */
 
 select * from Servicos;
 select * from Profissionais;

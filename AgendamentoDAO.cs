@@ -9,6 +9,9 @@ namespace BD_TRAMPO
 
         public void Inserir(Agendamento ag)
         {
+
+
+
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
@@ -28,6 +31,62 @@ namespace BD_TRAMPO
 
                 cmd.ExecuteNonQuery();
             }
+        }
+
+
+        public bool HorarioOcupado(int servicoId, DateTime data, TimeSpan hora)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+                SELECT COUNT(*) 
+                FROM Agendamentos
+                WHERE ServicoId = @ServicoId
+                AND Data = @Data
+                AND Hora = @Hora
+                AND Status = 'Pendente'";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ServicoId", servicoId);
+                cmd.Parameters.AddWithValue("@Data", data);
+                cmd.Parameters.AddWithValue("@Hora", hora);
+
+                int count = (int)cmd.ExecuteScalar();
+
+                return count > 0;
+            }
+        }
+
+        
+
+        public List<TimeSpan> BuscarHorariosOcupados(int servicoId, DateTime data)
+        {
+            List<TimeSpan> lista = new List<TimeSpan>();
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+                SELECT Hora 
+                FROM Agendamentos
+                WHERE ServicoId = @ServicoId
+                AND Data = @Data
+                AND Status != 'Cancelado'";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ServicoId", servicoId);
+                cmd.Parameters.AddWithValue("@Data", data);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add((TimeSpan)reader["Hora"]);
+                }
+            }
+
+            return lista;
         }
 
 
