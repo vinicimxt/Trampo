@@ -7,17 +7,27 @@ namespace BD_TRAMPO.Controllers
     {
         public IActionResult Criar()
         {
+            var auth = Proteger();
+            if (auth != null) return auth;
 
             CategoriaDAO catDAO = new CategoriaDAO();
             ViewBag.Categorias = catDAO.Listar();
-            var auth = Proteger();
-            if (auth != null) return auth;
+
+            ViewBag.Subcategorias = new List<Subcategoria>(); // começa vazio
 
             return View();
         }
 
+        public JsonResult GetSubcategorias(int categoriaId)
+        {
+            SubcategoriaDAO dao = new SubcategoriaDAO();
+            var lista = dao.ListarPorCategoria(categoriaId);
+
+            return Json(lista);
+        }
+
         [HttpPost]
-        public IActionResult Salvar(string nome,int subcategoriaId, string descricao, string contato, string atendimento, int? raioAtendimento)
+        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string contato, string atendimento, int? raioAtendimento)
         {
             ServicoDAO dao = new ServicoDAO();
 

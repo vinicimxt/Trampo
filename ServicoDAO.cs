@@ -12,14 +12,15 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"INSERT INTO Servicos 
-            (ProfissionalId, Nome, Descricao, Contato, Atendimento, RaioAtendimento)
+            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, RaioAtendimento)
             VALUES 
-            (@ProfissionalId, @Nome, @Descricao, @Contato, @Atendimento, @RaioAtendimento)";
+            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento, @RaioAtendimento)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@ProfissionalId", s.ProfissionalId);
                 cmd.Parameters.AddWithValue("@Nome", s.Nome);
+                cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
                 cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
@@ -36,17 +37,21 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        SELECT 
-            s.Id,
-            s.Nome,
-            s.Descricao,
-            s.Atendimento,
-            s.RaioAtendimento,
-            s.Contato,
-            u.Nome AS NomeProfissional
-        FROM Servicos s
-        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
-        INNER JOIN Usuarios u ON p.UsuarioId = u.Id";
+                SELECT 
+                    s.Id,
+                    s.Nome,
+                    s.Descricao,
+                    s.Atendimento,
+                    s.RaioAtendimento,
+                    s.Contato,
+                    u.Nome AS NomeProfissional,
+                    sc.Nome AS Subcategoria,
+                    c.Nome AS Categoria
+                FROM Servicos s
+                INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+                INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+                LEFT JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
+                LEFT JOIN Categorias c ON sc.CategoriaId = c.Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -57,7 +62,9 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         Nome = reader["Nome"].ToString(),
-                        Descricao = reader["Descricao"].ToString(),
+                        Categoria = reader["Categoria"] != DBNull.Value ? reader["Categoria"].ToString() : "Não definida",
+
+                        Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "Não definida",
                         Atendimento = reader["Atendimento"].ToString(),
                         RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
                             ? (int)reader["RaioAtendimento"]

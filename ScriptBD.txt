@@ -154,7 +154,7 @@ ALTER TABLE Servicos
 ADD SubcategoriaId INT;
 
 ALTER TABLE Servicos
-ADD FOREIGN KEY (SubcategoriaId) REFERENCES Ssubcategorias(Id);
+ADD FOREIGN KEY (SubcategoriaId) REFERENCES Subcategorias(Id);
 
 /* ALTER TABLE Agendamentos DROP COLUMN ProfissionalId; */
 
@@ -164,5 +164,21 @@ select * from Disponibilidade;
 select * from Agendamentos;
 select * from Usuarios;
 select * from Clientes;
+select * from Subcategorias;
+select * from Categorias;
+
 drop table Usuarios;
 
+DELETE FROM Servicos WHERE SubcategoriaId IS NULL;
+
+ALTER TABLE Agendamentos
+DROP CONSTRAINT FK__Agendamen__Servi__00200768;
+
+ALTER TABLE Agendamentos
+ADD CONSTRAINT FK_Agendamentos_Servicos
+FOREIGN KEY (ServicoId)
+REFERENCES Servicos(Id)
+ON DELETE CASCADE;
+
+ALTER TABLE Servicos
+ALTER COLUMN SubcategoriaId INT NOT NULL;
