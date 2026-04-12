@@ -30,6 +30,26 @@ else
                 <p><b>Raio:</b> @s.RaioAtendimento km</p>
             }
 
+            @if (!string.IsNullOrEmpty(s.LinkOnline))
+            {
+                <p>🔗 Online: @s.LinkOnline</p>
+            }
+
         </div>
     }
+}
+
+@foreach (var s in Model)
+{
+    <div>
+        <h3>@s.Nome</h3>
+
+        <a asp-controller="Servico" asp-action="Editar" asp-route-id="@s.Id">
+            ✏️ Editar
+        </a>
+
+        <a asp-controller="Servico" asp-action="Excluir" asp-route-id="@s.Id">
+            🗑 Excluir
+        </a>
+    </div>
 }

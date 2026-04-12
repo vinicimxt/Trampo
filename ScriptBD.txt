@@ -1,22 +1,25 @@
-
 USE master;
 GO
 
 ALTER DATABASE Xamou SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 GO
 
-DROP DATABASE Xamou;
+DROP DATABASE IF EXISTS Xamou;
 GO
 
-create database Xamou;
+CREATE DATABASE Xamou;
+GO
 
-use Xamou;
+USE Xamou;
+GO
 
+-- 🔥 ORDEM IMPORTA (dependências)
 
--- 🔥 LIMPA BANCO (CUIDADO EM PRODUÇÃO)
 DROP TABLE IF EXISTS Agendamentos;
 DROP TABLE IF EXISTS Disponibilidade;
 DROP TABLE IF EXISTS Servicos;
+DROP TABLE IF EXISTS Subcategorias;
+DROP TABLE IF EXISTS Categorias;
 DROP TABLE IF EXISTS Clientes;
 DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios;
@@ -27,13 +30,13 @@ CREATE TABLE Usuarios (
     Nome VARCHAR(100) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
     Senha VARCHAR(255) NOT NULL,
-    Tipo VARCHAR(20) NOT NULL -- Cliente ou Profissional
+    Tipo VARCHAR(20) NOT NULL
 );
 
 -- 👤 CLIENTES
 CREATE TABLE Clientes (
     Id INT PRIMARY KEY IDENTITY,
-    UsuarioId INT NOT NULL,
+    UsuarioId INT NOT NULL UNIQUE,
     BloqueadoAte DATETIME NULL,
 
     FOREIGN KEY (UsuarioId) 
@@ -41,10 +44,10 @@ CREATE TABLE Clientes (
         ON DELETE CASCADE
 );
 
--- 🧑‍🔧 PROFISSIONAIS (AGORA SÓ PERFIL)
+-- 🧑‍🔧 PROFISSIONAIS
 CREATE TABLE Profissionais (
     Id INT PRIMARY KEY IDENTITY,
-    UsuarioId INT NOT NULL,
+    UsuarioId INT NOT NULL UNIQUE,
     TipoDocumento VARCHAR(10),
     Documento VARCHAR(20),
 
@@ -53,43 +56,50 @@ CREATE TABLE Profissionais (
         ON DELETE CASCADE
 );
 
--- 🛠 SERVIÇOS (AGORA É O CORAÇÃO)
+-- 📂 CATEGORIAS
+CREATE TABLE Categorias (
+    Id INT PRIMARY KEY IDENTITY,
+    Nome VARCHAR(100) NOT NULL
+);
+
+-- 📂 SUBCATEGORIAS
+CREATE TABLE Subcategorias (
+    Id INT PRIMARY KEY IDENTITY,
+    Nome VARCHAR(100) NOT NULL,
+    CategoriaId INT NOT NULL,
+
+    FOREIGN KEY (CategoriaId) 
+        REFERENCES Categorias(Id)
+        ON DELETE CASCADE
+);
+
+-- 🛠 SERVIÇOS
 CREATE TABLE Servicos (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
+    SubcategoriaId INT NOT NULL,
 
     Nome NVARCHAR(100) NOT NULL,
     Descricao NVARCHAR(255),
     Contato VARCHAR(100),
 
-    Atendimento VARCHAR(50), -- Domicilio / Local / Online
+    Atendimento VARCHAR(50),
     RaioAtendimento INT NULL,
 
     FOREIGN KEY (ProfissionalId) 
         REFERENCES Profissionais(Id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (SubcategoriaId) 
+        REFERENCES Subcategorias(Id)
 );
-
-CREATE TABLE Categorias (
-    Id INT PRIMARY KEY IDENTITY,
-    Nome VARCHAR(100)
-);
-
-
-CREATE TABLE Subcategorias (
-    Id INT PRIMARY KEY IDENTITY,
-    Nome VARCHAR(100),
-    CategoriaId INT,
-    FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id)
-);
-
 
 -- 📅 DISPONIBILIDADE
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
 
-    DiaSemana INT NOT NULL, -- 1 a 7
+    DiaSemana INT NOT NULL,
     HoraInicio TIME NOT NULL,
     HoraFim TIME NOT NULL,
 
@@ -98,7 +108,7 @@ CREATE TABLE Disponibilidade (
         ON DELETE CASCADE
 );
 
--- 📌 AGENDAMENTOS (AGORA LIGADO AO SERVIÇO)
+-- 📌 AGENDAMENTOS
 CREATE TABLE Agendamentos (
     Id INT PRIMARY KEY IDENTITY,
 
@@ -109,11 +119,10 @@ CREATE TABLE Agendamentos (
     Data DATE NOT NULL,
     Hora TIME NOT NULL,
 
-    Status VARCHAR(50) NOT NULL, 
-    -- Pendente, Confirmado, CanceladoCliente, CanceladoProfissional, Finalizado
-
+    Status VARCHAR(50) NOT NULL,
     Descricao VARCHAR(255),
     DataCancelamento DATETIME NULL,
+    EnderecoCliente VARCHAR(255) NULL,
 
     FOREIGN KEY (ClienteId) 
         REFERENCES Clientes(Id),
@@ -123,7 +132,10 @@ CREATE TABLE Agendamentos (
 
     FOREIGN KEY (ServicoId) 
         REFERENCES Servicos(Id)
+        ON DELETE CASCADE
 );
+
+-- 🌱 DADOS INICIAIS
 
 INSERT INTO Categorias (Nome) VALUES
 ('Manutenção'),
@@ -151,34 +163,15 @@ INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
 ('Buffet', 5);
 
 ALTER TABLE Servicos
-ADD SubcategoriaId INT;
+ADD LinkOnline VARCHAR(255) NULL;
 
-ALTER TABLE Servicos
-ADD FOREIGN KEY (SubcategoriaId) REFERENCES Subcategorias(Id);
-
-/* ALTER TABLE Agendamentos DROP COLUMN ProfissionalId; */
-
-select * from Servicos;
-select * from Profissionais;
-select * from Disponibilidade;
-select * from Agendamentos;
-select * from Usuarios;
-select * from Clientes;
-select * from Subcategorias;
-select * from Categorias;
-
-drop table Usuarios;
-
-DELETE FROM Servicos WHERE SubcategoriaId IS NULL;
-
-ALTER TABLE Agendamentos
-DROP CONSTRAINT FK__Agendamen__Servi__00200768;
-
-ALTER TABLE Agendamentos
-ADD CONSTRAINT FK_Agendamentos_Servicos
-FOREIGN KEY (ServicoId)
-REFERENCES Servicos(Id)
-ON DELETE CASCADE;
-
-ALTER TABLE Servicos
-ALTER COLUMN SubcategoriaId INT NOT NULL;
+-- 🔍 DEBUG
+SELECT Id, Nome, LinkOnline FROM Servicos;
+SELECT * FROM Usuarios;
+SELECT * FROM Clientes;
+SELECT * FROM Profissionais;
+SELECT * FROM Categorias;
+SELECT * FROM Subcategorias;
+SELECT * FROM Servicos;
+SELECT * FROM Disponibilidade;
+SELECT * FROM Agendamentos;

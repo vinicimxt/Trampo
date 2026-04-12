@@ -1,0 +1,37 @@
+@model Servico
+
+<h2>Editar Serviço</h2>
+
+<form method="post">
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <label>Nome:</label>
+    <input type="text" name="Nome" value="@Model.Nome" />
+    <select name="SubcategoriaId">
+    @foreach (var sub in ViewBag.Subcategorias)
+    {
+        if (sub.Id == Model.SubcategoriaId)
+        {
+            <option value="@sub.Id" selected>@sub.Nome</option>
+        }
+        else
+        {
+            <option value="@sub.Id">@sub.Nome</option>
+        }
+    }
+</select>
+    <label>Descrição:</label>
+    <textarea name="Descricao">@Model.Descricao</textarea>
+
+    <label>Contato:</label>
+    <input type="text" name="Contato" value="@Model.Contato" />
+
+    <label>Atendimento:</label>
+    <select name="Atendimento">
+        <option>Domicilio</option>
+        <option>Local</option>
+        <option>Online</option>
+    </select>
+
+    <button type="submit">Salvar</button>
+</form>

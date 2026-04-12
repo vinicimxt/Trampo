@@ -8,6 +8,8 @@
             <th>Hora</th>
             <th>Status</th>
             <th>Ações</th>
+            <th>Endereço</th>
+            <th>Link Online</th>
         </tr>
     </thead>
 
@@ -18,7 +20,9 @@
                 <td>@ag.NomeCliente</td>
                 <td>@ag.Data.ToShortDateString()</td>
                 <td>@ag.Hora</td>
-
+                
+                
+               
                 <td>
                     @{
                         string statusTexto = ag.Status switch
@@ -34,7 +38,7 @@
 
                     @statusTexto
                 </td>
-
+                
                 <td>
                     @if (ag.Status == "Pendente")
                     {
@@ -57,10 +61,27 @@
                     @if (ag.Status == "Confirmado")
                     {
                         <form asp-action="Finalizar" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@ag.Id"/>
+                            <input type="hidden" name="id" value="@ag.Id" />
                             <button type="submit">Finalizar</button>
                         </form>
                     }
+                </td>
+                @if (ag.Status == "Confirmado" && !string.IsNullOrEmpty(ag.EnderecoCliente))
+                {
+                    <td>@ag.EnderecoCliente</td>
+                }
+                else
+                {
+                    <td>🔒 Aguardando confirmação</td>
+                }
+
+                <td>
+                @if (!string.IsNullOrEmpty(ag.LinkOnline))
+                {
+                    <a href="@ag.LinkOnline" target="_blank">
+                        🔗 Acessar reunião
+                    </a>
+                }
                 </td>
             </tr>
         }

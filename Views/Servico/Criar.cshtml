@@ -14,7 +14,7 @@
     </select>
 
     <label>Subcategoria:</label>
-    <select  id="subcategoria" name="subcategoriaId" required>
+    <select id="subcategoria" name="subcategoriaId" required>
         <option value="">Selecione a subcategoria</option>
     </select>
     
@@ -27,12 +27,18 @@
     <label>Contato:</label>
     <input type="text" name="contato" />
 
-    <label>Atendimento:</label>
-    <select name="atendimento">
-        <option value="Local">Local</option>
+    <label>Tipo de Atendimento:</label>
+    <select name="Atendimento" onchange="toggleLinkOnline(this.value)">
         <option value="Domicilio">Domicílio</option>
+        <option value="Local">Local</option>
+        <option value="Online">Online</option>
     </select>
 
+    <div id="linkOnlineDiv" style="display:none;">
+        <label>Link do atendimento:</label>
+        <input type="text" name="LinkOnline" placeholder="Link do atendimento online..." />
+    </div>
+    
     <label>Raio (km):</label>
     <input type="number" name="raioAtendimento" />
 
@@ -41,19 +47,28 @@
 </form>
 
 <script>
-document.getElementById("categoria").addEventListener("change", function () {
-    let categoriaId = this.value;
+    document.getElementById("categoria").addEventListener("change", function () {
+        let categoriaId = this.value;
 
-    fetch('/Servico/GetSubcategorias?categoriaId=' + categoriaId)
-        .then(res => res.json())
-        .then(data => {
-            let sub = document.getElementById("subcategoria");
+        fetch('/Servico/GetSubcategorias?categoriaId=' + categoriaId)
+            .then(res => res.json())
+            .then(data => {
+                let sub = document.getElementById("subcategoria");
 
-            sub.innerHTML = '<option value="">Selecione a subcategoria</option>';
+                sub.innerHTML = '<option value="">Selecione a subcategoria</option>';
 
-            data.forEach(s => {
-                sub.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
+                data.forEach(s => {
+                    sub.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
+                });
             });
-        });
-});
+    });
+    function toggleLinkOnline(tipo) {
+        let div = document.getElementById("linkOnlineDiv");
+
+        if (tipo.toLowerCase().includes("online")) {
+            div.style.display = "block";
+        } else {
+            div.style.display = "none";
+        }
+    }
 </script>

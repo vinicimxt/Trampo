@@ -40,3 +40,24 @@ button {
     button:hover {
         background: #0056b3;
     }
+
+    /* ========== MEUS AGENDAMENTOS ========== */
+
+    .grid-horarios {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.slot {
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.livre {
+    background: green;
+}
+
+.ocupado {
+    background: red;
+}

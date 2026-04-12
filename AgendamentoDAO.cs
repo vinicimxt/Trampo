@@ -16,8 +16,8 @@ namespace BD_TRAMPO
             {
                 string query = @"
         INSERT INTO Agendamentos 
-        (ClienteId, ServicoId, ProfissionalId, Data, Hora, Status, Descricao)
-        VALUES (@ClienteId, @ServicoId, @ProfissionalId, @Data, @Hora, @Status, @Descricao)";
+        (ClienteId, ServicoId, ProfissionalId, Data, Hora, Status, Descricao, EnderecoCliente)
+        VALUES (@ClienteId, @ServicoId, @ProfissionalId, @Data, @Hora, @Status, @Descricao, @EnderecoCliente)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -28,7 +28,7 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Hora", ag.Hora);
                 cmd.Parameters.AddWithValue("@Status", ag.Status);
                 cmd.Parameters.AddWithValue("@Descricao", ag.Descricao);
-
+                cmd.Parameters.AddWithValue("@EnderecoCliente", ag.EnderecoCliente ?? (object)DBNull.Value);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -58,7 +58,7 @@ namespace BD_TRAMPO
             }
         }
 
-        
+
 
         public List<TimeSpan> BuscarHorariosOcupados(int servicoId, DateTime data)
         {
@@ -97,21 +97,23 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        SELECT 
-            a.Id,
-            a.ClienteId,
-            p.Id AS ProfissionalId,
-            u.Nome AS ProfissionalNome,
-            s.Nome AS Servico,
-            a.Data,
-            a.Hora,
-            a.Status,
-            a.Descricao
-        FROM Agendamentos a
-        INNER JOIN Servicos s ON a.ServicoId = s.Id
-        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
-        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
-        WHERE a.ClienteId = @ClienteId";
+                SELECT 
+                    a.Id,
+                    a.ClienteId,
+                    p.Id AS ProfissionalId,
+                    u.Nome AS ProfissionalNome,
+                    s.Nome AS Servico,
+                    s.LinkOnline,
+                    a.Data,
+                    a.Hora,
+                    a.Status,
+                    a.Descricao,
+                    a.EnderecoCliente 
+                FROM Agendamentos a
+                INNER JOIN Servicos s ON a.ServicoId = s.Id
+                INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+                INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+                WHERE a.ClienteId = @ClienteId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ClienteId", clienteId);
@@ -127,10 +129,15 @@ namespace BD_TRAMPO
                         ProfissionalId = (int)reader["ProfissionalId"],
                         NomeProfissional = reader["ProfissionalNome"].ToString(),
                         Servico = reader["Servico"].ToString(),
+                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                        ? reader["LinkOnline"].ToString() : null,
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
-                        Descricao = reader["Descricao"].ToString()
+                        Descricao = reader["Descricao"].ToString(),
+                        EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
+                        ? reader["EnderecoCliente"].ToString()
+                        : "",
                     });
                 }
             }
@@ -146,7 +153,16 @@ namespace BD_TRAMPO
 
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "SELECT A.*, U.Nome AS NomeCliente FROM Agendamentos A INNER JOIN Clientes C ON A.ClienteId = C.Id INNER JOIN Usuarios U ON C.UsuarioId = U.Id WHERE A.ProfissionalId = @ProfissionalId";
+                string query = @"
+                SELECT 
+                    A.*,
+                    U.Nome AS NomeCliente,
+                    S.LinkOnline
+                FROM Agendamentos A
+                INNER JOIN Clientes C ON A.ClienteId = C.Id
+                INNER JOIN Usuarios U ON C.UsuarioId = U.Id
+                INNER JOIN Servicos S ON A.ServicoId = S.Id 
+                WHERE A.ProfissionalId = @ProfissionalId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
@@ -164,7 +180,13 @@ namespace BD_TRAMPO
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
-                        Descricao = reader["Descricao"].ToString()
+                        Descricao = reader["Descricao"].ToString(),
+                        EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
+                        ? reader["EnderecoCliente"].ToString()
+                        : "",
+                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                        ? reader["LinkOnline"].ToString()
+                        : null
                     });
                 }
             }
@@ -195,7 +217,10 @@ namespace BD_TRAMPO
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
-                        Descricao = reader["Descricao"].ToString()
+                        Descricao = reader["Descricao"].ToString(),
+                        EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
+                        ? reader["EnderecoCliente"].ToString()
+                        : "",
                     };
                 }
             }

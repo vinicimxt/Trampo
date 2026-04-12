@@ -43,7 +43,7 @@
                 ClienteDAO clienteDAO = new ClienteDAO();
                 clienteDAO.Inserir(usuarioId);
 
-                return RedirectToAction("Home");
+                return RedirectToAction("Lista", "Profissional");
             }
         }
 
@@ -54,7 +54,7 @@
             if (tipo == "profissional")
                 return RedirectToAction("Dashboard", "Profissional");
 
-            return RedirectToAction("Home", "Home");
+            return RedirectToAction("Lista", "Profissional");
         }
 
         [HttpPost]

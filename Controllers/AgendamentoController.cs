@@ -5,7 +5,7 @@ namespace BD_TRAMPO.Controllers
 {
     public class AgendamentoController : Controller
     {
-        
+
         public IActionResult Novo(int servicoId, DateTime? data)
         {
             if (HttpContext.Session.GetString("UsuarioId") == null)
@@ -13,20 +13,29 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
 
+            ServicoDAO servicoDAO = new ServicoDAO();
+            var servico = servicoDAO.BuscarPorId(servicoId);
+
+            if (servico == null)
+            {
+                return Content("Serviço não encontrado.");
+            }
+
+            ViewBag.ServicoId = servicoId;
+            ViewBag.Atendimento = servico.Atendimento ?? "Local";
+
             DateTime dia = data ?? DateTime.Today;
 
             AgendamentoDAO dao = new AgendamentoDAO();
-
             var ocupados = dao.BuscarHorariosOcupados(servicoId, dia);
 
             List<TimeSpan> todos = new List<TimeSpan>();
 
-            for (int h = 8; h <= 18; h++) // horário comercial
+            for (int h = 8; h <= 18; h++)
             {
                 todos.Add(new TimeSpan(h, 0, 0));
             }
 
-            ViewBag.ServicoId = servicoId;
             ViewBag.Data = dia;
             ViewBag.Horarios = todos;
             ViewBag.Ocupados = ocupados;
@@ -36,19 +45,37 @@ namespace BD_TRAMPO.Controllers
 
 
         [HttpPost]
-        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao)
+        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string enderecoCliente)
         {
+            string usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
-            //  pegar cliente real
+            if (usuarioIdStr == null)
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+
+            int usuarioId = int.Parse(usuarioIdStr);
+
             ClienteDAO clienteDAO = new ClienteDAO();
             AgendamentoDAO dao = new AgendamentoDAO();
             ServicoDAO servicoDAO = new ServicoDAO();
 
-            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
             int clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
 
-            //Buscar profissional por ID
             int profissionalId = servicoDAO.BuscarProfissionalId(servicoId);
+
+            if (profissionalId == 0)
+            {
+                return Content("Erro: serviço inválido.");
+            }
+
+            var servico = servicoDAO.BuscarPorId(servicoId);
+
+            if (servico.Atendimento.ToLower() == "domicilio" && string.IsNullOrWhiteSpace(enderecoCliente))
+            {
+                return Content("Endereço é obrigatório para atendimento a domicílio.");
+            }
+            
 
             var bloqueio = clienteDAO.BuscarBloqueio(clienteId);
 
@@ -64,12 +91,13 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Você só pode agendar até 1 ano à frente.");
             }
+
             if (bloqueio != null && bloqueio > DateTime.Now)
             {
                 return Content("Você está bloqueado temporariamente.");
             }
 
-            if (dao.ContarPendentes(clienteId) >= 5) // Bloqueia se tem mais de 5 agendamentos
+            if (dao.ContarPendentes(clienteId) >= 5)
             {
                 return Content("Você já tem muitos agendamentos pendentes.");
             }
@@ -87,9 +115,9 @@ namespace BD_TRAMPO.Controllers
                 Data = data,
                 Hora = hora,
                 Status = "Pendente",
-                Descricao = descricao
+                Descricao = descricao ?? "",
+                EnderecoCliente = enderecoCliente
             };
-
 
             dao.Inserir(agendamento);
 

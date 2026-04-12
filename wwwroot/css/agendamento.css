@@ -1,0 +1,37 @@
+.grid-horarios {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.slot {
+    padding: 15px;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.livre {
+    background: #22c55e;
+    color: white;
+}
+
+.livre:hover {
+    background: #16a34a;
+    transform: scale(1.05);
+}
+
+.ocupado {
+    background: #ef4444;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.selecionado {
+    border: 3px solid #000;
+    background: #2563eb !important;
+}

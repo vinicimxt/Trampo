@@ -46,20 +46,26 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
 
-            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+            int usuarioId = int.Parse(usuarioIdStr);
 
             // 🔥 pega o profissional do usuário
             ProfissionalDAO profDAO = new ProfissionalDAO();
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
-            // 🔥 agora busca os SERVIÇOS
+            // 🔴 valida segurança
+            if (profissionalId == 0)
+            {
+                return Content("Erro: profissional não encontrado.");
+            }
+
+            // 🔥 agora sim: só os serviços dele
             ServicoDAO servDAO = new ServicoDAO();
-            var lista = servDAO.ListarServicos();
+            var lista = servDAO.ListarPorProfissional(profissionalId);
 
             return View(lista);
         }
 
-  
+ 
 
 
 

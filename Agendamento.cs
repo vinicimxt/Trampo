@@ -13,7 +13,8 @@
         public string NomeCliente { get; set; }
         public string NomeProfissional { get; set; }
         public string Servico { get; set; }
-
+        public string LinkOnline { get; set;}
+        public string EnderecoCliente { get; set; }
 
     }
 }

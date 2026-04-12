@@ -1,47 +1,60 @@
-<h2>Agendar Serviço</h2>
+@section Styles {
+    <link rel="stylesheet" href="~/css/agendamento.css" />
+}
 
-<form method="post" action="/Agendamento/Salvar">
-    
-    <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
+<div id="pagina" data-atendimento="@ViewBag.Atendimento">
 
-    <label>Data:</label>
-    <input type="date" name="data" value="@ViewBag.Data.ToString("yyyy-MM-dd")"
-           min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(366).ToString("yyyy-MM-dd")"
-           onchange="location.href='?servicoId=@ViewBag.ServicoId&data=' + this.value" required />
-    
-    <h3>Escolha um horário</h3>
+    <h2>Agendar Serviço</h2>
 
-    @foreach (var hora in ViewBag.Horarios)
-    {
-        bool ocupado = ViewBag.Ocupados.Contains(hora);
+    <form method="post" action="/Agendamento/Salvar">
 
-        if (ocupado)
-        {
-            <button disabled style="background:red;color:white;margin:5px;">
-                @hora.ToString(@"hh\:mm") ❌
-            </button>
-        }
-        else
-        {
-            <form method="post" action="/Agendamento/Salvar" style="display:inline;">
-            
-                <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
-                <input type="hidden" name="data" value="@ViewBag.Data.ToString("yyyy-MM-dd")" />
-                <input type="hidden" name="hora" value="@hora" />
+        <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
+        <input type="hidden" name="hora" id="horaSelecionada" />
 
-                <button style="background:green;color:white;margin:5px;">
-                    @hora.ToString(@"hh\:mm") ✅
-                </button>
-            </form>
-        }
-    }
-    <br />
+        <label>Escolha a data:</label>
+        <input type="date" name="data" value="@ViewBag.Data.ToString("yyyy-MM-dd")"
+               min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(30).ToString("yyyy-MM-dd")"
+               onchange="location.href='?servicoId=@ViewBag.ServicoId&data=' + this.value" required />
 
-    <label>Descrição:</label>
-    <textarea name="descricao"></textarea>
+        <h3>Horários disponíveis</h3>
 
-    <br />
+        <div class="grid-horarios">
+            @foreach (var hora in ViewBag.Horarios)
+            {
+                bool ocupado = ViewBag.Ocupados.Contains(hora);
 
-    <button type="submit">Confirmar</button>
+                if (ocupado)
+                {
+                    <div class="slot ocupado">
+                        @hora.ToString(@"hh\:mm")
+                    </div>
+                }
+                else
+                {
+                    <div class="slot livre" onclick="selecionarHora('@hora', this)">
+                        @hora.ToString(@"hh\:mm")
+                    </div>
+                }
+            }
+        </div>
 
-</form>
+        <br />
+
+        <label>Descrição:</label>
+        <textarea name="descricao"></textarea>
+
+        <br />
+
+        <div id="enderecoDiv" style="display:none;">
+            <label>Endereço:</label>
+            <input type="text" name="enderecoCliente" placeholder="Digite seu Endereço" />
+        </div>
+
+        <button type="submit">Confirmar Agendamento</button>
+
+    </form>
+
+</div>
+@section Scripts {
+    <script src="~/js/agendamento.js"></script>
+}

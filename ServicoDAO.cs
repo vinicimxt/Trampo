@@ -12,9 +12,9 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"INSERT INTO Servicos 
-            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, RaioAtendimento)
+            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, RaioAtendimento, LinkOnline)
             VALUES 
-            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento, @RaioAtendimento)";
+            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento, @RaioAtendimento,  @LinkOnline)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -25,6 +25,8 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@RaioAtendimento", s.RaioAtendimento ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@LinkOnline",
+                string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
 
                 cmd.ExecuteNonQuery();
             }
@@ -84,13 +86,15 @@ namespace BD_TRAMPO
 
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = @"SELECT 
+                string query = @"
+        SELECT 
             s.Id,
             s.Nome,
             s.Descricao,
             s.Contato,
             s.Atendimento,
             s.RaioAtendimento,
+            s.LinkOnline,
             sc.Nome AS Subcategoria,
             c.Nome AS Categoria
         FROM Servicos s
@@ -99,8 +103,7 @@ namespace BD_TRAMPO
         WHERE s.ProfissionalId = @ProfissionalId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-
-                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId); // 🔥 ESSENCIAL
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -111,10 +114,16 @@ namespace BD_TRAMPO
                         Id = (int)reader["Id"],
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"].ToString(),
-                        Contato = reader["Contato"].ToString(),
+                        Contato = reader["Contato"] != DBNull.Value ? reader["Contato"].ToString() : "",
                         Atendimento = reader["Atendimento"].ToString(),
-                        Categoria = reader["Categoria"].ToString(),
-                        Subcategoria = reader["Subcategoria"].ToString()
+                        Categoria = reader["Categoria"] != DBNull.Value ? reader["Categoria"].ToString() : "",
+                        Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "",
+                        RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
+                            ? (int)reader["RaioAtendimento"]
+                            : (int?)null,
+                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                        ? reader["LinkOnline"].ToString()
+                        : null
                     });
                 }
             }
@@ -133,6 +142,47 @@ namespace BD_TRAMPO
 
                 return (int)cmd.ExecuteScalar();
             }
+        }
+
+        public Servico BuscarPorId(int id)
+        {
+            Servico servico = null;
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT 
+                Id,
+                Nome,
+                Descricao,
+                Atendimento,
+                Contato,
+                RaioAtendimento
+            FROM Servicos
+            WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    servico = new Servico
+                    {
+                        Id = (int)reader["Id"],
+                        Nome = reader["Nome"].ToString(),
+                        Descricao = reader["Descricao"].ToString(),
+                        Atendimento = reader["Atendimento"].ToString(),
+                        Contato = reader["Contato"].ToString(),
+                        RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
+                            ? (int)reader["RaioAtendimento"]
+                            : (int?)null
+                    };
+                }
+            }
+
+            return servico;
         }
 
         public List<Categoria> Listar()
@@ -184,6 +234,49 @@ namespace BD_TRAMPO
 
             return lista;
         }
+
+
+        public void Atualizar(Servico s)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        UPDATE Servicos SET
+            Nome = @Nome,
+            Descricao = @Descricao,
+            Contato = @Contato,
+            Atendimento = @Atendimento,
+            SubcategoriaId = @SubcategoriaId
+        WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Id", s.Id);
+                cmd.Parameters.AddWithValue("@Nome", s.Nome);
+                cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento);
+                cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
+                Console.WriteLine("SubcategoriaId: " + s.SubcategoriaId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void Excluir(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "DELETE FROM Servicos WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+
 
 
     }

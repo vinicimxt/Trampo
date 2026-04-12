@@ -9,6 +9,7 @@
             <th>Serviço</th>
             <th>Status</th>
             <th>Ação</th>
+            <th>Link Online</th>
         </tr>
     </thead>
 
@@ -21,6 +22,7 @@
                 <td>@ag.Data.ToShortDateString()</td>
                 <td>@ag.Hora</td>
                 <td>@ag.Servico</td>
+                
                 
                 <td>
                     @{
@@ -38,18 +40,37 @@
 
                     @statusTexto
                 </td>
+                
+      
 
                 <td>
-                 @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
+                    @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
                     {
                         <form asp-action="Cancelar" method="post" style="display:inline;">
                             <input type="hidden" name="id" value="@ag.Id" />
                             <button type="submit">Cancelar</button>
                         </form>
                     }
+
                  
-                    
                 </td>
+
+                <td>
+                              @if (!string.IsNullOrEmpty(ag.LinkOnline))
+                {
+                    <div>
+                        @if (ag.Status == "Confirmado")
+                        {
+                            <a href="@ag.LinkOnline" target="_blank">🔗 Entrar</a>
+                        }
+                        else
+                        {
+                            <span>🔒 Aguarde confirmação</span>
+                        }
+                    </div>
+                }
+                </td>
+                
             </tr>
      
         }

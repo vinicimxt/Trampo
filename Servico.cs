@@ -15,7 +15,8 @@ namespace BD_TRAMPO
         public string Categoria { get; set; }
         public string Subcategoria { get; set; }
         public int SubcategoriaId { get; set; }
-        // 🔥 NOVO CAMPO
+        public string LinkOnline { get; set; }
+        
         public string NomeProfissional { get; set; }
     }
 

@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <title>Xamou</title>
-    <link rel="stylesheet" href="~/css/style.css?v=2" />
+    <link rel="stylesheet" href="~/css/site.css?v=2" />
+    @RenderSection("Styles", required: false)
 </head>
 
 <body>
@@ -67,8 +68,10 @@
         @RenderBody()
     </main>
 
-    
+<script src="~/js/site.js"></script>
 
+@RenderSection("Scripts", required: false)
 </body>
+
 
 </html>
