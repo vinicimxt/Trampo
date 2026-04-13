@@ -45,7 +45,7 @@ namespace BD_TRAMPO.Controllers
 
 
         [HttpPost]
-        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string enderecoCliente)
+        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string enderecoCliente,int? localId)
         {
             string usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
@@ -116,7 +116,8 @@ namespace BD_TRAMPO.Controllers
                 Hora = hora,
                 Status = "Pendente",
                 Descricao = descricao ?? "",
-                EnderecoCliente = enderecoCliente
+                EnderecoCliente = enderecoCliente,
+                LocalId = localId
             };
 
             dao.Inserir(agendamento);

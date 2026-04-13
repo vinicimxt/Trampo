@@ -1,5 +1,7 @@
 @model Servico
-
+@section Styles {
+    <link rel="stylesheet" href="~/css/servico.css" />
+}
 <h2>Editar Serviço</h2>
 
 <form method="post">
@@ -8,30 +10,64 @@
     <label>Nome:</label>
     <input type="text" name="Nome" value="@Model.Nome" />
     <select name="SubcategoriaId">
-    @foreach (var sub in ViewBag.Subcategorias)
-    {
-        if (sub.Id == Model.SubcategoriaId)
+        @foreach (var sub in ViewBag.Subcategorias)
         {
-            <option value="@sub.Id" selected>@sub.Nome</option>
+            if (sub.Id == Model.SubcategoriaId)
+            {
+                <option value="@sub.Id" selected>@sub.Nome</option>
+            }
+            else
+            {
+                <option value="@sub.Id">@sub.Nome</option>
+            }
         }
-        else
-        {
-            <option value="@sub.Id">@sub.Nome</option>
-        }
-    }
-</select>
+    </select>
     <label>Descrição:</label>
     <textarea name="Descricao">@Model.Descricao</textarea>
 
     <label>Contato:</label>
     <input type="text" name="Contato" value="@Model.Contato" />
 
-    <label>Atendimento:</label>
-    <select name="Atendimento">
-        <option>Domicilio</option>
-        <option>Local</option>
-        <option>Online</option>
-    </select>
+ <label>Atendimento:</label>
+
+<select name="atendimento" id="atendimento" onchange="atualizarCampos()">
+
+    @if (Model.Atendimento == "Domicilio")
+    {
+        <option value="Domicilio" selected>Domicílio</option>
+    }
+    else
+    {
+        <option value="Domicilio">Domicílio</option>
+    }
+
+    @if (Model.Atendimento == "Local")
+    {
+        <option value="Local" selected>Local</option>
+    }
+    else
+    {
+        <option value="Local">Local</option>
+    }
+
+    @if (Model.Atendimento == "Online")
+    {
+        <option value="Online" selected>Online</option>
+    }
+    else
+    {
+        <option value="Online">Online</option>
+    }
+
+</select>
+
+ <div id="linkOnlineDiv" class="campo-dinamico">
+    <label>Link Online:</label>
+    <input type="text" name="linkOnline" value="@Model.LinkOnline" />
+</div>
 
     <button type="submit">Salvar</button>
 </form>
+@section Scripts {
+    <script src="~/js/servico.js"></script>
+}

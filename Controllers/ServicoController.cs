@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-
+using BD_TRAMPO.DAO;
 namespace BD_TRAMPO.Controllers
 {
 
@@ -9,6 +9,14 @@ namespace BD_TRAMPO.Controllers
         {
             var auth = Proteger();
             if (auth != null) return auth;
+
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+            
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+
+            LocalDAO localDAO = new LocalDAO();
+            ViewBag.Locais = localDAO.ListarPorProfissional(profissionalId);
 
             CategoriaDAO catDAO = new CategoriaDAO();
             ViewBag.Categorias = catDAO.Listar();
@@ -32,7 +40,7 @@ namespace BD_TRAMPO.Controllers
             var servico = dao.BuscarPorId(id);
 
             SubcategoriaDAO subDAO = new SubcategoriaDAO();
-            ViewBag.Subcategorias = subDAO.ListarTodas(); // 🔥 importante
+            ViewBag.Subcategorias = subDAO.ListarTodas();
 
             return View(servico);
         }
@@ -40,12 +48,22 @@ namespace BD_TRAMPO.Controllers
         [HttpPost]
         public IActionResult Editar(Servico s)
         {
+            if (s.Atendimento == "Online" && string.IsNullOrEmpty(s.LinkOnline))
+            {
+                return Content("Informe o link para atendimento online.");
+            }
+
+            // 🔥 se não for online, limpa o link
+            if (s.Atendimento != "Online")
+            {
+                s.LinkOnline = null;
+            }
+
             ServicoDAO dao = new ServicoDAO();
             dao.Atualizar(s);
 
             return RedirectToAction("MeusServicos", "Profissional");
         }
-
         public IActionResult Excluir(int id)
         {
             ServicoDAO dao = new ServicoDAO();
@@ -55,7 +73,7 @@ namespace BD_TRAMPO.Controllers
         }
 
         [HttpPost]
-        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string contato, string atendimento, int? raioAtendimento, string linkOnline)
+        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string contato, string atendimento, string linkOnline)
         {
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
@@ -77,7 +95,6 @@ namespace BD_TRAMPO.Controllers
                 Descricao = descricao,
                 Contato = contato,
                 Atendimento = atendimento,
-                RaioAtendimento = raioAtendimento,
                 LinkOnline = linkOnline
             };
 

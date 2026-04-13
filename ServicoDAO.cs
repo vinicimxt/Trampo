@@ -12,9 +12,9 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"INSERT INTO Servicos 
-            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, RaioAtendimento, LinkOnline)
+            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, LinkOnline)
             VALUES 
-            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento, @RaioAtendimento,  @LinkOnline)";
+            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento,   @LinkOnline)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -24,7 +24,6 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@RaioAtendimento", s.RaioAtendimento ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@LinkOnline",
                 string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
 
@@ -39,23 +38,24 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                SELECT 
-                    s.Id,
-                    s.Nome,
-                    s.Descricao,
-                    s.Atendimento,
-                    s.RaioAtendimento,
-                    s.Contato,
-                    u.Nome AS NomeProfissional,
-                    sc.Nome AS Subcategoria,
-                    c.Nome AS Categoria
-                FROM Servicos s
-                INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
-                INNER JOIN Usuarios u ON p.UsuarioId = u.Id
-                LEFT JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
-                LEFT JOIN Categorias c ON sc.CategoriaId = c.Id";
+        SELECT 
+            s.Id,
+            s.Nome,
+            s.Descricao,
+            s.Atendimento,
+            s.Contato,
+            p.Endereco,
+            u.Nome AS NomeProfissional,
+            sc.Nome AS Subcategoria,
+            c.Nome AS Categoria
+        FROM Servicos s
+        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+        INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
+        INNER JOIN Categorias c ON sc.CategoriaId = c.Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
+
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -64,15 +64,13 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         Nome = reader["Nome"].ToString(),
-                        Categoria = reader["Categoria"] != DBNull.Value ? reader["Categoria"].ToString() : "Não definida",
-
-                        Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "Não definida",
+                        Descricao = reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : "",
                         Atendimento = reader["Atendimento"].ToString(),
-                        RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
-                            ? (int)reader["RaioAtendimento"]
-                            : null,
-                        Contato = reader["Contato"].ToString(),
-                        NomeProfissional = reader["NomeProfissional"].ToString()
+                        Contato = reader["Contato"] != DBNull.Value ? reader["Contato"].ToString() : "",
+                        NomeProfissional = reader["NomeProfissional"].ToString(),
+                        Categoria = reader["Categoria"].ToString(),
+                        Subcategoria = reader["Subcategoria"].ToString(),
+                        Endereco = reader["Endereco"] != DBNull.Value ? reader["Endereco"].ToString() : ""
                     });
                 }
             }
@@ -87,20 +85,21 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        SELECT 
-            s.Id,
-            s.Nome,
-            s.Descricao,
-            s.Contato,
-            s.Atendimento,
-            s.RaioAtendimento,
-            s.LinkOnline,
-            sc.Nome AS Subcategoria,
-            c.Nome AS Categoria
-        FROM Servicos s
-        INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
-        INNER JOIN Categorias c ON sc.CategoriaId = c.Id
-        WHERE s.ProfissionalId = @ProfissionalId";
+                SELECT 
+                    s.Id,
+                    s.Nome,
+                    s.Descricao,
+                    s.Contato,
+                    s.Atendimento,
+                    s.LinkOnline,
+                    p.Endereco,
+                    sc.Nome AS Subcategoria,
+                    c.Nome AS Categoria
+                FROM Servicos s
+                INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+                INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
+                INNER JOIN Categorias c ON sc.CategoriaId = c.Id
+                WHERE s.ProfissionalId = @ProfissionalId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
@@ -118,9 +117,9 @@ namespace BD_TRAMPO
                         Atendimento = reader["Atendimento"].ToString(),
                         Categoria = reader["Categoria"] != DBNull.Value ? reader["Categoria"].ToString() : "",
                         Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "",
-                        RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
-                            ? (int)reader["RaioAtendimento"]
-                            : (int?)null,
+                            Endereco = reader["Endereco"] != DBNull.Value
+                            ? reader["Endereco"].ToString()
+                            : "",
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                         ? reader["LinkOnline"].ToString()
                         : null
@@ -156,8 +155,7 @@ namespace BD_TRAMPO
                 Nome,
                 Descricao,
                 Atendimento,
-                Contato,
-                RaioAtendimento
+                Contato
             FROM Servicos
             WHERE Id = @Id";
 
@@ -175,9 +173,6 @@ namespace BD_TRAMPO
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
                         Contato = reader["Contato"].ToString(),
-                        RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
-                            ? (int)reader["RaioAtendimento"]
-                            : (int?)null
                     };
                 }
             }
@@ -246,7 +241,8 @@ namespace BD_TRAMPO
             Descricao = @Descricao,
             Contato = @Contato,
             Atendimento = @Atendimento,
-            SubcategoriaId = @SubcategoriaId
+            SubcategoriaId = @SubcategoriaId,
+            LinkOnline = @LinkOnline
         WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -257,8 +253,10 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento);
                 cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
-                Console.WriteLine("SubcategoriaId: " + s.SubcategoriaId);
+                cmd.Parameters.AddWithValue("@LinkOnline",
+                string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
                 cmd.ExecuteNonQuery();
+
             }
         }
 

@@ -65,8 +65,10 @@ namespace BD_TRAMPO.Controllers
             return View(lista);
         }
 
- 
-
+        public IActionResult Perfil()
+        {
+            return View();
+        }
 
 
     }

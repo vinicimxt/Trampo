@@ -40,7 +40,6 @@ namespace BD_TRAMPO
             s.Nome,
             s.Descricao,
             s.Atendimento,
-            s.RaioAtendimento,
             s.Contato
         FROM Servicos s
         INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
@@ -59,9 +58,6 @@ namespace BD_TRAMPO
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
-                        RaioAtendimento = reader["RaioAtendimento"] != DBNull.Value
-                            ? (int)reader["RaioAtendimento"]
-                            : 0,
                         Contato = reader["Contato"].ToString()
                     });
                 }
@@ -85,6 +81,24 @@ namespace BD_TRAMPO
                     return (int)result;
 
                 return 0;
+            }
+        }
+
+        public void AtualizarEndereco(int usuarioId, string endereco)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        UPDATE Profissionais
+        SET Endereco = @Endereco
+        WHERE UsuarioId = @UsuarioId";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Endereco", endereco);
+                cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+
+                cmd.ExecuteNonQuery();
             }
         }
 

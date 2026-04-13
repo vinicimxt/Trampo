@@ -19,15 +19,15 @@ else
             <p><b>Categoria:</b> @s.Categoria</p>
             <p><b>Subcategoria:</b> @s.Subcategoria</p>
 
-            <p>@s.Descricao</p>
+            <p><b>Descrição:</b>@s.Descricao</p>
 
             <p><b>Contato:</b> @s.Contato</p>
 
             <p><b>Atendimento:</b> @s.Atendimento</p>
 
-            @if (s.Atendimento == "Domicilio")
+            @if (s.Atendimento == "Local")
             {
-                <p><b>Raio:</b> @s.RaioAtendimento km</p>
+                <p><b>📍 Endereço:</b> @s.Endereco</p>
             }
 
             @if (!string.IsNullOrEmpty(s.LinkOnline))

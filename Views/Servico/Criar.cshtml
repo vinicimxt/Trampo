@@ -34,13 +34,23 @@
         <option value="Online">Online</option>
     </select>
 
+    <div id="localDiv" style="display:none;">
+        <label>Local de Atendimento:</label>
+        <select name="localId">
+            <option value="">Selecione</option>
+
+            @foreach (var l in ViewBag.Locais)
+            {
+                <option value="@l.Id">@l.Nome - @l.Endereco</option>
+            }
+        </select>
+    </div>
+
     <div id="linkOnlineDiv" style="display:none;">
         <label>Link do atendimento:</label>
         <input type="text" name="LinkOnline" placeholder="Link do atendimento online..." />
     </div>
-    
-    <label>Raio (km):</label>
-    <input type="number" name="raioAtendimento" />
+
 
     <button type="submit">Cadastrar</button>
 
@@ -63,12 +73,15 @@
             });
     });
     function toggleLinkOnline(tipo) {
-        let div = document.getElementById("linkOnlineDiv");
+        let linkDiv = document.getElementById("linkOnlineDiv");
+        let localDiv = document.getElementById("localDiv");
 
-        if (tipo.toLowerCase().includes("online")) {
-            div.style.display = "block";
-        } else {
-            div.style.display = "none";
-        }
+        tipo = tipo.toLowerCase();
+
+        // Online
+        linkDiv.style.display = tipo === "online" ? "block" : "none";
+
+        // Local
+        localDiv.style.display = tipo === "local" ? "block" : "none";
     }
 </script>

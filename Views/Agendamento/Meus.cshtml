@@ -10,6 +10,7 @@
             <th>Status</th>
             <th>Ação</th>
             <th>Link Online</th>
+            <th>Local de Atendimento</th>
         </tr>
     </thead>
 
@@ -22,7 +23,7 @@
                 <td>@ag.Data.ToShortDateString()</td>
                 <td>@ag.Hora</td>
                 <td>@ag.Servico</td>
-                
+
                 
                 <td>
                     @{
@@ -40,9 +41,9 @@
 
                     @statusTexto
                 </td>
+
                 
       
-
                 <td>
                     @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
                     {
@@ -54,22 +55,34 @@
 
                  
                 </td>
+                
+                <td>
+                    @if (!string.IsNullOrEmpty(ag.LinkOnline))
+                    {
+                        <div>
+                            @if (ag.Status == "Confirmado")
+                            {
+                                <a href="@ag.LinkOnline" target="_blank">🔗 Entrar</a>
+                            }
+                            else
+                            {
+                                <span>🔒 Aguarde confirmação</span>
+                            }
+                        </div>
+                    }
+                </td>
 
                 <td>
-                              @if (!string.IsNullOrEmpty(ag.LinkOnline))
-                {
-                    <div>
-                        @if (ag.Status == "Confirmado")
-                        {
-                            <a href="@ag.LinkOnline" target="_blank">🔗 Entrar</a>
-                        }
-                        else
-                        {
-                            <span>🔒 Aguarde confirmação</span>
-                        }
-                    </div>
-                }
+                    @if (!string.IsNullOrEmpty(ag.EnderecoLocal))
+                    {
+                        @ag.EnderecoLocal
+                    }
+                    else
+                    {
+                        <span>Não informado</span>
+                    }
                 </td>
+
                 
             </tr>
      

@@ -7,14 +7,17 @@
         public int ProfissionalId { get; set; }
         public int ServicoId { get; set; }
         public DateTime Data { get; set; }
-        public TimeSpan Hora { get; set; }   
-        public string Status { get; set; }   
+        public TimeSpan Hora { get; set; }
+        public string Status { get; set; }
         public string Descricao { get; set; }
         public string NomeCliente { get; set; }
         public string NomeProfissional { get; set; }
         public string Servico { get; set; }
-        public string LinkOnline { get; set;}
+        public string LinkOnline { get; set; }
         public string EnderecoCliente { get; set; }
+
+        public int? LocalId { get; set; }
+        public string EnderecoLocal { get; set; } // só pra exibir
 
     }
 }

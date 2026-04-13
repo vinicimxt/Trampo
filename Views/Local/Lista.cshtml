@@ -1,0 +1,11 @@
+<h2>Meus Locais</h2>
+
+<a href="/Local/Criar">➕ Novo Local</a>
+
+@foreach (var l in Model)
+{
+    <div>
+        <h3>@l.Nome</h3>
+        <p>@l.Endereco</p>
+    </div>
+}

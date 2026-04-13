@@ -2,14 +2,41 @@
 
 @foreach (var item in Model)
 {
-    <div>
-        <h3>@item.Nome</h3>
-        <p><b>Profissional:</b> @item.NomeProfissional</p>
-        <p>@item.Descricao</p>
-        <p>@item.Atendimento</p>
+    <div style="border:1px solid #ccc; padding:15px; margin:10px; border-radius:10px;">
 
-        <a href="/Agendamento/novo?servicoId=@item.Id">
-            Agendar
+        <h3>@item.Nome</h3>
+
+        <p><b>👤 Profissional:</b> @item.NomeProfissional</p>
+
+        <p><b>📂 Categoria:</b> @item.Categoria</p>
+        <p><b>📌 Subcategoria:</b> @item.Subcategoria</p>
+
+        <p><b>📝 Descrição:</b> @item.Descricao</p>
+
+        <p>
+            <b>📍 Atendimento:</b> 
+            @if (item.Atendimento == "Domicilio")
+            {
+                <span>🏠 A domicílio</span>
+            }
+            else if (item.Atendimento == "Local")
+            {
+                <span>📍 No local</span>
+            }
+            else if (item.Atendimento == "Online")
+            {
+                <span>💻 Online</span>
+            }
+        </p>
+
+        <p><b>📞 Contato:</b> @item.Contato</p>
+
+        <br />
+
+        <a href="/Agendamento/novo?servicoId=@item.Id" 
+           style="background:#28a745; color:white; padding:8px 12px; border-radius:5px; text-decoration:none;">
+            📅 Agendar
         </a>
+
     </div>
 }
