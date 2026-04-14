@@ -13,11 +13,11 @@ GO
 USE Xamou;
 GO
 
--- 🔥 ORDEM IMPORTA (dependências)
-
+-- 🔥 DROP NA ORDEM CORRETA (dependências)
 DROP TABLE IF EXISTS Agendamentos;
 DROP TABLE IF EXISTS Disponibilidade;
 DROP TABLE IF EXISTS Servicos;
+DROP TABLE IF EXISTS Locais;
 DROP TABLE IF EXISTS Subcategorias;
 DROP TABLE IF EXISTS Categorias;
 DROP TABLE IF EXISTS Clientes;
@@ -50,6 +50,7 @@ CREATE TABLE Profissionais (
     UsuarioId INT NOT NULL UNIQUE,
     TipoDocumento VARCHAR(10),
     Documento VARCHAR(20),
+    Endereco VARCHAR(255) NULL, -- 👈 já incluído
 
     FOREIGN KEY (UsuarioId) 
         REFERENCES Usuarios(Id)
@@ -73,25 +74,41 @@ CREATE TABLE Subcategorias (
         ON DELETE CASCADE
 );
 
+-- 📍 LOCAIS (vem antes de Serviços agora)
+CREATE TABLE Locais (
+    Id INT PRIMARY KEY IDENTITY,
+    ProfissionalId INT NOT NULL,
+    Nome VARCHAR(100),
+    Endereco VARCHAR(255) NOT NULL,
+
+    FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
+);
+
 -- 🛠 SERVIÇOS
 CREATE TABLE Servicos (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
     SubcategoriaId INT NOT NULL,
+    LocalId INT NULL, -- 👈 já incluído
 
     Nome NVARCHAR(100) NOT NULL,
     Descricao NVARCHAR(255),
     Contato VARCHAR(100),
 
     Atendimento VARCHAR(50),
-    RaioAtendimento INT NULL,
+    LinkOnline VARCHAR(255) NULL, -- 👈 já incluído
 
     FOREIGN KEY (ProfissionalId) 
         REFERENCES Profissionais(Id)
         ON DELETE CASCADE,
 
     FOREIGN KEY (SubcategoriaId) 
-        REFERENCES Subcategorias(Id)
+        REFERENCES Subcategorias(Id),
+
+    FOREIGN KEY (LocalId) 
+        REFERENCES Locais(Id)
 );
 
 -- 📅 DISPONIBILIDADE
@@ -162,11 +179,8 @@ INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
 ('Fotografia', 5),
 ('Buffet', 5);
 
-ALTER TABLE Servicos
-ADD LinkOnline VARCHAR(255) NULL;
-
 -- 🔍 DEBUG
-SELECT Id, Nome, LinkOnline FROM Servicos;
+
 SELECT * FROM Usuarios;
 SELECT * FROM Clientes;
 SELECT * FROM Profissionais;
@@ -175,3 +189,38 @@ SELECT * FROM Subcategorias;
 SELECT * FROM Servicos;
 SELECT * FROM Disponibilidade;
 SELECT * FROM Agendamentos;
+SELECT * FROM Locais;
+
+-- TESTE DE LOCAL
+
+ALTER TABLE Locais
+ADD FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id);
+
+ALTER TABLE Agendamentos
+ADD LocalId INT NULL;
+
+ALTER TABLE Agendamentos
+ADD CONSTRAINT FK_Agendamentos_Locais
+FOREIGN KEY (LocalId) REFERENCES Locais(Id);
+
+INSERT INTO Locais (ProfissionalId, Nome, Endereco)
+VALUES (1, 'Unidade Principal', 'Rua Teste, 123');
+
+
+SELECT 
+    s.Id,
+    s.Nome,
+    s.LocalId,
+    l.Endereco
+FROM Servicos s
+LEFT JOIN Locais l ON s.LocalId = l.Id;
+
+SELECT LocalId FROM Agendamentos;
+
+ALTER TABLE Profissionais DROP COLUMN Endereco;
+
+SELECT Id, Nome, Endereco FROM Locais
+
+SELECT Id, Nome, LocalId FROM Servicos
+
+SELECT Id, LocalId FROM Agendamentos

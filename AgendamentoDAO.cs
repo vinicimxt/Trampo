@@ -32,7 +32,7 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@LocalId",
                 ag.LocalId.HasValue ? (object)ag.LocalId.Value : DBNull.Value);
                 cmd.ExecuteNonQuery();
-                
+
             }
         }
 
@@ -106,6 +106,7 @@ namespace BD_TRAMPO
                 p.Id AS ProfissionalId,
                 u.Nome AS ProfissionalNome,
                 s.Nome AS Servico,
+                s.Atendimento,
                 s.LinkOnline,
                 a.Data,
                 a.Hora,
@@ -117,7 +118,7 @@ namespace BD_TRAMPO
             INNER JOIN Servicos s ON a.ServicoId = s.Id
             INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
             INNER JOIN Usuarios u ON p.UsuarioId = u.Id
-            LEFT JOIN Locais l ON s.LocalId = l.Id
+            LEFT JOIN Locais l ON a.LocalId = l.Id 
             WHERE a.ClienteId = @ClienteId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -134,12 +135,15 @@ namespace BD_TRAMPO
                         ProfissionalId = (int)reader["ProfissionalId"],
                         NomeProfissional = reader["ProfissionalNome"].ToString(),
                         Servico = reader["Servico"].ToString(),
+                        Atendimento = reader["Atendimento"].ToString(),
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                         ? reader["LinkOnline"].ToString() : null,
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
-                        Descricao = reader["Descricao"].ToString(),
+                        Descricao = reader["Descricao"] != DBNull.Value
+                        ? reader["Descricao"].ToString()
+                        : "",
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                         ? reader["EnderecoCliente"].ToString()
                         : "",
@@ -165,11 +169,14 @@ namespace BD_TRAMPO
                 SELECT 
                     A.*,
                     U.Nome AS NomeCliente,
-                    S.LinkOnline
+                    S.LinkOnline,
+                    S.Atendimento,
+                    L.Endereco AS EnderecoLocal
                 FROM Agendamentos A
                 INNER JOIN Clientes C ON A.ClienteId = C.Id
                 INNER JOIN Usuarios U ON C.UsuarioId = U.Id
                 INNER JOIN Servicos S ON A.ServicoId = S.Id 
+                LEFT JOIN Locais L ON A.LocalId = L.Id
                 WHERE A.ProfissionalId = @ProfissionalId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -194,7 +201,11 @@ namespace BD_TRAMPO
                         : "",
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                         ? reader["LinkOnline"].ToString()
-                        : null
+                        : null,
+                        Atendimento = reader["Atendimento"].ToString(),
+                        EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
+                        ? reader["EnderecoLocal"].ToString()
+                        : "",
                     });
                 }
             }
@@ -208,7 +219,15 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "SELECT * FROM Agendamentos WHERE Id = @Id";
+                string query = @"SELECT 
+                A.*,
+                S.Atendimento,
+                S.LinkOnline,
+                L.Endereco AS EnderecoLocal
+            FROM Agendamentos A
+            INNER JOIN Servicos S ON A.ServicoId = S.Id
+            LEFT JOIN Locais L ON A.LocalId = L.Id
+            WHERE A.Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);

@@ -18,10 +18,11 @@ namespace BD_TRAMPO.Controllers
             return View(lista);
         }
 
-        public IActionResult Criar()
-        {
-            return View();
-        }
+
+    public IActionResult Criar() 
+    {
+        return View();
+    }
 
         [HttpPost]
         public IActionResult Criar(string nome, string endereco)

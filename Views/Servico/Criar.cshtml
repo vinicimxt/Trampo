@@ -28,12 +28,13 @@
     <input type="text" name="contato" />
 
     <label>Tipo de Atendimento:</label>
-    <select name="Atendimento" onchange="toggleLinkOnline(this.value)">
+    <select name="atendimento" id="atendimento">
         <option value="Domicilio">Domicílio</option>
         <option value="Local">Local</option>
         <option value="Online">Online</option>
     </select>
 
+    <!-- 🔥 LOCAL -->
     <div id="localDiv" style="display:none;">
         <label>Local de Atendimento:</label>
         <select name="localId">
@@ -46,17 +47,18 @@
         </select>
     </div>
 
+    <!-- 🔥 ONLINE -->
     <div id="linkOnlineDiv" style="display:none;">
         <label>Link do atendimento:</label>
-        <input type="text" name="LinkOnline" placeholder="Link do atendimento online..." />
+        <input type="text" name="linkOnline" placeholder="Link do atendimento online..." />
     </div>
-
 
     <button type="submit">Cadastrar</button>
 
 </form>
 
 <script>
+    // 🔥 Subcategorias dinâmicas
     document.getElementById("categoria").addEventListener("change", function () {
         let categoriaId = this.value;
 
@@ -72,16 +74,23 @@
                 });
             });
     });
-    function toggleLinkOnline(tipo) {
+
+    // 🔥 CONTROLE DE EXIBIÇÃO
+    function toggleCampos() {
+        let tipo = document.getElementById("atendimento").value.toLowerCase();
+
         let linkDiv = document.getElementById("linkOnlineDiv");
         let localDiv = document.getElementById("localDiv");
 
-        tipo = tipo.toLowerCase();
-
-        // Online
-        linkDiv.style.display = tipo === "online" ? "block" : "none";
-
-        // Local
-        localDiv.style.display = tipo === "local" ? "block" : "none";
+        linkDiv.style.display = (tipo === "online") ? "block" : "none";
+        localDiv.style.display = (tipo === "local") ? "block" : "none";
     }
+
+    // 🔥 muda ao trocar
+    document.getElementById("atendimento").addEventListener("change", toggleCampos);
+
+    // 🔥 roda ao carregar (ESSENCIAL)
+    document.addEventListener("DOMContentLoaded", function () {
+        toggleCampos();
+    });
 </script>

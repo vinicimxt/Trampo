@@ -1,3 +1,4 @@
+using BD_TRAMPO.DAO;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -16,6 +17,8 @@ namespace BD_TRAMPO.Controllers
             ServicoDAO servicoDAO = new ServicoDAO();
             var servico = servicoDAO.BuscarPorId(servicoId);
 
+            LocalDAO localDAO = new LocalDAO();
+            ViewBag.Locais = localDAO.ListarPorProfissional(servico.ProfissionalId);
             if (servico == null)
             {
                 return Content("Serviço não encontrado.");
@@ -45,7 +48,7 @@ namespace BD_TRAMPO.Controllers
 
 
         [HttpPost]
-        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string enderecoCliente,int? localId)
+        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string enderecoCliente, int? localId)
         {
             string usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
@@ -75,7 +78,7 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Endereço é obrigatório para atendimento a domicílio.");
             }
-            
+
 
             var bloqueio = clienteDAO.BuscarBloqueio(clienteId);
 
@@ -106,6 +109,7 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Esse horário já está ocupado.");
             }
+  
 
             var agendamento = new Agendamento
             {
@@ -117,7 +121,7 @@ namespace BD_TRAMPO.Controllers
                 Status = "Pendente",
                 Descricao = descricao ?? "",
                 EnderecoCliente = enderecoCliente,
-                LocalId = localId
+                LocalId = servico.LocalId
             };
 
             dao.Inserir(agendamento);

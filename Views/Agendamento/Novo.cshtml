@@ -44,11 +44,11 @@
         <textarea name="descricao"></textarea>
 
         <br />
-        
-        <div id="enderecoDiv" class="campo-dinamico">
-            <label>Endereço:</label>
-            <input type="text" name="enderecoCliente" value="" />
-        </div>
+
+        @if (ViewBag.Atendimento == "Local")
+        {
+            <p>📍 Atendimento no local do profissional</p>
+        }
 
         <button type="submit">Confirmar Agendamento</button>
 

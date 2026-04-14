@@ -15,7 +15,7 @@
         public string Servico { get; set; }
         public string LinkOnline { get; set; }
         public string EnderecoCliente { get; set; }
-
+        public string Atendimento { get; set; }
         public int? LocalId { get; set; }
         public string EnderecoLocal { get; set; } // só pra exibir
 

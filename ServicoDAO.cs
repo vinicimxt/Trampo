@@ -12,9 +12,9 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"INSERT INTO Servicos 
-            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, LinkOnline)
+            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, LinkOnline, LocalId)
             VALUES 
-            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento,   @LinkOnline)";
+            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento,   @LinkOnline,@LocalId)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -26,6 +26,8 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@LinkOnline",
                 string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
+                cmd.Parameters.AddWithValue("@LocalId",
+                s.LocalId.HasValue ? (object)s.LocalId : DBNull.Value);
 
                 cmd.ExecuteNonQuery();
             }
@@ -44,15 +46,17 @@ namespace BD_TRAMPO
             s.Descricao,
             s.Atendimento,
             s.Contato,
-            p.Endereco,
+            s.LinkOnline,
             u.Nome AS NomeProfissional,
             sc.Nome AS Subcategoria,
-            c.Nome AS Categoria
+            c.Nome AS Categoria,
+            l.Endereco
         FROM Servicos s
         INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
         INNER JOIN Usuarios u ON p.UsuarioId = u.Id
         INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
-        INNER JOIN Categorias c ON sc.CategoriaId = c.Id";
+        INNER JOIN Categorias c ON sc.CategoriaId = c.Id
+        LEFT JOIN Locais l ON s.LocalId = l.Id"; // 🔥 AQUI
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -70,7 +74,12 @@ namespace BD_TRAMPO
                         NomeProfissional = reader["NomeProfissional"].ToString(),
                         Categoria = reader["Categoria"].ToString(),
                         Subcategoria = reader["Subcategoria"].ToString(),
-                        Endereco = reader["Endereco"] != DBNull.Value ? reader["Endereco"].ToString() : ""
+                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                            ? reader["LinkOnline"].ToString()
+                            : null,
+                        Endereco = reader["Endereco"] != DBNull.Value
+                            ? reader["Endereco"].ToString()
+                            : ""
                     });
                 }
             }
@@ -92,7 +101,6 @@ namespace BD_TRAMPO
                     s.Contato,
                     s.Atendimento,
                     s.LinkOnline,
-                    p.Endereco,
                     sc.Nome AS Subcategoria,
                     c.Nome AS Categoria
                 FROM Servicos s
@@ -117,9 +125,6 @@ namespace BD_TRAMPO
                         Atendimento = reader["Atendimento"].ToString(),
                         Categoria = reader["Categoria"] != DBNull.Value ? reader["Categoria"].ToString() : "",
                         Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "",
-                            Endereco = reader["Endereco"] != DBNull.Value
-                            ? reader["Endereco"].ToString()
-                            : "",
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                         ? reader["LinkOnline"].ToString()
                         : null
@@ -139,7 +144,9 @@ namespace BD_TRAMPO
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", servicoId);
 
-                return (int)cmd.ExecuteScalar();
+                object result = cmd.ExecuteScalar();
+
+                return result != null ? (int)result : 0;
             }
         }
 
@@ -150,12 +157,13 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-            SELECT 
+           SELECT 
                 Id,
                 Nome,
                 Descricao,
                 Atendimento,
-                Contato
+                Contato,
+                LocalId
             FROM Servicos
             WHERE Id = @Id";
 
@@ -173,6 +181,9 @@ namespace BD_TRAMPO
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
                         Contato = reader["Contato"].ToString(),
+                        LocalId = reader["LocalId"] != DBNull.Value
+                        ? (int)reader["LocalId"]
+                        : (int?)null
                     };
                 }
             }

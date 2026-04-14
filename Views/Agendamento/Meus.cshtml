@@ -73,13 +73,24 @@
                 </td>
 
                 <td>
-                    @if (!string.IsNullOrEmpty(ag.EnderecoLocal))
+                    @if (ag.Atendimento == "Domicilio")
                     {
-                        @ag.EnderecoLocal
+                        <span>🏠 @ag.EnderecoCliente</span>
                     }
-                    else
+                    else if (ag.Atendimento == "Local")
                     {
-                        <span>Não informado</span>
+                        <span>📍 @ag.EnderecoLocal</span>
+                    }
+                    else if (ag.Atendimento == "Online")
+                    {
+                        if (!string.IsNullOrEmpty(ag.LinkOnline) && ag.Status == "Confirmado")
+                        {
+                            <a href="@ag.LinkOnline" target="_blank">🔗 Acessar reunião</a>
+                        }
+                        else
+                        {
+                            <span>🔒 Disponível após confirmação</span>
+                        }
                     }
                 </td>
 

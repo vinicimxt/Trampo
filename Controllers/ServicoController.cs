@@ -11,7 +11,7 @@ namespace BD_TRAMPO.Controllers
             if (auth != null) return auth;
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
-            
+
             ProfissionalDAO profDAO = new ProfissionalDAO();
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
@@ -73,7 +73,7 @@ namespace BD_TRAMPO.Controllers
         }
 
         [HttpPost]
-        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string contato, string atendimento, string linkOnline)
+        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string contato, string atendimento, int? localId, string linkOnline)
         {
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
@@ -87,6 +87,11 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Informe o link para atendimento online.");
             }
+            
+            if (atendimento == "Local" && !localId.HasValue)
+            {
+                return Content("Selecione um local para atendimento.");
+            }
             Servico s = new Servico
             {
                 ProfissionalId = profissionalId,
@@ -95,6 +100,7 @@ namespace BD_TRAMPO.Controllers
                 Descricao = descricao,
                 Contato = contato,
                 Atendimento = atendimento,
+                LocalId = localId,
                 LinkOnline = linkOnline
             };
 
