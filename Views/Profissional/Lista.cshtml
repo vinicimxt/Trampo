@@ -1,42 +1,63 @@
 @model List<BD_TRAMPO.Servico>
 
-@foreach (var item in Model)
-{
-    <div style="border:1px solid #ccc; padding:15px; margin:10px; border-radius:10px;">
+<link rel="stylesheet" href="~/css/profissionais.css" />
 
-        <h3>@item.Nome</h3>
+<section class="profissionais-container">
 
-        <p><b>👤 Profissional:</b> @item.NomeProfissional</p>
+    <h2 class="titulo-pagina">Serviços disponíveis</h2>
 
-        <p><b>📂 Categoria:</b> @item.Categoria</p>
-        <p><b>📌 Subcategoria:</b> @item.Subcategoria</p>
+    <div class="grid-profissionais">
 
-        <p><b>📝 Descrição:</b> @item.Descricao</p>
+        @foreach (var item in Model)
+        {
+            <div class="card-servico">
 
-        <p>
-            <b>📍 Atendimento:</b> 
-            @if (item.Atendimento == "Domicilio")
-            {
-                <span>🏠 A domicílio</span>
-            }
-            else if (item.Atendimento == "Local")
-            {
-                <span>📍 No local</span>
-            }
-            else if (item.Atendimento == "Online")
-            {
-                <span>💻 Online</span>
-            }
-        </p>
+                <div class="card-header">
+                    <h3>@item.Nome</h3>
+                    <span class="categoria">@item.Categoria</span>
+                </div>
 
-        <p><b>📞 Contato:</b> @item.Contato</p>
+                <p class="profissional">
+                    👤 @item.NomeProfissional
+                </p>
 
-        <br />
+                <p class="descricao">
+                    @item.Descricao
+                </p>
 
-        <a href="/Agendamento/novo?servicoId=@item.Id" 
-           style="background:#28a745; color:white; padding:8px 12px; border-radius:5px; text-decoration:none;">
-            📅 Agendar
-        </a>
+                <div class="info">
+                    <span>📂 @item.Subcategoria</span>
+
+                    <span class="atendimento">
+                        @if (item.Atendimento == "Domicilio")
+                        {
+                            <span>🏠 Domicílio</span>
+                        }
+                        else if (item.Atendimento == "Local")
+                        {
+                            <span>📍 Local</span>
+                        }
+                        else if (item.Atendimento == "Online")
+                        {
+                            <span>💻 Online</span>
+                        }
+                    </span>
+                </div>
+
+                <div class="footer-card">
+                    <span class="contato">📞 @item.Contato</span>
+
+                    <a href="/Agendamento/novo?servicoId=@item.Id" 
+                       class="btn-agendar">
+                        Agendar
+                    </a>
+                </div>
+
+            </div>
+        }
 
     </div>
-}
+
+</section>
+
+<script src="~/js/profissionais.js"></script>

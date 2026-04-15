@@ -4,66 +4,81 @@
 <head>
     <meta charset="utf-8" />
     <title>Xamou</title>
-    <link rel="stylesheet" href="~/css/site.css?v=2" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="~/css/site.css?v=3" />
     @RenderSection("Styles", required: false)
 </head>
 
 <body>
 
-    <header class="header">
-        <h1>Xamou</h1>
-        <nav>
-            <a asp-controller="Home" asp-action="Index">Home</a>
+<header class="navbar">
+    <div class="container-ap nav-content">
 
-            <a asp-controller="Profissional" asp-action="Lista">
-                Profissionais
-            </a>
-            
-            @{
-                var usuario = Context.Session.GetString("UsuarioEmail");
-                var tipo = Context.Session.GetString("UsuarioTipo");
-            }
+        <!-- LOGO -->
+        <div class="logo">
+            Xa<span>mou</span>
+        </div>
+
+        <!-- BOTÃO MOBILE -->
+        <button class="menu-toggle" id="menuToggle">☰</button>
+
+        <!-- MENU -->
+        <nav class="nav-links" id="navMenu">
+
+            <a asp-controller="Home" asp-action="Index">Home</a>
+            <a asp-controller="Profissional" asp-action="Lista">Profissionais</a>
 
             @if (Context.Session.GetString("UsuarioNome") != null)
             {
-                <span>Bem-vindo, @Context.Session.GetString("UsuarioNome")</span>
+                <span class="user">
+                    👤 @Context.Session.GetString("UsuarioNome")
+                </span>
 
-                <a asp-controller="Usuario" asp-action="Logout">
-                    Sair
-                </a>
-
-                @if (tipo == "cliente")
+                @if (Context.Session.GetString("UsuarioTipo") == "cliente")
                 {
                     <a asp-controller="Agendamento" asp-action="Meus">
                         Meus Agendamentos
                     </a>
                 }
 
-                @if (tipo == "profissional")
+                @if (Context.Session.GetString("UsuarioTipo") == "profissional")
                 {
                     <a asp-controller="Profissional" asp-action="Perfil">
                         Meu Perfil
                     </a>
+
+                    <a asp-controller="Local" asp-action="Lista">
+                        Meus Locais
+                    </a>
                 }
+
+                <a asp-controller="Usuario" asp-action="Logout" class="btn-logout">
+                    Sair
+                </a>
             }
             else
             {
                 <a asp-controller="Usuario" asp-action="Login">Login</a>
-                <a asp-controller="Usuario" asp-action="Cadastro">Cadastro</a>
+
+                <a asp-controller="Usuario" asp-action="Cadastro" class="btn-primary">
+                    Cadastro
+                </a>
             }
 
         </nav>
-    </header>
+    </div>
+</header>
 
 
-    <main class="container">
-        @RenderBody()
-    </main>
+<main class="main-content">
+    @RenderBody()
+</main>
 
-    <script src="~/js/site.js"></script>
+<script src="~/js/site.js"></script>
 
-    @RenderSection("Scripts", required: false)
+@RenderSection("Scripts", required: false)
+
 </body>
-
-
 </html>

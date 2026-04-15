@@ -19,10 +19,10 @@ namespace BD_TRAMPO.Controllers
         }
 
 
-    public IActionResult Criar() 
-    {
-        return View();
-    }
+        public IActionResult Criar()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult Criar(string nome, string endereco)
@@ -43,6 +43,35 @@ namespace BD_TRAMPO.Controllers
 
             return RedirectToAction("Lista");
         }
+
+
+        public IActionResult Editar(int id)
+        {
+            LocalDAO dao = new LocalDAO();
+            var local = dao.BuscarPorId(id);
+
+            return View(local);
+        }
+
+        [HttpPost]
+        public IActionResult Editar(Local l)
+        {
+            LocalDAO dao = new LocalDAO();
+            dao.Atualizar(l);
+
+            return RedirectToAction("Lista");
+        }
+
+
+        public IActionResult Excluir(int id)
+        {
+            LocalDAO dao = new LocalDAO();
+            dao.Excluir(id);
+
+            return RedirectToAction("Lista");
+        }
+
+
     }
 
 }

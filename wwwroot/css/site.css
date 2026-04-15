@@ -1,12 +1,147 @@
 
+/* HOME PAGE  */
+
+:root {
+    --blue: #1A6BFF;
+    --dark: #0D1B3E;
+    --light: #F4F7FF;
+    --text: #333;
+}
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--light);
+}
+
+/* CONTAINER */
+.container-ap {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* NAVBAR */
+.navbar {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #eee;
+    z-index: 1000;
+}
+
+.nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+}
+
+/* LOGO */
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: var(--blue);
+}
+
+/* MENU */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--blue);
+}
+
+/* USER */
+.user {
+    font-size: 14px;
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* BOTÕES */
+.btn-primary {
+    background: var(--blue);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.btn-primary:hover {
+    background: #1258d6;
+}
+
+.btn-logout {
+    color: red !important;
+    font-weight: bold;
+}
+
+/* MAIN */
+.main-content {
+    padding-top: 90px;
+}
+
+/* MENU MOBILE */
+.menu-toggle {
+    display: none;
+    font-size: 22px;
+    background: none;
+    border: none;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        display: none;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        padding: 10px 0;
+    }
+}
+
+
 @media (min-width: 768px) {
     html {
         font-size: 16px;
     }
-}
-body {
-    font-family: Arial;
-    background: #f4f6f9;
 }
 
 .container {

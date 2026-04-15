@@ -8,7 +8,15 @@ namespace BD_TRAMPO.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            using (var db = new XamouContext())
+            {
+                var servicos = db.Servicos
+                    .OrderByDescending(s => s.Id)
+                    .Take(6)
+                    .ToList();
+
+                return View(servicos);
+            }
         }
 
         public IActionResult Privacy()
