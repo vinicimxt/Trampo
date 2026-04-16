@@ -1,8 +1,49 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css?v=1" />
+}
+<section class="hero">
+    <div class="hero-container">
 
-@* <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div> *@
+        <!-- TEXTO -->
+        <div class="hero-left">
+            <span class="badge">● Mais de 5.000 profissionais disponíveis</span>
+
+            <h1>
+                Agende serviços<br>
+                <span>perto de você</span><br>
+                em poucos cliques
+            </h1>
+
+            <p>
+                Encontre profissionais e empresas disponíveis para o horário que você precisa.
+            </p>
+
+            <div class="search-box">
+                <input type="text" placeholder="Que serviço você precisa?" />
+                <input type="text" placeholder="Sua localização" />
+                <button>Buscar</button>
+            </div>
+        </div>
+
+        <!-- VISUAL -->
+        <div class="hero-right">
+            <div class="phone-mock">
+                <div class="phone-header"></div>
+
+                <div class="item">Corte de cabelo - Hoje 14h</div>
+                <div class="item">Manicure - Amanhã</div>
+                <div class="item">Lava rápido - Sexta</div>
+
+                <button class="btn-novo">+ Novo</button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/home.js"></script>
+}

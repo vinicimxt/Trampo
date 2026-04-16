@@ -7,8 +7,11 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="~/css/site.css?v=3" />
     @RenderSection("Styles", required: false)
+
 </head>
 
 <body>
@@ -18,7 +21,7 @@
 
         <!-- LOGO -->
         <div class="logo">
-            Xa<span>mou</span>
+            Tram<span>po</span>
         </div>
 
         <!-- BOTÃO MOBILE -->
@@ -27,8 +30,8 @@
         <!-- MENU -->
         <nav class="nav-links" id="navMenu">
 
-            <a asp-controller="Home" asp-action="Index">Home</a>
-            <a asp-controller="Profissional" asp-action="Lista">Profissionais</a>
+            <a asp-controller="Home" asp-action="Index" asp-fragment="servicos">Home</a>
+            <a asp-controller="Profissional" asp-action="Lista">Serviços</a>
 
             @if (Context.Session.GetString("UsuarioNome") != null)
             {
@@ -72,7 +75,7 @@
 </header>
 
 
-<main class="main-content">
+<main>
     @RenderBody()
 </main>
 
