@@ -1,4 +1,3 @@
-
 /* HOME PAGE  */
 
 :root {
@@ -7,6 +6,185 @@
     --light: #F4F7FF;
     --text: #333;
 }
+
+
+/*=============== NAVBAR=============== */
+
+
+.navbar-ap {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: 0.3s;
+}
+
+/* SCROLL EFFECT */
+.navbar-ap.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* WRAPPER */
+.nav-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+}
+
+/* LOGO */
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.logo span {
+    color: var(--blue);
+}
+
+/* LINKS */
+.nav-links {
+    display: flex;
+    gap: 25px;
+    position: relative;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--blue);
+}
+
+/* RIGHT SIDE */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-indicator {
+    position: absolute;
+    bottom: -6px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--blue), #00D4AA);
+    border-radius: 10px;
+
+    transition: all 0.3s ease;
+}
+
+.nav-item {
+    position: relative;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    padding: 5px 2px;
+    transition: color 0.25s ease;
+}
+
+.nav-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+
+    width: 0%;
+    height: 2px;
+
+    background: linear-gradient(90deg, var(--blue), #00D4AA);
+    border-radius: 10px;
+
+    transition: width 0.3s ease;
+}
+
+/* HOVER */
+.nav-item:hover {
+    color: var(--blue);
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
+
+/* USER */
+.user {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* BUTTONS */
+.btn-primary {
+    background: var(--blue);
+    color: white;
+    padding: 9px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+
+    box-shadow: 0 4px 20px rgba(26, 107, 255, 0.25);
+    transition: all 0.3s ease;
+}
+
+.btn-outline {
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    padding: 7px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.btn-outline:hover {
+    background: var(--blue);
+    color: white;
+}
+
+.btn-logout {
+    color: red;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* MOBILE */
+.menu-toggle {
+    display: none;
+    font-size: 22px;
+    background: none;
+    border: none;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+
+        flex-direction: column;
+        padding: 20px;
+        display: none;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+}
+
 
 /* RESET */
 * {
@@ -63,7 +241,7 @@ button {
     position: fixed;
     width: 100%;
     top: 0;
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid #eee;
     z-index: 1000;
@@ -112,17 +290,12 @@ button {
 }
 
 /* BOTÕES */
-.btn-primary {
-    background: var(--blue);
-    color: white !important;
-    padding: 8px 16px;
-    border-radius: 8px;
-}
 
 .btn-primary:hover {
-    background: #1258d6;
-}
+    transform: translateY(-2px);
 
+    box-shadow: 0 8px 30px rgba(26,107,255,0.4);
+}
 .btn-logout {
     color: red !important;
     font-weight: bold;
@@ -180,7 +353,8 @@ button {
     margin: 50px auto;
 }
 
-input, select {
+input,
+select {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
@@ -199,13 +373,13 @@ button {
     cursor: pointer;
 }
 
-    button:hover {
-        background: #0056b3;
-    }
+button:hover {
+    background: #0056b3;
+}
 
-    /* ========== MEUS AGENDAMENTOS ========== */
+/* ========== MEUS AGENDAMENTOS ========== */
 
-    .grid-horarios {
+.grid-horarios {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
@@ -232,6 +406,7 @@ button {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -243,6 +418,7 @@ button {
         opacity: 0;
         transform: translateX(40px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);

@@ -35,15 +35,31 @@
 
         <!-- VISUAL -->
         <div class="hero-right">
-            <div class="phone-mock">
-                <div class="phone-header"></div>
 
-                <div class="item">Corte de cabelo - Hoje 14h</div>
-                <div class="item">Manicure - Amanhã</div>
-                <div class="item">Lava rápido - Sexta</div>
+            <div class="hero-visual">
 
-                <button class="btn-novo">+ Novo</button>
+                <div class="card card-main">
+                    <h3>Barbearia Silva</h3>
+                    <p>Hoje • 14:00</p>
+                    <span class="status">Disponível</span>
+                </div>
+
+                <div class="card card-float card-1">
+                    <p>Manicure</p>
+                    <small>Amanhã • 10:30</small>
+                </div>
+
+                <div class="card card-float card-2">
+                    <p>Faxina</p>
+                    <small>Domingo • 08:00</small>
+                </div>
+
+                <div class="card card-float card-3">
+                    ⭐ 4.9 Avaliação
+                </div>
+
             </div>
+
         </div>
 
     </div>
@@ -84,63 +100,62 @@
         <div class="services-grid">
 
             <div class="service-card">
-                <div class="icon">✂️</div>
-                <h3>Corte de cabelo</h3>
-                <p>Barbearia • 4.9 ⭐</p>
-                <button>Agendar</button>
-            </div>
+    
+                <div class="card-image">
+                    <img src="~/assets/imagens/servicos/barbeiro.jpg" alt="Corte de cabelo">
+                        <div class="card-overlay"></div>
+                    </div>
 
-            <div class="service-card">
-                <div class="icon">💅</div>
-                <h3>Manicure</h3>
-                <p>Studio Nails • 4.8 ⭐</p>
-                <button>Agendar</button>
-            </div>
+                    <div class="card-content">
+                        <h3>Corte de cabelo</h3>
 
-            <div class="service-card">
-                <div class="icon">🚗</div>
-                <h3>Lava Rápido</h3>
-                <p>LavaMax • 4.7 ⭐</p>
-                <button>Agendar</button>
-            </div>
+                        <div class="card-info">
+                            <span>⭐ 4.9</span>
+                            <span>+120 profissionais</span>
+                        </div>
 
+                        <button class="btn-card">Ver profissionais</button>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="how">
-    <div class="container-ap">
+    <section class="how">
+        <div class="container-ap">
 
-        <div class="section-header">
-            <span>Simples</span>
-            <h2>Como funciona</h2>
+            <div class="section-header">
+                <span>Simples</span>
+                <h2>Como funciona</h2>
+            </div>
+
+            <div class="steps">
+
+                <div class="step">
+                    <div class="circle">1</div>
+                    <h3>Busque</h3>
+                    <p>Encontre serviços próximos</p>
+                </div>
+
+                <div class="step">
+                    <div class="circle">2</div>
+                    <h3>Escolha</h3>
+                    <p>Veja avaliações e horários</p>
+                </div>
+
+                <div class="step">
+                    <div class="circle">3</div>
+                    <h3>Agende</h3>
+                    <p>Confirme em segundos</p>
+                </div>
+
+            </div>
         </div>
+    </section>
 
-        <div class="steps">
-
-            <div class="step">
-                <div class="circle">1</div>
-                <h3>Busque</h3>
-                <p>Encontre serviços próximos</p>
-            </div>
-
-            <div class="step">
-                <div class="circle">2</div>
-                <h3>Escolha</h3>
-                <p>Veja avaliações e horários</p>
-            </div>
-
-            <div class="step">
-                <div class="circle">3</div>
-                <h3>Agende</h3>
-                <p>Confirme em segundos</p>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-@* <section class="features">
+    @* <section class="features">
     <div class="container-ap">
         <div class="feature">
             <h3>Rápido</h3>
@@ -159,18 +174,18 @@
     </div>
 </section> *@
 
-<section class="cta">
-    <div class="container-ap">
-        <h2>Pronto para agendar?</h2>
-        <a href="#" class="btn-primary">Começar agora</a>
-    </div>
-</section>
+    <section class="cta">
+        <div class="container-ap">
+            <h2>Pronto para agendar?</h2>
+            <a href="#" class="btn-primary">Começar agora</a>
+        </div>
+    </section>
 
 
 
-<footer class="footer">
-    <p>© 2026 Xamou - Todos os direitos reservados</p>
-</footer>
-@section Scripts {
-    <script src="~/js/home.js"></script>
-}
+    <footer class="footer">
+        <p>© 2026 Xamou - Todos os direitos reservados</p>
+    </footer>
+    @section Scripts {
+        <script src="~/js/home.js"></script>
+    }

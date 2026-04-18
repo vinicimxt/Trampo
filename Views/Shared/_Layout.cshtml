@@ -16,44 +16,42 @@
 
 <body>
 
-<header class="navbar">
-    <div class="container-ap nav-content">
+<header class="navbar-ap" id="navbar">
+
+    <div class="container-ap nav-wrapper">
 
         <!-- LOGO -->
         <div class="logo">
             Tram<span>po</span>
         </div>
 
-        <!-- BOTÃO MOBILE -->
-        <button class="menu-toggle" id="menuToggle">☰</button>
-
         <!-- MENU -->
-        <nav class="nav-links" id="navMenu">
-
-            <a asp-controller="Home" asp-action="Index" asp-fragment="servicos">Home</a>
-            <a asp-controller="Profissional" asp-action="Lista">Serviços</a>
+        <nav class="nav-links" id="navLinks">
+            <a asp-controller="Home" asp-action="Index" class="nav-item">Home</a>
+            <a asp-controller="Profissional" asp-action="Lista" class="nav-item">Serviços</a>
 
             @if (Context.Session.GetString("UsuarioNome") != null)
             {
-                <span class="user">
-                    👤 @Context.Session.GetString("UsuarioNome")
-                </span>
+                <a asp-controller="Agendamento" asp-action="Meus" class="nav-item">Agendamentos</a>
+            }
+        </nav>
 
-                @if (Context.Session.GetString("UsuarioTipo") == "cliente")
+        <!-- USER AREA -->
+        <div class="nav-right">
+
+            @{
+                var nome = Context.Session.GetString("UsuarioNome");
+                var tipo = Context.Session.GetString("UsuarioTipo");
+            }
+
+            @if (nome != null)
+            {
+                <span class="user">Olá, @nome</span>
+
+                @if (tipo == "profissional")
                 {
-                    <a asp-controller="Agendamento" asp-action="Meus">
-                        Meus Agendamentos
-                    </a>
-                }
-
-                @if (Context.Session.GetString("UsuarioTipo") == "profissional")
-                {
-                    <a asp-controller="Profissional" asp-action="Perfil">
-                        Meu Perfil
-                    </a>
-
-                    <a asp-controller="Local" asp-action="Lista">
-                        Meus Locais
+                    <a asp-controller="Profissional" asp-action="Perfil" class="btn-outline">
+                        Painel
                     </a>
                 }
 
@@ -63,23 +61,31 @@
             }
             else
             {
-                <a asp-controller="Usuario" asp-action="Login">Login</a>
+                <a asp-controller="Usuario" asp-action="Login" class="btn-outline">
+                    Login
+                </a>
 
                 <a asp-controller="Usuario" asp-action="Cadastro" class="btn-primary">
-                    Cadastro
+                    Criar Conta
                 </a>
             }
 
-        </nav>
-    </div>
-</header>
+            <!-- MOBILE BTN -->
+            <button class="menu-toggle" id="menuToggle">
+                ☰
+            </button>
 
+        </div>
+
+    </div>
+
+</header>
 
 <main>
     @RenderBody()
 </main>
 
-<script src="~/js/site.js"></script>
+<script src="~/js/site.js" defer></script>
 
 @RenderSection("Scripts", required: false)
 
