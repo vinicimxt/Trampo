@@ -1,15 +1,43 @@
-/* HOME PAGE  */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
 :root {
-    --blue: #1A6BFF;
-    --dark: #0D1B3E;
-    --light: #F4F7FF;
-    --text: #333;
+    --blue:          #1A6BFF;
+    --blue-dark:     #1258d6;
+    --blue-soft:     rgba(26, 107, 255, 0.08);
+    --blue-mid:      rgba(26, 107, 255, 0.15);
+    --accent:        #00D4AA;
+    --accent-soft:   rgba(0, 212, 170, 0.10);
+    --dark:          #0D1B3E;
+    --dark-2:        #071130;
+    --text-muted:    #6B7A99;
+    --border:        #E8EEF8;
+    --bg-light:      #F4F7FF;
+    --bg-white:      #FFFFFF;
+    --radius-xl:     24px;
+    --radius-lg:     18px;
+    --radius-md:     12px;
+    --radius-sm:     8px;
+    --card-shadow:   0 8px 32px rgba(26, 107, 255, 0.10);
+    --shadow-dark:   0 24px 60px rgba(13, 27, 62, 0.22);
+    --transition:    all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-
 /*=============== NAVBAR=============== */
 
+/* ===================================================
+   BASE
+=================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+ 
+body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--dark);
+    background: var(--bg-white);
+    overflow-x: hidden;
+}
+ 
+h1, h2, h3, h4 { font-family:Arial, Helvetica, sans-serif }
 
 .navbar-ap {
     position: fixed;
@@ -362,7 +390,7 @@ select {
     border-radius: 5px;
 }
 
-button {
+.default-btn {
     width: 100%;
     padding: 10px;
     margin-top: 15px;
