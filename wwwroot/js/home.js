@@ -1,50 +1,62 @@
-window.addEventListener("scroll", () => {
-    const nav = document.querySelector(".navbar");
-    nav.classList.toggle("shadow", window.scrollY > 20);
-});
+document.addEventListener('DOMContentLoaded', function () {
 
-const visual = document.querySelector('.hero-visual');
+    // -------------------------------------------------------
+    // Navbar shadow no scroll
+    // -------------------------------------------------------
+    var nav = document.querySelector('.navbar');
+    if (nav) {
+        window.addEventListener('scroll', function () {
+            nav.classList.toggle('shadow', window.scrollY > 20);
+        });
+    }
 
-document.addEventListener('mousemove', (e) => {
-    const x = (window.innerWidth / 2 - e.clientX) / 30;
-    const y = (window.innerHeight / 2 - e.clientY) / 30;
+    // -------------------------------------------------------
+    // Efeito 3D no hero-visual ao mover o mouse
+    // -------------------------------------------------------
+    var visual = document.querySelector('.hero-visual');
+    if (visual) {
+        document.addEventListener('mousemove', function (e) {
+            var x = (window.innerWidth  / 2 - e.clientX) / 30;
+            var y = (window.innerHeight / 2 - e.clientY) / 30;
+            visual.style.transform = 'rotateY(' + x + 'deg) rotateX(' + y + 'deg)';
+        });
+    }
 
-    visual.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-});
+    // -------------------------------------------------------
+    // Scroll reveal — fade-up
+    // -------------------------------------------------------
+    var fadeEls = document.querySelectorAll('.fade-up');
+    if (fadeEls.length > 0) {
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
 
-// -------------------------------------------------------
-// Scroll reveal — fade-up
-// -------------------------------------------------------
-const fadeEls = document.querySelectorAll('.fade-up');
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
+        fadeEls.forEach(function (el) { observer.observe(el); });
+    }
+
+    // -------------------------------------------------------
+    // Tab switcher — Como Funciona (cliente / profissional)
+    // -------------------------------------------------------
+    window.switchTab = function (tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(function (t) { t.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+
+        var target = document.getElementById('tab-' + tabId);
+        if (target) { target.classList.add('active'); }
+        if (btn)    { btn.classList.add('active'); }
+
+        if (target) {
+            target.querySelectorAll('.fade-up').forEach(function (el) {
+                el.classList.remove('visible');
+                setTimeout(function () { el.classList.add('visible'); }, 80);
+            });
         }
-    });
-}, { threshold: 0.12 });
+    };
 
-fadeEls.forEach(el => observer.observe(el));
+});
 
-
-// -------------------------------------------------------
-// Tab switcher — Como Funciona (cliente / profissional)
-// -------------------------------------------------------
-function switchTab(tabId, btn) {
-    // Esconde todas as abas
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    // Remove active de todos os botões
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-    // Ativa aba e botão clicados
-    document.getElementById('tab-' + tabId).classList.add('active');
-    btn.classList.add('active');
-
-    // Re-aciona fade-up nos steps do novo tab
-    const newFades = document.querySelectorAll('#tab-' + tabId + ' .fade-up');
-    newFades.forEach(el => {
-        el.classList.remove('visible');
-        setTimeout(() => el.classList.add('visible'), 80);
-    });
-}

@@ -1,0 +1,138 @@
+/* =========================
+   BASE
+========================= */
+.container-cadastro {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, #4567a7, #00C6FF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* CARD */
+.container {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    
+    box-shadow: 0 20px 60px rgba(13, 27, 62, 0.15);
+    animation: fadeUp 0.6s ease;
+}
+
+/* TITULO */
+.container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* INPUTS */
+form input,
+form select {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+
+    border-radius: 10px;
+    border: 1px solid #e3e8f0;
+
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+/* FOCUS */
+form input:focus,
+form select:focus {
+    border-color: #1A6BFF;
+    box-shadow: 0 0 0 3px rgba(26,107,255,0.1);
+    outline: none;
+}
+
+/* BOTÃO */
+form button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+
+    background: linear-gradient(135deg, #1A6BFF, #00C6FF);
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(26,107,255,0.4);
+}
+
+/* LINK */
+.container p {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.container a {
+    color: #1A6BFF;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* PROFISSIONAL BOX */
+#camposProfissional {
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f7f9ff;
+    border: 1px dashed #dce5ff;
+}
+
+
+/* =========================
+   VALIDAÇÃO VISUAL
+========================= */
+.input-group {
+    position: relative;
+}
+
+.input-error {
+    border-color: #ff4d4f !important;
+    box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.1);
+}
+
+.input-success {
+    border-color: #00c853 !important;
+    box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.1);
+}
+
+.input-message {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #ff4d4f;
+}
+
+.input-message.success {
+    color: #00c853;
+}
+
+/* ANIMAÇÃO */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

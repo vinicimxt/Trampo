@@ -1,26 +1,24 @@
-﻿<!DOCTYPE html>
-<html lang="pt-br">
+﻿@section Styles {
+    <link rel="stylesheet" href="~/css/cadastro.css" />
+}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xamou - Cadastro</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
 
-<body>
-
+<div class="container-cadastro">
     <div class="container">
         <h2>Cadastro</h2>
 
-        <form method="post" action="/Usuario/Cadastrar">
-    
-            <input type="text" name="nome" placeholder="Nome" required>
-    
-            <input type="email" name="email" placeholder="Email" required>
-    
-            <input type="password" name="senha" placeholder="Senha" required>
+        <form method="post" action="/Usuario/Cadastrar" id="formCadastro">
 
+            <input type="text" name="nome" placeholder="Nome completo" required>
+
+            <input type="email" name="email" placeholder="Email" required>
+
+            <!-- TELEFONE (futuro) -->
+            <input type="text" name="telefone" id="telefone" placeholder="Telefone (opcional)">
+
+            <input type="password" name="senha" id="senha" placeholder="Senha" required>
+
+        
             <select id="tipo" name="tipo" onchange="mostrarCampos()" required>
                 <option value="cliente">Cliente</option>
                 <option value="profissional">Profissional</option>
@@ -29,37 +27,24 @@
             <!-- CAMPOS DO PROFISSIONAL -->
             <div id="camposProfissional" style="display: none;">
 
-
                 <select name="tipoDocumento">
                     <option value="CPF">CPF</option>
                     <option value="CNPJ">CNPJ</option>
                 </select>
 
-                <input type="text" name="documento" placeholder="Digite o CPF ou CNPJ">
-
+                <div class="input-group">
+                    <input type="text" name="documento" id="documento" placeholder="CPF ou CNPJ">
+                    <span id="docMsg" class="input-message"></span>
+                </div>
             </div>
 
-            <button type="submit">Cadastrar</button>
+            <button type="submit" id="btnCadastro">Cadastrar</button>
 
         </form>
 
         <p>Já tem conta? <a href="Login">Login</a></p>
     </div>
-
-    <script>
-            function mostrarCampos() {
-                var tipo = document.getElementById("tipo").value;
-                var campos = document.getElementById("camposProfissional");
-
-                if (tipo === "profissional") {
-                    campos.style.display = "block";
-                } else {
-                    campos.style.display = "none";
-                }
-            }
-    </script>
-    <script src="/js/script.js"></script>
-
-</body>
-
-</html>
+</div>
+@section Scripts {
+    <script src="~/js/cadastro.js"></script>
+}
