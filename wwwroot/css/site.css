@@ -21,6 +21,7 @@
     --card-shadow:   0 8px 32px rgba(26, 107, 255, 0.10);
     --shadow-dark:   0 24px 60px rgba(13, 27, 62, 0.22);
     --transition:    all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    --navbar-height: 62px;
 }
 /*=============== NAVBAR=============== */
 
@@ -35,6 +36,30 @@ body {
     color: var(--dark);
     background: var(--bg-white);
     overflow-x: hidden;
+}
+ 
+
+/* Toda página deve começar abaixo da navbar */
+.main-content,
+.profissionais-page,
+.hero,
+.auth-page {
+    padding-top: var(--navbar-height);
+}
+ 
+/* A hero da home já tem padding-top próprio — soma com a navbar */
+.hero {
+    padding-top: calc(var(--navbar-height) + 90px);
+}
+ 
+/* prof-hero não precisa de padding extra pois é o topo da página */
+.profissionais-page {
+    padding-top: var(--navbar-height);
+}
+ 
+/* auth-page é full screen — não precisa de offset */
+.auth-page {
+    padding-top: 0;
 }
  
 h1, h2, h3, h4 { font-family:Arial, Helvetica, sans-serif }

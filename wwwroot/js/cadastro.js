@@ -1,294 +1,204 @@
-/* =========================
-   MOSTRAR CAMPOS PROFISSIONAL
-========================= */
-function mostrarCampos() {
-    const tipo = document.getElementById("tipo").value;
-    const campos = document.getElementById("camposProfissional");
+document.addEventListener('DOMContentLoaded', function () {
 
-    campos.style.display = (tipo === "profissional") ? "block" : "none";
-}
+    /* -----------------------------------------------
+       REFERÊNCIAS
+    ----------------------------------------------- */
+    var form       = document.getElementById('formCadastro');
+    var tipoSelect = document.getElementById('tipo');
+    var telInput   = document.getElementById('telefone');
+    var senhaInput = document.getElementById('senha');
+    var senhaMsg   = document.getElementById('senhaMsg');
+    var docInput   = document.getElementById('documento');
+    var tipoDoc    = document.querySelector('select[name="tipoDocumento"]');
+    var docMsg     = document.getElementById('docMsg');
+    var btnCadastro = document.getElementById('btnCadastro');
+    var toggleBtn  = document.getElementById('toggleSenha');
 
-/* =========================
-   TELEFONE (máscara)
-========================= */
-const tel = document.getElementById("telefone");
-
-if (tel) {
-    tel.addEventListener("input", () => {
-        let v = tel.value.replace(/\D/g, "");
-
-        if (v.length > 11) v = v.slice(0, 11);
-
-        v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
-        v = v.replace(/(\d{5})(\d)/, "$1-$2");
-
-        tel.value = v;
-    });
-}
-
-/* =========================
-   CPF / CNPJ
-========================= */
-const documento = document.getElementById("documento");
-const tipoDoc = document.querySelector("select[name='tipoDocumento']");
-
-function aplicarMascaraDocumento() {
-    let v = documento.value.replace(/\D/g, "");
-
-    if (tipoDoc.value === "CPF") {
-        // limita CPF (11)
-        v = v.slice(0, 11);
-
-        // máscara CPF
-        v = v.replace(/(\d{3})(\d)/, "$1.$2");
-        v = v.replace(/(\d{3})(\d)/, "$1.$2");
-        v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-
-        documento.maxLength = 14; // 000.000.000-00
-    } else {
-        // limita CNPJ (14)
-        v = v.slice(0, 14);
-
-        // máscara CNPJ
-        v = v.replace(/^(\d{2})(\d)/, "$1.$2");
-        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-        v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
-        v = v.replace(/(\d{4})(\d)/, "$1-$2");
-
-        documento.maxLength = 18; // 00.000.000/0000-00
+    /* -----------------------------------------------
+       MOSTRAR/OCULTAR senha
+    ----------------------------------------------- */
+    if (toggleBtn && senhaInput) {
+        toggleBtn.addEventListener('click', function () {
+            var isPass = senhaInput.type === 'password';
+            senhaInput.type = isPass ? 'text' : 'password';
+            toggleBtn.textContent = isPass ? '🙈' : '👁';
+        });
     }
 
-    documento.value = v;
-}
-
-/* EVENTOS */
-if (documento) {
-    documento.addEventListener("input", aplicarMascaraDocumento);
-}
-
-if (tipoDoc) {
-    tipoDoc.addEventListener("change", () => {
-        documento.value = ""; // limpa ao trocar tipo
-        aplicarMascaraDocumento();
-    });
-}
-
-/* =========================
-   VALIDAR CPF
-========================= */
-function validarCPF(cpf) {
-    const erro = document.getElementById("erroDocumento");
-
-    erro.textContent = "CPF inválido";
-    cpf = cpf.replace(/\D/g, "");
-
-    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf))
-        return false;
-
-    let soma = 0;
-    let resto;
-
-    for (let i = 1; i <= 9; i++)
-        soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-
-    resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-
-    if (resto !== parseInt(cpf.substring(9, 10)))
-        return false;
-
-    soma = 0;
-
-    for (let i = 1; i <= 10; i++)
-        soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-
-    resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-
-    return resto === parseInt(cpf.substring(10, 11));
-}
-
-/* =========================
-   VALIDAR CNPJ
-========================= */
-function validarCNPJ(cnpj) {
-    cnpj = cnpj.replace(/\D/g, "");
-
-    if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj))
-        return false;
-
-    let tamanho = cnpj.length - 2;
-    let numeros = cnpj.substring(0, tamanho);
-    let digitos = cnpj.substring(tamanho);
-
-    let soma = 0;
-    let pos = tamanho - 7;
-
-    for (let i = tamanho; i >= 1; i--) {
-        soma += numeros.charAt(tamanho - i) * pos--;
-        if (pos < 2) pos = 9;
-    }
-
-    let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-
-    if (resultado != digitos.charAt(0))
-        return false;
-
-    tamanho = tamanho + 1;
-    numeros = cnpj.substring(0, tamanho);
-
-    soma = 0;
-    pos = tamanho - 7;
-
-    for (let i = tamanho; i >= 1; i--) {
-        soma += numeros.charAt(tamanho - i) * pos--;
-        if (pos < 2) pos = 9;
-    }
-
-    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-
-    return resultado == digitos.charAt(1);
-}
-
-const documento = document.getElementById("documento");
-const tipoDoc = document.querySelector("select[name='tipoDocumento']");
-const docMsg = document.getElementById("docMsg");
-const btn = document.querySelector("button");
-
-/* =========================
-   VALIDAR EM TEMPO REAL
-========================= */
-function validarDocumentoRealtime() {
-    const valor = documento.value;
-
-    if (valor.length < 5) {
-        resetEstado(documento, docMsg);
-        return;
-    }
-
-    let valido = false;
-
-    if (tipoDoc.value === "CPF") {
-        valido = validarCPF(valor);
-    } else {
-        valido = validarCNPJ(valor);
-    }
-
-    if (valido) {
-        setSucesso(documento, docMsg, "Documento válido");
-    } else {
-        setErro(documento, docMsg, "Documento inválido");
-    }
-
-    controlarBotao();
-}
-
-/* =========================
-   ESTADOS VISUAIS
-========================= */
-function setErro(input, msgEl, msg) {
-    input.classList.add("input-error");
-    input.classList.remove("input-success");
-
-    msgEl.textContent = msg;
-    msgEl.classList.remove("success");
-}
-
-function setSucesso(input, msgEl, msg) {
-    input.classList.remove("input-error");
-    input.classList.add("input-success");
-
-    msgEl.textContent = msg;
-    msgEl.classList.add("success");
-}
-
-function resetEstado(input, msgEl) {
-    input.classList.remove("input-error", "input-success");
-    msgEl.textContent = "";
-}
-
-/* =========================
-   CONTROLE BOTÃO
-========================= */
-function controlarBotao() {
-    const tipoUsuario = document.getElementById("tipo").value;
-
-    if (tipoUsuario !== "profissional") {
-        btn.disabled = false;
-        return;
-    }
-
-    const valido = documento.classList.contains("input-success");
-
-    btn.disabled = !valido;
-}
-
-/* =========================
-   EVENTOS
-========================= */
-if (documento) {
-    documento.addEventListener("input", validarDocumentoRealtime);
-}
-
-if (tipoDoc) {
-    tipoDoc.addEventListener("change", () => {
-        documento.value = "";
-        resetEstado(documento, docMsg);
+    /* -----------------------------------------------
+       MOSTRAR campos profissional
+    ----------------------------------------------- */
+    window.mostrarCampos = function () {
+        var campos = document.getElementById('camposProfissional');
+        if (!campos) return;
+        campos.style.display = (tipoSelect.value === 'profissional') ? 'block' : 'none';
         controlarBotao();
-    });
-}
-/* =========================
-   VALIDAÇÃO
-========================= */
-const form = document.querySelector("form");
+    };
 
-form.addEventListener("submit", function (e) {
-
-    const senha = document.getElementById("senha");
-    const btn = form.querySelector("button");
-    const documento = document.getElementById("documento");
-    const tipoDoc = document.querySelector("select[name='tipoDocumento']");
-    const tipoUsuario = document.getElementById("tipo");
-
-    /* SENHA */
-    if (senha.value.length < 6) {
-        alert("Senha precisa ter no mínimo 6 caracteres");
-        e.preventDefault();
-        return;
+    /* -----------------------------------------------
+       MÁSCARA TELEFONE
+    ----------------------------------------------- */
+    if (telInput) {
+        telInput.addEventListener('input', function () {
+            var v = telInput.value.replace(/\D/g, '').slice(0, 11);
+            v = v.replace(/^(\d{2})(\d)/, '($1) $2');
+            v = v.replace(/(\d{5})(\d)/, '$1-$2');
+            telInput.value = v;
+        });
     }
 
-    /* VALIDA DOCUMENTO SE FOR PROFISSIONAL */
-    if (tipoUsuario.value === "profissional") {
+    /* -----------------------------------------------
+       MÁSCARA CPF / CNPJ
+    ----------------------------------------------- */
+    function aplicarMascara() {
+        if (!docInput || !tipoDoc) return;
+        var v = docInput.value.replace(/\D/g, '');
 
-        const valor = documento.value;
-
-        if (tipoDoc.value === "CPF") {
-            if (!validarCPF(valor)) {
-                alert("CPF inválido");
-                e.preventDefault();
-                return;
-            }
+        if (tipoDoc.value === 'CPF') {
+            v = v.slice(0, 11);
+            v = v.replace(/(\d{3})(\d)/, '$1.$2');
+            v = v.replace(/(\d{3})(\d)/, '$1.$2');
+            v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            docInput.maxLength = 14;
         } else {
-            if (!validarCNPJ(valor)) {
-                alert("CNPJ inválido");
-                e.preventDefault();
-                return;
-            }
+            v = v.slice(0, 14);
+            v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+            v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            v = v.replace(/(\d{4})(\d)/, '$1-$2');
+            docInput.maxLength = 18;
         }
+        docInput.value = v;
     }
 
-    btn.textContent = "Cadastrando...";
-    btn.disabled = true;
-});
-
-const senha = document.getElementById("senha");
-
-senha.addEventListener("input", () => {
-    if (senha.value.length >= 6) {
-        senha.classList.add("input-success");
-        senha.classList.remove("input-error");
-    } else {
-        senha.classList.add("input-error");
-        senha.classList.remove("input-success");
+    if (docInput) { docInput.addEventListener('input', function () { aplicarMascara(); validarDocRealtime(); }); }
+    if (tipoDoc)  {
+        tipoDoc.addEventListener('change', function () {
+            docInput.value = '';
+            resetInput(docInput, docMsg);
+            aplicarMascara();
+            controlarBotao();
+        });
     }
+
+    /* -----------------------------------------------
+       VALIDAR CPF
+    ----------------------------------------------- */
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/\D/g, '');
+        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+        var soma = 0, resto;
+        for (var i = 1; i <= 9; i++) soma += parseInt(cpf[i - 1]) * (11 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf[9])) return false;
+        soma = 0;
+        for (var j = 1; j <= 10; j++) soma += parseInt(cpf[j - 1]) * (12 - j);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        return resto === parseInt(cpf[10]);
+    }
+
+    /* -----------------------------------------------
+       VALIDAR CNPJ
+    ----------------------------------------------- */
+    function validarCNPJ(cnpj) {
+        cnpj = cnpj.replace(/\D/g, '');
+        if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
+        var tam = cnpj.length - 2;
+        var nums = cnpj.substring(0, tam);
+        var digs = cnpj.substring(tam);
+        var soma = 0, pos = tam - 7;
+        for (var i = tam; i >= 1; i--) { soma += nums.charAt(tam - i) * pos--; if (pos < 2) pos = 9; }
+        var res = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+        if (res != digs.charAt(0)) return false;
+        tam++; nums = cnpj.substring(0, tam); soma = 0; pos = tam - 7;
+        for (var k = tam; k >= 1; k--) { soma += nums.charAt(tam - k) * pos--; if (pos < 2) pos = 9; }
+        res = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+        return res == digs.charAt(1);
+    }
+
+    /* -----------------------------------------------
+       VALIDAÇÃO EM TEMPO REAL — documento
+    ----------------------------------------------- */
+    function validarDocRealtime() {
+        if (!docInput || !tipoDoc) return;
+        var val = docInput.value;
+        if (val.length < 5) { resetInput(docInput, docMsg); controlarBotao(); return; }
+        var ok = tipoDoc.value === 'CPF' ? validarCPF(val) : validarCNPJ(val);
+        ok ? setSuccess(docInput, docMsg, 'Documento válido ✓') : setError(docInput, docMsg, 'Documento inválido');
+        controlarBotao();
+    }
+
+    /* -----------------------------------------------
+       VALIDAÇÃO SENHA EM TEMPO REAL
+    ----------------------------------------------- */
+    if (senhaInput) {
+        senhaInput.addEventListener('input', function () {
+            if (senhaInput.value.length === 0) { resetInput(senhaInput, senhaMsg); return; }
+            senhaInput.value.length >= 6
+                ? setSuccess(senhaInput, senhaMsg, '')
+                : setError(senhaInput, senhaMsg, 'Mínimo 6 caracteres');
+        });
+    }
+
+    /* -----------------------------------------------
+       CONTROLAR BOTÃO
+    ----------------------------------------------- */
+    function controlarBotao() {
+        if (!btnCadastro) return;
+        if (!tipoSelect || tipoSelect.value !== 'profissional') {
+            btnCadastro.disabled = false;
+            return;
+        }
+        btnCadastro.disabled = !(docInput && docInput.classList.contains('input-success'));
+    }
+
+    /* -----------------------------------------------
+       SUBMIT
+    ----------------------------------------------- */
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            var ok = true;
+
+            if (senhaInput && senhaInput.value.length < 6) {
+                setError(senhaInput, senhaMsg, 'Senha muito curta (mín. 6 caracteres)');
+                ok = false;
+            }
+
+            if (tipoSelect && tipoSelect.value === 'profissional' && docInput && tipoDoc) {
+                var docValido = tipoDoc.value === 'CPF'
+                    ? validarCPF(docInput.value)
+                    : validarCNPJ(docInput.value);
+                if (!docValido) {
+                    setError(docInput, docMsg, 'Documento inválido');
+                    ok = false;
+                }
+            }
+
+            if (!ok) { e.preventDefault(); return; }
+
+            btnCadastro.textContent = 'Criando conta...';
+            btnCadastro.disabled = true;
+        });
+    }
+
+    /* -----------------------------------------------
+       HELPERS
+    ----------------------------------------------- */
+    function setError(input, msgEl, msg) {
+        if (input) { input.classList.add('input-error'); input.classList.remove('input-success'); }
+        if (msgEl) { msgEl.textContent = msg; msgEl.classList.remove('success'); }
+    }
+
+    function setSuccess(input, msgEl, msg) {
+        if (input) { input.classList.remove('input-error'); input.classList.add('input-success'); }
+        if (msgEl) { msgEl.textContent = msg; msgEl.classList.add('success'); }
+    }
+
+    function resetInput(input, msgEl) {
+        if (input) { input.classList.remove('input-error', 'input-success'); }
+        if (msgEl) { msgEl.textContent = ''; msgEl.classList.remove('success'); }
+    }
+
 });

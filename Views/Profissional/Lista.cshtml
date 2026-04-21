@@ -2,62 +2,160 @@
 
 <link rel="stylesheet" href="~/css/profissionais.css" />
 
-<section class="profissionais-container">
+<div class="profissionais-page">
 
-    <h2 class="titulo-pagina">Serviços disponíveis</h2>
-
-    <div class="grid-profissionais">
-
-        @foreach (var item in Model)
-        {
-            <div class="card-servico">
-
-                <div class="card-header">
-                    <h3>@item.Nome</h3>
-                    <span class="categoria">@item.Categoria</span>
+    <!-- =============================================
+         HERO INTERNO
+    ============================================= -->
+    <div class="prof-hero">
+        <div class="prof-hero-inner">
+            <div>
+                <span class="prof-hero-label">Encontre agora</span>
+                <h1 class="prof-hero-title">Serviços disponíveis</h1>
+                <p class="prof-hero-sub">Profissionais verificados prontos para atender você hoje.</p>
+            </div>
+            <div class="prof-hero-count">
+                <div>
+                    <strong id="totalServicos">@Model.Count()</strong>
+                    <span>serviços encontrados</span>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <p class="profissional">
-                    👤 @item.NomeProfissional
-                </p>
+    <!-- =============================================
+         BARRA DE FILTROS — sticky
+         Todos os data-* são os ganchos para o backend
+    ============================================= -->
+    <div class="prof-filters-bar">
+        <div class="prof-filters-inner">
 
-                <p class="descricao">
-                    @item.Descricao
-                </p>
+            <!-- Busca por nome / profissional -->
+            <div class="filter-search">
+                <span class="filter-search-icon">🔍</span>
+                <input type="text"
+                       id="filtro-busca"
+                       placeholder="Buscar serviço ou profissional..."
+                       data-filtro="busca" />
+            </div>
 
-                <div class="info">
-                    <span>📂 @item.Subcategoria</span>
+            <!-- Categoria -->
+            <div class="filter-select-wrap">
+                <select class="filter-select" id="filtro-categoria" data-filtro="categoria">
+                    <option value="">Todas as categorias</option>
+                    @foreach (var cat in Model.Select(s => s.Categoria).Distinct().OrderBy(c => c))
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                </select>
+            </div>
 
-                    <span class="atendimento">
+            <!-- Subcategoria -->
+            <div class="filter-select-wrap">
+                <select class="filter-select" id="filtro-subcategoria" data-filtro="subcategoria">
+                    <option value="">Todas as subcategorias</option>
+                    @foreach (var sub in Model.Select(s => s.Subcategoria).Distinct().OrderBy(s => s))
+                    {
+                        <option value="@sub">@sub</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Pills de atendimento -->
+            <div class="filter-pills" id="filtro-atendimento-pills">
+                <button class="filter-pill active" data-atendimento="">Todos</button>
+                <button class="filter-pill" data-atendimento="Domicilio">🏠 Domicílio</button>
+                <button class="filter-pill" data-atendimento="Local">📍 Local</button>
+                <button class="filter-pill" data-atendimento="Online">💻 Online</button>
+            </div>
+
+            <!-- Contador + limpar -->
+            <span class="filter-results-count">
+                <strong id="contadorResultados">@Model.Count()</strong> resultados
+            </span>
+
+            <button class="btn-clear-filters" id="btnLimparFiltros">
+                ✕ Limpar filtros
+            </button>
+
+        </div>
+    </div>
+
+    <!-- =============================================
+         GRID DE CARDS
+    ============================================= -->
+    <div class="prof-main">
+        <div class="grid-profissionais" id="gridProfissionais">
+
+            @foreach (var item in Model)
+            {
+                <!-- data-* = ganchos de filtro client-side (e futuramente query params) -->
+                <div class="card-servico"
+                     data-nome="@item.Nome.ToLower()"
+                     data-profissional="@item.NomeProfissional.ToLower()"
+                     data-categoria="@item.Categoria"
+                     data-subcategoria="@item.Subcategoria"
+                     data-atendimento="@item.Atendimento">
+
+                    <!-- Header -->
+                    <div class="card-header">
+                        <h3>@item.Nome</h3>
+                        <span class="categoria-badge">@item.Categoria</span>
+                    </div>
+
+                    <!-- Profissional com avatar de iniciais -->
+                    <div class="profissional-row">
+                        <div class="profissional-avatar">
+                            @(item.NomeProfissional?.Length > 0
+                                ? string.Concat(item.NomeProfissional.Split(' ')
+                                    .Take(2).Select(p => p[0].ToString().ToUpper()))
+                                : "?")
+                        </div>
+                        <span class="profissional-name">@item.NomeProfissional</span>
+                    </div>
+
+                    <!-- Descrição (clampada em 3 linhas via CSS) -->
+                    <p class="descricao">@item.Descricao</p>
+
+                    <!-- Chips de info -->
+                    <div class="info-chips">
+                        <span class="chip">📂 @item.Subcategoria</span>
+
                         @if (item.Atendimento == "Domicilio")
                         {
-                            <span>🏠 Domicílio</span>
+                            <span class="chip chip-domicilio">🏠 Domicílio</span>
                         }
                         else if (item.Atendimento == "Local")
                         {
-                            <span>📍 Local</span>
+                            <span class="chip chip-local">📍 Local</span>
                         }
                         else if (item.Atendimento == "Online")
                         {
-                            <span>💻 Online</span>
+                            <span class="chip chip-online">💻 Online</span>
                         }
-                    </span>
+                    </div>
+
+                    <!-- Footer do card -->
+                    <div class="footer-card">
+                        <span class="contato">📞 @item.Contato</span>
+                        <a href="/Agendamento/novo?servicoId=@item.Id" class="btn-agendar">
+                            Agendar →
+                        </a>
+                    </div>
+
                 </div>
+            }
 
-                <div class="footer-card">
-                    <span class="contato">📞 @item.Contato</span>
-
-                    <a href="/Agendamento/novo?servicoId=@item.Id" 
-                       class="btn-agendar">
-                        Agendar
-                    </a>
-                </div>
-
+            <!-- Estado vazio (mostrado via JS quando filtros não acham nada) -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">🔍</div>
+                <h3>Nenhum serviço encontrado</h3>
+                <p>Tente ajustar os filtros ou buscar por outro termo.</p>
             </div>
-        }
 
+        </div>
     </div>
 
-</section>
+</div>
 
 <script src="~/js/profissionais.js"></script>

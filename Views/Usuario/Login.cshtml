@@ -1,46 +1,94 @@
 @section Styles {
-    <link rel="stylesheet" href="~/css/login.css" />
+    <link rel="stylesheet" href="~/css/auth.css" />
 }
 
-<div class="auth-container">
-    <div class="auth-card">
+<div class="auth-page">
 
-        <div class="auth-header">
-            <h2>Login</h2>
-            <p>Entre na sua conta</p>
+    <!-- =============================================
+         PAINEL ESQUERDO — branding
+    ============================================= -->
+    <div class="auth-panel">
+        <div class="auth-panel-dots"></div>
+
+        <div class="auth-panel-content">
+            <div class="auth-logo">Tram<span>po</span></div>
+
+            <h1 class="auth-panel-title">
+                Bem-vindo<br>de volta! 👋
+            </h1>
+            <p class="auth-panel-sub">
+                Entre na sua conta e acesse os melhores profissionais ou gerencie seus agendamentos.
+            </p>
+
+            <div class="auth-bullets">
+                <div class="auth-bullet">
+                    <div class="auth-bullet-icon">⚡</div>
+                    <span class="auth-bullet-text">Acesse sua agenda em segundos</span>
+                </div>
+                <div class="auth-bullet">
+                    <div class="auth-bullet-icon">🔔</div>
+                    <span class="auth-bullet-text">Veja notificações de novos agendamentos</span>
+                </div>
+                <div class="auth-bullet">
+                    <div class="auth-bullet-icon">📊</div>
+                    <span class="auth-bullet-text">Acompanhe seu histórico completo</span>
+                </div>
+            </div>
         </div>
 
-        <form method="post" asp-action="Logar" class="auth-form" id="loginForm">
+        <div class="auth-panel-footer">
+            © 2026 Trampo — Todos os direitos reservados
+        </div>
+    </div>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" id="email" placeholder="seu@email.com" required />
-                <span class="error-text" id="emailError"></span>
+    <!-- =============================================
+         PAINEL DIREITO — formulário
+    ============================================= -->
+    <div class="auth-form-side">
+        <div class="auth-card">
+
+            <div class="auth-card-header">
+                <span class="auth-card-label">Acesso seguro</span>
+                <h2 class="auth-card-title">Entrar na conta</h2>
+                <p class="auth-card-sub">Informe suas credenciais para continuar.</p>
             </div>
 
-            <div class="form-group password-group">
-                <label>Senha</label>
+            <form method="post" asp-action="Logar" id="loginForm" novalidate>
 
-                <div class="password-wrap">
-                    <input type="password" name="senha" id="senha" placeholder="••••••••" required />
-                    <button type="button" class="toggle-pass" id="toggleSenha">👁</button>
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" for="email">E-mail</label>
+                    <input class="form-input" type="email" name="email" id="email"
+                           placeholder="seu@email.com" required autocomplete="email" />
+                    <span class="input-message" id="emailError"></span>
                 </div>
 
-                <span class="error-text" id="senhaError"></span>
+                <!-- Senha -->
+                <div class="form-group">
+                    <label class="form-label" for="senha">Senha</label>
+                    <div class="password-wrap">
+                        <input class="form-input" type="password" name="senha" id="senha"
+                               placeholder="••••••••" required autocomplete="current-password" />
+                        <button type="button" class="toggle-pass" id="toggleSenha"
+                                aria-label="Mostrar senha">👁</button>
+                    </div>
+                    <span class="input-message" id="senhaError"></span>
+                </div>
+
+                <button type="submit" class="btn-auth" id="btnLogin">
+                    Entrar na conta
+                </button>
+
+            </form>
+
+            <div class="auth-switch">
+                Não tem conta?
+                <a asp-controller="Usuario" asp-action="Cadastro">Criar conta grátis</a>
             </div>
 
-            <button type="submit" class="btn-auth" id="btnLogin">
-                Entrar
-            </button>
-
-        </form>
-
-        <div class="auth-footer">
-            <span>Não tem conta?</span>
-            <a asp-controller="Usuario" asp-action="Cadastro">Criar conta</a>
         </div>
-
     </div>
+
 </div>
 
 @section Scripts {

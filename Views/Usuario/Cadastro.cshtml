@@ -1,50 +1,151 @@
 ﻿@section Styles {
-    <link rel="stylesheet" href="~/css/cadastro.css" />
+    <link rel="stylesheet" href="~/css/auth.css" />
 }
 
+<div class="auth-page">
 
-<div class="container-cadastro">
-    <div class="container">
-        <h2>Cadastro</h2>
+    <!-- =============================================
+         PAINEL ESQUERDO — branding
+    ============================================= -->
+    <div class="auth-panel">
+        <div class="auth-panel-dots"></div>
 
-        <form method="post" action="/Usuario/Cadastrar" id="formCadastro">
+        <div class="auth-panel-content">
+            <div class="auth-logo">Tram<span>po</span></div>
 
-            <input type="text" name="nome" placeholder="Nome completo" required>
+            <h1 class="auth-panel-title">
+                Comece a usar<br>o Trampo hoje 🚀
+            </h1>
+            <p class="auth-panel-sub">
+                Cadastre-se gratuitamente e agende serviços ou comece a receber clientes agora mesmo.
+            </p>
 
-            <input type="email" name="email" placeholder="Email" required>
-
-            <!-- TELEFONE (futuro) -->
-            <input type="text" name="telefone" id="telefone" placeholder="Telefone (opcional)">
-
-            <input type="password" name="senha" id="senha" placeholder="Senha" required>
-
-        
-            <select id="tipo" name="tipo" onchange="mostrarCampos()" required>
-                <option value="cliente">Cliente</option>
-                <option value="profissional">Profissional</option>
-            </select>
-
-            <!-- CAMPOS DO PROFISSIONAL -->
-            <div id="camposProfissional" style="display: none;">
-
-                <select name="tipoDocumento">
-                    <option value="CPF">CPF</option>
-                    <option value="CNPJ">CNPJ</option>
-                </select>
-
-                <div class="input-group">
-                    <input type="text" name="documento" id="documento" placeholder="CPF ou CNPJ">
-                    <span id="docMsg" class="input-message"></span>
+            <div class="auth-bullets">
+                <div class="auth-bullet">
+                    <div class="auth-bullet-icon">✅</div>
+                    <span class="auth-bullet-text">Cadastro gratuito em menos de 1 minuto</span>
+                </div>
+                <div class="auth-bullet">
+                    <div class="auth-bullet-icon">🔒</div>
+                    <span class="auth-bullet-text">Seus dados estão protegidos e seguros</span>
+                </div>
+                <div class="auth-bullet">
+                    <div class="auth-bullet-icon">⭐</div>
+                    <span class="auth-bullet-text">+850 profissionais verificados disponíveis</span>
                 </div>
             </div>
+        </div>
 
-            <button type="submit" id="btnCadastro">Cadastrar</button>
-
-        </form>
-
-        <p>Já tem conta? <a href="Login">Login</a></p>
+        <div class="auth-panel-footer">
+            © 2026 Trampo — Todos os direitos reservados
+        </div>
     </div>
+
+    <!-- =============================================
+         PAINEL DIREITO — formulário
+    ============================================= -->
+    <div class="auth-form-side">
+        <div class="auth-card">
+
+            <div class="auth-card-header">
+                <span class="auth-card-label">É grátis</span>
+                <h2 class="auth-card-title">Criar conta</h2>
+                <p class="auth-card-sub">Preencha os dados abaixo para começar.</p>
+            </div>
+
+            <form method="post" action="/Usuario/Cadastrar" id="formCadastro" novalidate>
+
+                <!-- Nome -->
+                <div class="form-group">
+                    <label class="form-label" for="nome">Nome completo</label>
+                    <input class="form-input" type="text" name="nome" id="nome"
+                           placeholder="João da Silva" required autocomplete="name" />
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" for="email">E-mail</label>
+                    <input class="form-input" type="email" name="email" id="email"
+                           placeholder="seu@email.com" required autocomplete="email" />
+                </div>
+
+                <!-- Telefone + Tipo em linha -->
+                <div class="form-row">
+                    <div class="form-group" style="margin-bottom:0">
+                        <label class="form-label" for="telefone">
+                            Telefone <span class="optional">(opcional)</span>
+                        </label>
+                        <input class="form-input" type="text" name="telefone" id="telefone"
+                               placeholder="(11) 91234-5678" autocomplete="tel" />
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:0">
+                        <label class="form-label" for="tipo">Tipo de conta</label>
+                        <div class="select-wrap">
+                            <select class="form-select" id="tipo" name="tipo"
+                                    onchange="mostrarCampos()" required>
+                                <option value="cliente">👤 Cliente</option>
+                                <option value="profissional">👷 Profissional</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Senha -->
+                <div class="form-group" style="margin-top:18px">
+                    <label class="form-label" for="senha">Senha</label>
+                    <div class="password-wrap">
+                        <input class="form-input" type="password" name="senha" id="senha"
+                               placeholder="Mínimo 6 caracteres" required autocomplete="new-password" />
+                        <button type="button" class="toggle-pass" id="toggleSenha"
+                                aria-label="Mostrar senha">👁</button>
+                    </div>
+                    <span class="input-message" id="senhaMsg"></span>
+                </div>
+
+                <!-- Campos profissional (ocultos por padrão) -->
+                <div id="camposProfissional" style="display:none;">
+                    <div class="prof-box">
+                        <div class="prof-box-label">🏢 Dados profissionais</div>
+
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Tipo de documento</label>
+                                <div class="select-wrap">
+                                    <select class="form-select" name="tipoDocumento">
+                                        <option value="CPF">CPF</option>
+                                        <option value="CNPJ">CNPJ</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label">Número do documento</label>
+                                <input class="form-input" type="text" name="documento"
+                                       id="documento" placeholder="000.000.000-00" />
+                            </div>
+                        </div>
+
+                        <span class="input-message" id="docMsg" style="margin-top:6px;"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth" id="btnCadastro" style="margin-top:24px;">
+                    Criar minha conta
+                </button>
+
+            </form>
+
+            <div class="auth-switch">
+                Já tem conta?
+                <a href="/Usuario/Login">Entrar</a>
+            </div>
+
+        </div>
+    </div>
+
 </div>
+
 @section Scripts {
     <script src="~/js/cadastro.js"></script>
 }

@@ -1,0 +1,559 @@
+/* ===================================================
+   AUTH.CSS — compartilhado entre Login e Cadastro
+   Design: split-screen | lado esquerdo escuro (branding)
+                         | lado direito branco (form)
+=================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+/* ===================================================
+   TOKENS
+=================================================== */
+:root {
+    --blue: #1A6BFF;
+    --blue-dark: #1258d6;
+    --blue-soft: rgba(26, 107, 255, 0.09);
+    --accent: #00D4AA;
+    --dark: #0D1B3E;
+    --dark-2: #060F26;
+    --text-muted: #6B7A99;
+    --border: #DDE5F5;
+    --border-focus: rgba(26, 107, 255, 0.50);
+    --bg-input: #F7F9FF;
+    --red: #F03D3D;
+    --red-soft: rgba(240, 61, 61, 0.09);
+    --green: #00C06B;
+    --green-soft: rgba(0, 192, 107, 0.09);
+    --radius-xl: 24px;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===================================================
+   RESET BASE
+=================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark-2);
+    color: var(--dark);
+}
+
+/* ===================================================
+   LAYOUT SPLIT-SCREEN
+=================================================== */
+.auth-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* ---------------------------------------------------
+   PAINEL ESQUERDO — branding
+--------------------------------------------------- */
+.auth-panel {
+    background: var(--dark);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 56px;
+}
+
+/* gradientes decorativos */
+.auth-panel::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: -120px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(26, 107, 255, 0.18) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-panel::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    right: -80px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(0, 212, 170, 0.12) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* grade de pontos */
+.auth-panel-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+
+.auth-panel-content {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 56px;
+}
+
+.auth-logo span {
+    color: var(--blue);
+}
+
+.auth-panel-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+}
+
+.auth-panel-sub {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.50);
+    line-height: 1.7;
+    max-width: 340px;
+    margin-bottom: 48px;
+}
+
+/* bullets de benefícios */
+.auth-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.auth-bullet {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.auth-bullet-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(0, 212, 170, 0.12);
+    border: 1px solid rgba(0, 212, 170, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.auth-bullet-text {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.60);
+    line-height: 1.4;
+}
+
+/* footer do painel */
+.auth-panel-footer {
+    position: relative;
+    z-index: 1;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.22);
+}
+
+/* ---------------------------------------------------
+   PAINEL DIREITO — formulário
+--------------------------------------------------- */
+.auth-form-side {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 40px;
+    overflow-y: auto;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* header do card */
+.auth-card-header {
+    margin-bottom: 36px;
+}
+
+.auth-card-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: var(--blue-soft);
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+}
+
+.auth-card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+}
+
+.auth-card-sub {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ===================================================
+   FORM ELEMENTS
+=================================================== */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-label .optional {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+/* input base */
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 0.92rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--dark);
+    background: var(--bg-input);
+    outline: none;
+    transition: var(--transition);
+    appearance: none;
+}
+
+.form-input::placeholder {
+    color: #aab4cc;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(26, 107, 255, 0.10);
+}
+
+/* select com chevron customizado */
+.select-wrap {
+    position: relative;
+}
+
+.select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    pointer-events: none;
+}
+
+/* dois campos lado a lado */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+/* campo de senha com olho */
+.password-wrap {
+    position: relative;
+}
+
+.password-wrap .form-input {
+    padding-right: 46px;
+}
+
+.toggle-pass {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-muted);
+    padding: 4px;
+    transition: var(--transition);
+    line-height: 1;
+}
+
+.toggle-pass:hover {
+    color: var(--blue);
+}
+
+/* ===================================================
+   ESTADOS DE VALIDAÇÃO
+=================================================== */
+.form-input.input-error,
+.form-select.input-error {
+    border-color: var(--red);
+    background: var(--red-soft);
+    box-shadow: 0 0 0 4px rgba(240, 61, 61, 0.08);
+}
+
+.form-input.input-success,
+.form-select.input-success {
+    border-color: var(--green);
+    background: var(--green-soft);
+    box-shadow: 0 0 0 4px rgba(0, 192, 107, 0.08);
+}
+
+.input-message {
+    font-size: 0.76rem;
+    margin-top: 5px;
+    color: var(--red);
+    min-height: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.input-message.success {
+    color: var(--green);
+}
+
+.input-message:empty {
+    display: none;
+}
+
+/* ===================================================
+   CAIXA CAMPOS PROFISSIONAL
+=================================================== */
+.prof-box {
+    margin-top: 4px;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-input);
+    border: 1.5px dashed var(--border);
+    animation: expandIn 0.25s ease both;
+}
+
+.prof-box-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+@keyframes expandIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================================
+   BOTÃO PRINCIPAL
+=================================================== */
+.btn-auth {
+    width: 100%;
+    padding: 14px;
+    margin-top: 8px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--blue);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.97rem;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(26, 107, 255, 0.30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* shimmer no hover */
+.btn-auth::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: 0.5s;
+}
+
+.btn-auth:hover {
+    background: var(--blue-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(26, 107, 255, 0.38);
+}
+
+.btn-auth:hover::after {
+    transform: translateX(100%);
+}
+
+.btn-auth:active {
+    transform: translateY(0);
+}
+
+.btn-auth:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ===================================================
+   DIVISOR  "ou"
+=================================================== */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* ===================================================
+   LINK DE RODAPÉ
+=================================================== */
+.auth-switch {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.auth-switch a {
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 4px;
+    transition: var(--transition);
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* ===================================================
+   RESPONSIVIDADE
+=================================================== */
+@media (max-width: 900px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-panel {
+        display: none;
+    }
+
+    .auth-form-side {
+        padding: 40px 24px;
+        background: var(--dark-2);
+    }
+
+    .auth-card {
+        background: #fff;
+        border-radius: var(--radius-xl);
+        padding: 36px 28px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    }
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===================================================
+   KEYFRAMES
+=================================================== */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
