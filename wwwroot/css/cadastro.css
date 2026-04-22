@@ -17,7 +17,7 @@
     background: white;
     padding: 40px 30px;
     border-radius: 20px;
-    
+
     box-shadow: 0 20px 60px rgba(13, 27, 62, 0.15);
     animation: fadeUp 0.6s ease;
 }
@@ -48,7 +48,7 @@ form select {
 form input:focus,
 form select:focus {
     border-color: #1A6BFF;
-    box-shadow: 0 0 0 3px rgba(26,107,255,0.1);
+    box-shadow: 0 0 0 3px rgba(26, 107, 255, 0.1);
     outline: none;
 }
 
@@ -72,7 +72,7 @@ form button {
 
 form button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(26,107,255,0.4);
+    box-shadow: 0 10px 25px rgba(26, 107, 255, 0.4);
 }
 
 /* LINK */
@@ -125,14 +125,94 @@ form button:hover {
     color: #00c853;
 }
 
+/* MENSAGEM ERRO*/
+
+.auth-card-header {
+    margin-top: 10px;
+}
+
+.alert-erro {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    background: linear-gradient(135deg, #ffecec, #fff5f5);
+    border: 1px solid #ffc9c9;
+
+    padding: 16px 18px;
+    border-radius: 14px;
+
+    margin-bottom: 22px; /* 👈 RESPIRO IMPORTANTE */
+
+    box-shadow: 0 8px 20px rgba(217, 48, 37, 0.08);
+
+    animation: fadeDown 0.4s ease;
+}
+
+.alert-icon {
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.alert-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.alert-content strong {
+    color: #b42318;
+    font-size: 14px;
+}
+
+.alert-content span {
+    color: #7a271a;
+    font-size: 13px;
+}
+
+/* animação suave */
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* ANIMAÇÃO */
 @keyframes fadeUp {
     from {
         opacity: 0;
         transform: translateY(25px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-4px);
+    }
+
+    50% {
+        transform: translateX(4px);
+    }
+
+    75% {
+        transform: translateX(-4px);
+    }
+
+    100% {
+        transform: translateX(0);
     }
 }

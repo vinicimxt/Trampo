@@ -10,6 +10,8 @@
     public string Atendimento { get; set; } = "";
     public int Raio { get; set; }
 
+    public string? Email { get; set;}
+
     }
     
 }

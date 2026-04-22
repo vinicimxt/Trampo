@@ -1,55 +1,80 @@
 @model List<Servico>
 
-<h2>Meus Serviços</h2>
-
-<a href="/Servico/Criar">➕ Novo Serviço</a>
-
-@if (Model.Count == 0)
-{
-    <p>Você ainda não cadastrou nenhum serviço.</p>
-}
-else
-{
-    foreach (var s in Model)
-    {
-        <div style="border:1px solid #ccc; margin:10px; padding:10px; border-radius:10px;">
-            
-            <h3>@s.Nome</h3>
-
-            <p><b>Categoria:</b> @s.Categoria</p>
-            <p><b>Subcategoria:</b> @s.Subcategoria</p>
-
-            <p><b>Descrição:</b>@s.Descricao</p>
-
-            <p><b>Contato:</b> @s.Contato</p>
-
-            <p><b>Atendimento:</b> @s.Atendimento</p>
-
-            @if (s.Atendimento == "Local")
-            {
-                <p><b>📍 Endereço:</b> @s.Endereco</p>
-            }
-
-            @if (!string.IsNullOrEmpty(s.LinkOnline))
-            {
-                <p>🔗 Online: @s.LinkOnline</p>
-            }
-
-        </div>
-    }
+@section Styles {
+    <link rel="stylesheet" href="~/css/PerfilPro.css" />
 }
 
-@foreach (var s in Model)
-{
-    <div>
-        <h3>@s.Nome</h3>
+<div class="perfil-container">
 
-        <a asp-controller="Servico" asp-action="Editar" asp-route-id="@s.Id">
-            ✏️ Editar
-        </a>
+    <div class="perfil-header">
+        <h2>📦 Meus Serviços</h2>
 
-        <a asp-controller="Servico" asp-action="Excluir" asp-route-id="@s.Id">
-            🗑 Excluir
+        <a href="/Servico/Criar" class="btn-primary">
+            ➕ Novo Serviço
         </a>
     </div>
-}
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <p>Você ainda não cadastrou nenhum serviço.</p>
+            <a href="/Servico/Criar" class="btn-primary">
+                Criar primeiro serviço
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="servicos-grid">
+            @foreach (var s in Model)
+            {
+                <div class="servico-card">
+
+                    <div class="servico-header">
+                        <h3>@s.Nome</h3>
+                        <span class="badge">@s.Atendimento</span>
+                    </div>
+
+                    <div class="servico-body">
+                        <p><b>Categoria:</b> @s.Categoria</p>
+                        <p><b>Subcategoria:</b> @s.Subcategoria</p>
+
+                        @if (!string.IsNullOrEmpty(s.Descricao))
+                        {
+                            <p class="desc">@s.Descricao</p>
+                        }
+
+                        @if (!string.IsNullOrEmpty(s.Contato))
+                        {
+                            <p>📞 @s.Contato</p>
+                        }
+
+                        @if (s.Atendimento == "Local")
+                        {
+                            <p>📍 @s.Endereco</p>
+                        }
+
+                        @if (!string.IsNullOrEmpty(s.LinkOnline))
+                        {
+                            <p>🔗 <a href="@s.LinkOnline" target="_blank">Acessar</a></p>
+                        }
+                    </div>
+
+                    <div class="servico-actions">
+                        <a asp-controller="Servico" asp-action="Editar" asp-route-id="@s.Id" class="btn-edit">
+                            ✏️ Editar
+                        </a>
+
+                        <a asp-controller="Servico" asp-action="Excluir" asp-route-id="@s.Id"
+                           class="btn-delete"
+                           onclick="return confirm('Deseja excluir este serviço?')">
+                            🗑 Excluir
+                        </a>
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+
+</div>

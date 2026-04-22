@@ -22,6 +22,11 @@ namespace BD_TRAMPO.Controllers
             ViewBag.Categorias = catDAO.Listar();
 
             ViewBag.Subcategorias = new List<Subcategoria>(); // começa vazio
+            ServicoDAO servicoDAO = new ServicoDAO();
+            ViewBag.TotalServicos = servicoDAO.ContarPorProfissional(usuarioId);
+
+            AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+            ViewBag.PedidosPendentes = agendamentoDAO.ContarPendentes(usuarioId);
 
             return View();
         }
@@ -87,7 +92,7 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Informe o link para atendimento online.");
             }
-            
+
             if (atendimento == "Local" && !localId.HasValue)
             {
                 return Content("Selecione um local para atendimento.");

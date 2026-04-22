@@ -43,6 +43,7 @@ namespace BD_TRAMPO
         SELECT 
             s.Id,
             s.Nome,
+            s.ProfissionalId,
             s.Descricao,
             s.Atendimento,
             s.Contato,
@@ -67,6 +68,7 @@ namespace BD_TRAMPO
                     lista.Add(new Servico
                     {
                         Id = (int)reader["Id"],
+                        ProfissionalId = (int)reader["ProfissionalId"],
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : "",
                         Atendimento = reader["Atendimento"].ToString(),
@@ -147,6 +149,19 @@ namespace BD_TRAMPO
                 object result = cmd.ExecuteScalar();
 
                 return result != null ? (int)result : 0;
+            }
+        }
+        public int ContarPorProfissional(int profissionalId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+
+                string query = "SELECT COUNT(*) FROM Servicos WHERE ProfissionalId = @id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@id", profissionalId);
+
+                return (int)cmd.ExecuteScalar();
             }
         }
 

@@ -8,14 +8,14 @@ namespace BD_TRAMPO
     {
         Conexao conexao = new Conexao();
 
-        public int Inserir(string nome, string email, string senha, string tipo)
+        public int Inserir(string nome, string email, string senha, string tipo, string telefone)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                INSERT INTO Usuarios (Nome, Email, Senha, Tipo)
+                INSERT INTO Usuarios (Nome, Email, Senha, Tipo, Telefone)
                 OUTPUT INSERTED.Id
-                VALUES (@Nome, @Email, @Senha, @Tipo)";
+                VALUES (@Nome, @Email, @Senha, @Tipo, @Telefone)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -23,10 +23,28 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@Senha", senha);
                 cmd.Parameters.AddWithValue("@Tipo", tipo);
+                cmd.Parameters.AddWithValue("@telefone",
+                string.IsNullOrEmpty(telefone) ? (object)DBNull.Value : telefone);
 
                 int id = (int)cmd.ExecuteScalar();
 
                 return id;
+            }
+        }
+
+        public bool EmailExiste(string email)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+
+                string sql = "SELECT COUNT(*) FROM Usuarios WHERE Email = @email";
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@email", email);
+
+                int count = (int)cmd.ExecuteScalar();
+
+                return count > 0;
             }
         }
 

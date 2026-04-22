@@ -33,9 +33,7 @@
             <!-- Busca por nome / profissional -->
             <div class="filter-search">
                 <span class="filter-search-icon">🔍</span>
-                <input type="text"
-                       id="filtro-busca"
-                       placeholder="Buscar serviço ou profissional..."
+                <input type="text" id="filtro-busca" placeholder="Buscar serviço ou profissional..."
                        data-filtro="busca" />
             </div>
 
@@ -90,12 +88,9 @@
             @foreach (var item in Model)
             {
                 <!-- data-* = ganchos de filtro client-side (e futuramente query params) -->
-                <div class="card-servico"
-                     data-nome="@item.Nome.ToLower()"
-                     data-profissional="@item.NomeProfissional.ToLower()"
-                     data-categoria="@item.Categoria"
-                     data-subcategoria="@item.Subcategoria"
-                     data-atendimento="@item.Atendimento">
+                <div class="card-servico" data-nome="@item.Nome.ToLower()"
+                     data-profissional="@item.NomeProfissional.ToLower()" data-categoria="@item.Categoria"
+                     data-subcategoria="@item.Subcategoria" data-atendimento="@item.Atendimento">
 
                     <!-- Header -->
                     <div class="card-header">
@@ -138,9 +133,18 @@
                     <!-- Footer do card -->
                     <div class="footer-card">
                         <span class="contato">📞 @item.Contato</span>
-                        <a href="/Agendamento/novo?servicoId=@item.Id" class="btn-agendar">
-                            Agendar →
-                        </a>
+
+                        <div style="display:flex; gap:8px;">
+
+                            <a href="/Profissional/Perfil/@item.ProfissionalId" class="btn-outline">
+                                Ver perfil
+                            </a>
+
+                            <a href="/Agendamento/novo?servicoId=@item.Id" class="btn-agendar">
+                                Agendar →
+                            </a>
+
+                        </div>
                     </div>
 
                 </div>

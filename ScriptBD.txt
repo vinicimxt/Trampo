@@ -193,6 +193,9 @@ SELECT * FROM Locais;
 
 -- TESTE DE LOCAL
 
+ALTER TABLE Usuarios
+ADD Telefone VARCHAR(20) NULL;
+
 ALTER TABLE Locais
 ADD FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id);
 

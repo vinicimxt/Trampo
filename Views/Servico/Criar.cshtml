@@ -1,96 +1,118 @@
 @model Servico
 
-<h2>Novo Serviço</h2>
+@section Styles {
+    <link rel="stylesheet" href="~/css/servico.css" />
+}
 
-<form method="post" action="/Servico/Salvar">
+<div class="servico-page">
 
-    <label>Categoria:</label>
-    <select id="categoria">
-        <option value="">Selecione</option>
-        @foreach (var c in ViewBag.Categorias)
-        {
-            <option value="@c.Id">@c.Nome</option>
-        }
-    </select>
+    <div class="servico-card">
 
-    <label>Subcategoria:</label>
-    <select id="subcategoria" name="subcategoriaId" required>
-        <option value="">Selecione a subcategoria</option>
-    </select>
-    
-    <label>Nome do Serviço:</label>
-    <input type="text" name="nome" required />
+        <!-- HEADER -->
+        <div class="servico-header">
+            <h2>🛠 Criar Serviço</h2>
+            <p>Preencha as informações para começar a receber clientes</p>
+        </div>
 
-    <label>Descrição:</label>
-    <textarea name="descricao"></textarea>
+        <form method="post" action="/Servico/Salvar" class="servico-form">
 
-    <label>Contato:</label>
-    <input type="text" name="contato" />
+            <!-- CATEGORIA -->
+            <div class="form-group">
+                <label>Categoria</label>
+                <select id="categoria" class="form-select">
+                    <option value="">Selecione</option>
+                    @foreach (var c in ViewBag.Categorias)
+                    {
+                        <option value="@c.Id">@c.Nome</option>
+                    }
+                </select>
+            </div>
 
-    <label>Tipo de Atendimento:</label>
-    <select name="atendimento" id="atendimento">
-        <option value="Domicilio">Domicílio</option>
-        <option value="Local">Local</option>
-        <option value="Online">Online</option>
-    </select>
+            <!-- SUBCATEGORIA -->
+            <div class="form-group">
+                <label>Subcategoria</label>
+                <select id="subcategoria" name="subcategoriaId" class="form-select" required>
+                    <option value="">Selecione a subcategoria</option>
+                </select>
+            </div>
 
-    <!-- 🔥 LOCAL -->
-    <div id="localDiv" style="display:none;">
-        <label>Local de Atendimento:</label>
-        <select name="localId">
-            <option value="">Selecione</option>
+            <!-- NOME -->
+            <div class="form-group">
+                <label>Nome do Serviço</label>
+                <input type="text" name="nome" id="nome" class="form-input" required />
+                <span class="input-msg" id="nomeMsg"></span>
+            </div>
 
-            @foreach (var l in ViewBag.Locais)
-            {
-                <option value="@l.Id">@l.Nome - @l.Endereco</option>
-            }
-        </select>
+            <!-- DESCRIÇÃO -->
+            <div class="form-group">
+                <label>Descrição</label>
+                <textarea name="descricao" id="descricao" class="form-textarea" maxlength="200"></textarea>
+                <div class="char-count">
+                    <span id="contador">0</span>/200
+                </div>
+            </div>
+
+            <!-- CONTATO -->
+            <div class="form-group">
+                <label>Contato</label>
+                <input type="text" name="contato" id="contato" class="form-input" placeholder="(11) 91234-5678" />
+                </div>
+
+                <!-- ATENDIMENTO -->
+                <div class="form-group">
+                    <label>Tipo de Atendimento</label>
+                    <select name="atendimento" id="atendimento" class="form-select">
+                        <option value="Domicilio">🏠 Domicílio</option>
+                        <option value="Local">📍 Local</option>
+                        <option value="Online">💻 Online</option>
+                    </select>
+                </div>
+
+                <!-- LOCAL -->
+                <div id="localDiv" class="form-group hidden">
+                    <label>Local de Atendimento</label>
+                    <select name="localId" class="form-select">
+                        <option value="">Selecione</option>
+
+                        @foreach (var l in ViewBag.Locais)
+                        {
+                            <option value="@l.Id">@l.Nome - @l.Endereco</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- ONLINE -->
+                <div id="linkOnlineDiv" class="form-group hidden">
+                    <label>Link do atendimento</label>
+                    <input type="text" name="linkOnline" class="form-input" placeholder="https://meet.google.com/..." />
+                </div>
+
+                <!-- BOTÃO -->
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <span id="btnText">Criar Serviço 🚀</span>
+                    <span id="btnLoader" class="loader hidden"></span>
+                </button>
+
+            </form>
+
+            <div class="preview-card">
+                <h3>👀 Preview</h3>
+
+                <div class="preview-box">
+                    <h4 id="previewNome">Nome do serviço</h4>
+                    <p id="previewDesc">Descrição aparecerá aqui...</p>
+
+                    <div class="preview-tags">
+                        <span id="previewCategoria">Categoria</span>
+                        <span id="previewAtendimento">Atendimento</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- 🔥 ONLINE -->
-    <div id="linkOnlineDiv" style="display:none;">
-        <label>Link do atendimento:</label>
-        <input type="text" name="linkOnline" placeholder="Link do atendimento online..." />
-    </div>
-
-    <button type="submit">Cadastrar</button>
-
-</form>
-
-<script>
-    // 🔥 Subcategorias dinâmicas
-    document.getElementById("categoria").addEventListener("change", function () {
-        let categoriaId = this.value;
-
-        fetch('/Servico/GetSubcategorias?categoriaId=' + categoriaId)
-            .then(res => res.json())
-            .then(data => {
-                let sub = document.getElementById("subcategoria");
-
-                sub.innerHTML = '<option value="">Selecione a subcategoria</option>';
-
-                data.forEach(s => {
-                    sub.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
-                });
-            });
-    });
-
-    // 🔥 CONTROLE DE EXIBIÇÃO
-    function toggleCampos() {
-        let tipo = document.getElementById("atendimento").value.toLowerCase();
-
-        let linkDiv = document.getElementById("linkOnlineDiv");
-        let localDiv = document.getElementById("localDiv");
-
-        linkDiv.style.display = (tipo === "online") ? "block" : "none";
-        localDiv.style.display = (tipo === "local") ? "block" : "none";
+    @section Scripts {
+        <script src="~/js/servico.js"></script>
     }
-
-    // 🔥 muda ao trocar
-    document.getElementById("atendimento").addEventListener("change", toggleCampos);
-
-    // 🔥 roda ao carregar (ESSENCIAL)
-    document.addEventListener("DOMContentLoaded", function () {
-        toggleCampos();
-    });
-</script>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BD_TRAMPO.Controllers
 {
-    public class ProfissionalController : Controller
+    public class ProfissionalController : BaseController
     {
 
         public IActionResult Lista()
@@ -64,12 +64,40 @@ namespace BD_TRAMPO.Controllers
 
             return View(lista);
         }
-
-        public IActionResult Perfil()
+        public IActionResult Perfil(int id)
         {
-            return View();
+            if (HttpContext.Session.GetString("UsuarioId") == null)
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+            ServicoDAO servicoDAO = new ServicoDAO();
+
+            var profissional = profDAO.BuscarPorId(id);
+            var servicos = servicoDAO.ListarPorProfissional(id);
+
+            ViewBag.Servicos = servicos;
+
+            return View("PerfilPublico", profissional);
         }
 
+
+        public IActionResult MeuPerfil()
+        {
+            var auth = Proteger();
+            if (auth != null) return auth;
+
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+
+            ServicoDAO servicoDAO = new ServicoDAO();
+            var servicos = servicoDAO.ListarPorProfissional(profissionalId);
+
+            return View(servicos);
+        }
 
     }
 

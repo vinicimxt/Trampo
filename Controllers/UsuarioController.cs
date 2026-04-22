@@ -2,7 +2,8 @@
 {
     using Microsoft.AspNetCore.Mvc;
     using BD_TRAMPO;
-    using BD_TRAMPO.Models;
+    using Microsoft.Data.SqlClient;
+
     public class UsuarioController : Controller
     {
         public IActionResult Cadastro()
@@ -16,26 +17,51 @@
 
         [HttpPost]
         public IActionResult Cadastrar(
-           string nome, string email, string senha, string tipo,
-           string tipoDocumento, string documento)
+         string nome, string email, string senha, string tipo,
+         string tipoDocumento, string documento, string telefone)
         {
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+            // ✅ 1. VALIDAR ANTES
+            if (usuarioDAO.EmailExiste(email))
+            {
+                TempData["Erro"] = "Já existe uma conta com esse email 😬";
+                return RedirectToAction("Cadastro");
+            }
+
             string senhaHash = Seguranca.GerarHash(senha);
 
-            UsuarioDAO usuarioDAO = new UsuarioDAO();
-            int usuarioId = usuarioDAO.Inserir(nome, email, senhaHash, tipo);
+            int usuarioId;
 
-            // 🔥 AUTENTICA AQUI
+            try
+            {
+                // ✅ 2. TENTAR INSERIR
+                usuarioId = usuarioDAO.Inserir(nome, email, senhaHash, tipo, telefone);
+            }
+            catch (SqlException ex)
+            {
+                //  proteção extra (concorrência)
+                if (ex.Number == 2627) // UNIQUE constraint
+                {
+                    TempData["Erro"] = "Esse email já está cadastrado ";
+                    return RedirectToAction("Cadastro");
+                }
+
+                throw; // outros erros
+            }
+
+            // ✅ 3. AUTENTICAR
             HttpContext.Session.SetString("UsuarioId", usuarioId.ToString());
             HttpContext.Session.SetString("UsuarioNome", nome);
             HttpContext.Session.SetString("UsuarioEmail", email);
             HttpContext.Session.SetString("UsuarioTipo", tipo);
 
+            // ✅ 4. FLUXO NORMAL
             if (tipo == "profissional")
             {
                 ProfissionalDAO profDAO = new ProfissionalDAO();
                 profDAO.Inserir(usuarioId, tipoDocumento, documento);
 
-                // 👉 AGORA FUNCIONA
                 return RedirectToAction("Criar", "Servico");
             }
             else
@@ -47,6 +73,7 @@
             }
         }
 
+
         public IActionResult RedirecionarPorTipo()
         {
             var tipo = Sessao.Tipo(HttpContext);
@@ -56,6 +83,8 @@
 
             return RedirectToAction("Lista", "Profissional");
         }
+
+
 
         [HttpPost]
         public IActionResult Logar(string email, string senha)

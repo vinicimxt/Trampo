@@ -109,7 +109,7 @@ namespace BD_TRAMPO.Controllers
             {
                 return Content("Esse horário já está ocupado.");
             }
-  
+
 
             var agendamento = new Agendamento
             {
@@ -126,7 +126,9 @@ namespace BD_TRAMPO.Controllers
 
             dao.Inserir(agendamento);
 
-            return RedirectToAction("Lista", "Profissional");
+            TempData["Sucesso"] = $"Agendamento confirmado para {data} às {hora}!";
+
+            return RedirectToAction("Meus", "Agendamento");
         }
 
 

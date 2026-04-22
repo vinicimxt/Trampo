@@ -84,6 +84,35 @@ namespace BD_TRAMPO
             }
         }
 
+        public Profissional BuscarPorId(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        SELECT p.Id, u.Nome, u.Email
+        FROM Profissionais p
+        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+        WHERE p.Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return new Profissional
+                    {
+                        Id = (int)reader["Id"],
+                        Nome = reader["Nome"].ToString(),
+                        Email = reader["Email"].ToString()
+                    };
+                }
+            }
+
+            return null;
+        }
+
         public void AtualizarEndereco(int usuarioId, string endereco)
         {
             using (SqlConnection conn = conexao.Conectar())

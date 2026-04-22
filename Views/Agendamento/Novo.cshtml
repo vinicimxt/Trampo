@@ -2,59 +2,246 @@
     <link rel="stylesheet" href="~/css/agendamento.css" />
 }
 
-<div id="pagina" data-atendimento="@ViewBag.Atendimento">
+@if (TempData["Sucesso"] != null)
+{
+    <div class="toast-sucesso" id="toastSucesso">
+        @TempData["Sucesso"]
+    </div>
+}
+<div class="agendamento-page" id="pagina" data-atendimento="@ViewBag.Atendimento">
 
-    <h2>Agendar Serviço</h2>
-
-    <form method="post" action="/Agendamento/Salvar">
-
-        <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
-        <input type="hidden" name="hora" id="horaSelecionada" />
-
-        <label>Escolha a data:</label>
-        <input type="date" name="data" value="@ViewBag.Data.ToString("yyyy-MM-dd")"
-               min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(30).ToString("yyyy-MM-dd")"
-               onchange="location.href='?servicoId=@ViewBag.ServicoId&data=' + this.value" required />
-
-        <h3>Horários disponíveis</h3>
-
-        <div class="grid-horarios">
-            @foreach (var hora in ViewBag.Horarios)
-            {
-                bool ocupado = ViewBag.Ocupados.Contains(hora);
-
-                if (ocupado)
-                {
-                    <div class="slot ocupado">
-                        @hora.ToString(@"hh\:mm")
-                    </div>
-                }
-                else
-                {
-                    <div class="slot livre" onclick="selecionarHora('@hora', this)">
-                        @hora.ToString(@"hh\:mm")
-                    </div>
-                }
-            }
+    <!-- =============================================
+         HERO INTERNO
+    ============================================= -->
+    <div class="agend-hero">
+        <div class="agend-hero-inner">
+            <span class="agend-hero-label">Confirme seu horário</span>
+            <h1 class="agend-hero-title">Agendar Serviço</h1>
+            <p class="agend-hero-sub">Escolha a data e o horário disponível para sua visita.</p>
         </div>
+    </div>
 
-        <br />
+    <!-- =============================================
+         LAYOUT PRINCIPAL
+    ============================================= -->
+    <form method="post" action="/Agendamento/Salvar" id="formAgendamento">
 
-        <label>Descrição:</label>
-        <textarea name="descricao"></textarea>
+        <input type="hidden" name="servicoId"    value="@ViewBag.ServicoId" />
+        <input type="hidden" name="hora"         id="horaSelecionada" />
 
-        <br />
+        <div class="agend-main">
 
-        @if (ViewBag.Atendimento == "Local")
-        {
-            <p>📍 Atendimento no local do profissional</p>
-        }
+            <!-- ----------------------------------------
+                 PAINEL ESQUERDO
+            ---------------------------------------- -->
+            <div class="agend-left">
 
-        <button type="submit">Confirmar Agendamento</button>
+                <!-- Seletor de data -->
+                <div class="agend-card" style="animation-delay:.05s">
+                    <div class="agend-card-title">📅 Escolha a data</div>
+
+                    <div class="date-input-wrap">
+                        <input class="date-input"
+                               type="date"
+                               name="data"
+                               id="inputData"
+                               value="@ViewBag.Data.ToString("yyyy-MM-dd")"
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                               max="@DateTime.Today.AddDays(30).ToString("yyyy-MM-dd")"
+                               onchange="location.href='?servicoId=@ViewBag.ServicoId&data=' + this.value"
+                               required />
+                    </div>
+                </div>
+
+                <!-- Grid de horários -->
+                <div class="agend-card" style="animation-delay:.10s">
+                    <div class="agend-card-title">🕐 Horários disponíveis</div>
+
+                    <!-- legenda -->
+                    <div class="horario-legenda">
+                        <div class="legenda-item">
+                            <span class="legenda-dot livre"></span> Disponível
+                        </div>
+                        <div class="legenda-item">
+                            <span class="legenda-dot ocupado"></span> Ocupado
+                        </div>
+                        <div class="legenda-item">
+                            <span class="legenda-dot selecionado"></span> Selecionado
+                        </div>
+                    </div>
+
+                    <div class="grid-horarios">
+                        @if (ViewBag.Horarios != null && ViewBag.Horarios.Count > 0)
+                        {
+                            @foreach (var hora in ViewBag.Horarios)
+                            {
+                                bool ocupado = ViewBag.Ocupados.Contains(hora);
+
+                                if (ocupado)
+                                {
+                                    <div class="slot ocupado" title="Horário indisponível">
+                                        @hora.ToString(@"hh\:mm")
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="slot livre"
+                                         onclick="selecionarHora('@hora', this)"
+                                         title="Clique para selecionar">
+                                        @hora.ToString(@"hh\:mm")
+                                    </div>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="sem-horarios">
+                                Nenhum horário disponível para esta data.<br>
+                                Tente outro dia.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="agend-card" style="animation-delay:.15s">
+                    <div class="agend-card-title">💬 Observações</div>
+
+                    <label class="descricao-label" for="descricao">
+                        Algum detalhe para o profissional? <span style="color:var(--text-muted);font-weight:400;">(opcional)</span>
+                    </label>
+                    <textarea class="descricao-input"
+                              name="descricao"
+                              id="descricao"
+                              placeholder="Ex: preciso de atendimento rápido, tenho alergia a X..."></textarea>
+                </div>
+
+                <!-- Endereço (só domicílio) -->
+                <div class="agend-card campo-dinamico" id="enderecoDiv" style="animation-delay:.18s">
+                    <div class="agend-card-title">📍 Endereço de atendimento</div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                        <div>
+                            <label class="agend-label" for="rua">Rua / Avenida</label>
+                            <input class="agend-input" type="text" name="rua" id="rua" placeholder="Rua das Flores" />
+                        </div>
+                        <div>
+                            <label class="agend-label" for="numero">Número</label>
+                            <input class="agend-input" type="text" name="numero" id="numero" placeholder="123" />
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                        <div>
+                            <label class="agend-label" for="bairro">Bairro</label>
+                            <input class="agend-input" type="text" name="bairro" id="bairro" placeholder="Centro" />
+                        </div>
+                        <div>
+                            <label class="agend-label" for="cidade">Cidade</label>
+                            <input class="agend-input" type="text" name="cidade" id="cidade" placeholder="São Paulo" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ----------------------------------------
+                 PAINEL DIREITO — resumo
+            ---------------------------------------- -->
+            <div class="agend-right">
+
+                <!-- Resumo do serviço -->
+                <div class="agend-card" style="animation-delay:.08s">
+                    <div class="agend-card-title">📋 Resumo do agendamento</div>
+
+                    <div class="resumo-servico">
+                        <div class="resumo-avatar" id="resumoAvatar">?</div>
+                        <div>
+                            <div class="resumo-nome" id="resumoNome">@ViewBag.NomeServico</div>
+                            <span class="resumo-categoria">@ViewBag.Categoria</span>
+                        </div>
+                    </div>
+
+                    <div class="resumo-linha">
+                        <span class="resumo-linha-label">📅 Data</span>
+                        <span class="resumo-linha-val" id="resumoData">
+                            @ViewBag.Data.ToString("dd/MM/yyyy")
+                        </span>
+                    </div>
+
+                    <div class="resumo-linha">
+                        <span class="resumo-linha-label">🕐 Horário</span>
+                        <span class="resumo-linha-val empty" id="resumoHora">
+                            Nenhum selecionado
+                        </span>
+                    </div>
+
+                    <div class="resumo-linha">
+                        <span class="resumo-linha-label">📌 Atendimento</span>
+                        <span class="resumo-linha-val">
+                            @if (ViewBag.Atendimento == "Local")
+                            {
+                                <span class="atend-badge atend-local">📍 Local</span>
+                            }
+                            else if (ViewBag.Atendimento == "Domicilio")
+                            {
+                                <span class="atend-badge atend-domicilio">🏠 Domicílio</span>
+                            }
+                            else if (ViewBag.Atendimento == "Online")
+                            {
+                                <span class="atend-badge atend-online">💻 Online</span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="resumo-linha">
+                        <span class="resumo-linha-label">👤 Profissional</span>
+                        <span class="resumo-linha-val">@ViewBag.NomeProfissional</span>
+                    </div>
+
+                </div>
+
+                <!-- Aviso por tipo de atendimento -->
+                @if (ViewBag.Atendimento == "Local")
+                {
+                    <div class="atend-aviso local">
+                        <span class="atend-aviso-icon">📍</span>
+                        <span>O atendimento será <strong>no local do profissional</strong>. Lembre-se de chegar no horário marcado.</span>
+                    </div>
+                }
+                else if (ViewBag.Atendimento == "Domicilio")
+                {
+                    <div class="atend-aviso domicilio">
+                        <span class="atend-aviso-icon">🏠</span>
+                        <span>O profissional irá até <strong>seu endereço</strong>. Preencha o endereço completo abaixo.</span>
+                    </div>
+                }
+                else if (ViewBag.Atendimento == "Online")
+                {
+                    <div class="atend-aviso online">
+                        <span class="atend-aviso-icon">💻</span>
+                        <span>Atendimento <strong>online</strong>. Você receberá o link de acesso após a confirmação.</span>
+                    </div>
+                }
+
+                <!-- Botão confirmar -->
+                <div class="agend-card" style="padding:20px; animation-delay:.12s">
+                    <button type="submit" class="btn-confirmar" id="btnConfirmar" disabled>
+                        Confirmar Agendamento →
+                    </button>
+                    <p class="btn-confirmar-hint" id="hintConfirmar">
+                        Selecione um horário para continuar
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
 
     </form>
 
 </div>
+
 @section Scripts {
     <script src="~/js/agendamento.js"></script>
 }

@@ -2,6 +2,8 @@
     <link rel="stylesheet" href="~/css/auth.css" />
 }
 
+
+
 <div class="auth-page">
 
     <!-- =============================================
@@ -46,6 +48,16 @@
     ============================================= -->
     <div class="auth-form-side">
         <div class="auth-card">
+            @if (TempData["Erro"] != null)
+            {
+                <div class="alert-erro">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <strong>Erro ao criar conta</strong>
+                        <span>@TempData["Erro"]</span>
+                    </div>
+                </div>
+            }
 
             <div class="auth-card-header">
                 <span class="auth-card-label">É grátis</span>
@@ -53,20 +65,20 @@
                 <p class="auth-card-sub">Preencha os dados abaixo para começar.</p>
             </div>
 
-            <form method="post" action="/Usuario/Cadastrar" id="formCadastro" novalidate>
+            <form method="post" asp-controller="Usuario" asp-action="Cadastrar">
 
                 <!-- Nome -->
                 <div class="form-group">
                     <label class="form-label" for="nome">Nome completo</label>
-                    <input class="form-input" type="text" name="nome" id="nome"
-                           placeholder="João da Silva" required autocomplete="name" />
+                    <input class="form-input" type="text" name="nome" id="nome" placeholder="João da Silva" required
+                           autocomplete="name" />
                 </div>
 
                 <!-- Email -->
                 <div class="form-group">
                     <label class="form-label" for="email">E-mail</label>
-                    <input class="form-input" type="email" name="email" id="email"
-                           placeholder="seu@email.com" required autocomplete="email" />
+                    <input class="form-input @(TempData["Erro"] != null ? "input-error" : "")" type="email" name="email"
+                           id="email" placeholder="seu@email.com" required />
                 </div>
 
                 <!-- Telefone + Tipo em linha -->
@@ -82,8 +94,7 @@
                     <div class="form-group" style="margin-bottom:0">
                         <label class="form-label" for="tipo">Tipo de conta</label>
                         <div class="select-wrap">
-                            <select class="form-select" id="tipo" name="tipo"
-                                    onchange="mostrarCampos()" required>
+                            <select class="form-select" id="tipo" name="tipo" onchange="mostrarCampos()" required>
                                 <option value="cliente">👤 Cliente</option>
                                 <option value="profissional">👷 Profissional</option>
                             </select>
@@ -121,8 +132,8 @@
 
                             <div class="form-group" style="margin-bottom:0">
                                 <label class="form-label">Número do documento</label>
-                                <input class="form-input" type="text" name="documento"
-                                       id="documento" placeholder="000.000.000-00" />
+                                <input class="form-input" type="text" name="documento" id="documento"
+                                       placeholder="000.000.000-00" />
                             </div>
                         </div>
 
