@@ -1,80 +1,222 @@
 @model List<Servico>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/PerfilPro.css" />
+    <link rel="stylesheet" href="~/css/MeusServicos.css" />
 }
 
-<div class="perfil-container">
+<div class="servicos-page">
 
-    <div class="perfil-header">
-        <h2>📦 Meus Serviços</h2>
+    <!-- =============================================
+         HERO INTERNO
+    ============================================= -->
+    <div class="servicos-hero">
+        <div class="servicos-hero-dots"></div>
+        <div class="servicos-hero-inner">
 
-        <a href="/Servico/Criar" class="btn-primary">
-            ➕ Novo Serviço
-        </a>
-    </div>
+            <div>
+                <span class="servicos-hero-label">Meu negócio</span>
+                <h1 class="servicos-hero-title">Meus Serviços</h1>
+                <p class="servicos-hero-sub">Gerencie, edite e organize tudo que você oferece.</p>
+            </div>
 
-    @if (Model.Count == 0)
-    {
-        <div class="empty-state">
-            <p>Você ainda não cadastrou nenhum serviço.</p>
-            <a href="/Servico/Criar" class="btn-primary">
-                Criar primeiro serviço
-            </a>
-        </div>
-    }
-    else
-    {
-        <div class="servicos-grid">
-            @foreach (var s in Model)
+            @if (Model.Count > 0)
             {
-                <div class="servico-card">
-
-                    <div class="servico-header">
-                        <h3>@s.Nome</h3>
-                        <span class="badge">@s.Atendimento</span>
-                    </div>
-
-                    <div class="servico-body">
-                        <p><b>Categoria:</b> @s.Categoria</p>
-                        <p><b>Subcategoria:</b> @s.Subcategoria</p>
-
-                        @if (!string.IsNullOrEmpty(s.Descricao))
-                        {
-                            <p class="desc">@s.Descricao</p>
-                        }
-
-                        @if (!string.IsNullOrEmpty(s.Contato))
-                        {
-                            <p>📞 @s.Contato</p>
-                        }
-
-                        @if (s.Atendimento == "Local")
-                        {
-                            <p>📍 @s.Endereco</p>
-                        }
-
-                        @if (!string.IsNullOrEmpty(s.LinkOnline))
-                        {
-                            <p>🔗 <a href="@s.LinkOnline" target="_blank">Acessar</a></p>
-                        }
-                    </div>
-
-                    <div class="servico-actions">
-                        <a asp-controller="Servico" asp-action="Editar" asp-route-id="@s.Id" class="btn-edit">
-                            ✏️ Editar
-                        </a>
-
-                        <a asp-controller="Servico" asp-action="Excluir" asp-route-id="@s.Id"
-                           class="btn-delete"
-                           onclick="return confirm('Deseja excluir este serviço?')">
-                            🗑 Excluir
-                        </a>
-                    </div>
-
+                <div class="servicos-hero-count">
+                    <strong>@Model.Count</strong>
+                    <span>@(Model.Count == 1 ? "serviço cadastrado" : "serviços cadastrados")</span>
                 </div>
             }
+
         </div>
-    }
+    </div>
+
+    <!-- =============================================
+         CONTEÚDO
+    ============================================= -->
+    <div class="servicos-main">
+
+        @if (Model.Count == 0)
+        {
+            <!-- Empty state -->
+            <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <h3>Nenhum serviço cadastrado</h3>
+                <p>Crie seu primeiro serviço para aparecer para clientes e começar a receber agendamentos.</p>
+                <a href="/Servico/Criar" class="btn-criar-primeiro">+ Criar primeiro serviço</a>
+            </div>
+        }
+        else
+        {
+            <!-- Topbar com título e botão -->
+            <div class="servicos-topbar">
+                <div class="servicos-topbar-title">Todos os serviços</div>
+                <a href="/Servico/Criar" class="btn-novo">+ Novo serviço</a>
+            </div>
+
+            <!-- Grid de cards -->
+            <div class="servicos-grid">
+                @foreach (var s in Model)
+                {
+                    <div class="servico-card">
+
+                        <!-- Cabeçalho -->
+                        <div class="servico-header">
+                            <h3>@s.Nome</h3>
+
+                            @{
+                                var badgeClass = s.Atendimento switch {
+                                    "Local"     => "badge-local",
+                                    "Domicilio" => "badge-domicilio",
+                                    "Online"    => "badge-online",
+                                    _           => "badge-default"
+                                };
+                                var badgeIcon = s.Atendimento switch {
+                                    "Local"     => "📍",
+                                    "Domicilio" => "🏠",
+                                    "Online"    => "💻",
+                                    _           => "📌"
+                                };
+                            }
+                            <span class="badge-atendimento @badgeClass">
+                                @badgeIcon @s.Atendimento
+                            </span>
+                        </div>
+
+                        <!-- Corpo -->
+                        <div class="servico-body">
+
+                            <!-- Categoria -->
+                            <div class="info-row">
+                                <div class="info-row-icon">📂</div>
+                                <div>
+                                    <span class="info-row-label">Categoria</span>
+                                    <div class="info-row-val">@s.Categoria</div>
+                                </div>
+                            </div>
+
+                            <!-- Subcategoria -->
+                            @if (!string.IsNullOrEmpty(s.Subcategoria))
+                            {
+                                <div class="info-row">
+                                    <div class="info-row-icon">🏷️</div>
+                                    <div>
+                                        <span class="info-row-label">Subcategoria</span>
+                                        <div class="info-row-val">@s.Subcategoria</div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Contato -->
+                            @if (!string.IsNullOrEmpty(s.Contato))
+                            {
+                                <div class="info-row">
+                                    <div class="info-row-icon">📞</div>
+                                    <div>
+                                        <span class="info-row-label">Contato</span>
+                                        <div class="info-row-val">@s.Contato</div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Endereço (atendimento local) -->
+                            @if (s.Atendimento == "Local" && !string.IsNullOrEmpty(s.Endereco))
+                            {
+                                <div class="info-row">
+                                    <div class="info-row-icon">📍</div>
+                                    <div>
+                                        <span class="info-row-label">Endereço</span>
+                                        <div class="info-row-val">@s.Endereco</div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Link online -->
+                            @if (!string.IsNullOrEmpty(s.LinkOnline))
+                            {
+                                <div class="info-row">
+                                    <div class="info-row-icon">🔗</div>
+                                    <div>
+                                        <span class="info-row-label">Link de acesso</span>
+                                        <a href="@s.LinkOnline" target="_blank" class="servico-link">
+                                            Acessar →
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Descrição -->
+                            @if (!string.IsNullOrEmpty(s.Descricao))
+                            {
+                                <p class="servico-desc">@s.Descricao</p>
+                            }
+
+                        </div>
+
+                        <!-- Ações -->
+                        <div class="servico-actions">
+                            <a asp-controller="Servico"
+                               asp-action="Editar"
+                               asp-route-id="@s.Id"
+                               class="btn-edit">
+                                ✏️ Editar
+                            </a>
+
+                            <button type="button"
+                                    class="btn-delete"
+                                    onclick="abrirModal('@s.Id', '@s.Nome.Replace("'", "\\'")' )">
+                                🗑 Excluir
+                            </button>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
 
 </div>
+
+
+<!-- =============================================
+     MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
+============================================= -->
+<div class="modal-overlay" id="modalExcluir">
+    <div class="modal-box">
+        <div class="modal-icon">🗑️</div>
+        <div class="modal-title">Excluir serviço?</div>
+        <p class="modal-sub">
+            Tem certeza que deseja excluir
+            <span class="modal-name" id="modalNomeServico"></span>?
+            Esta ação não pode ser desfeita.
+        </p>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
+            <a class="btn-modal-confirm" id="modalLinkExcluir" href="#">Sim, excluir</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function abrirModal(id, nome) {
+            document.getElementById('modalNomeServico').textContent = '"' + nome + '"';
+            document.getElementById('modalLinkExcluir').href = '/Servico/Excluir/' + id;
+            document.getElementById('modalExcluir').classList.add('open');
+        }
+
+        function fecharModal() {
+            document.getElementById('modalExcluir').classList.remove('open');
+        }
+
+        // fecha clicando fora do box
+        document.getElementById('modalExcluir').addEventListener('click', function (e) {
+            if (e.target === this) fecharModal();
+        });
+
+        // fecha com ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') fecharModal();
+        });
+    </script>
+}

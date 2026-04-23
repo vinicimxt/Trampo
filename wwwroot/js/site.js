@@ -1,54 +1,60 @@
-﻿
+﻿// =============================
+// CAMPOS DINÂMICOS (cadastro)
+// =============================
 function mostrarCampos() {
     var tipo = document.getElementById("tipo").value;
     var campos = document.getElementById("camposProfissional");
 
-    campos.style.display = (tipo === "profissional") ? "block" : "none";
+    if (campos) {
+        campos.style.display = (tipo === "profissional") ? "block" : "none";
+    }
 }
 
-const toggle = document.getElementById("menuToggle");
-const menu = document.getElementById("navMenu");
+// =============================
+// NAVBAR / MENU MOBILE
+// =============================
+const menuToggle = document.getElementById("menuToggle");
+const navMenu = document.getElementById("navLinks");
 
-toggle.addEventListener("click", () => {
-    menu.classList.toggle("active");
-});
+if (menuToggle && navMenu) {
+    menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+    });
+}
 
-
+// =============================
 // SCROLL EFFECT
+// =============================
 const navbar = document.getElementById("navbar");
 
-window.addEventListener("scroll", () => {
-    navbar.classList.toggle("scrolled", window.scrollY > 20);
-});
+if (navbar) {
+    window.addEventListener("scroll", () => {
+        navbar.classList.toggle("scrolled", window.scrollY > 20);
+    });
+}
 
-// MENU MOBILE
-const toggle = document.getElementById("menuToggle");
-const nav = document.getElementById("navLinks");
-
-toggle.addEventListener("click", () => {
-    nav.classList.toggle("active");
-});
-
-// NAV INDICATOR
+// =============================
+// NAV INDICATOR (hover)
+// =============================
 const items = document.querySelectorAll(".nav-item");
-const nav = document.querySelector(".nav-links");
+const navLinks = document.querySelector(".nav-links");
 
-if (items.length && nav) {
+if (items.length && navLinks) {
     const indicator = document.createElement("div");
     indicator.classList.add("nav-indicator");
-    nav.appendChild(indicator);
+    navLinks.appendChild(indicator);
 
     items.forEach(item => {
         item.addEventListener("mouseenter", () => {
             const rect = item.getBoundingClientRect();
-            const parentRect = nav.getBoundingClientRect();
+            const parentRect = navLinks.getBoundingClientRect();
 
             indicator.style.width = rect.width + "px";
             indicator.style.left = (rect.left - parentRect.left) + "px";
         });
     });
 
-    nav.addEventListener("mouseleave", () => {
+    navLinks.addEventListener("mouseleave", () => {
         indicator.style.width = "0";
     });
 }

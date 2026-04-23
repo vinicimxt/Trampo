@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Avaliar Serviço";
+}
+
+<link rel="stylesheet" href="~/css/avaliacao.css" />
+
+<div class="avaliacao-container">
+
+    <h2>⭐ Avaliar Atendimento</h2>
+
+    <form method="post" action="/Avaliacao/Salvar">
+
+        <input type="hidden" name="agendamentoId" value="@ViewBag.AgendamentoId" />
+        <input type="hidden" name="profissionalId" value="@ViewBag.ProfissionalId" />
+
+        <!-- NOTA -->
+        <label>Nota:</label>
+        <div class="stars">
+            @for (int i = 1; i <= 5; i++)
+            {
+                <div class="stars" id="stars">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+
+                <input type="hidden" name="nota" id="nota" required />
+            }
+        </div>
+
+        <input type="hidden" name="nota" id="nota" required />
+
+        <!-- COMENTÁRIO -->
+        <label>Comentário:</label>
+        <textarea name="comentario" placeholder="Conte como foi o atendimento..."></textarea>
+
+        <button type="submit" class="btn-primary">
+            Enviar avaliação
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+    const stars = document.querySelectorAll(".star");
+    const inputNota = document.getElementById("nota");
+
+    let notaSelecionada = 0;
+
+    stars.forEach((star, index) => {
+
+        // 🔥 HOVER
+        star.addEventListener("mouseover", () => {
+            resetStars();
+
+            for (let i = 0; i <= index; i++) {
+                stars[i].classList.add("hover");
+            }
+        });
+
+        // 🔥 SAIR DO HOVER
+        star.addEventListener("mouseout", () => {
+            resetStars();
+            marcarSelecionadas();
+        });
+
+        // 🔥 CLICK (SALVA)
+        star.addEventListener("click", () => {
+            notaSelecionada = index + 1;
+            inputNota.value = notaSelecionada;
+
+            marcarSelecionadas();
+        });
+    });
+
+    function resetStars() {
+        stars.forEach(s => {
+            s.classList.remove("hover");
+        });
+    }
+
+    function marcarSelecionadas() {
+        stars.forEach((s, i) => {
+            s.classList.remove("active");
+
+            if (i < notaSelecionada) {
+                s.classList.add("active");
+            }
+        });
+    }
+</script>

@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int ClienteId { get; set; }
+        public int UsuarioId { get; set; }
         public int ProfissionalId { get; set; }
         public int ServicoId { get; set; }
         public DateTime Data { get; set; }

@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS Categorias;
 DROP TABLE IF EXISTS Clientes;
 DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios;
+DROP TABLE IF EXISTS Avaliacoes;
 
 -- 👤 USUÁRIOS
 CREATE TABLE Usuarios (
@@ -49,8 +50,7 @@ CREATE TABLE Profissionais (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT NOT NULL UNIQUE,
     TipoDocumento VARCHAR(10),
-    Documento VARCHAR(20),
-    Endereco VARCHAR(255) NULL, -- 👈 já incluído
+    Documento VARCHAR(20)
 
     FOREIGN KEY (UsuarioId) 
         REFERENCES Usuarios(Id)
@@ -152,6 +152,19 @@ CREATE TABLE Agendamentos (
         ON DELETE CASCADE
 );
 
+CREATE TABLE Avaliacoes (
+    Id INT PRIMARY KEY IDENTITY,
+    ProfissionalId INT NOT NULL,
+    UsuarioId INT NOT NULL,
+    AgendamentoId INT,
+    Nota INT NOT NULL,
+    Comentario NVARCHAR(500),
+    Data DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id),
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id),
+    FOREIGN KEY (AgendamentoId) REFERENCES Agendamentos(Id)
+);
 -- 🌱 DADOS INICIAIS
 
 INSERT INTO Categorias (Nome) VALUES
@@ -190,8 +203,19 @@ SELECT * FROM Servicos;
 SELECT * FROM Disponibilidade;
 SELECT * FROM Agendamentos;
 SELECT * FROM Locais;
+SELECT * FROM Avaliacoes;
 
 -- TESTE DE LOCAL
+
+ALTER TABLE Avaliacoes
+ADD UsuarioId INT;
+
+ALTER TABLE Avaliacoes
+ADD Data DATETIME DEFAULT GETDATE();
+
+ALTER TABLE Avaliacoes
+ADD CONSTRAINT FK_Avaliacoes_Usuarios
+FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id);
 
 ALTER TABLE Usuarios
 ADD Telefone VARCHAR(20) NULL;

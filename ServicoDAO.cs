@@ -99,6 +99,7 @@ namespace BD_TRAMPO
                 SELECT 
                     s.Id,
                     s.Nome,
+                    s.ProfissionalId,
                     s.Descricao,
                     s.Contato,
                     s.Atendimento,
@@ -122,6 +123,7 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         Nome = reader["Nome"].ToString(),
+                        ProfissionalId = (int)reader["ProfissionalId"],
                         Descricao = reader["Descricao"].ToString(),
                         Contato = reader["Contato"] != DBNull.Value ? reader["Contato"].ToString() : "",
                         Atendimento = reader["Atendimento"].ToString(),
@@ -155,7 +157,7 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-
+                
                 string query = "SELECT COUNT(*) FROM Servicos WHERE ProfissionalId = @id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);

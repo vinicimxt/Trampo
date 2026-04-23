@@ -34,6 +34,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWdlbmRhbWVudG9cUmVjZWJpZG9zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Avaliacao/Avaliar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXZhbGlhY2FvXEF2YWxpYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -66,12 +70,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXExpc3RhLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/MeusServicos.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXE1ldXNTZXJ2aWNvcy5jc2h0bWw=
+[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/MeuPerfil.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXE1ldVBlcmZpbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/Perfil.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXFBlcmZpbC5jc2h0bWw=
+[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/MeusServicos.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXE1ldXNTZXJ2aWNvcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/PerfilPublico.cshtml]

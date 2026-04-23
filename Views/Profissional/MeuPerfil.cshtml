@@ -1,0 +1,161 @@
+@section Styles {
+    <link rel="stylesheet" href="~/css/PerfilPro.css" />
+}
+
+<div class="perfil-page">
+
+    <!-- =============================================
+         HERO DO PAINEL
+    ============================================= -->
+    <div class="perfil-hero">
+        <div class="perfil-hero-dots"></div>
+        <div class="perfil-hero-inner">
+
+            <div class="perfil-hero-left">
+                <span class="perfil-hero-label">Painel do Profissional</span>
+                <h1 class="perfil-hero-title">Olá, @ViewBag.NomeProfissional 👋</h1>
+                <p class="perfil-hero-sub">Gerencie seus serviços, agendamentos e acompanhe seu desempenho.</p>
+            </div>
+
+            <div class="perfil-hero-status">
+                <div class="status-dot"></div>
+                <div class="status-text">
+                    Perfil ativo
+                    <span>Visível para clientes</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =============================================
+         BARRA DE STATS RÁPIDAS
+    ============================================= -->
+    <div class="perfil-stats">
+        <div class="perfil-stats-inner">
+
+            <div class="stat-item">
+                <div class="stat-item-icon">📦</div>
+                <div>
+                    <div class="stat-item-val">@(ViewBag.TotalServicos ?? 0)</div>
+                    <div class="stat-item-lbl">Serviços ativos</div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-item-icon">📥</div>
+                <div>
+                    <div class="stat-item-val">@(ViewBag.TotalAgendamentos ?? 0)</div>
+                    <div class="stat-item-lbl">Agendamentos totais</div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-item-icon">⏳</div>
+                <div>
+                    <div class="stat-item-val" style="color: @((ViewBag.PedidosPendentes ?? 0) > 0 ? "#ef4444" : "var(--dark)")">
+                        @(ViewBag.PedidosPendentes ?? 0)
+                    </div>
+                    <div class="stat-item-lbl">Pendentes</div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-item-icon">⭐</div>
+                <div>
+                    <div class="stat-item-val">@(ViewBag.Avaliacao ?? "—")</div>
+                    <div class="stat-item-lbl">Avaliação média</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =============================================
+         CONTEÚDO PRINCIPAL
+    ============================================= -->
+    <div class="perfil-main">
+
+        @if ((ViewBag.TotalServicos ?? 0) == 0)
+        {
+            <!-- Estado vazio -->
+            <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <h3>Nenhum serviço cadastrado ainda</h3>
+                <p>
+                    Crie seu primeiro serviço para aparecer para os clientes e começar a receber agendamentos.
+                </p>
+                <a href="/Servico/Criar" class="btn-primary-solid">
+                    + Criar meu primeiro serviço
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Ação rápida -->
+            <div class="acao-rapida">
+                <div class="acao-rapida-text">
+                    <h3>Quer oferecer algo novo?</h3>
+                    <p>Adicione um serviço e comece a receber agendamentos de novos clientes.</p>
+                </div>
+                <a href="/Servico/Criar" class="btn-criar">+ Novo serviço</a>
+            </div>
+
+            <!-- Título da seção -->
+            <div class="perfil-section-title">Acesso rápido</div>
+
+            <!-- Grid de cards -->
+            <div class="perfil-grid">
+
+                <a href="/Profissional/MeusServicos" class="perfil-card">
+                    <div class="card-icon">📦</div>
+                    <div class="card-content">
+                        <h3>Meus Serviços</h3>
+                        <p>Edite, ative ou remova seus serviços cadastrados</p>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+
+                <a href="/Local/Lista" class="perfil-card">
+                    <div class="card-icon">📍</div>
+                    <div class="card-content">
+                        <h3>Locais de Atendimento</h3>
+                        <p>Configure endereços e áreas de cobertura</p>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+
+                <a href="/Agendamento/Recebidos" class="perfil-card">
+                    <div class="card-icon">📥</div>
+                    <div class="card-content">
+                        <h3>Agendamentos Recebidos</h3>
+                        <p>Veja e gerencie todos os pedidos dos clientes</p>
+                    </div>
+
+                    @if ((ViewBag.PedidosPendentes ?? 0) > 0)
+                    {
+                        <span class="card-badge">@ViewBag.PedidosPendentes novo(s)</span>
+                    }
+
+                    <span class="card-arrow">→</span>
+                </a>
+
+                <a href="/Profissional/Dashboard" class="perfil-card destaque">
+                    <div class="card-icon">📊</div>
+                    <div class="card-content">
+                        <h3>Dashboard</h3>
+                        <p>Faturamento, avaliações e métricas do seu negócio</p>
+                    </div>
+                    <span class="card-arrow">→</span>
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/PerfilPro.js"></script>
+}

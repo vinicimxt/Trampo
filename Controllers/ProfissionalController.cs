@@ -64,7 +64,8 @@ namespace BD_TRAMPO.Controllers
 
             return View(lista);
         }
-        public IActionResult Perfil(int id)
+        
+        public IActionResult PerfilPublico(int id)
         {
             if (HttpContext.Session.GetString("UsuarioId") == null)
             {
@@ -73,15 +74,23 @@ namespace BD_TRAMPO.Controllers
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
             ServicoDAO servicoDAO = new ServicoDAO();
+            AvaliacaoDAO avalDAO = new AvaliacaoDAO(); // 🔥 NOVO
 
             var profissional = profDAO.BuscarPorId(id);
             var servicos = servicoDAO.ListarPorProfissional(id);
 
+            if (profissional == null)
+            {
+                return Content("Profissional não encontrado.");
+            }
+
+            // 🔥 DADOS PRA VIEW
             ViewBag.Servicos = servicos;
+            ViewBag.Avaliacoes = avalDAO.ListarPorProfissional(id);
+            ViewBag.Media = avalDAO.MediaPorProfissional(id);
 
-            return View("PerfilPublico", profissional);
+            return View(profissional);
         }
-
 
         public IActionResult MeuPerfil()
         {
@@ -94,11 +103,12 @@ namespace BD_TRAMPO.Controllers
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
             ServicoDAO servicoDAO = new ServicoDAO();
-            var servicos = servicoDAO.ListarPorProfissional(profissionalId);
 
-            return View(servicos);
+            ViewBag.TotalServicos = servicoDAO.ContarPorProfissional(profissionalId);
+            ViewBag.PedidosPendentes = 0; // ou seu método real
+
+            return View();
         }
-
     }
 
 

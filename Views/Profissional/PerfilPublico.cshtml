@@ -1,0 +1,113 @@
+@model Profissional
+
+<link rel="stylesheet" href="~/css/perfil-publico.css" />
+
+<div class="perfil-publico">
+
+    <!-- HEADER -->
+    <div class="perfil-header">
+        <div class="perfil-header-content">
+
+            
+           
+            <div class="avatar">
+                @(Model.Nome?.Substring(0, 1).ToUpper())
+            </div>
+
+            <div>
+                <h1>@Model.Nome</h1>
+                <p class="sub">Profissional verificado</p>
+            </div>
+
+            <div class="perfil-actions">
+                <a href="#" class="btn-contato">
+                    💬 Falar agora
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+    
+    <!-- CONTEÚDO -->
+    <div class="perfil-body">
+
+        <!-- SOBRE -->
+        <div class="card">
+            <h3>👤 Sobre</h3>
+            <p>
+                Profissional disponível para serviços de qualidade.
+                Entre em contato para mais informações.
+            </p>
+        </div>
+
+        <!-- SERVIÇOS -->
+       <div class="card">
+    <h3>📦 Serviços</h3>
+
+    @if (ViewBag.Servicos.Count == 0)
+    {
+        <p>Nenhum serviço cadastrado.</p>
+    }
+    else
+    {
+        <div class="servicos-grid">
+            @foreach (var s in ViewBag.Servicos)
+            {
+                <div class="servico-card">
+
+                    <h4>@s.Nome</h4>
+
+                    <p class="desc">@s.Descricao</p>
+
+                    <div class="chips">
+                        <span>@s.Categoria</span>
+                        <span>@s.Subcategoria</span>
+                    </div>
+
+                    <div class="footer">
+                        <span class="tipo">@s.Atendimento</span>
+
+                        <div class="acoes">
+                            <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar">
+                                Agendar
+                            </a>
+
+                            <!-- 🔥 AVALIAR (TEMPORÁRIO - depois vamos corrigir com agendamento) -->
+                            <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar">
+                                ⭐ Avaliar
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+</div>
+
+        <!-- AVALIAÇÕES -->
+        <div class="card">
+            <h3>⭐ Avaliações (@ViewBag.Media.ToString("0.0"))</h3>
+
+            @if (ViewBag.Avaliacoes.Count == 0)
+            {
+                <p>Nenhuma avaliação ainda.</p>
+            }
+            else
+            {
+                foreach (var a in ViewBag.Avaliacoes)
+                {
+                    <div class="avaliacao">
+                        <strong>@a.NomeUsuario</strong>
+                        <span>⭐ @a.Nota</span>
+                        <p>@a.Comentario</p>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+
+</div>
