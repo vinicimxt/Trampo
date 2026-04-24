@@ -80,23 +80,61 @@ namespace BD_TRAMPO.Controllers
         [HttpPost]
         public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string contato, string atendimento, int? localId, string linkOnline)
         {
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
-            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+            if (usuarioIdStr == null)
+                return RedirectToAction("Login", "Usuario");
+
+            int usuarioId = int.Parse(usuarioIdStr);
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
-            ServicoDAO dao = new ServicoDAO();
-            var lista = dao.ListarPorProfissional(profissionalId);
-            if (atendimento == "Online" && string.IsNullOrEmpty(linkOnline))
+            if (profissionalId == 0)
             {
-                return Content("Informe o link para atendimento online.");
+                TempData["Erro"] = "Você precisa ser um profissional para criar serviços.";
+                return RedirectToAction("Cadastro", "Usuario");
             }
 
-            if (atendimento == "Local" && !localId.HasValue)
+            ServicoDAO dao = new ServicoDAO();
+
+            //  VALIDAÇÕES INTELIGENTES
+
+            if (atendimento == "Online")
             {
-                return Content("Selecione um local para atendimento.");
+                if (string.IsNullOrWhiteSpace(linkOnline))
+                {
+                    TempData["Erro"] = "Informe o link do atendimento online.";
+                    return RedirectToAction("Criar");
+                }
+
+                // valida formato básico de URL
+                if (!Uri.IsWellFormedUriString(linkOnline, UriKind.Absolute))
+                {
+                    TempData["Erro"] = "Informe um link válido.";
+                    return RedirectToAction("Criar");
+                }
             }
+
+            if (atendimento == "Local")
+            {
+                LocalDAO localDAO = new LocalDAO();
+                var locais = localDAO.ListarPorProfissional(profissionalId);
+
+                if (locais.Count == 0)
+                {
+                    TempData["Erro"] = "Você precisa cadastrar um local antes de criar serviços presenciais.";
+                    return RedirectToAction("Criar");
+                }
+
+                if (!localId.HasValue)
+                {
+                    TempData["Erro"] = "Selecione um local.";
+                    return RedirectToAction("Criar");
+                }
+            }
+
+            //  SALVAR
             Servico s = new Servico
             {
                 ProfissionalId = profissionalId,
@@ -110,6 +148,8 @@ namespace BD_TRAMPO.Controllers
             };
 
             dao.Inserir(s);
+
+            TempData["Sucesso"] = "Serviço criado com sucesso 🚀";
 
             return RedirectToAction("MeusServicos", "Profissional");
         }

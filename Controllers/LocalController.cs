@@ -1,77 +1,87 @@
 using Microsoft.AspNetCore.Mvc;
 using BD_TRAMPO.DAO;
+
 namespace BD_TRAMPO.Controllers
 {
-
     public class LocalController : Controller
     {
-        public IActionResult Lista()
+        /* -----------------------------------------------
+           Helper: pega o profissionalId da sessão
+        ----------------------------------------------- */
+        private int GetProfissionalId()
         {
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+            return new ProfissionalDAO().BuscarPorUsuario(usuarioId);
+        }
 
-            ProfissionalDAO profDAO = new ProfissionalDAO();
-            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
-
-            LocalDAO dao = new LocalDAO();
-            var lista = dao.ListarPorProfissional(profissionalId);
-
+        /* -----------------------------------------------
+           GET /Local/Lista
+           Única view da página — lista + drawer inline
+        ----------------------------------------------- */
+        public IActionResult Lista()
+        {
+            var lista = new LocalDAO().ListarPorProfissional(GetProfissionalId());
             return View(lista);
         }
 
-
-        public IActionResult Criar()
-        {
-            return View();
-        }
-
+        /* -----------------------------------------------
+           POST /Local/Salvar
+           Cria ou edita dependendo do campo "id":
+             id == 0 ou null → novo local
+             id > 0          → editar local existente
+        ----------------------------------------------- */
         [HttpPost]
-        public IActionResult Criar(string nome, string endereco)
+        public IActionResult Salvar(int id, string nome, string endereco)
         {
-            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
-
-            ProfissionalDAO profDAO = new ProfissionalDAO();
-            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
-
             LocalDAO dao = new LocalDAO();
 
-            dao.Inserir(new Local
+            if (id > 0)
             {
-                ProfissionalId = profissionalId,
-                Nome = nome,
-                Endereco = endereco
-            });
+                // EDITAR
+                dao.Atualizar(new Local
+                {
+                    Id = id,
+                    Nome = nome,
+                    Endereco = endereco
+                });
+            }
+            else
+            {
+                // CRIAR
+                dao.Inserir(new Local
+                {
+                    ProfissionalId = GetProfissionalId(),
+                    Nome = nome,
+                    Endereco = endereco
+                });
+            }
 
             return RedirectToAction("Lista");
         }
 
-
-        public IActionResult Editar(int id)
-        {
-            LocalDAO dao = new LocalDAO();
-            var local = dao.BuscarPorId(id);
-
-            return View(local);
-        }
-
-        [HttpPost]
-        public IActionResult Editar(Local l)
-        {
-            LocalDAO dao = new LocalDAO();
-            dao.Atualizar(l);
-
-            return RedirectToAction("Lista");
-        }
-
-
+        /* -----------------------------------------------
+           GET /Local/Excluir/{id}
+        ----------------------------------------------- */
         public IActionResult Excluir(int id)
         {
-            LocalDAO dao = new LocalDAO();
-            dao.Excluir(id);
-
+            new LocalDAO().Excluir(id);
             return RedirectToAction("Lista");
         }
 
 
+
+    public IActionResult Index()
+    {
+        LocalDAO dao = new LocalDAO();
+
+        int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+        ProfissionalDAO profDAO = new ProfissionalDAO();
+        int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+
+        var lista = dao.ListarPorProfissional(profissionalId);
+
+        return View("Lista", lista);
     }
 
+    }
 }

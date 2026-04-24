@@ -15,17 +15,6 @@ document.getElementById("categoria").addEventListener("change", function () {
         });
 });
 
-// CONTROLE DE CAMPOS
-function toggleCampos() {
-    let tipo = document.getElementById("atendimento").value.toLowerCase();
-
-    let linkDiv = document.getElementById("linkOnlineDiv");
-    let localDiv = document.getElementById("localDiv");
-
-    linkDiv.classList.toggle("hidden", tipo !== "online");
-    localDiv.classList.toggle("hidden", tipo !== "local");
-}
-
 // EVENTOS
 document.getElementById("atendimento").addEventListener("change", toggleCampos);
 
@@ -136,3 +125,25 @@ document.getElementById("atendimento")
     .addEventListener("change", toggleCampos);
 
 document.addEventListener("DOMContentLoaded", toggleCampos);
+
+const atendimento = document.getElementById("atendimento");
+const localDiv = document.getElementById("localDiv");
+
+atendimento.addEventListener("change", () => {
+    if (atendimento.value === "Local") {
+
+        const temLocal = document.querySelectorAll("select[name='localId'] option").length > 1;
+
+        if (!temLocal) {
+            alert("Você precisa cadastrar um local primeiro.");
+            atendimento.value = "Domicilio";
+            return;
+        }
+
+        localDiv.classList.remove("hidden");
+    } else {
+        localDiv.classList.add("hidden");
+    }
+});
+
+    var drawerAberto = false;

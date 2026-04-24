@@ -47,69 +47,79 @@ namespace BD_TRAMPO.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string enderecoCliente, int? localId)
+        public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string rua, string numero, string bairro, string cidade, int? localId)
         {
-            string usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
             if (usuarioIdStr == null)
-            {
                 return RedirectToAction("Login", "Usuario");
-            }
 
             int usuarioId = int.Parse(usuarioIdStr);
 
             ClienteDAO clienteDAO = new ClienteDAO();
             AgendamentoDAO dao = new AgendamentoDAO();
             ServicoDAO servicoDAO = new ServicoDAO();
+            ProfissionalDAO profDAO = new ProfissionalDAO();
 
             int clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
-
             int profissionalId = servicoDAO.BuscarProfissionalId(servicoId);
+            int profissionalLogadoId = profDAO.BuscarPorUsuario(usuarioId);
 
-            if (profissionalId == 0)
+            if (clienteId == 0)
             {
-                return Content("Erro: serviço inválido.");
+                clienteDAO.Inserir(usuarioId);
+                clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
             }
+            if (profissionalId == 0)
+                return Content("Erro: serviço inválido.");
+
+            //  auto agendamento
+            if (profissionalLogadoId == profissionalId)
+                return Content("Você não pode agendar seu próprio serviço.");
 
             var servico = servicoDAO.BuscarPorId(servicoId);
 
-            if (servico.Atendimento.ToLower() == "domicilio" && string.IsNullOrWhiteSpace(enderecoCliente))
+            if (servico == null)
+                return Content("Serviço não encontrado.");
+
+            var tipo = servico.Atendimento.ToLower();
+
+            string enderecoCliente = null;
+
+            if (tipo == "domicilio")
             {
-                return Content("Endereço é obrigatório para atendimento a domicílio.");
+                if (string.IsNullOrWhiteSpace(rua) ||
+                    string.IsNullOrWhiteSpace(numero) ||
+                    string.IsNullOrWhiteSpace(bairro) ||
+                    string.IsNullOrWhiteSpace(cidade))
+                {
+                    return Content("Preencha o endereço completo para atendimento a domicílio.");
+                }
+
+                enderecoCliente = $"{rua}, {numero} - {bairro}, {cidade}";
             }
 
+            if (tipo == "local" && localId == null)
+                return Content("Selecione um local.");
+
+            DateTime hoje = DateTime.Today;
+
+            if (data < hoje)
+                return Content("Não é possível agendar no passado.");
+
+            if (data > hoje.AddDays(366))
+                return Content("Você só pode agendar até 1 ano à frente.");
 
             var bloqueio = clienteDAO.BuscarBloqueio(clienteId);
 
-            DateTime hoje = DateTime.Today;
-            DateTime limiteFuturo = hoje.AddDays(366);
-
-            if (data < hoje)
-            {
-                return Content("Não é possível agendar no passado.");
-            }
-
-            if (data > limiteFuturo)
-            {
-                return Content("Você só pode agendar até 1 ano à frente.");
-            }
-
             if (bloqueio != null && bloqueio > DateTime.Now)
-            {
                 return Content("Você está bloqueado temporariamente.");
-            }
 
             if (dao.ContarPendentes(clienteId) >= 5)
-            {
                 return Content("Você já tem muitos agendamentos pendentes.");
-            }
 
             if (dao.HorarioOcupado(servicoId, data, hora))
-            {
                 return Content("Esse horário já está ocupado.");
-            }
-
 
             var agendamento = new Agendamento
             {
@@ -121,14 +131,30 @@ namespace BD_TRAMPO.Controllers
                 Status = "Pendente",
                 Descricao = descricao ?? "",
                 EnderecoCliente = enderecoCliente,
-                LocalId = servico.LocalId
+                LocalId = localId
             };
 
             dao.Inserir(agendamento);
 
-            TempData["Sucesso"] = $"Agendamento confirmado para {data} às {hora}!";
+            TempData["Sucesso"] = $"Agendamento confirmado para {data:dd/MM/yyyy} às {hora}";
 
             return RedirectToAction("Meus", "Agendamento");
+        }
+        private string ValidarAgendamento(Agendamento ag, Servico servico, int usuarioId)
+        {
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+            ServicoDAO servDAO = new ServicoDAO();
+
+            int profissionalLogadoId = profDAO.BuscarPorUsuario(usuarioId);
+            int profissionalDoServico = servDAO.BuscarProfissionalId(ag.ServicoId);
+
+            if (profissionalLogadoId == profissionalDoServico)
+                return "Você não pode agendar seu próprio serviço.";
+
+            if (servico.Atendimento == "Domicilio" && string.IsNullOrEmpty(ag.EnderecoCliente))
+                return "Endereço é obrigatório para atendimento a domicílio.";
+
+            return null;
         }
 
 

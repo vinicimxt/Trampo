@@ -23,7 +23,7 @@ namespace BD_TRAMPO
 
                 cmd.Parameters.AddWithValue("@ClienteId", ag.ClienteId);
                 cmd.Parameters.AddWithValue("@ServicoId", ag.ServicoId);
-                cmd.Parameters.AddWithValue("@ProfissionalId", ag.ProfissionalId); // 🔥 AQUI
+                cmd.Parameters.AddWithValue("@ProfissionalId", ag.ProfissionalId); 
                 cmd.Parameters.AddWithValue("@Data", ag.Data);
                 cmd.Parameters.AddWithValue("@Hora", ag.Hora);
                 cmd.Parameters.AddWithValue("@Status", ag.Status);

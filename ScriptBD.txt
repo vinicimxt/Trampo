@@ -1,6 +1,8 @@
 USE master;
 GO
 
+ALTER DATABASE Xamou SET MULTI_USER;
+
 ALTER DATABASE Xamou SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 GO
 
@@ -13,7 +15,8 @@ GO
 USE Xamou;
 GO
 
--- 🔥 DROP NA ORDEM CORRETA (dependências)
+-- DROP TABLES (ordem correta)
+DROP TABLE IF EXISTS Avaliacoes;
 DROP TABLE IF EXISTS Agendamentos;
 DROP TABLE IF EXISTS Disponibilidade;
 DROP TABLE IF EXISTS Servicos;
@@ -23,18 +26,18 @@ DROP TABLE IF EXISTS Categorias;
 DROP TABLE IF EXISTS Clientes;
 DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios;
-DROP TABLE IF EXISTS Avaliacoes;
 
--- 👤 USUÁRIOS
+-- USUARIOS
 CREATE TABLE Usuarios (
     Id INT PRIMARY KEY IDENTITY,
     Nome VARCHAR(100) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
     Senha VARCHAR(255) NOT NULL,
-    Tipo VARCHAR(20) NOT NULL
+    Tipo VARCHAR(20) NOT NULL,
+    Telefone VARCHAR(20) NULL
 );
 
--- 👤 CLIENTES
+-- CLIENTES
 CREATE TABLE Clientes (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT NOT NULL UNIQUE,
@@ -45,25 +48,25 @@ CREATE TABLE Clientes (
         ON DELETE CASCADE
 );
 
--- 🧑‍🔧 PROFISSIONAIS
+-- PROFISSIONAIS
 CREATE TABLE Profissionais (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT NOT NULL UNIQUE,
     TipoDocumento VARCHAR(10),
-    Documento VARCHAR(20)
+    Documento VARCHAR(20),
 
     FOREIGN KEY (UsuarioId) 
         REFERENCES Usuarios(Id)
         ON DELETE CASCADE
 );
 
--- 📂 CATEGORIAS
+-- CATEGORIAS
 CREATE TABLE Categorias (
     Id INT PRIMARY KEY IDENTITY,
     Nome VARCHAR(100) NOT NULL
 );
 
--- 📂 SUBCATEGORIAS
+-- SUBCATEGORIAS
 CREATE TABLE Subcategorias (
     Id INT PRIMARY KEY IDENTITY,
     Nome VARCHAR(100) NOT NULL,
@@ -74,7 +77,7 @@ CREATE TABLE Subcategorias (
         ON DELETE CASCADE
 );
 
--- 📍 LOCAIS (vem antes de Serviços agora)
+-- LOCAIS
 CREATE TABLE Locais (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
@@ -86,19 +89,18 @@ CREATE TABLE Locais (
         ON DELETE CASCADE
 );
 
--- 🛠 SERVIÇOS
+-- SERVICOS
 CREATE TABLE Servicos (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
     SubcategoriaId INT NOT NULL,
-    LocalId INT NULL, -- 👈 já incluído
+    LocalId INT NULL,
 
     Nome NVARCHAR(100) NOT NULL,
     Descricao NVARCHAR(255),
     Contato VARCHAR(100),
-
     Atendimento VARCHAR(50),
-    LinkOnline VARCHAR(255) NULL, -- 👈 já incluído
+    LinkOnline VARCHAR(255) NULL,
 
     FOREIGN KEY (ProfissionalId) 
         REFERENCES Profissionais(Id)
@@ -111,7 +113,7 @@ CREATE TABLE Servicos (
         REFERENCES Locais(Id)
 );
 
--- 📅 DISPONIBILIDADE
+-- DISPONIBILIDADE
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
@@ -125,13 +127,14 @@ CREATE TABLE Disponibilidade (
         ON DELETE CASCADE
 );
 
--- 📌 AGENDAMENTOS
+-- AGENDAMENTOS
 CREATE TABLE Agendamentos (
     Id INT PRIMARY KEY IDENTITY,
 
     ClienteId INT NOT NULL,
     ProfissionalId INT NOT NULL,
     ServicoId INT NOT NULL,
+    LocalId INT NULL,
 
     Data DATE NOT NULL,
     Hora TIME NOT NULL,
@@ -149,14 +152,18 @@ CREATE TABLE Agendamentos (
 
     FOREIGN KEY (ServicoId) 
         REFERENCES Servicos(Id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (LocalId)
+        REFERENCES Locais(Id)
 );
 
+-- AVALIACOES
 CREATE TABLE Avaliacoes (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
     UsuarioId INT NOT NULL,
-    AgendamentoId INT,
+    AgendamentoId INT NOT NULL,
     Nota INT NOT NULL,
     Comentario NVARCHAR(500),
     Data DATETIME DEFAULT GETDATE(),
@@ -165,7 +172,8 @@ CREATE TABLE Avaliacoes (
     FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id),
     FOREIGN KEY (AgendamentoId) REFERENCES Agendamentos(Id)
 );
--- 🌱 DADOS INICIAIS
+
+-- DADOS INICIAIS
 
 INSERT INTO Categorias (Nome) VALUES
 ('Manutenção'),
@@ -179,20 +187,16 @@ INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
 ('Hidráulica', 1),
 ('Construção', 1),
 ('Jardinagem', 1),
-
 ('Cabelo', 2),
 ('Estética', 2),
-
 ('Informática', 3),
 ('Desenvolvimento', 3),
-
 ('Idiomas', 4),
 ('Música', 4),
-
 ('Fotografia', 5),
 ('Buffet', 5);
 
--- 🔍 DEBUG
+-- DEBUG
 
 SELECT * FROM Usuarios;
 SELECT * FROM Clientes;
@@ -205,49 +209,4 @@ SELECT * FROM Agendamentos;
 SELECT * FROM Locais;
 SELECT * FROM Avaliacoes;
 
--- TESTE DE LOCAL
 
-ALTER TABLE Avaliacoes
-ADD UsuarioId INT;
-
-ALTER TABLE Avaliacoes
-ADD Data DATETIME DEFAULT GETDATE();
-
-ALTER TABLE Avaliacoes
-ADD CONSTRAINT FK_Avaliacoes_Usuarios
-FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id);
-
-ALTER TABLE Usuarios
-ADD Telefone VARCHAR(20) NULL;
-
-ALTER TABLE Locais
-ADD FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id);
-
-ALTER TABLE Agendamentos
-ADD LocalId INT NULL;
-
-ALTER TABLE Agendamentos
-ADD CONSTRAINT FK_Agendamentos_Locais
-FOREIGN KEY (LocalId) REFERENCES Locais(Id);
-
-INSERT INTO Locais (ProfissionalId, Nome, Endereco)
-VALUES (1, 'Unidade Principal', 'Rua Teste, 123');
-
-
-SELECT 
-    s.Id,
-    s.Nome,
-    s.LocalId,
-    l.Endereco
-FROM Servicos s
-LEFT JOIN Locais l ON s.LocalId = l.Id;
-
-SELECT LocalId FROM Agendamentos;
-
-ALTER TABLE Profissionais DROP COLUMN Endereco;
-
-SELECT Id, Nome, Endereco FROM Locais
-
-SELECT Id, Nome, LocalId FROM Servicos
-
-SELECT Id, LocalId FROM Agendamentos

@@ -143,7 +143,6 @@ C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\uhhuzzzsip-{0}-z7qpgzmj6r-z7qpgzmj6r.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\1o73hetkcs-{0}-fvjrm59mw4-fvjrm59mw4.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\qkoigqp3lw-{0}-fspurn4xp7-fspurn4xp7.gz
-C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\nshtdsequr-{0}-s0bmrf6k9l-s0bmrf6k9l.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\1xvcrroa07-{0}-sq70j1dllh-sq70j1dllh.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\41jw6gam6j-{0}-4mysqweiur-4mysqweiur.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\qg6u8mzoul-{0}-p6sovn6cok-p6sovn6cok.gz
@@ -151,3 +150,5 @@ C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\nimblp1vwc-{0}-9q4q0knp0b-9q4q0knp0b.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\z0svh772be-{0}-1xp3y8b1mg-1xp3y8b1mg.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\awv1xdmmad-{0}-e9292dmf5j-e9292dmf5j.gz
+C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\11384dnufj-{0}-kco1g5hg7s-kco1g5hg7s.gz
+C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\nshtdsequr-{0}-gcz1wtk2sw-gcz1wtk2sw.gz

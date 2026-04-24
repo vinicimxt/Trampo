@@ -47,10 +47,10 @@ namespace BD_TRAMPO
 
                 var result = cmd.ExecuteScalar();
 
-                if (result != DBNull.Value)
-                    return (DateTime)result;
+                if (result == null || result == DBNull.Value)
+                    return null;
 
-                return null;
+                return (DateTime)result;
             }
         }
 

@@ -22,10 +22,10 @@
         {
             UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-            // ✅ 1. VALIDAR ANTES
+            //  1. VALIDAR ANTES
             if (usuarioDAO.EmailExiste(email))
             {
-                TempData["Erro"] = "Já existe uma conta com esse email 😬";
+                TempData["Erro"] = "Já existe uma conta com esse email ";
                 return RedirectToAction("Cadastro");
             }
 
@@ -35,7 +35,7 @@
 
             try
             {
-                // ✅ 2. TENTAR INSERIR
+                //  2. TENTAR INSERIR
                 usuarioId = usuarioDAO.Inserir(nome, email, senhaHash, tipo, telefone);
             }
             catch (SqlException ex)
@@ -50,13 +50,16 @@
                 throw; // outros erros
             }
 
-            // ✅ 3. AUTENTICAR
+            //  3. AUTENTICAR
             HttpContext.Session.SetString("UsuarioId", usuarioId.ToString());
             HttpContext.Session.SetString("UsuarioNome", nome);
             HttpContext.Session.SetString("UsuarioEmail", email);
             HttpContext.Session.SetString("UsuarioTipo", tipo);
 
-            // ✅ 4. FLUXO NORMAL
+            //  4. FLUXO NORMAL
+        
+            ClienteDAO clienteDAO = new ClienteDAO();
+            clienteDAO.Inserir(usuarioId);
             if (tipo == "profissional")
             {
                 ProfissionalDAO profDAO = new ProfissionalDAO();
@@ -64,13 +67,9 @@
 
                 return RedirectToAction("Criar", "Servico");
             }
-            else
-            {
-                ClienteDAO clienteDAO = new ClienteDAO();
-                clienteDAO.Inserir(usuarioId);
 
-                return RedirectToAction("Lista", "Profissional");
-            }
+            //  cliente comum
+            return RedirectToAction("Lista", "Profissional");
         }
 
 

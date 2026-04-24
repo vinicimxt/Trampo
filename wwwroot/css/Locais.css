@@ -1,0 +1,899 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+/* ===================================================
+   TOKENS
+=================================================== */
+:root {
+    --blue: #1A6BFF;
+    --blue-dark: #1258d6;
+    --blue-soft: rgba(26, 107, 255, 0.08);
+    --blue-mid: rgba(26, 107, 255, 0.14);
+    --accent: #00D4AA;
+    --accent-soft: rgba(0, 212, 170, 0.10);
+    --red: #ef4444;
+    --red-soft: rgba(239, 68, 68, 0.08);
+    --red-border: rgba(239, 68, 68, 0.18);
+    --dark: #0D1B3E;
+    --text-muted: #6B7A99;
+    --border: #DDE5F5;
+    --border-strong: #C2D0EC;
+    --bg-light: #F0F4FF;
+    --bg-white: #FFFFFF;
+    --radius-xl: 24px;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 8px;
+    --card-shadow: 0 4px 6px rgba(13, 27, 62, 0.04),
+        0 12px 32px rgba(26, 107, 255, 0.09),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    --card-hover: 0 8px 12px rgba(13, 27, 62, 0.08),
+        0 24px 48px rgba(26, 107, 255, 0.15);
+    --transition: all 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+    --navbar-h: 62px;
+}
+
+/* ===================================================
+   PÁGINA
+=================================================== */
+.locais-page {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-light);
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+/* ===================================================
+   HERO
+=================================================== */
+.locais-hero {
+    background: var(--dark);
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--navbar-h) + 44px) 0 40px;
+}
+
+.locais-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    left: -80px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(26, 107, 255, 0.18) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.locais-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, rgba(0, 212, 170, 0.10) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.locais-hero-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+
+.locais-hero-inner {
+    max-width: 1100px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.locais-hero-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    background: rgba(0, 212, 170, 0.10);
+    border: 1px solid rgba(0, 212, 170, 0.20);
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+}
+
+.locais-hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+}
+
+.locais-hero-sub {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.locais-hero-count {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--radius-lg);
+    padding: 16px 24px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.locais-hero-count strong {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.locais-hero-count span {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.42);
+}
+
+/* ===================================================
+   DICA
+=================================================== */
+.locais-tip {
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: 20px 24px 0;
+}
+
+.tip-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(26, 107, 255, 0.06);
+    border: 1.5px solid rgba(26, 107, 255, 0.18);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    animation: fadeUp 0.4s ease both;
+}
+
+.tip-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--blue-soft);
+    border: 1px solid var(--blue-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.tip-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 4px;
+}
+
+.tip-text {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+}
+
+.tip-close {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px;
+    line-height: 1;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.tip-close:hover {
+    color: var(--dark);
+}
+
+/* ===================================================
+   CONTEÚDO — layout grid quando drawer aberto
+=================================================== */
+.locais-main {
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: 28px 24px 0;
+}
+
+/* quando o drawer estiver aberto, lista + form lado a lado */
+.locais-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    transition: grid-template-columns 0.35s ease;
+}
+
+.locais-layout.drawer-open {
+    grid-template-columns: 1fr 380px;
+}
+
+/* ===================================================
+   TOPBAR
+=================================================== */
+.locais-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.locais-topbar-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.locais-topbar-title::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: linear-gradient(180deg, var(--blue), var(--accent));
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.btn-novo-local {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 11px 22px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(26, 107, 255, 0.28);
+}
+
+.btn-novo-local:hover {
+    background: var(--blue-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(26, 107, 255, 0.38);
+}
+
+/* quando drawer aberto, botão muda para "fechar" */
+.btn-novo-local.ativo {
+    background: var(--bg-white);
+    color: var(--dark);
+    border: 1.5px solid var(--border-strong);
+    box-shadow: none;
+}
+
+.btn-novo-local.ativo:hover {
+    background: var(--bg-light);
+    transform: none;
+    box-shadow: none;
+}
+
+/* ===================================================
+   LISTA DE LOCAIS
+=================================================== */
+.locais-col {
+    min-width: 0;
+}
+
+.locais-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* ===================================================
+   CARD DE LOCAL
+=================================================== */
+.local-card {
+    background: var(--bg-white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 22px;
+    transition: var(--transition);
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+}
+
+.local-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--blue), var(--accent));
+    border-radius: 4px 0 0 4px;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.local-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--card-hover);
+    transform: translateX(4px);
+}
+
+.local-card:hover::before {
+    opacity: 1;
+}
+
+.local-card:nth-child(1) {
+    animation-delay: .04s;
+}
+
+.local-card:nth-child(2) {
+    animation-delay: .08s;
+}
+
+.local-card:nth-child(3) {
+    animation-delay: .12s;
+}
+
+.local-card:nth-child(4) {
+    animation-delay: .16s;
+}
+
+.local-card:nth-child(5) {
+    animation-delay: .20s;
+}
+
+.local-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--blue-soft);
+    border: 1.5px solid var(--blue-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.local-card:hover .local-card-icon {
+    background: var(--blue-mid);
+    transform: scale(1.05);
+}
+
+.local-card-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.local-card-nome {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.local-card-end {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.local-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.btn-edit-local {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: 1.5px solid rgba(26, 107, 255, 0.18);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-edit-local:hover {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+}
+
+.btn-del-local {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: var(--transition);
+    background: var(--red-soft);
+    color: var(--red);
+    border: 1.5px solid var(--red-border);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-del-local:hover {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+}
+
+/* ===================================================
+   DRAWER — formulário inline
+=================================================== */
+.form-drawer {
+    display: none;
+    flex-direction: column;
+}
+
+.form-drawer.open {
+    display: flex;
+}
+
+.drawer-card {
+    background: var(--bg-white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+    position: sticky;
+    top: calc(var(--navbar-h) + 16px);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.drawer-header {
+    background: var(--dark);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.drawer-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.drawer-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(0, 212, 170, 0.12);
+    border: 1px solid rgba(0, 212, 170, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.drawer-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.drawer-sub {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.42);
+    margin-top: 1px;
+}
+
+.drawer-close {
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.drawer-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+
+.drawer-body {
+    padding: 24px;
+}
+
+/* campos do formulário */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group:last-of-type {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 7px;
+}
+
+.form-label .required {
+    color: var(--red);
+    margin-left: 2px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--dark);
+    background: var(--bg-light);
+    outline: none;
+    transition: var(--transition);
+}
+
+.form-input::placeholder {
+    color: #aab4cc;
+}
+
+.form-input:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(26, 107, 255, 0.10);
+}
+
+.drawer-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-light);
+    display: flex;
+    gap: 10px;
+}
+
+.btn-salvar {
+    flex: 1;
+    padding: 12px;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 14px rgba(26, 107, 255, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-salvar:hover {
+    background: var(--blue-dark);
+    box-shadow: 0 6px 20px rgba(26, 107, 255, 0.38);
+}
+
+.btn-cancelar {
+    padding: 12px 18px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-cancelar:hover {
+    background: var(--bg-white);
+    color: var(--dark);
+}
+
+/* ===================================================
+   EMPTY STATE
+=================================================== */
+.empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    background: var(--bg-white);
+    border-radius: var(--radius-xl);
+    border: 1.5px dashed var(--border-strong);
+    box-shadow: var(--card-shadow);
+    animation: fadeUp 0.4s ease both;
+}
+
+.empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 18px;
+    opacity: 0.45;
+}
+
+.empty-state h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    max-width: 380px;
+    margin-inline: auto;
+    line-height: 1.65;
+}
+
+.btn-criar-local {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    padding: 13px 32px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 20px rgba(26, 107, 255, 0.28);
+}
+
+.btn-criar-local:hover {
+    background: var(--blue-dark);
+    transform: translateY(-2px);
+}
+
+/* ===================================================
+   MODAL DE CONFIRMAÇÃO
+=================================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 17, 48, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-box {
+    background: var(--bg-white);
+    border-radius: var(--radius-xl);
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 32px 80px rgba(7, 17, 48, 0.30);
+    transform: translateY(16px) scale(0.97);
+    transition: transform 0.22s ease;
+    text-align: center;
+}
+
+.modal-overlay.open .modal-box {
+    transform: translateY(0) scale(1);
+}
+
+.modal-icon {
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+}
+
+.modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 8px;
+}
+
+.modal-sub {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.modal-name {
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-modal-cancel {
+    flex: 1;
+    padding: 11px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border-strong);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--bg-light);
+    color: var(--dark);
+}
+
+.btn-modal-confirm {
+    flex: 1;
+    padding: 11px;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--red);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.28);
+}
+
+.btn-modal-confirm:hover {
+    background: #dc2626;
+}
+
+/* ===================================================
+   RESPONSIVO
+=================================================== */
+@media (max-width: 900px) {
+    .locais-layout.drawer-open {
+        grid-template-columns: 1fr;
+    }
+
+    .form-drawer.open {
+        order: -1;
+    }
+
+    /* formulário sobe no mobile */
+    .drawer-card {
+        position: static;
+    }
+}
+
+@media (max-width: 640px) {
+    .local-card {
+        flex-wrap: wrap;
+    }
+
+    .local-card-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .locais-hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .locais-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-novo-local {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ===================================================
+   KEYFRAMES
+=================================================== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,14 +1,290 @@
-<h2>Meus Locais</h2>
+@model List<Local>
 
-<a href="/Local/Criar">➕ Novo Local</a>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Locais.css" />
+}
 
-@foreach (var l in Model)
-{
-    <div>
-        <h3>@l.Nome</h3>
-        <p>@l.Endereco</p>
+<div class="locais-page">
 
-        <a href="/Local/Editar/@l.Id">✏️ Editar</a>
-        <a href="/Local/Excluir/@l.Id">🗑 Excluir</a>
+    <!-- =============================================
+         HERO
+    ============================================= -->
+    <div class="locais-hero">
+        <div class="locais-hero-dots"></div>
+        <div class="locais-hero-inner">
+            <div>
+                <span class="locais-hero-label">Meus locais</span>
+                <h1 class="locais-hero-title">Locais de Atendimento</h1>
+                <p class="locais-hero-sub">Configure os endereços usados nos seus serviços presenciais.</p>
+            </div>
+
+            @if (Model.Count > 0)
+            {
+                <div class="locais-hero-count">
+                    <strong>@Model.Count</strong>
+                    <span>@(Model.Count == 1 ? "local cadastrado" : "locais cadastrados")</span>
+                </div>
+            }
+        </div>
     </div>
+
+    <!-- =============================================
+         DICA
+    ============================================= -->
+    <div class="locais-tip" id="tipBanner">
+        <div class="tip-banner">
+            <div class="tip-icon">💡</div>
+            <div class="tip-body">
+                <div class="tip-title">Como os locais funcionam?</div>
+                <p class="tip-text">
+                    Ao criar um serviço <strong>presencial (Local)</strong>, você escolhe um dos endereços cadastrados aqui.
+                    Cadastre todos os lugares onde você atende para facilitar na hora de criar seus serviços.
+                </p>
+            </div>
+            <button class="tip-close" onclick="fecharTip()" aria-label="Fechar">✕</button>
+        </div>
+    </div>
+
+    <!-- =============================================
+         CONTEÚDO
+    ============================================= -->
+    <div class="locais-main">
+
+        @if (Model.Count == 0)
+        {
+            <!-- Empty state com botão que abre o drawer -->
+            <div class="empty-state">
+                <div class="empty-icon">📍</div>
+                <h3>Nenhum local cadastrado</h3>
+                <p>Cadastre o endereço onde você atende seus clientes. Ele será usado nos seus serviços presenciais.</p>
+                <button class="btn-criar-local" onclick="abrirDrawer()">+ Cadastrar primeiro local</button>
+            </div>
+        }
+
+        <!-- topbar sempre visível se houver locais -->
+        @if (Model.Count > 0)
+        {
+            <div class="locais-topbar">
+                <div class="locais-topbar-title">Seus endereços</div>
+                <button class="btn-novo-local" id="btnNovoLocal" onclick="toggleDrawer()">
+                    + Novo local
+                </button>
+            </div>
+        }
+
+        <!-- layout em grid: lista + drawer -->
+        <div class="locais-layout" id="locaisLayout">
+
+            <!-- coluna da lista -->
+            <div class="locais-col">
+                @if (Model.Count > 0)
+                {
+                    <div class="locais-lista">
+                        @foreach (var l in Model)
+                        {
+                            <div class="local-card">
+                                <div class="local-card-icon">📍</div>
+
+                                <div class="local-card-body">
+                                    <div class="local-card-nome">@l.Nome</div>
+                                    <div class="local-card-end">
+                                        <span>🗺️</span>
+                                        @l.Endereco
+                                    </div>
+                                </div>
+
+                                <div class="local-card-actions">
+                                    <button class="btn-edit-local"
+                                            onclick="abrirDrawerEditar('@l.Id', '@l.Nome.Replace("'","\\'")', '@l.Endereco.Replace("'","\\'")')">
+                                        ✏️ Editar
+                                    </button>
+                                    <button class="btn-del-local"
+                                            onclick="abrirModal('@l.Id', '@l.Nome.Replace("'","\\'")')">
+                                        🗑 Excluir
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- drawer do formulário (oculto por padrão) -->
+            <div class="form-drawer" id="formDrawer">
+                <div class="drawer-card">
+
+                    <div class="drawer-header">
+                        <div class="drawer-header-left">
+                            <div class="drawer-header-icon">📍</div>
+                            <div>
+                                <div class="drawer-title" id="drawerTitle">Novo local</div>
+                                <div class="drawer-sub" id="drawerSub">Preencha os dados do endereço</div>
+                            </div>
+                        </div>
+                        <button class="drawer-close" onclick="fecharDrawer()">✕</button>
+                    </div>
+
+                    <form method="post" id="formLocal" action="/Local/Salvar">
+                        <input type="hidden" name="id" id="localId" value="" />
+
+                        <div class="drawer-body">
+
+                            <div class="form-group">
+                                <label class="form-label" for="nome">
+                                    Nome do local <span class="required">*</span>
+                                </label>
+                                <input class="form-input"
+                                       type="text"
+                                       name="nome"
+                                       id="inputNome"
+                                       placeholder="Ex: Estúdio Centro, Salão Principal..."
+                                       required />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="endereco">
+                                    Endereço completo <span class="required">*</span>
+                                </label>
+                                <input class="form-input"
+                                       type="text"
+                                       name="endereco"
+                                       id="inputEndereco"
+                                       placeholder="Ex: Rua das Flores, 123 — Centro, SP"
+                                       required />
+                            </div>
+
+                        </div>
+
+                        <div class="drawer-footer">
+                            <button type="button" class="btn-cancelar" onclick="fecharDrawer()">Cancelar</button>
+                            <button type="submit" class="btn-salvar">
+                                💾 Salvar local
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div><!-- /locais-layout -->
+
+    </div><!-- /locais-main -->
+
+</div><!-- /locais-page -->
+
+
+<!-- =============================================
+     MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
+============================================= -->
+<div class="modal-overlay" id="modalExcluir">
+    <div class="modal-box">
+        <div class="modal-icon">🗑️</div>
+        <div class="modal-title">Excluir local?</div>
+        <p class="modal-sub">
+            Tem certeza que deseja excluir
+            <span class="modal-name" id="modalNomeLocal"></span>?
+            Serviços vinculados a este endereço podem ser afetados.
+        </p>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
+            <a class="btn-modal-confirm" id="modalLinkExcluir" href="#">Sim, excluir</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    var drawerAberto = false;
+
+    /* -----------------------------------------------
+       DRAWER — abrir / fechar / toggle
+    ----------------------------------------------- */
+    function abrirDrawer() {
+        var drawer  = document.getElementById('formDrawer');
+        var layout  = document.getElementById('locaisLayout');
+        var btn     = document.getElementById('btnNovoLocal');
+
+        // reseta para "novo local"
+        document.getElementById('localId').value       = '';
+        document.getElementById('inputNome').value     = '';
+        document.getElementById('inputEndereco').value = '';
+        document.getElementById('drawerTitle').textContent = 'Novo local';
+        document.getElementById('drawerSub').textContent   = 'Preencha os dados do endereço';
+        document.getElementById('formLocal').action = '/Local/Salvar';
+
+        drawer.classList.add('open');
+        layout.classList.add('drawer-open');
+        if (btn) btn.classList.add('ativo');
+        drawerAberto = true;
+    }
+
+    function fecharDrawer() {
+        var drawer = document.getElementById('formDrawer');
+        var layout = document.getElementById('locaisLayout');
+        var btn    = document.getElementById('btnNovoLocal');
+
+        drawer.classList.remove('open');
+        layout.classList.remove('drawer-open');
+        if (btn) btn.classList.remove('ativo');
+        drawerAberto = false;
+    }
+
+    function toggleDrawer() {
+        drawerAberto ? fecharDrawer() : abrirDrawer();
+    }
+
+    /* -----------------------------------------------
+       DRAWER — modo edição
+    ----------------------------------------------- */
+    function abrirDrawerEditar(id, nome, endereco) {
+        abrirDrawer();
+
+        document.getElementById('localId').value       = id;
+        document.getElementById('inputNome').value     = nome;
+        document.getElementById('inputEndereco').value = endereco;
+        document.getElementById('drawerTitle').textContent = 'Editar local';
+        document.getElementById('drawerSub').textContent   = 'Atualize os dados do endereço';
+
+        // aponta para a action de edição
+        document.getElementById('formLocal').action = '/Local/Editar/' + id;
+    }
+
+    /* -----------------------------------------------
+       MODAL DE EXCLUSÃO
+    ----------------------------------------------- */
+    function abrirModal(id, nome) {
+        document.getElementById('modalNomeLocal').textContent = '"' + nome + '"';
+        document.getElementById('modalLinkExcluir').href = '/Local/Excluir/' + id;
+        document.getElementById('modalExcluir').classList.add('open');
+    }
+
+    function fecharModal() {
+        document.getElementById('modalExcluir').classList.remove('open');
+    }
+
+    document.getElementById('modalExcluir').addEventListener('click', function (e) {
+        if (e.target === this) fecharModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            fecharModal();
+            fecharDrawer();
+        }
+    });
+
+    /* -----------------------------------------------
+       BANNER DE DICA
+    ----------------------------------------------- */
+    function fecharTip() {
+        var el = document.getElementById('tipBanner');
+        if (!el) return;
+        el.style.transition  = 'opacity 0.2s ease, max-height 0.3s ease, padding 0.3s ease';
+        el.style.overflow    = 'hidden';
+        el.style.opacity     = '0';
+        el.style.maxHeight   = '0';
+        el.style.paddingTop  = '0';
+        setTimeout(function () { el.remove(); }, 320);
+    }
+</script>
 }
