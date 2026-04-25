@@ -8,39 +8,45 @@
 
     <h2>⭐ Avaliar Atendimento</h2>
 
-    <form method="post" action="/Avaliacao/Salvar">
+    @if (ViewBag.PodeAvaliar == false)
+    {
+        <div class="alerta-avaliacao">
+            <p>@ViewBag.Mensagem</p>
 
-        <input type="hidden" name="agendamentoId" value="@ViewBag.AgendamentoId" />
-        <input type="hidden" name="profissionalId" value="@ViewBag.ProfissionalId" />
-
-        <!-- NOTA -->
-        <label>Nota:</label>
-        <div class="stars">
-            @for (int i = 1; i <= 5; i++)
-            {
-                <div class="stars" id="stars">
-                    <span class="star" data-value="1">★</span>
-                    <span class="star" data-value="2">★</span>
-                    <span class="star" data-value="3">★</span>
-                    <span class="star" data-value="4">★</span>
-                    <span class="star" data-value="5">★</span>
-                </div>
-
-                <input type="hidden" name="nota" id="nota" required />
-            }
+            <a href="/Agendamento/Meus" class="btn-secundario">
+                Ver meus agendamentos
+            </a>
         </div>
+    }
+    else
+    {
+        <form method="post" action="/Avaliacao/Salvar">
 
-        <input type="hidden" name="nota" id="nota" required />
+            <input type="hidden" name="agendamentoId" value="@ViewBag.AgendamentoId" />
+            <input type="hidden" name="profissionalId" value="@ViewBag.ProfissionalId" />
 
-        <!-- COMENTÁRIO -->
-        <label>Comentário:</label>
-        <textarea name="comentario" placeholder="Conte como foi o atendimento..."></textarea>
+            <!-- NOTA -->
+            <label>Nota:</label>
+            <div class="stars" id="stars">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
 
-        <button type="submit" class="btn-primary">
-            Enviar avaliação
-        </button>
+            <input type="hidden" name="nota" id="nota" required />
 
-    </form>
+            <!-- COMENTÁRIO -->
+            <label>Comentário:</label>
+            <textarea name="comentario" placeholder="Conte como foi o atendimento..."></textarea>
+
+            <button type="submit" class="btn-primary">
+                Enviar avaliação
+            </button>
+
+        </form>
+    }
 
 </div>
 

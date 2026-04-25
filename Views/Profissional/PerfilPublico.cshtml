@@ -43,49 +43,47 @@
         </div>
 
         <!-- SERVIÇOS -->
-       <div class="card">
-    <h3>📦 Serviços</h3>
+        <div class="card">
+            <h3>📦 Serviços</h3>
 
-    @if (ViewBag.Servicos.Count == 0)
-    {
-        <p>Nenhum serviço cadastrado.</p>
-    }
-    else
-    {
-        <div class="servicos-grid">
-            @foreach (var s in ViewBag.Servicos)
+            @if (ViewBag.Servicos.Count == 0)
             {
-                <div class="servico-card">
+                <p>Nenhum serviço cadastrado.</p>
+            }
+            else
+            {
+                <div class="servicos-grid">
+                    @foreach (var s in ViewBag.Servicos)
+                    {
+                        <div class="servico-card">
 
-                    <h4>@s.Nome</h4>
+                            <div class="top">
+                                <h4>@s.Nome</h4>
+                                <span class="tipo">@s.Atendimento</span>
+                            </div>
 
-                    <p class="desc">@s.Descricao</p>
+                            <p class="desc">@s.Descricao</p>
 
-                    <div class="chips">
-                        <span>@s.Categoria</span>
-                        <span>@s.Subcategoria</span>
-                    </div>
+                            <div class="chips">
+                                <span>@s.Categoria</span>
+                                <span>@s.Subcategoria</span>
+                            </div>
 
-                    <div class="footer">
-                        <span class="tipo">@s.Atendimento</span>
+                            <div class="footer">
+                                <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar">
+                                    Agendar
+                                </a>
 
-                        <div class="acoes">
-                            <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar">
-                                Agendar
-                            </a>
+                                <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar">
+                                    ⭐
+                                </a>
+                            </div>
 
-                            <!-- 🔥 AVALIAR (TEMPORÁRIO - depois vamos corrigir com agendamento) -->
-                            <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar">
-                                ⭐ Avaliar
-                            </a>
                         </div>
-                    </div>
-
+                    }
                 </div>
             }
         </div>
-    }
-</div>
 
         <!-- AVALIAÇÕES -->
         <div class="card">
@@ -100,8 +98,10 @@
                 foreach (var a in ViewBag.Avaliacoes)
                 {
                     <div class="avaliacao">
-                        <strong>@a.NomeUsuario</strong>
-                        <span>⭐ @a.Nota</span>
+                        <div class="avaliacao-top">
+                            <strong>@a.NomeUsuario</strong>
+                            <span class="nota">⭐ @a.Nota</span>
+                        </div>
                         <p>@a.Comentario</p>
                     </div>
                 }

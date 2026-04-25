@@ -18,6 +18,10 @@
     gap: 20px;
 }
 
+.sub {
+    opacity: 0.9;
+    font-size: 14px;
+}
 
 .avatar {
     width: 70px;
@@ -41,35 +45,62 @@
 
 /* CARD */
 .card {
-    background: white;
-    padding: 20px;
+    background: #fff;
     border-radius: 16px;
-    border: 1px solid #eee;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.card h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* GRID SERVIÇOS */
 .servicos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
 }
 
 .servico-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
     border: 1px solid #eee;
-    padding: 15px;
-    border-radius: 12px;
     transition: 0.2s;
 }
 
 .servico-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.servico-card .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tipo {
+    font-size: 12px;
+    background: #eef4ff;
+    padding: 4px 8px;
+    border-radius: 8px;
 }
 
 .desc {
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
+    margin: 10px 0;
 }
+
+
+
 
 .chips span {
     background: #eef4ff;
@@ -106,11 +137,28 @@
     padding: 10px 16px;
     border-radius: 10px;
     text-decoration: none;
+    font-size: 18px;
+    
 }
 
 
 
 /* AVALIAÇÕES */
+
+.avaliacao {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.avaliacao-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.nota {
+    font-weight: bold;
+}
 
 .avaliacao-resumo {
     display: flex;
@@ -151,10 +199,10 @@
 
 /* FOOTER */
 .footer {
+    margin-top: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
 }
 
 .btn-agendar {

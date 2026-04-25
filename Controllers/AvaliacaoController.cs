@@ -4,55 +4,63 @@ namespace BD_TRAMPO.Controllers
 {
     public class AvaliacaoController : Controller
     {
-    public IActionResult Avaliar(int agendamentoId)
-{
-    //  usuário precisa estar logado
-    if (HttpContext.Session.GetString("UsuarioId") == null)
-    {
-        return RedirectToAction("Login", "Usuario");
-    }
+        public IActionResult Avaliar(int agendamentoId)
+        {
+            if (HttpContext.Session.GetString("UsuarioId") == null)
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
 
-    int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
-    AgendamentoDAO agDAO = new AgendamentoDAO();
-    var ag = agDAO.BuscarPorId(agendamentoId);
+            AgendamentoDAO agDAO = new AgendamentoDAO();
+            var ag = agDAO.BuscarPorId(agendamentoId);
 
-    //  valida existência
-    if (ag == null)
-    {
-        return Content("Agendamento não encontrado.");
-    }
+            // 🔥 Estado padrão (permite avaliar)
+            ViewBag.PodeAvaliar = true;
 
-    //  segurança: só quem contratou pode avaliar
-    if (ag.UsuarioId != usuarioId)
-    {
-        return Content("Você não tem permissão para avaliar este atendimento.");
-    }
+            if (ag == null)
+            {
+                ViewBag.PodeAvaliar = false;
+                ViewBag.Mensagem = "Esse atendimento não foi encontrado.";
+            }
+            else if (ag.UsuarioId != usuarioId)
+            {
+                ViewBag.PodeAvaliar = false;
+                ViewBag.Mensagem = "Você não tem permissão para avaliar este atendimento.";
+            }
+            else if (ag.Status != "Concluido")
+            {
+                ViewBag.PodeAvaliar = false;
+                ViewBag.Mensagem = "Você só pode avaliar após o atendimento ser concluído.";
+            }
+            else
+            {
+                AvaliacaoDAO avalDAO = new AvaliacaoDAO();
 
-    //  só pode avaliar se estiver concluído
-    if (ag.Status != "Concluido")
-    {
-        return Content("Você só pode avaliar após o atendimento ser concluído.");
-    }
+                if (avalDAO.JaAvaliou(agendamentoId))
+                {
+                    ViewBag.PodeAvaliar = false;
+                    ViewBag.Mensagem = "Você já avaliou este atendimento.";
+                }
+            }
 
-    //  evitar avaliação duplicada
-    AvaliacaoDAO avalDAO = new AvaliacaoDAO();
-    if (avalDAO.JaAvaliou(agendamentoId))
-    {
-        return Content("Você já avaliou este atendimento.");
-    }
+            // mesmo se não puder avaliar, ainda mandamos IDs (se existir)
+            if (ag != null)
+            {
+                ViewBag.AgendamentoId = agendamentoId;
+                ViewBag.ProfissionalId = ag.ProfissionalId;
+            }
 
-    //  envia dados pra view
-    ViewBag.AgendamentoId = agendamentoId;
-    ViewBag.ProfissionalId = ag.ProfissionalId;
+            return View();
+        }
 
-    return View();
-}
+
         [HttpPost]
         public IActionResult Salvar(Avaliacao a)
         {
 
-            
+
             if (HttpContext.Session.GetString("UsuarioId") == null)
             {
                 return RedirectToAction("Login", "Usuario");
