@@ -6,12 +6,13 @@ namespace BD_TRAMPO.Controllers
     public class ProfissionalController : BaseController
     {
 
-        public IActionResult Lista(string busca, string localizacao)
+        public IActionResult Lista(string busca, string localizacao, string categoria)
         {
             ServicoDAO dao = new ServicoDAO();
 
-            var lista = dao.ListarServicos(busca, localizacao);
-
+            var lista = dao.ListarServicos(busca, localizacao,categoria);
+            
+            
             return View(lista);
         }
 

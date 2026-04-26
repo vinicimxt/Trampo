@@ -258,7 +258,7 @@ namespace BD_TRAMPO
             return lista;
         }
 
-        public List<Servico> ListarServicos(string busca, string localizacao)
+        public List<Servico> ListarServicos(string busca, string localizacao, string categoria)
         {
             List<Servico> lista = new List<Servico>();
 
@@ -290,6 +290,9 @@ namespace BD_TRAMPO
         AND
             (@localizacao IS NULL OR 
                 l.Endereco COLLATE Latin1_General_CI_AI LIKE '%' + @localizacao + '%')
+                AND
+            (@categoria IS NULL OR 
+                c.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @categoria + '%')
         ";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -299,6 +302,9 @@ namespace BD_TRAMPO
 
                 cmd.Parameters.AddWithValue("@localizacao",
                     string.IsNullOrWhiteSpace(localizacao) ? (object)DBNull.Value : localizacao);
+
+                cmd.Parameters.AddWithValue("@categoria",
+                    string.IsNullOrWhiteSpace(categoria) ? (object)DBNull.Value : categoria);
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -372,7 +378,32 @@ namespace BD_TRAMPO
             }
         }
 
+        
+        // PUXAR DO BANCO CARDS DINAMICOS
+        public Dictionary<string, int> ContarServicosPorCategoria()
+        {
+            var dict = new Dictionary<string, int>();
 
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        SELECT c.Nome, COUNT(*) AS Total
+        FROM Servicos s
+        INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
+        INNER JOIN Categorias c ON sc.CategoriaId = c.Id
+        GROUP BY c.Nome";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    dict.Add(reader["Nome"].ToString(), (int)reader["Total"]);
+                }
+            }
+
+            return dict;
+        }
 
 
 

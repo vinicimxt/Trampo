@@ -8,8 +8,11 @@ namespace BD_TRAMPO.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            ServicoDAO dao = new ServicoDAO();
 
+            ViewBag.CountCategorias = dao.ContarServicosPorCategoria();
+
+            return View();
         }
 
         public IActionResult Privacy()

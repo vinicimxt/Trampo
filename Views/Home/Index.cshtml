@@ -287,7 +287,8 @@
                                                         <span class="svc-count">+180 profissionais</span>
                                                         <span class="svc-rating">⭐ 4.9</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Cabelo -->
+                                                    <a href="/Profissional/Lista?categoria=Beleza" class="btn-svc">Ver profissionais</a>
                                                 </div>
 
                                                 <div class="service-card fade-up" style="transition-delay:.05s">
@@ -297,7 +298,10 @@
                                                         <span class="svc-count">+140 profissionais</span>
                                                         <span class="svc-rating">⭐ 4.8</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Manicure -->
+                                                    <a href="/Profissional/Lista?categoria=Beleza" class="btn-svc">
+                                                        Ver profissionais
+                                                    </a>
                                                 </div>
 
                                                 <div class="service-card fade-up" style="transition-delay:.10s">
@@ -307,7 +311,8 @@
                                                         <span class="svc-count">+90 parceiros</span>
                                                         <span class="svc-rating">⭐ 4.7</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Lava rápido -->
+                                                    <a href="/Profissional/Lista?categoria=Automotivo" class="btn-svc">Ver profissionais</a>
                                                 </div>
 
                                                 <div class="service-card fade-up" style="transition-delay:.15s">
@@ -317,7 +322,8 @@
                                                         <span class="svc-count">+110 profissionais</span>
                                                         <span class="svc-rating">⭐ 4.9</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Faxina -->
+                                                    <a href="/Profissional/Lista?categoria=Limpeza" class="btn-svc">Ver profissionais</a>
                                                 </div>
 
                                                 <div class="service-card fade-up" style="transition-delay:.20s">
@@ -327,7 +333,8 @@
                                                         <span class="svc-count">+75 profissionais</span>
                                                         <span class="svc-rating">⭐ 4.8</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Assistência -->
+                                                    <a href="/Profissional/Lista?categoria=Tecnica" class="btn-svc">Ver profissionais</a>
                                                 </div>
 
                                                 <div class="service-card fade-up" style="transition-delay:.25s">
@@ -337,7 +344,8 @@
                                                         <span class="svc-count">+60 profissionais</span>
                                                         <span class="svc-rating">⭐ 5.0</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Personal -->
+                                                    <a href="/Profissional/Lista?categoria=Fitness" class="btn-svc">Ver profissionais</a>
                                                 </div>
 
                                                 <div class="service-card fade-up" style="transition-delay:.30s">
@@ -347,23 +355,31 @@
                                                         <span class="svc-count">+50 parceiros</span>
                                                         <span class="svc-rating">⭐ 4.9</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Pet -->
+                                                    <a href="/Profissional/Lista?categoria=Pet" class="btn-svc">Ver profissionais</a>
                                                 </div>
 
                                                 <div class="service-card fade-up" style="transition-delay:.35s">
                                                     <div class="svc-icon ic-red">❤️‍🩹</div>
                                                     <div class="svc-name">Saúde<br>& Bem-estar</div>
                                                     <div class="svc-meta">
-                                                        <span class="svc-count">+45 profissionais</span>
+                                                        @{
+                                                            var counts = ViewBag.CountCategorias as Dictionary<string, int>;
+                                                        }
+
+                                                        <span class="svc-count">
+                                                            +@(counts != null && counts.ContainsKey("Beleza") ? counts["Beleza"] : 0) profissionais
+                                                        </span>
                                                         <span class="svc-rating">⭐ 4.9</span>
                                                     </div>
-                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                    <!-- Saúde -->
+                                                    <a href="/Profissional/Lista?categoria=Saude" class="btn-svc">Ver profissionais</a>
                                                 </div>
 
                                             </div>
 
                                             <div class="services-footer fade-up">
-                                                <a href="#" class="link-ver-todos">
+                                                <a href="/Profissional/Lista" class="link-ver-todos">
                                                     Ver todas as categorias →
                                                 </a>
                                             </div>
@@ -427,7 +443,7 @@
                                                                         </div>
                                                                     </div>
 
-                                                                    <a href="#" class="btn-pros">Cadastrar minha conta grátis</a>
+                                                                    <a href="Usuario/Cadastro" class="btn-pros">Cadastrar minha conta grátis</a>
                                                                     <p class="pros-note">Teste grátis por 30 dias · Sem cartão de crédito</p>
                                                                 </div>
 
@@ -584,8 +600,8 @@
                                                             </p>
 
                                                             <div class="cta-actions">
-                                                                <a href="#" class="btn-primary">Agendar um serviço grátis</a>
-                                                                <a href="#" class="btn-outline-cta">Cadastrar minha empresa</a>
+                                                                <a href="Profissional/Lista" class="btn-primary">Agendar um serviço grátis</a>
+                                                                <a href="Usuario/Cadastro" class="btn-outline-cta">Cadastrar minha empresa</a>
                                                             </div>
 
                                                             <p class="cta-note">Sem cartão de crédito · Cadastro em menos de 1 minuto</p>
@@ -629,11 +645,11 @@
                                                                 <div>
                                                                     <div class="footer-col-title">Plataforma</div>
                                                                     <ul class="footer-col-links">
-                                                                        <li><a href="#">Início</a></li>
-                                                                        <li><a href="#">Explorar serviços</a></li>
-                                                                        <li><a href="#">Como funciona</a></li>
-                                                                        <li><a href="#">Para profissionais</a></li>
-                                                                        <li><a href="#">Avaliações</a></li>
+                                                                        <li><a href="#home">Início</a></li>
+                                                                        <li><a href="#services">Explorar serviços</a></li>
+                                                                        <li><a href="#how">Como funciona</a></li>
+                                                                        <li><a href="#pros">Para profissionais</a></li>
+                                                                        <li><a href="#reviews">Avaliações</a></li>
                                                                     </ul>
                                                                 </div>
 
@@ -642,9 +658,6 @@
                                                                     <div class="footer-col-title">Empresa</div>
                                                                     <ul class="footer-col-links">
                                                                         <li><a href="#">Sobre nós</a></li>
-                                                                        <li><a href="#">Blog</a></li>
-                                                                        <li><a href="#">Carreiras</a></li>
-                                                                        <li><a href="#">Imprensa</a></li>
                                                                         <li><a href="#">Termos de uso</a></li>
                                                                     </ul>
                                                                 </div>
@@ -700,7 +713,7 @@
                                                                 </div>
 
                                                                 <div class="footer-made">
-                                                                    🇧🇷 Feito no Brasil
+                                                                    🇧🇷 São Paulo - Brasil
                                                                 </div>
                                                             </div>
 
