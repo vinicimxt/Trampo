@@ -1,20 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-
+using BD_TRAMPO.DAO;
 
 namespace BD_TRAMPO.Controllers
 {
     public class ProfissionalController : BaseController
     {
 
-        public IActionResult Lista()
+        public IActionResult Lista(string busca, string localizacao)
         {
-
             ServicoDAO dao = new ServicoDAO();
-            var lista = dao.ListarServicos();
+
+            var lista = dao.ListarServicos(busca, localizacao);
 
             return View(lista);
         }
-
 
         public IActionResult Dashboard()
         {
@@ -62,9 +61,15 @@ namespace BD_TRAMPO.Controllers
             ServicoDAO servDAO = new ServicoDAO();
             var lista = servDAO.ListarPorProfissional(profissionalId);
 
+            SubcategoriaDAO subDao = new SubcategoriaDAO();
+            ViewBag.Subcategorias = subDao.ListarTodas();
+            
+            LocalDAO localDao = new LocalDAO();
+            ViewBag.Locais = localDao.ListarPorProfissional(usuarioId);
+
             return View(lista);
         }
-        
+
         public IActionResult PerfilPublico(int id)
         {
             if (HttpContext.Session.GetString("UsuarioId") == null)
@@ -109,6 +114,9 @@ namespace BD_TRAMPO.Controllers
 
             return View();
         }
+
+
+
     }
 
 

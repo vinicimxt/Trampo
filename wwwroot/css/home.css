@@ -1566,6 +1566,11 @@ h4 {
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+.logo-img {
+    width: auto;
+    height: 45px;
+}
+
 .footer-brand-name {
     font-family: 'Outfit', sans-serif;
     font-size: 1.5rem;

@@ -9,95 +9,96 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="~/css/site.css?v=3" />
+    <link rel="stylesheet" href="~/css/site.css?v=4" />
     @RenderSection("Styles", required: false)
 
 </head>
 
 <body>
 
-    <header class="navbar-ap" id="navbar">
+    <header class="navbar" id="navbar">
 
         <div class="container-ap nav-wrapper">
 
             <a href="/#home" style="text-decoration: none; color:inherit;">
                 <!-- LOGO -->
                 <div class="logo">
-                    Tram<span>po</span>
-                </div>
-            </a>
-            <!-- MENU -->
-            <nav class="nav-links" id="navLinks">
-                <a asp-controller="Home" asp-action="Index" class="nav-item">Home</a>
-                <a href="/#services" class="nav-item">Serviços</a>
-                <a href="/#how" class="nav-item">Como funciona</a>
-                <a href="/#reviews" class="nav-item">Avaliações</a>
-                <a asp-controller="Profissional" asp-action="Lista" class="nav-item">Profissionais</a>
+                    <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo Logo" class="logo-img">
+                        <span>Tram<span class="highlight">po</span></span>
+                    </div>
+                </a>
+                <!-- MENU -->
+                <nav class="nav-links" id="navLinks">
+                    <a asp-controller="Home" asp-action="Index" class="nav-item">Home</a>
+                    <a href="/#services" class="nav-item">Serviços</a>
+                    <a href="/#how" class="nav-item">Como funciona</a>
+                    <a href="/#reviews" class="nav-item">Avaliações</a>
+                    <a asp-controller="Profissional" asp-action="Lista" class="nav-item">Profissionais</a>
 
-                @if (Context.Session.GetString("UsuarioNome") != null)
-                {
-                    <a asp-controller="Agendamento" asp-action="Meus" class="nav-item">Agendamentos</a>
-                }
-                
-            </nav>
-
-            <!-- USER AREA -->
-            <div class="nav-right">
-
-                @{
-                    var nome = Context.Session.GetString("UsuarioNome");
-                    var tipo = Context.Session.GetString("UsuarioTipo");
-                }
-
-                @if (nome != null)
-                {
-                    <span class="user">Olá, @nome</span>
-
-                    @if (tipo == "profissional")
+                    @if (Context.Session.GetString("UsuarioNome") != null)
                     {
-                        <a asp-controller="Profissional" asp-action="MeuPerfil" class="btn-outline">
-                            Painel
+                        <a asp-controller="Agendamento" asp-action="Meus" class="nav-item">Agendamentos</a>
+                    }
+                
+                </nav>
+
+                <!-- USER AREA -->
+                <div class="nav-right">
+
+                    @{
+                        var nome = Context.Session.GetString("UsuarioNome");
+                        var tipo = Context.Session.GetString("UsuarioTipo");
+                    }
+
+                    @if (nome != null)
+                    {
+                        <span class="user">Olá, @nome</span>
+
+                        @if (tipo == "profissional")
+                        {
+                            <a asp-controller="Profissional" asp-action="MeuPerfil" class="btn-outline">
+                                Painel
+                            </a>
+                        }
+
+                        <a asp-controller="Usuario" asp-action="Logout" class="btn-logout">
+                            Sair
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Usuario" asp-action="Login" class="btn-outline">
+                            Login
+                        </a>
+
+                        <a asp-controller="Usuario" asp-action="Cadastro" class="btn-primary">
+                            Criar Conta
                         </a>
                     }
 
-                    <a asp-controller="Usuario" asp-action="Logout" class="btn-logout">
-                        Sair
-                    </a>
-                }
-                else
-                {
-                    <a asp-controller="Usuario" asp-action="Login" class="btn-outline">
-                        Login
-                    </a>
+                    <!-- MOBILE BTN -->
+                    <button class="menu-toggle" id="menuToggle">
+                        ☰
+                    </button>
 
-                    <a asp-controller="Usuario" asp-action="Cadastro" class="btn-primary">
-                        Criar Conta
-                    </a>
-                }
-
-                <!-- MOBILE BTN -->
-                <button class="menu-toggle" id="menuToggle">
-                    ☰
-                </button>
+                </div>
 
             </div>
 
-        </div>
-
-    </header>
+        </header>
    
-    <main>
-        @RenderBody()
-    </main>
+        <main>
+            @RenderBody()
+        </main>
 
-    <button id="btnTop" class="btn-top">
-        ↑
-    </button>
+        <button id="btnTop" class="btn-top">
+            ↑
+        </button>
 
-    <script src="~/js/site.js" defer></script>
+        <script src="~/js/site.js" defer></script>
 
-    @RenderSection("Scripts", required: false)
+        @RenderSection("Scripts", required: false)
 
-</body>
+    </body>
 
 </html>

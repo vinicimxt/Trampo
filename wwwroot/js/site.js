@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (navbar) {
-                navbar.classList.add("fixed", "top-0", "left-0", "z-50");
+                navbar.classList.add("scrolled");
                 navbar.classList.add("bg-black/80", "backdrop-blur-md", "shadow-lg");
             }
 
@@ -35,8 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (navbar) {
-                navbar.classList.remove("fixed", "top-0", "left-0", "z-50");
-                navbar.classList.remove("bg-black/80", "backdrop-blur-md", "shadow-lg");
+                navbar.classList.remove("scrolled");
             }
 
             document.body.style.paddingTop = "0px";

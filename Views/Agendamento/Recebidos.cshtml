@@ -1,89 +1,438 @@
-<h2>Pedidos Recebidos</h2>
+@model List<Agendamento>
 
-<table>
-    <thead>
-        <tr>
-            <th>Cliente</th>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Status</th>
-            <th>Ações</th>
-            <th>Endereço</th>
-            <th>Link Online</th>
-        </tr>
-    </thead>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Recebidos.css" />
+}
 
-    <tbody>
-        @foreach (var ag in Model)
+@functions {
+    string GetStatusClass(string status)
+    {
+        if (status == "Pendente") return "status-pendente";
+        if (status == "Confirmado") return "status-confirmado";
+        if (status == "Finalizado") return "status-finalizado";
+        if (status == "CanceladoCliente") return "status-cancelado";
+        if (status == "CanceladoProfissional") return "status-cancelado";
+        return "";
+    }
+
+    string GetDataFiltro(string status)
+    {
+        if (status == "CanceladoCliente") return "cancelado";
+        if (status == "CanceladoProfissional") return "cancelado";
+        return status;
+    }
+
+    string GetBadgeClass(string status)
+    {
+        if (status == "Pendente") return "badge-pendente";
+        if (status == "Confirmado") return "badge-confirmado";
+        if (status == "Finalizado") return "badge-finalizado";
+        return "badge-cancelado";
+    }
+
+    string GetBadgeTexto(string status)
+    {
+        if (status == "Pendente") return "Pendente";
+        if (status == "Confirmado") return "Confirmado";
+        if (status == "Finalizado") return "Finalizado";
+        if (status == "CanceladoCliente") return "Cancelado pelo cliente";
+        if (status == "CanceladoProfissional") return "Cancelado por você";
+        return status;
+    }
+
+    string GetIniciais(string nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome)) return "?";
+        var partes = nome.Trim().Split(' ');
+        string ini = "";
+        for (int i = 0; i < partes.Length && i < 2; i++)
         {
-            <tr>
-                <td>@ag.NomeCliente</td>
-                <td>@ag.Data.ToShortDateString()</td>
-                <td>@ag.Hora</td>
-                
-                
-               
-                <td>
-                    @{
-                        string statusTexto = ag.Status switch
-                        {
-                            "Pendente" => "🟡 Pendente",
-                            "Confirmado" => "🟢 Confirmado",
-                            "Finalizado" => "🔵 Finalizado",
-                            "CanceladoCliente" => "🔴 Cancelado por você",
-                            "CanceladoProfissional" => "🔴 Cancelado pelo profissional",
-                            _ => ag.Status
-                        };
-                    }
-
-                    @statusTexto
-                </td>
-                
-                <td>
-                    @if (ag.Status == "Pendente")
-                    {
-                        <a asp-action="Confirmar" asp-route-id="@ag.Id">✔</a>
-                        <a asp-action="Recusar" asp-route-id="@ag.Id">❌</a>
-                    }
-                    else
-                    {
-                        <span>@ag.Status</span>
-                    }
-
-                    @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
-                    {
-                        <form asp-action="Cancelar" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@ag.Id" />
-                            <button type="submit">Cancelar</button>
-                        </form>
-                    }
-
-                    @if (ag.Status == "Confirmado")
-                    {
-                        <form asp-action="Finalizar" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@ag.Id" />
-                            <button type="submit">Finalizar</button>
-                        </form>
-                    }
-                </td>
-                @if (ag.Status == "Confirmado" && !string.IsNullOrEmpty(ag.EnderecoCliente))
-                {
-                    <td>@ag.EnderecoCliente</td>
-                }
-                else
-                {
-                    <td>🔒 Aguardando confirmação</td>
-                }
-
-                <td>
-                @if (!string.IsNullOrEmpty(ag.LinkOnline))
-                {
-                    <a href="@ag.LinkOnline" target="_blank">
-                        🔗 Acessar reunião
-                    </a>
-                }
-                </td>
-            </tr>
+            if (partes[i].Length > 0) ini += char.ToUpper(partes[i][0]);
         }
-    </tbody>
-</table>
+        return ini;
+    }
+}
+
+@{
+    int total = Model.Count;
+    int pendentes = Model.Count(a => a.Status == "Pendente");
+    int confirmados = Model.Count(a => a.Status == "Confirmado");
+    int finalizados = Model.Count(a => a.Status == "Finalizado");
+    int cancelados = Model.Count(a =>
+        a.Status == "CanceladoCliente" || a.Status == "CanceladoProfissional");
+}
+
+<div class="recebidos-page">
+
+    <!-- =============================================
+         HERO
+    ============================================= -->
+    <div class="recebidos-hero">
+        <div class="recebidos-hero-dots"></div>
+        <div class="recebidos-hero-inner">
+
+            <div>
+                <span class="recebidos-hero-label">Painel do profissional</span>
+                <h1 class="recebidos-hero-title">Pedidos Recebidos</h1>
+                <p class="recebidos-hero-sub">Gerencie os agendamentos dos seus clientes.</p>
+            </div>
+
+            @if (total > 0)
+            {
+                <div class="hero-counters">
+                    <div class="hero-counter">
+                        <strong class="hero-counter-val">@total</strong>
+                        <span class="hero-counter-lbl">Total</span>
+                    </div>
+                    @if (pendentes > 0)
+                    {
+                        <div class="hero-counter has-pending">
+                            <strong class="hero-counter-val">@pendentes</strong>
+                            <span class="hero-counter-lbl">Aguardando</span>
+                        </div>
+                    }
+                    @if (confirmados > 0)
+                    {
+                        <div class="hero-counter">
+                            <strong class="hero-counter-val" style="color:#22c55e;">@confirmados</strong>
+                            <span class="hero-counter-lbl">Confirmados</span>
+                        </div>
+                    }
+                    @if (finalizados > 0)
+                    {
+                        <div class="hero-counter">
+                            <strong class="hero-counter-val" style="color:#8b5cf6;">@finalizados</strong>
+                            <span class="hero-counter-lbl">Finalizados</span>
+                        </div>
+                    }
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- =============================================
+         FILTROS
+    ============================================= -->
+    @if (total > 0)
+    {
+        <div class="recebidos-filters">
+            <div class="recebidos-filters-inner">
+
+                <button class="filter-pill active" onclick="filtrar('todos', this)">
+                    <span class="filter-pill-dot dot-all"></span> Todos
+                </button>
+                <button class="filter-pill" onclick="filtrar('Pendente', this)">
+                    <span class="filter-pill-dot dot-pendente"></span>
+                    Pendentes @if (pendentes > 0) {
+                    <span>(@pendentes)</span>
+                }
+            </button>
+            <button class="filter-pill" onclick="filtrar('Confirmado', this)">
+                <span class="filter-pill-dot dot-confirmado"></span>
+                Confirmados @if (confirmados > 0) {
+                <span>(@confirmados)</span>
+            }
+        </button>
+        <button class="filter-pill" onclick="filtrar('Finalizado', this)">
+            <span class="filter-pill-dot dot-finalizado"></span>
+            Finalizados @if (finalizados > 0) {
+            <span>(@finalizados)</span>
+        }
+    </button>
+    <button class="filter-pill" onclick="filtrar('cancelado', this)">
+        <span class="filter-pill-dot dot-cancelado"></span>
+        Cancelados @if (cancelados > 0) {
+        <span>(@cancelados)</span>
+    }
+</button>
+
+<span class="filter-count">
+    <strong id="contadorFiltro">@total</strong> pedido(s)
+</span>
+
+</div>
+</div>
+    }
+
+<!-- =============================================
+         LISTA
+    ============================================= -->
+<div class="recebidos-main">
+
+    @if (total == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">📥</div>
+            <h3>Nenhum pedido recebido ainda</h3>
+            <p>Quando clientes agendarem seus serviços, os pedidos aparecerão aqui para você confirmar ou recusar.</p>
+        </div>
+    }
+    else
+    {
+        <div class="agend-lista" id="agendLista">
+
+            @foreach (var ag in Model)
+            {
+                <div class="agend-card @GetStatusClass(ag.Status)" data-status="@GetDataFiltro(ag.Status)">
+
+                    <!-- cabeçalho: cliente + status -->
+                    <div class="agend-card-header">
+                        <div class="agend-avatar">@GetIniciais(ag.NomeCliente)</div>
+                        <div>
+                            <div class="agend-cliente-name">@ag.NomeCliente</div>
+                            <div class="agend-servico">
+                                <span>📦</span> @ag.Servico
+                            </div>
+                        </div>
+                        <span class="status-badge @GetBadgeClass(ag.Status)">
+                            <span class="badge-dot"></span>
+                            @GetBadgeTexto(ag.Status)
+                        </span>
+                    </div>
+
+                    <!-- corpo: data / hora / tipo -->
+                    <div class="agend-card-body">
+
+                        <div class="agend-info-item">
+                            <div class="agend-info-label">📅 Data</div>
+                            <div class="agend-info-val">@ag.Data.ToString("dd/MM/yyyy")</div>
+                            <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">
+                                @ag.Data.ToString("dddd", new System.Globalization.CultureInfo("pt-BR"))
+                            </div>
+                        </div>
+
+                        <div class="agend-info-item">
+                            <div class="agend-info-label">🕐 Horário</div>
+                            <div class="agend-info-val">@ag.Hora</div>
+                        </div>
+
+                        <div class="agend-info-item">
+                            <div class="agend-info-label">📌 Atendimento</div>
+                            <div class="agend-info-val">
+                                @if (ag.Atendimento == "Local")
+                                {
+                                    <span class="agend-atend-chip chip-local">📍 Presencial</span>
+                                }
+                                else if (ag.Atendimento == "Domicilio")
+                                {
+                                    <span class="agend-atend-chip chip-domicilio">🏠 Domicílio</span>
+                                }
+                                else if (ag.Atendimento == "Online")
+                                {
+                                    <span class="agend-atend-chip chip-online">💻 Online</span>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- área de ações -->
+                    <div class="agend-actions-area">
+
+                        <!-- endereço / link -->
+                        <div class="agend-info-extra">
+                            @if (ag.Atendimento == "Domicilio")
+                            {
+                                if (ag.Status == "Confirmado" && !string.IsNullOrEmpty(ag.EnderecoCliente))
+                                {
+                                    <span>🏠</span>
+                                    <span>@ag.EnderecoCliente</span>
+                                }
+                                else
+                                {
+                                    <span class="aguardando-chip">🔒 Endereço visível após confirmação</span>
+                                }
+                            }
+                            else if (ag.Atendimento == "Online" && !string.IsNullOrEmpty(ag.LinkOnline))
+                            {
+                                <a href="@ag.LinkOnline" target="_blank" class="btn-link-online">
+                                    🔗 Acessar reunião
+                                </a>
+                            }
+                            else if (ag.Atendimento == "Local" && !string.IsNullOrEmpty(ag.EnderecoLocal))
+                            {
+                                <span>📍</span>
+                                <span>@ag.EnderecoLocal</span>
+                            }
+                        </div>
+
+                        <!-- botões de ação -->
+                        <div class="agend-btns">
+
+                            @if (ag.Status == "Pendente")
+                            {
+                                <!-- Confirmar -->
+                                <button type="button" class="btn-confirmar"
+                                        onclick="abrirModal('confirmar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                    ✔ Confirmar
+                                </button>
+                                <!-- Recusar -->
+                                <button type="button" class="btn-recusar"
+                                        onclick="abrirModal('recusar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                    ✕ Recusar
+                                </button>
+                            }
+
+                            @if (ag.Status == "Confirmado")
+                            {
+                                <!-- Finalizar -->
+                                <button type="button" class="btn-finalizar"
+                                        onclick="abrirModal('finalizar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                    ✅ Finalizar
+                                </button>
+                            }
+
+                            @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
+                            {
+                                <!-- Cancelar (profissional) -->
+                                <button type="button" class="btn-cancelar-pro"
+                                        onclick="abrirModal('cancelar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                    Cancelar
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+            <div class="empty-filtrado" id="emptyFiltrado">
+                Nenhum pedido com esse status.
+            </div>
+
+        </div>
+    }
+
+</div>
+</div>
+
+
+<!-- =============================================
+     MODAIS DE AÇÃO
+============================================= -->
+
+<!-- Modal Confirmar -->
+<div class="modal-overlay" id="modalConfirmar">
+    <div class="modal-box">
+        <div class="modal-icon">✅</div>
+        <div class="modal-title">Confirmar agendamento?</div>
+        <p class="modal-sub" id="descConfirmar"></p>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
+            <a class="btn-modal-green" id="linkConfirmar" href="#">Sim, confirmar</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Recusar -->
+<div class="modal-overlay" id="modalRecusar">
+    <div class="modal-box">
+        <div class="modal-icon">❌</div>
+        <div class="modal-title">Recusar pedido?</div>
+        <p class="modal-sub" id="descRecusar"></p>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
+            <a class="btn-modal-red" id="linkRecusar" href="#">Sim, recusar</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Finalizar -->
+<div class="modal-overlay" id="modalFinalizar">
+    <div class="modal-box">
+        <div class="modal-icon">🏁</div>
+        <div class="modal-title">Finalizar atendimento?</div>
+        <p class="modal-sub" id="descFinalizar"></p>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
+            <a class="btn-modal-blue" id="linkFinalizar" href="#">Sim, finalizar</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cancelar -->
+<div class="modal-overlay" id="modalCancelar">
+    <div class="modal-box">
+        <div class="modal-icon">⚠️</div>
+        <div class="modal-title">Cancelar agendamento?</div>
+        <p class="modal-sub" id="descCancelar"></p>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="fecharModais()">Manter</button>
+            <form id="formCancelar" asp-action="Cancelar" method="post" style="flex:1;">
+                <input type="hidden" name="id" id="cancelarId" />
+                <button type="submit" class="btn-modal-red" style="width:100%;">Sim, cancelar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        /* -----------------------------------------------
+           FILTRO
+        ----------------------------------------------- */
+        function filtrar(status, btn) {
+            document.querySelectorAll('.filter-pill').forEach(function (p) { p.classList.remove('active'); });
+            btn.classList.add('active');
+            var cards = document.querySelectorAll('.agend-card');
+            var n = 0;
+            cards.forEach(function (c) {
+                var show = status === 'todos' || c.dataset.status === status;
+                c.style.display = show ? '' : 'none';
+                if (show) n++;
+            });
+            var cnt = document.getElementById('contadorFiltro');
+            if (cnt) cnt.textContent = n;
+            var emp = document.getElementById('emptyFiltrado');
+            if (emp) emp.classList.toggle('visivel', n === 0);
+        }
+
+        /* -----------------------------------------------
+           MODAIS
+        ----------------------------------------------- */
+        function abrirModal(tipo, id, cliente, data, hora) {
+            fecharModais();
+
+            var desc = 'Agendamento de <strong>' + cliente + '</strong> para <strong>' + data + ' às ' + hora + '</strong>.';
+
+            if (tipo === 'confirmar') {
+                document.getElementById('descConfirmar').innerHTML = desc;
+                document.getElementById('linkConfirmar').href = '/Agendamento/Confirmar/' + id;
+                document.getElementById('modalConfirmar').classList.add('open');
+            }
+            else if (tipo === 'recusar') {
+                document.getElementById('descRecusar').innerHTML = desc + ' O cliente será notificado.';
+                document.getElementById('linkRecusar').href = '/Agendamento/Recusar/' + id;
+                document.getElementById('modalRecusar').classList.add('open');
+            }
+            else if (tipo === 'finalizar') {
+                document.getElementById('descFinalizar').innerHTML = desc + ' Confirme que o serviço foi realizado.';
+                document.getElementById('linkFinalizar').href = '/Agendamento/Finalizar/' + id;
+                document.getElementById('modalFinalizar').classList.add('open');
+            }
+            else if (tipo === 'cancelar') {
+                document.getElementById('descCancelar').innerHTML = desc + ' Esta ação não pode ser desfeita.';
+                document.getElementById('cancelarId').value = id;
+                document.getElementById('modalCancelar').classList.add('open');
+            }
+        }
+
+        function fecharModais() {
+            document.querySelectorAll('.modal-overlay').forEach(function (m) {
+                m.classList.remove('open');
+            });
+        }
+
+        // fecha clicando fora ou ESC
+        document.querySelectorAll('.modal-overlay').forEach(function (m) {
+            m.addEventListener('click', function (e) { if (e.target === this) fecharModais(); });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') fecharModais();
+        });
+    </script>
+}

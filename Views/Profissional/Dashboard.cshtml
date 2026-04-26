@@ -1,32 +1,371 @@
 @model (int total, int pendentes, int confirmados, int finalizados, int cancelados)
 
-<h2>📊 Dashboard</h2>
+@section Styles {
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+}
 
-<div style="display:flex; gap:20px; flex-wrap:wrap;">
+@{
+    int total = Model.total;
+    int pendentes = Model.pendentes;
+    int confirmados = Model.confirmados;
+    int finalizados = Model.finalizados;
+    int cancelados = Model.cancelados;
 
-    <div style="padding:20px; background:#eee; border-radius:10px;">
-        <h3>Total</h3>
-        <p>@Model.total</p>
+    // percentuais (evita divisão por zero)
+    double pPend = total > 0 ? Math.Round((double)pendentes / total * 100, 1) : 0;
+    double pConf = total > 0 ? Math.Round((double)confirmados / total * 100, 1) : 0;
+    double pFin = total > 0 ? Math.Round((double)finalizados / total * 100, 1) : 0;
+    double pCanc = total > 0 ? Math.Round((double)cancelados / total * 100, 1) : 0;
+
+    // taxa de conclusão = finalizados / (total - pendentes - cancelados)
+    int ativos = confirmados + finalizados;
+    double taxaConcl = ativos > 0 ? Math.Round((double)finalizados / (finalizados + confirmados) * 100, 1) : 0;
+    double taxaCancel = total > 0 ? Math.Round((double)cancelados / total * 100, 1) : 0;
+    double taxaAceit = total > 0 ? Math.Round((double)(total - cancelados) / total * 100, 1) : 0;
+
+    // donut SVG — construído manualmente
+    // raio = 70, circumference = 439.82
+    double circ = 2 * Math.PI * 70;
+    double offPend = 0;
+    double offConf = offPend + (pPend / 100 * circ);
+    double offFin = offConf + (pConf / 100 * circ);
+    double offCanc = offFin + (pFin / 100 * circ);
+
+    double gapPend = circ - (pPend / 100 * circ);
+    double gapConf = circ - (pConf / 100 * circ);
+    double gapFin = circ - (pFin / 100 * circ);
+    double gapCanc = circ - (pCanc / 100 * circ);
+}
+
+<div class="dash-page">
+
+    <!-- HERO -->
+    <div class="dash-hero">
+        <div class="dash-hero-dots"></div>
+        <div class="dash-hero-inner">
+            <div>
+                <span class="dash-hero-label">Meu desempenho</span>
+                <h1 class="dash-hero-title">Dashboard</h1>
+                <p class="dash-hero-sub">Acompanhe seus resultados e métricas de atendimento.</p>
+            </div>
+            <div class="dash-hero-right">
+                <span style="font-size:1.4rem;">📅</span>
+                <div class="dash-hero-date">
+                    <div class="dash-hero-date-val">
+                        @DateTime.Now.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pt-BR"))
+                    </div>
+                    <div class="dash-hero-date-lbl">Período atual</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div style="padding:20px; background:#fff3cd; border-radius:10px;">
-        <h3>🟡 Pendentes</h3>
-        <p>@Model.pendentes</p>
-    </div>
+    <div class="dash-main">
 
-    <div style="padding:20px; background:#d4edda; border-radius:10px;">
-        <h3>🟢 Confirmados</h3>
-        <p>@Model.confirmados</p>
-    </div>
+        <!-- ============================================
+             KPIs
+        ============================================= -->
+        <div>
+            <div class="dash-section-title">Resumo geral</div>
+            <div class="kpi-grid">
 
-    <div style="padding:20px; background:#cce5ff; border-radius:10px;">
-        <h3>🔵 Finalizados</h3>
-        <p>@Model.finalizados</p>
-    </div>
+                <div class="kpi-card total">
+                    <div class="kpi-icon">📥</div>
+                    <div class="kpi-val">@total</div>
+                    <div class="kpi-lbl">Agendamentos totais</div>
+                </div>
 
-    <div style="padding:20px; background:#f8d7da; border-radius:10px;">
-        <h3>🔴 Cancelados</h3>
-        <p>@Model.cancelados</p>
-    </div>
+                <div class="kpi-card pendente">
+                    <div class="kpi-icon">⏳</div>
+                    <div class="kpi-val">@pendentes</div>
+                    <div class="kpi-lbl">Aguardando resposta</div>
+                </div>
 
+                <div class="kpi-card confirmado">
+                    <div class="kpi-icon">✅</div>
+                    <div class="kpi-val">@confirmados</div>
+                    <div class="kpi-lbl">Confirmados</div>
+                </div>
+
+                <div class="kpi-card finalizado">
+                    <div class="kpi-icon">🏁</div>
+                    <div class="kpi-val">@finalizados</div>
+                    <div class="kpi-lbl">Finalizados</div>
+                </div>
+
+                <div class="kpi-card cancelado">
+                    <div class="kpi-icon">❌</div>
+                    <div class="kpi-val">@cancelados</div>
+                    <div class="kpi-lbl">Cancelados</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============================================
+             GRÁFICO + DISTRIBUIÇÃO
+        ============================================= -->
+        <div class="dash-row-2">
+
+            <!-- Gráfico de rosca SVG -->
+            <div class="chart-card">
+                <div class="dash-section-title">Distribuição</div>
+
+                <div class="donut-wrap">
+                    <svg width="200" height="200" viewBox="0 0 180 180">
+
+                        @if (total == 0)
+                        {
+                            <!-- anel vazio -->
+                            <circle cx="90" cy="90" r="70" fill="none" stroke="#E8EEF8" stroke-width="22" />
+                        }
+                        else
+                        {
+                            <!-- Pendentes -->
+                            @if (pendentes > 0)
+                            {
+                                <circle cx="90" cy="90" r="70" fill="none" stroke="#f59e0b" stroke-width="22"
+                                        stroke-dasharray="@((pPend / 100 * circ).ToString("F2", System.Globalization.CultureInfo.InvariantCulture)) @(gapPend.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        stroke-dashoffset="@((circ / 4).ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        transform="rotate(-90, 90, 90)" />
+                            }
+                            <!-- Confirmados -->
+                            @if (confirmados > 0)
+                            {
+                                <circle cx="90" cy="90" r="70" fill="none" stroke="#22c55e" stroke-width="22"
+                                        stroke-dasharray="@((pConf / 100 * circ).ToString("F2", System.Globalization.CultureInfo.InvariantCulture)) @(gapConf.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        stroke-dashoffset="@(((circ / 4) - offConf).ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        transform="rotate(-90, 90, 90)" />
+                            }
+                            <!-- Finalizados -->
+                            @if (finalizados > 0)
+                            {
+                                <circle cx="90" cy="90" r="70" fill="none" stroke="#8b5cf6" stroke-width="22"
+                                        stroke-dasharray="@((pFin / 100 * circ).ToString("F2", System.Globalization.CultureInfo.InvariantCulture)) @(gapFin.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        stroke-dashoffset="@(((circ / 4) - offFin).ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        transform="rotate(-90, 90, 90)" />
+                            }
+                            <!-- Cancelados -->
+                            @if (cancelados > 0)
+                            {
+                                <circle cx="90" cy="90" r="70" fill="none" stroke="#ef4444" stroke-width="22"
+                                        stroke-dasharray="@((pCanc / 100 * circ).ToString("F2", System.Globalization.CultureInfo.InvariantCulture)) @(gapCanc.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        stroke-dashoffset="@(((circ / 4) - offCanc).ToString("F2", System.Globalization.CultureInfo.InvariantCulture))"
+                                        transform="rotate(-90, 90, 90)" />
+                            }
+                        }
+
+                        <!-- Círculo central branco -->
+                        <circle cx="90" cy="90" r="52" fill="white" />
+                    </svg>
+
+                    <div class="donut-center">
+                        <div class="donut-center-val">@total</div>
+                        <div class="donut-center-lbl">total</div>
+                    </div>
+                </div>
+
+                <div class="donut-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background:#f59e0b;"></span>
+                        <span class="legend-label">Pendentes</span>
+                        <span class="legend-val">@pendentes</span>
+                        <span class="legend-pct">@pPend%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background:#22c55e;"></span>
+                        <span class="legend-label">Confirmados</span>
+                        <span class="legend-val">@confirmados</span>
+                        <span class="legend-pct">@pConf%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background:#8b5cf6;"></span>
+                        <span class="legend-label">Finalizados</span>
+                        <span class="legend-val">@finalizados</span>
+                        <span class="legend-pct">@pFin%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background:#ef4444;"></span>
+                        <span class="legend-label">Cancelados</span>
+                        <span class="legend-val">@cancelados</span>
+                        <span class="legend-pct">@pCanc%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barras de distribuição -->
+            <div class="dist-card">
+                <div class="dash-section-title">Proporção por status</div>
+
+                <div class="dist-bar-row">
+                    <div class="dist-bar-label">
+                        <span class="dot" style="background:#f59e0b;"></span>
+                        Pendentes
+                    </div>
+                    <div class="dist-bar-track">
+                        <div class="dist-bar-fill"
+                             style="width:@(pPend.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#f59e0b;">
+                        </div>
+                    </div>
+                    <div class="dist-bar-val">@pendentes</div>
+                </div>
+
+                <div class="dist-bar-row">
+                    <div class="dist-bar-label">
+                        <span class="dot" style="background:#22c55e;"></span>
+                        Confirmados
+                    </div>
+                    <div class="dist-bar-track">
+                        <div class="dist-bar-fill"
+                             style="width:@(pConf.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#22c55e;">
+                        </div>
+                    </div>
+                    <div class="dist-bar-val">@confirmados</div>
+                </div>
+
+                <div class="dist-bar-row">
+                    <div class="dist-bar-label">
+                        <span class="dot" style="background:#8b5cf6;"></span>
+                        Finalizados
+                    </div>
+                    <div class="dist-bar-track">
+                        <div class="dist-bar-fill"
+                             style="width:@(pFin.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#8b5cf6;">
+                        </div>
+                    </div>
+                    <div class="dist-bar-val">@finalizados</div>
+                </div>
+
+                <div class="dist-bar-row">
+                    <div class="dist-bar-label">
+                        <span class="dot" style="background:#ef4444;"></span>
+                        Cancelados
+                    </div>
+                    <div class="dist-bar-track">
+                        <div class="dist-bar-fill"
+                             style="width:@(pCanc.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#ef4444;">
+                        </div>
+                    </div>
+                    <div class="dist-bar-val">@cancelados</div>
+                </div>
+
+                <!-- Indicadores rápidos -->
+                <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--border);">
+                    <div class="dash-section-title" style="margin-bottom:14px;">Indicadores</div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+
+                        <div
+                            style="background:var(--bg-light); border:1.5px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+                            <div
+                                style="font-size:.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px;">
+                                Taxa de conclusão
+                            </div>
+                            <div
+                                style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; color:#5b21b6;">
+                                @taxaConcl%
+                            </div>
+                            <div style="font-size:.75rem; color:var(--text-muted); margin-top:2px;">
+                                dos ativos finalizados
+                            </div>
+                        </div>
+
+                        <div
+                            style="background:var(--bg-light); border:1.5px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+                            <div
+                                style="font-size:.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px;">
+                                Taxa de cancelamento
+                            </div>
+                            <div
+                                style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; color:#991b1b;">
+                                @taxaCancel%
+                            </div>
+                            <div style="font-size:.75rem; color:var(--text-muted); margin-top:2px;">
+                                do total de pedidos
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============================================
+             PAGAMENTOS — placeholder backend futuro
+        ============================================= -->
+        <div class="pagamentos-card">
+            <div class="pag-inner">
+
+                <div class="pag-section-title">💳 Pagamentos</div>
+
+                <!-- Stats fictícios (serão reais quando o backend estiver pronto) -->
+                <div class="pag-stats-grid">
+                    <div class="pag-stat">
+                        <span class="pag-stat-val">R$—</span>
+                        <span class="pag-stat-lbl">Faturamento total</span>
+                    </div>
+                    <div class="pag-stat">
+                        <span class="pag-stat-val">R$—</span>
+                        <span class="pag-stat-lbl">Este mês</span>
+                    </div>
+                    <div class="pag-stat">
+                        <span class="pag-stat-val">R$—</span>
+                        <span class="pag-stat-lbl">A receber</span>
+                    </div>
+                </div>
+
+                <!-- Aviso de "em breve" -->
+                <div class="pag-coming-soon">
+                    <div class="pag-coming-icon">🚀</div>
+                    <div>
+                        <div class="pag-coming-title">Módulo de pagamentos em breve</div>
+                        <div class="pag-coming-sub">
+                            Histórico de transações, valores por serviço e relatórios financeiros estarão disponíveis em
+                            breve.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista mockada com blur (preview do que virá) -->
+                <div style="position:relative; margin-top:16px;">
+                    <div class="pag-list">
+                        <div class="pag-item">
+                            <div class="pag-item-icon">💈</div>
+                            <div>
+                                <div class="pag-item-name">Corte de cabelo — Carlos M.</div>
+                                <div class="pag-item-date">Hoje, 14:00</div>
+                            </div>
+                            <div class="pag-item-val">R$55,00</div>
+                        </div>
+                        <div class="pag-item">
+                            <div class="pag-item-icon">🧔</div>
+                            <div>
+                                <div class="pag-item-name">Barba — Rafael L.</div>
+                                <div class="pag-item-date">Ontem, 15:30</div>
+                            </div>
+                            <div class="pag-item-val">R$35,00</div>
+                        </div>
+                        <div class="pag-item">
+                            <div class="pag-item-icon">💈</div>
+                            <div>
+                                <div class="pag-item-name">Corte + Barba — Pedro S.</div>
+                                <div class="pag-item-date">Seg, 09:00</div>
+                            </div>
+                            <div class="pag-item-val">R$80,00</div>
+                        </div>
+                    </div>
+
+                    <!-- overlay de blur sobre a lista mockada -->
+                    <div class="pag-blur-overlay">
+                        <div class="pag-blur-badge">
+                            🔒 Disponível em breve
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 </div>

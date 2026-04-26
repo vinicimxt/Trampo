@@ -88,9 +88,11 @@
             @foreach (var item in Model)
             {
                 <!-- data-* = ganchos de filtro client-side (e futuramente query params) -->
-                <div class="card-servico" data-nome="@item.Nome.ToLower()"
-                     data-profissional="@item.NomeProfissional.ToLower()" data-categoria="@item.Categoria"
-                     data-subcategoria="@item.Subcategoria" data-atendimento="@item.Atendimento">
+                <div class="card-servico" 
+                     data-nome="@(item.Nome?.ToLower() ?? "")"
+                     data-profissional="@(item.NomeProfissional?.ToLower() ?? "")" 
+                     data-categoria="@(item.Categoria ?? "")"
+                     data-subcategoria="@(item.Subcategoria ?? "")" data-atendimento="@(item.Atendimento ?? "")">
 
                     <!-- Header -->
                     <div class="card-header">

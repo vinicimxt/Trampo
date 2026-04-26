@@ -129,6 +129,11 @@ body {
     color: var(--blue);
 }
 
+.auth-logo-img {
+    height: 40px;
+    width: auto;
+}
+
 .auth-panel-title {
     font-family: 'Outfit', sans-serif;
     font-size: clamp(1.8rem, 2.8vw, 2.6rem);

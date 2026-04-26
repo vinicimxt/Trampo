@@ -24,18 +24,25 @@
                 Encontre profissionais e empresas disponíveis para o horário que você precisa.
             </p>
 
-            <div class="search-box">
+            <form method="get" action="/Profissional/Lista" class="search-box">
+
                 <div class="search-field">
                     <span>🔎</span>
-                    <input type="text" placeholder="Qual serviço você precisa?" />
+                    <input type="text" name="busca" required placeholder="Qual serviço você precisa?" />
                 </div>
+
                 <div class="divider"></div>
+
                 <div class="search-field">
                     <span>📍</span>
-                    <input type="text" placeholder="Sua localização" />
+                    <input type="text" name="localizacao" placeholder="Sua localização" />
                 </div>
-                <button class="btn-search">Buscar</button>
-            </div>
+
+                <button type="submit" class="btn-search">
+                    Buscar
+                </button>
+
+            </form>
 
             <div class="popular">
                 Popular: Corte de cabelo • Manicure • Lava rápido
@@ -89,594 +96,618 @@
                 <div class="why-icon">🔒</div>
                 <div class="why-body">
                     <h3>Profissionais verificados</h3>
-                    <p>Todo profissional passa por verificação de identidade e análise de reputação antes de aparecer na plataforma. Você contrata com confiança.</p>
-                    <span class="why-tag">100% verificado</span>
+                    <p>Todo profissional passa por verificação de identidade e análise de reputação antes de aparecer na
+                        plataforma. Você contrata com confiança.</p>
+                        <span class="why-tag">100% verificado</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="why-card fade-up" style="transition-delay:.08s">
-                <div class="why-icon">⚡</div>
-                <div class="why-body">
-                    <h3>Agendamento em segundos</h3>
-                    <p>Sem ligações, sem espera. Escolha o serviço, veja a disponibilidade em tempo real e confirme o agendamento com um clique.</p>
-                    <span class="why-tag">Média de 45 segundos</span>
-                </div>
-            </div>
+                <div class="why-card fade-up" style="transition-delay:.08s">
+                    <div class="why-icon">⚡</div>
+                    <div class="why-body">
+                        <h3>Agendamento em segundos</h3>
+                        <p>Sem ligações, sem espera. Escolha o serviço, veja a disponibilidade em tempo real e confirme o
+                            agendamento com um clique.</p>
+                            <span class="why-tag">Média de 45 segundos</span>
+                        </div>
+                    </div>
 
-            <div class="why-card fade-up" style="transition-delay:.12s">
-                <div class="why-icon">⭐</div>
-                <div class="why-body">
-                    <h3>Avaliações reais</h3>
-                    <p>Todas as avaliações são de clientes reais que usaram o serviço. Nenhuma nota é fabricada — você sempre sabe o que esperar.</p>
-                    <span class="why-tag">Avaliação 4.9 / 5.0</span>
-                </div>
-            </div>
+                    <div class="why-card fade-up" style="transition-delay:.12s">
+                        <div class="why-icon">⭐</div>
+                        <div class="why-body">
+                            <h3>Avaliações reais</h3>
+                            <p>Todas as avaliações são de clientes reais que usaram o serviço. Nenhuma nota é fabricada — você
+                                sempre sabe o que esperar.</p>
+                                <span class="why-tag">Avaliação 4.9 / 5.0</span>
+                            </div>
+                        </div>
 
-            <div class="why-card fade-up" style="transition-delay:.16s">
-                <div class="why-icon">🛡️</div>
-                <div class="why-body">
-                    <h3>Suporte humano</h3>
-                    <p>Tivemos algum problema? Nossa equipe está disponível para te ajudar via chat em menos de 5 minutos, todos os dias.</p>
-                    <span class="why-tag">Suporte 7 dias por semana</span>
-                </div>
-            </div>
+                        <div class="why-card fade-up" style="transition-delay:.16s">
+                            <div class="why-icon">🛡️</div>
+                            <div class="why-body">
+                                <h3>Suporte humano</h3>
+                                <p>Tivemos algum problema? Nossa equipe está disponível para te ajudar via chat em menos de 5
+                                    minutos, todos os dias.</p>
+                                    <span class="why-tag">Suporte 7 dias por semana</span>
+                                </div>
+                            </div>
 
-        </div>
+                        </div>
 
-    </div>
-</section>
+                    </div>
+                </section>
 
 
-<!-- =====================================================
+                <!-- =====================================================
      COMO FUNCIONA — abas cliente / profissional
 ===================================================== -->
-<section id="how" class="how">
-    <div class="container-ap">
+                <section id="how" class="how">
+                    <div class="container-ap">
 
-        <div class="section-header fade-up">
-            <span class="section-label">Simples e rápido</span>
-            <h2>Como funciona</h2>
-            <p>Um jeito diferente para cada lado da plataforma.</p>
-        </div>
+                        <div class="section-header fade-up">
+                            <span class="section-label">Simples e rápido</span>
+                            <h2>Como funciona</h2>
+                            <p>Um jeito diferente para cada lado da plataforma.</p>
+                        </div>
 
-        <!-- Seletor de aba -->
-        <div class="tab-switcher fade-up">
-            <button class="tab-btn active" onclick="switchTab('cliente', this)">🙋 Sou cliente</button>
-            <button class="tab-btn" onclick="switchTab('profissional', this)">👷 Sou profissional</button>
-        </div>
+                        <!-- Seletor de aba -->
+                        <div class="tab-switcher fade-up">
+                            <button class="tab-btn active" onclick="switchTab('cliente', this)">🙋 Sou cliente</button>
+                            <button class="tab-btn" onclick="switchTab('profissional', this)">👷 Sou profissional</button>
+                        </div>
 
-        <!-- Aba: cliente -->
-        <div class="tab-content active" id="tab-cliente">
-            <div class="steps">
+                        <!-- Aba: cliente -->
+                        <div class="tab-content active" id="tab-cliente">
+                            <div class="steps">
 
-                <div class="step fade-up">
-                    <div class="step-num">1</div>
-                    <div class="step-icon-wrap">🔍</div>
-                    <h3>Busque o serviço</h3>
-                    <p>Digite o que você precisa e sua cidade. Veja todos os profissionais disponíveis perto de você com avaliações e preços.</p>
-                </div>
+                                <div class="step fade-up">
+                                    <div class="step-num">1</div>
+                                    <div class="step-icon-wrap">🔍</div>
+                                    <h3>Busque o serviço</h3>
+                                    <p>Digite o que você precisa e sua cidade. Veja todos os profissionais disponíveis perto de você com
+                                        avaliações e preços.</p>
+                                    </div>
 
-                <div class="step-arrow">→</div>
+                                    <div class="step-arrow">→</div>
 
-                <div class="step fade-up" style="transition-delay:.10s">
-                    <div class="step-num">2</div>
-                    <div class="step-icon-wrap">🗓️</div>
-                    <h3>Escolha e agende</h3>
-                    <p>Veja a disponibilidade em tempo real, compare profissionais e confirme o horário que encaixa melhor na sua rotina.</p>
-                </div>
+                                    <div class="step fade-up" style="transition-delay:.10s">
+                                        <div class="step-num">2</div>
+                                        <div class="step-icon-wrap">🗓️</div>
+                                        <h3>Escolha e agende</h3>
+                                        <p>Veja a disponibilidade em tempo real, compare profissionais e confirme o horário que encaixa
+                                            melhor na sua rotina.</p>
+                                        </div>
 
-                <div class="step-arrow">→</div>
+                                        <div class="step-arrow">→</div>
 
-                <div class="step fade-up" style="transition-delay:.20s">
-                    <div class="step-num">3</div>
-                    <div class="step-icon-wrap">✅</div>
-                    <h3>Pronto — aproveite!</h3>
-                    <p>Receba a confirmação, acompanhe pelo app e, após o serviço, avalie o profissional. Simples assim.</p>
-                </div>
+                                        <div class="step fade-up" style="transition-delay:.20s">
+                                            <div class="step-num">3</div>
+                                            <div class="step-icon-wrap">✅</div>
+                                            <h3>Pronto — aproveite!</h3>
+                                            <p>Receba a confirmação, acompanhe pelo app e, após o serviço, avalie o profissional. Simples assim.
+                                            </p>
+                                        </div>
 
-            </div>
-        </div>
+                                    </div>
+                                </div>
 
-        <!-- Aba: profissional -->
-        <div class="tab-content" id="tab-profissional">
-            <div class="steps">
+                                <!-- Aba: profissional -->
+                                <div class="tab-content" id="tab-profissional">
+                                    <div class="steps">
 
-                <div class="step fade-up">
-                    <div class="step-num">1</div>
-                    <div class="step-icon-wrap">📝</div>
-                    <h3>Crie seu perfil</h3>
-                    <p>Cadastre-se gratuitamente, adicione seus serviços, defina preços e configure sua agenda em menos de 10 minutos.</p>
-                </div>
+                                        <div class="step fade-up">
+                                            <div class="step-num">1</div>
+                                            <div class="step-icon-wrap">📝</div>
+                                            <h3>Crie seu perfil</h3>
+                                            <p>Cadastre-se gratuitamente, adicione seus serviços, defina preços e configure sua agenda em menos
+                                                de 10 minutos.</p>
+                                            </div>
 
-                <div class="step-arrow">→</div>
+                                            <div class="step-arrow">→</div>
 
-                <div class="step fade-up" style="transition-delay:.10s">
-                    <div class="step-num">2</div>
-                    <div class="step-icon-wrap">📲</div>
-                    <h3>Receba pedidos</h3>
-                    <p>Clientes encontram seu perfil, verificam sua agenda e solicitam serviços. Você recebe a notificação e confirma em segundos.</p>
-                </div>
+                                            <div class="step fade-up" style="transition-delay:.10s">
+                                                <div class="step-num">2</div>
+                                                <div class="step-icon-wrap">📲</div>
+                                                <h3>Receba pedidos</h3>
+                                                <p>Clientes encontram seu perfil, verificam sua agenda e solicitam serviços. Você recebe a
+                                                    notificação e confirma em segundos.</p>
+                                                </div>
 
-                <div class="step-arrow">→</div>
+                                                <div class="step-arrow">→</div>
 
-                <div class="step fade-up" style="transition-delay:.20s">
-                    <div class="step-num">3</div>
-                    <div class="step-icon-wrap">💰</div>
-                    <h3>Ganhe mais</h3>
-                    <p>Atenda, receba sua avaliação e construa reputação. Quanto mais estrelas, mais visibilidade — e mais clientes chegando até você.</p>
-                </div>
+                                                <div class="step fade-up" style="transition-delay:.20s">
+                                                    <div class="step-num">3</div>
+                                                    <div class="step-icon-wrap">💰</div>
+                                                    <h3>Ganhe mais</h3>
+                                                    <p>Atenda, receba sua avaliação e construa reputação. Quanto mais estrelas, mais visibilidade — e
+                                                        mais clientes chegando até você.</p>
+                                                    </div>
 
-            </div>
-        </div>
+                                                </div>
+                                            </div>
 
-    </div>
-</section>
+                                        </div>
+                                    </section>
 
 
-<!-- =====================================================
+                                    <!-- =====================================================
      STATS — números com ícone e descrição rica
 ===================================================== -->
-<section id="stats" class="stats">
-    <div class="container-ap">
-        <div class="stats-inner fade-up">
+                                    <section id="stats" class="stats">
+                                        <div class="container-ap">
+                                            <div class="stats-inner fade-up">
 
-            <div class="stat">
-                <div class="stat-icon">📅</div>
-                <h2>12k+</h2>
-                <p class="stat-label">Agendamentos<br>realizados</p>
-            </div>
+                                                <div class="stat">
+                                                    <div class="stat-icon">📅</div>
+                                                    <h2>12k+</h2>
+                                                    <p class="stat-label">Agendamentos<br>realizados</p>
+                                                </div>
 
-            <div class="stat">
-                <div class="stat-icon">👷</div>
-                <h2>850+</h2>
-                <p class="stat-label">Profissionais<br>cadastrados</p>
-            </div>
+                                                <div class="stat">
+                                                    <div class="stat-icon">👷</div>
+                                                    <h2>850+</h2>
+                                                    <p class="stat-label">Profissionais<br>cadastrados</p>
+                                                </div>
 
-            <div class="stat">
-                <div class="stat-icon">⭐</div>
-                <h2>4.9</h2>
-                <p class="stat-label">Avaliação média<br>dos serviços</p>
-            </div>
+                                                <div class="stat">
+                                                    <div class="stat-icon">⭐</div>
+                                                    <h2>4.9</h2>
+                                                    <p class="stat-label">Avaliação média<br>dos serviços</p>
+                                                </div>
 
-            <div class="stat">
-                <div class="stat-icon">🏙️</div>
-                <h2>30+</h2>
-                <p class="stat-label">Cidades<br>atendidas</p>
-            </div>
+                                                <div class="stat">
+                                                    <div class="stat-icon">🏙️</div>
+                                                    <h2>30+</h2>
+                                                    <p class="stat-label">Cidades<br>atendidas</p>
+                                                </div>
 
-        </div>
-    </div>
-</section>
+                                            </div>
+                                        </div>
+                                    </section>
 
 
-<!-- =====================================================
+                                    <!-- =====================================================
      SERVIÇOS — 8 categorias com ícone, rating e contador
 ===================================================== -->
-<section id="services" class="services">
-    <div class="container-ap">
+                                    <section id="services" class="services">
+                                        <div class="container-ap">
 
-        <div class="section-header fade-up">
-            <span class="section-label">O que você precisa?</span>
-            <h2>Explore por categoria</h2>
-            <p>Mais de 850 profissionais verificados prontos para atender você hoje mesmo.</p>
-        </div>
+                                            <div class="section-header fade-up">
+                                                <span class="section-label">O que você precisa?</span>
+                                                <h2>Explore por categoria</h2>
+                                                <p>Mais de 850 profissionais verificados prontos para atender você hoje mesmo.</p>
+                                            </div>
 
-        <div class="services-grid">
+                                            <div class="services-grid">
 
-            <div class="service-card fade-up">
-                <div class="svc-icon ic-blue">✂️</div>
-                <div class="svc-name">Corte de cabelo<br>& Barba</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+180 profissionais</span>
-                    <span class="svc-rating">⭐ 4.9</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up">
+                                                    <div class="svc-icon ic-blue">✂️</div>
+                                                    <div class="svc-name">Corte de cabelo<br>& Barba</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+180 profissionais</span>
+                                                        <span class="svc-rating">⭐ 4.9</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-            <div class="service-card fade-up" style="transition-delay:.05s">
-                <div class="svc-icon ic-pink">💅</div>
-                <div class="svc-name">Manicure<br>& Pedicure</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+140 profissionais</span>
-                    <span class="svc-rating">⭐ 4.8</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up" style="transition-delay:.05s">
+                                                    <div class="svc-icon ic-pink">💅</div>
+                                                    <div class="svc-name">Manicure<br>& Pedicure</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+140 profissionais</span>
+                                                        <span class="svc-rating">⭐ 4.8</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-            <div class="service-card fade-up" style="transition-delay:.10s">
-                <div class="svc-icon ic-cyan">🚗</div>
-                <div class="svc-name">Lava Rápido<br>& Higienização</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+90 parceiros</span>
-                    <span class="svc-rating">⭐ 4.7</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up" style="transition-delay:.10s">
+                                                    <div class="svc-icon ic-cyan">🚗</div>
+                                                    <div class="svc-name">Lava Rápido<br>& Higienização</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+90 parceiros</span>
+                                                        <span class="svc-rating">⭐ 4.7</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-            <div class="service-card fade-up" style="transition-delay:.15s">
-                <div class="svc-icon ic-purple">🏠</div>
-                <div class="svc-name">Faxina<br>& Limpeza</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+110 profissionais</span>
-                    <span class="svc-rating">⭐ 4.9</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up" style="transition-delay:.15s">
+                                                    <div class="svc-icon ic-purple">🏠</div>
+                                                    <div class="svc-name">Faxina<br>& Limpeza</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+110 profissionais</span>
+                                                        <span class="svc-rating">⭐ 4.9</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-            <div class="service-card fade-up" style="transition-delay:.20s">
-                <div class="svc-icon ic-orange">🔧</div>
-                <div class="svc-name">Assistência<br>Técnica</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+75 profissionais</span>
-                    <span class="svc-rating">⭐ 4.8</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up" style="transition-delay:.20s">
+                                                    <div class="svc-icon ic-orange">🔧</div>
+                                                    <div class="svc-name">Assistência<br>Técnica</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+75 profissionais</span>
+                                                        <span class="svc-rating">⭐ 4.8</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-            <div class="service-card fade-up" style="transition-delay:.25s">
-                <div class="svc-icon ic-green">🏋️</div>
-                <div class="svc-name">Personal<br>Trainer</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+60 profissionais</span>
-                    <span class="svc-rating">⭐ 5.0</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up" style="transition-delay:.25s">
+                                                    <div class="svc-icon ic-green">🏋️</div>
+                                                    <div class="svc-name">Personal<br>Trainer</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+60 profissionais</span>
+                                                        <span class="svc-rating">⭐ 5.0</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-            <div class="service-card fade-up" style="transition-delay:.30s">
-                <div class="svc-icon ic-amber">🐾</div>
-                <div class="svc-name">Pet Shop<br>& Banho</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+50 parceiros</span>
-                    <span class="svc-rating">⭐ 4.9</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up" style="transition-delay:.30s">
+                                                    <div class="svc-icon ic-amber">🐾</div>
+                                                    <div class="svc-name">Pet Shop<br>& Banho</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+50 parceiros</span>
+                                                        <span class="svc-rating">⭐ 4.9</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-            <div class="service-card fade-up" style="transition-delay:.35s">
-                <div class="svc-icon ic-red">❤️‍🩹</div>
-                <div class="svc-name">Saúde<br>& Bem-estar</div>
-                <div class="svc-meta">
-                    <span class="svc-count">+45 profissionais</span>
-                    <span class="svc-rating">⭐ 4.9</span>
-                </div>
-                <a href="#" class="btn-svc">Ver profissionais</a>
-            </div>
+                                                <div class="service-card fade-up" style="transition-delay:.35s">
+                                                    <div class="svc-icon ic-red">❤️‍🩹</div>
+                                                    <div class="svc-name">Saúde<br>& Bem-estar</div>
+                                                    <div class="svc-meta">
+                                                        <span class="svc-count">+45 profissionais</span>
+                                                        <span class="svc-rating">⭐ 4.9</span>
+                                                    </div>
+                                                    <a href="#" class="btn-svc">Ver profissionais</a>
+                                                </div>
 
-        </div>
+                                            </div>
 
-        <div class="services-footer fade-up">
-            <a href="#" class="link-ver-todos">
-                Ver todas as categorias →
-            </a>
-        </div>
+                                            <div class="services-footer fade-up">
+                                                <a href="#" class="link-ver-todos">
+                                                    Ver todas as categorias →
+                                                </a>
+                                            </div>
 
-    </div>
-</section>
+                                        </div>
+                                    </section>
 
 
 
-<!-- =====================================================
+                                    <!-- =====================================================
      PARA PROFISSIONAIS — seção escura com mockup
 ===================================================== -->
-<section id="pros" class="pros">
-    <div class="container-ap">
-        <div class="pros-inner">
+                                    <section id="pros" class="pros">
+                                        <div class="container-ap">
+                                            <div class="pros-inner">
 
-            <!-- Texto -->
-            <div>
-                <span class="pros-label">Para profissionais</span>
-                <h2 class="pros-title">Transforme sua agenda<br>em renda garantida</h2>
-                <p class="pros-sub">
-                    Cadastre-se no Trampo e comece a receber agendamentos de clientes da sua região. Sem mensalidade, sem burocracia — você só paga quando trabalha.
-                </p>
+                                                <!-- Texto -->
+                                                <div>
+                                                    <span class="pros-label">Para profissionais</span>
+                                                    <h2 class="pros-title">Transforme sua agenda<br>em renda garantida</h2>
+                                                    <p class="pros-sub">
+                                                        Cadastre-se no Trampo e comece a receber agendamentos de clientes da sua região. Sem mensalidade,
+                                                        sem burocracia — você só paga quando trabalha.
+                                                    </p>
 
-                <div class="pros-features">
-                    <div class="pros-feat">
-                        <div class="pros-feat-icon">📅</div>
-                        <div>
-                            <div class="pros-feat-title">Agenda inteligente</div>
-                            <div class="pros-feat-text">Defina sua disponibilidade e deixe o Trampo gerenciar os horários por você. Sem conflitos, sem dor de cabeça.</div>
-                        </div>
-                    </div>
+                                                    <div class="pros-features">
+                                                        <div class="pros-feat">
+                                                            <div class="pros-feat-icon">📅</div>
+                                                            <div>
+                                                                <div class="pros-feat-title">Agenda inteligente</div>
+                                                                <div class="pros-feat-text">Defina sua disponibilidade e deixe o Trampo gerenciar os
+                                                                    horários por você. Sem conflitos, sem dor de cabeça.</div>
+                                                                </div>
+                                                            </div>
 
-                    <div class="pros-feat">
-                        <div class="pros-feat-icon">🔔</div>
-                        <div>
-                            <div class="pros-feat-title">Notificações em tempo real</div>
-                            <div class="pros-feat-text">Receba alertas de novos agendamentos e lembretes automáticos para você e para o cliente.</div>
-                        </div>
-                    </div>
+                                                            <div class="pros-feat">
+                                                                <div class="pros-feat-icon">🔔</div>
+                                                                <div>
+                                                                    <div class="pros-feat-title">Notificações em tempo real</div>
+                                                                    <div class="pros-feat-text">Receba alertas de novos agendamentos e lembretes automáticos
+                                                                        para você e para o cliente.</div>
+                                                                    </div>
+                                                                </div>
 
-                    <div class="pros-feat">
-                        <div class="pros-feat-icon">📊</div>
-                        <div>
-                            <div class="pros-feat-title">Painel de desempenho</div>
-                            <div class="pros-feat-text">Acompanhe faturamento, avaliações e histórico de clientes em um painel simples e direto.</div>
-                        </div>
-                    </div>
+                                                                <div class="pros-feat">
+                                                                    <div class="pros-feat-icon">📊</div>
+                                                                    <div>
+                                                                        <div class="pros-feat-title">Painel de desempenho</div>
+                                                                        <div class="pros-feat-text">Acompanhe faturamento, avaliações e histórico de clientes em um
+                                                                            painel simples e direto.</div>
+                                                                        </div>
+                                                                    </div>
 
-                    <div class="pros-feat">
-                        <div class="pros-feat-icon">💳</div>
-                        <div>
-                            <div class="pros-feat-title">Sem mensalidade fixa</div>
-                            <div class="pros-feat-text">Cobramos apenas uma pequena comissão por agendamento realizado. Zero custo se você não atender.</div>
-                        </div>
-                    </div>
-                </div>
+                                                                    <div class="pros-feat">
+                                                                        <div class="pros-feat-icon">💳</div>
+                                                                        <div>
+                                                                            <div class="pros-feat-title">Sem mensalidade fixa</div>
+                                                                            <div class="pros-feat-text">Cobramos apenas uma pequena comissão por agendamento realizado.
+                                                                                Zero custo se você não atender.</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
 
-                <a href="#" class="btn-pros">Cadastrar minha conta grátis</a>
-                <p class="pros-note">Teste grátis por 30 dias · Sem cartão de crédito</p>
-            </div>
+                                                                    <a href="#" class="btn-pros">Cadastrar minha conta grátis</a>
+                                                                    <p class="pros-note">Teste grátis por 30 dias · Sem cartão de crédito</p>
+                                                                </div>
 
-            <!-- Mockup painel do profissional -->
-            <div class="pros-mockup fade-up">
+                                                                <!-- Mockup painel do profissional -->
+                                                                <div class="pros-mockup fade-up">
 
-                <div class="mockup-header">
-                    <div class="mockup-avatar">JS</div>
-                    <div>
-                        <div class="mockup-name">João Silva</div>
-                        <div class="mockup-role">Barbeiro · São Paulo, SP</div>
-                    </div>
-                    <div class="mockup-online">
-                        <div class="online-dot"></div>
-                        Online
-                    </div>
-                </div>
+                                                                    <div class="mockup-header">
+                                                                        <div class="mockup-avatar">JS</div>
+                                                                        <div>
+                                                                            <div class="mockup-name">João Silva</div>
+                                                                            <div class="mockup-role">Barbeiro · São Paulo, SP</div>
+                                                                        </div>
+                                                                        <div class="mockup-online">
+                                                                            <div class="online-dot"></div>
+                                                                            Online
+                                                                        </div>
+                                                                    </div>
 
-                <div class="mockup-stats">
-                    <div class="ms-box">
-                        <div class="ms-val">R$3.2k</div>
-                        <div class="ms-lbl">Este mês</div>
-                    </div>
-                    <div class="ms-box">
-                        <div class="ms-val">47</div>
-                        <div class="ms-lbl">Atendimentos</div>
-                    </div>
-                    <div class="ms-box">
-                        <div class="ms-val">4.9⭐</div>
-                        <div class="ms-lbl">Avaliação</div>
-                    </div>
-                </div>
+                                                                    <div class="mockup-stats">
+                                                                        <div class="ms-box">
+                                                                            <div class="ms-val">R$3.2k</div>
+                                                                            <div class="ms-lbl">Este mês</div>
+                                                                        </div>
+                                                                        <div class="ms-box">
+                                                                            <div class="ms-val">47</div>
+                                                                            <div class="ms-lbl">Atendimentos</div>
+                                                                        </div>
+                                                                        <div class="ms-box">
+                                                                            <div class="ms-val">4.9⭐</div>
+                                                                            <div class="ms-lbl">Avaliação</div>
+                                                                        </div>
+                                                                    </div>
 
-                <div class="mockup-list-label">Próximos agendamentos</div>
+                                                                    <div class="mockup-list-label">Próximos agendamentos</div>
 
-                <div class="mockup-item">
-                    <div class="mi-dot dot-green"></div>
-                    <div>
-                        <div class="mi-name">Carlos Mendes</div>
-                        <div class="mi-time">Corte · Hoje 14:00</div>
-                    </div>
-                    <span class="mi-status ms-ok">Confirmado</span>
-                </div>
+                                                                    <div class="mockup-item">
+                                                                        <div class="mi-dot dot-green"></div>
+                                                                        <div>
+                                                                            <div class="mi-name">Carlos Mendes</div>
+                                                                            <div class="mi-time">Corte · Hoje 14:00</div>
+                                                                        </div>
+                                                                        <span class="mi-status ms-ok">Confirmado</span>
+                                                                    </div>
 
-                <div class="mockup-item">
-                    <div class="mi-dot dot-yellow"></div>
-                    <div>
-                        <div class="mi-name">Rafael Lima</div>
-                        <div class="mi-time">Barba · Hoje 15:30</div>
-                    </div>
-                    <span class="mi-status ms-pend">Pendente</span>
-                </div>
+                                                                    <div class="mockup-item">
+                                                                        <div class="mi-dot dot-yellow"></div>
+                                                                        <div>
+                                                                            <div class="mi-name">Rafael Lima</div>
+                                                                            <div class="mi-time">Barba · Hoje 15:30</div>
+                                                                        </div>
+                                                                        <span class="mi-status ms-pend">Pendente</span>
+                                                                    </div>
 
-                <div class="mockup-item">
-                    <div class="mi-dot dot-blue"></div>
-                    <div>
-                        <div class="mi-name">Pedro Souza</div>
-                        <div class="mi-time">Corte + Barba · Amanhã 09:00</div>
-                    </div>
-                    <span class="mi-status ms-new">Novo</span>
-                </div>
+                                                                    <div class="mockup-item">
+                                                                        <div class="mi-dot dot-blue"></div>
+                                                                        <div>
+                                                                            <div class="mi-name">Pedro Souza</div>
+                                                                            <div class="mi-time">Corte + Barba · Amanhã 09:00</div>
+                                                                        </div>
+                                                                        <span class="mi-status ms-new">Novo</span>
+                                                                    </div>
 
-            </div>
+                                                                </div>
 
-        </div>
-    </div>
-</section>
+                                                            </div>
+                                                        </div>
+                                                    </section>
 
 
-<!-- =====================================================
+                                                    <!-- =====================================================
      DEPOIMENTOS — clientes e profissionais
 ===================================================== -->
-<section id="reviews" class="reviews">
-    <div class="container-ap">
+                                                    <section id="reviews" class="reviews">
+                                                        <div class="container-ap">
 
-        <div class="section-header fade-up">
-            <span class="section-label">Quem usa, aprova</span>
-            <h2>O que dizem sobre o Trampo</h2>
-            <p>Avaliações reais de quem já usa a plataforma todos os dias.</p>
-        </div>
+                                                            <div class="section-header fade-up">
+                                                                <span class="section-label">Quem usa, aprova</span>
+                                                                <h2>O que dizem sobre o Trampo</h2>
+                                                                <p>Avaliações reais de quem já usa a plataforma todos os dias.</p>
+                                                            </div>
 
-        <div class="reviews-grid">
+                                                            <div class="reviews-grid">
 
-            <div class="review-card fade-up">
-                <div class="review-quote">"</div>
-                <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                <p class="review-text">
-                    Agendei um corte em menos de 2 minutos e recebi confirmação na hora. O profissional foi super pontual. Nunca mais ligo para barbearia.
-                </p>
-                <div class="reviewer">
-                    <div class="reviewer-av" style="background: linear-gradient(135deg, #1A6BFF, #00D4AA);">MS</div>
-                    <div>
-                        <div class="reviewer-name">Mariana Santos</div>
-                        <div class="reviewer-svc">✂️ Corte de cabelo</div>
-                    </div>
-                    <span class="review-type type-client">Cliente</span>
-                </div>
-            </div>
+                                                                <div class="review-card fade-up">
+                                                                    <div class="review-quote">"</div>
+                                                                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                                                                    <p class="review-text">
+                                                                        Agendei um corte em menos de 2 minutos e recebi confirmação na hora. O profissional foi super
+                                                                        pontual. Nunca mais ligo para barbearia.
+                                                                    </p>
+                                                                    <div class="reviewer">
+                                                                        <div class="reviewer-av" style="background: linear-gradient(135deg, #1A6BFF, #00D4AA);">MS</div>
+                                                                        <div>
+                                                                            <div class="reviewer-name">Mariana Santos</div>
+                                                                            <div class="reviewer-svc">✂️ Corte de cabelo</div>
+                                                                        </div>
+                                                                        <span class="review-type type-client">Cliente</span>
+                                                                    </div>
+                                                                </div>
 
-            <div class="review-card fade-up" style="transition-delay:.08s">
-                <div class="review-quote">"</div>
-                <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                <p class="review-text">
-                    Desde que entrei no Trampo minha agenda encheu. Não preciso mais ficar no WhatsApp o dia todo para gerenciar horários. Vale muito a pena.
-                </p>
-                <div class="reviewer">
-                    <div class="reviewer-av" style="background: linear-gradient(135deg, #7C3AED, #1A6BFF);">RO</div>
-                    <div>
-                        <div class="reviewer-name">Roberto Oliveira</div>
-                        <div class="reviewer-svc">✂️ Barbeiro profissional</div>
-                    </div>
-                    <span class="review-type type-pro">Profissional</span>
-                </div>
-            </div>
+                                                                <div class="review-card fade-up" style="transition-delay:.08s">
+                                                                    <div class="review-quote">"</div>
+                                                                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                                                                    <p class="review-text">
+                                                                        Desde que entrei no Trampo minha agenda encheu. Não preciso mais ficar no WhatsApp o dia todo para
+                                                                        gerenciar horários. Vale muito a pena.
+                                                                    </p>
+                                                                    <div class="reviewer">
+                                                                        <div class="reviewer-av" style="background: linear-gradient(135deg, #7C3AED, #1A6BFF);">RO</div>
+                                                                        <div>
+                                                                            <div class="reviewer-name">Roberto Oliveira</div>
+                                                                            <div class="reviewer-svc">✂️ Barbeiro profissional</div>
+                                                                        </div>
+                                                                        <span class="review-type type-pro">Profissional</span>
+                                                                    </div>
+                                                                </div>
 
-            <div class="review-card fade-up" style="transition-delay:.16s">
-                <div class="review-quote">"</div>
-                <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                <p class="review-text">
-                    Encontrei uma ótima faxineira com ótimas avaliações. Ela chegou no horário combinado e o serviço foi impecável. Já agendei para o mês que vem.
-                </p>
-                <div class="reviewer">
-                    <div class="reviewer-av" style="background: linear-gradient(135deg, #FF5C97, #FF8700);">JL</div>
-                    <div>
-                        <div class="reviewer-name">Juliana Lima</div>
-                        <div class="reviewer-svc">🏠 Faxina residencial</div>
-                    </div>
-                    <span class="review-type type-client">Cliente</span>
-                </div>
-            </div>
+                                                                <div class="review-card fade-up" style="transition-delay:.16s">
+                                                                    <div class="review-quote">"</div>
+                                                                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                                                                    <p class="review-text">
+                                                                        Encontrei uma ótima faxineira com ótimas avaliações. Ela chegou no horário combinado e o serviço foi
+                                                                        impecável. Já agendei para o mês que vem.
+                                                                    </p>
+                                                                    <div class="reviewer">
+                                                                        <div class="reviewer-av" style="background: linear-gradient(135deg, #FF5C97, #FF8700);">JL</div>
+                                                                        <div>
+                                                                            <div class="reviewer-name">Juliana Lima</div>
+                                                                            <div class="reviewer-svc">🏠 Faxina residencial</div>
+                                                                        </div>
+                                                                        <span class="review-type type-client">Cliente</span>
+                                                                    </div>
+                                                                </div>
 
-        </div>
+                                                            </div>
 
-    </div>
-</section>
+                                                        </div>
+                                                    </section>
 
 
-<!-- =====================================================
+                                                    <!-- =====================================================
      CTA FINAL
 ===================================================== -->
-<section id="cta" class="cta">
-    <div class="container-ap">
+                                                    <section id="cta" class="cta">
+                                                        <div class="container-ap">
 
-        <span class="cta-label">Comece agora</span>
+                                                            <span class="cta-label">Comece agora</span>
 
-        <h2>Pronto para simplificar<br>sua vida?</h2>
+                                                            <h2>Pronto para simplificar<br>sua vida?</h2>
 
-        <p>
-            Mais de 12.000 agendamentos realizados. Junte-se às pessoas que já descobriram um jeito mais fácil de contratar serviços.
-        </p>
+                                                            <p>
+                                                                Mais de 12.000 agendamentos realizados. Junte-se às pessoas que já descobriram um jeito mais fácil de
+                                                                contratar serviços.
+                                                            </p>
 
-        <div class="cta-actions">
-            <a href="#" class="btn-primary">Agendar um serviço grátis</a>
-            <a href="#" class="btn-outline-cta">Cadastrar minha empresa</a>
-        </div>
+                                                            <div class="cta-actions">
+                                                                <a href="#" class="btn-primary">Agendar um serviço grátis</a>
+                                                                <a href="#" class="btn-outline-cta">Cadastrar minha empresa</a>
+                                                            </div>
 
-        <p class="cta-note">Sem cartão de crédito · Cadastro em menos de 1 minuto</p>
+                                                            <p class="cta-note">Sem cartão de crédito · Cadastro em menos de 1 minuto</p>
 
-    </div>
-</section>
+                                                        </div>
+                                                    </section>
 
 
-<!-- =====================================================
+                                                    <!-- =====================================================
      FOOTER
 ===================================================== -->
-<!-- =====================================================
+                                                    <!-- =====================================================
      FOOTER — completo e encorpado
 ===================================================== -->
-<footer id="footer" class="footer">
-    <div class="container-ap">
+                                                    <footer id="footer" class="footer">
+                                                        <div class="container-ap">
 
-        <!-- Bloco superior: brand + colunas de links + contato -->
-        <div class="footer-top">
+                                                            <!-- Bloco superior: brand + colunas de links + contato -->
+                                                            <div class="footer-top">
 
-            <!-- Marca -->
-            <div>
-                <div class="footer-brand-name">Tram<span>po</span></div>
-                <p class="footer-brand-desc">
-                    A plataforma que conecta você aos melhores profissionais e serviços da sua cidade. Rápido, seguro e confiável.
-                </p>
-                <div class="footer-social">
-                    <a href="#" aria-label="Instagram">📸</a>
-                    <a href="#" aria-label="Facebook">📘</a>
-                    <a href="#" aria-label="LinkedIn">💼</a>
-                    <a href="#" aria-label="Twitter/X">🐦</a>
-                </div>
-            </div>
+                                                                <!-- Marca -->
+                                                                <div>
+                    
+                                                                    <div class="footer-brand-name"><img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo Logo"
+                                                                                                        class="logo-img">Tram<span>po</span>
+                                                                    </div>
 
-            <!-- Plataforma -->
-            <div>
-                <div class="footer-col-title">Plataforma</div>
-                <ul class="footer-col-links">
-                    <li><a href="#">Início</a></li>
-                    <li><a href="#">Explorar serviços</a></li>
-                    <li><a href="#">Como funciona</a></li>
-                    <li><a href="#">Para profissionais</a></li>
-                    <li><a href="#">Avaliações</a></li>
-                </ul>
-            </div>
+                                                                    <p class="footer-brand-desc">
+                                                                        A plataforma que conecta você aos melhores profissionais e serviços da sua cidade. Rápido, seguro e
+                                                                        confiável.
+                                                                    </p>
+                                                                    <div class="footer-social">
+                                                                        <a href="#" aria-label="Instagram">📸</a>
+                                                                        <a href="#" aria-label="Facebook">📘</a>
+                                                                        <a href="#" aria-label="LinkedIn">💼</a>
+                                                                        <a href="#" aria-label="Twitter/X">🐦</a>
+                                                                    </div>
+                                                                </div>
 
-            <!-- Empresa -->
-            <div>
-                <div class="footer-col-title">Empresa</div>
-                <ul class="footer-col-links">
-                    <li><a href="#">Sobre nós</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Carreiras</a></li>
-                    <li><a href="#">Imprensa</a></li>
-                    <li><a href="#">Termos de uso</a></li>
-                </ul>
-            </div>
+                                                                <!-- Plataforma -->
+                                                                <div>
+                                                                    <div class="footer-col-title">Plataforma</div>
+                                                                    <ul class="footer-col-links">
+                                                                        <li><a href="#">Início</a></li>
+                                                                        <li><a href="#">Explorar serviços</a></li>
+                                                                        <li><a href="#">Como funciona</a></li>
+                                                                        <li><a href="#">Para profissionais</a></li>
+                                                                        <li><a href="#">Avaliações</a></li>
+                                                                    </ul>
+                                                                </div>
 
-            <!-- Contato + newsletter -->
-            <div>
-                <div class="footer-col-title">Contato</div>
+                                                                <!-- Empresa -->
+                                                                <div>
+                                                                    <div class="footer-col-title">Empresa</div>
+                                                                    <ul class="footer-col-links">
+                                                                        <li><a href="#">Sobre nós</a></li>
+                                                                        <li><a href="#">Blog</a></li>
+                                                                        <li><a href="#">Carreiras</a></li>
+                                                                        <li><a href="#">Imprensa</a></li>
+                                                                        <li><a href="#">Termos de uso</a></li>
+                                                                    </ul>
+                                                                </div>
 
-                <div class="footer-contact-item">
-                    <div class="footer-contact-icon">✉️</div>
-                    <div class="footer-contact-text">
-                        <strong>E-mail</strong>
-                        contato@trampo.com.br
-                    </div>
-                </div>
+                                                                <!-- Contato + newsletter -->
+                                                                <div>
+                                                                    <div class="footer-col-title">Contato</div>
 
-                <div class="footer-contact-item">
-                    <div class="footer-contact-icon">📞</div>
-                    <div class="footer-contact-text">
-                        <strong>Suporte</strong>
-                        (11) 4000-1234
-                    </div>
-                </div>
+                                                                    <div class="footer-contact-item">
+                                                                        <div class="footer-contact-icon">✉️</div>
+                                                                        <div class="footer-contact-text">
+                                                                            <strong>E-mail</strong>
+                                                                            contato@trampo.com.br
+                                                                        </div>
+                                                                    </div>
 
-                <div class="footer-contact-item">
-                    <div class="footer-contact-icon">📍</div>
-                    <div class="footer-contact-text">
-                        <strong>Localização</strong>
-                        São Paulo, SP — Brasil
-                    </div>
-                </div>
+                                                                    <div class="footer-contact-item">
+                                                                        <div class="footer-contact-icon">📞</div>
+                                                                        <div class="footer-contact-text">
+                                                                            <strong>Suporte</strong>
+                                                                            (11) 4000-1234
+                                                                        </div>
+                                                                    </div>
 
-                <div style="margin-top: 20px;">
-                    <div class="footer-newsletter-label">Receba novidades no seu e-mail</div>
-                    <div class="footer-newsletter-form">
-                        <input type="email" placeholder="seu@email.com" />
-                        <button type="button">→</button>
-                    </div>
-                </div>
-            </div>
+                                                                    <div class="footer-contact-item">
+                                                                        <div class="footer-contact-icon">📍</div>
+                                                                        <div class="footer-contact-text">
+                                                                            <strong>Localização</strong>
+                                                                            São Paulo, SP — Brasil
+                                                                        </div>
+                                                                    </div>
 
-        </div>
+                                                                    <div style="margin-top: 20px;">
+                                                                        <div class="footer-newsletter-label">Receba novidades no seu e-mail</div>
+                                                                        <div class="footer-newsletter-form">
+                                                                            <input type="email" placeholder="seu@email.com" />
+                                                                            <button type="button">→</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-        <!-- Rodapé inferior: copyright + links legais -->
-        <div class="footer-bottom">
-            <p class="footer-copy">© 2026 Trampo — Todos os direitos reservados</p>
+                                                            </div>
 
-            <div class="footer-links">
-                <a href="#">Termos de uso</a>
-                <a href="#">Privacidade</a>
-                <a href="#">Cookies</a>
-                <a href="#">Contato</a>
-            </div>
+                                                            <!-- Rodapé inferior: copyright + links legais -->
+                                                            <div class="footer-bottom">
+                                                                <p class="footer-copy">© 2026 Trampo — Todos os direitos reservados</p>
 
-            <div class="footer-made">
-                🇧🇷 Feito no Brasil
-            </div>
-        </div>
+                                                                <div class="footer-links">
+                                                                    <a href="#">Termos de uso</a>
+                                                                    <a href="#">Privacidade</a>
+                                                                    <a href="#">Cookies</a>
+                                                                    <a href="#">Contato</a>
+                                                                </div>
 
-    </div>
-</footer>
+                                                                <div class="footer-made">
+                                                                    🇧🇷 Feito no Brasil
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </footer>
 
 
-@section Scripts {
-    <script src="~/js/home.js"></script>
-}
+                                                    @section Scripts {
+                                                        <script src="~/js/home.js"></script>
+                                                    }

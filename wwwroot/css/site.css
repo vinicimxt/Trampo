@@ -8,7 +8,7 @@
     --blue-dark: #1258d6;
     --blue-soft: rgba(26, 107, 255, 0.08);
     --blue-mid: rgba(26, 107, 255, 0.15);
-    --accent: #00D4AA;
+    --accent: #06b6d4;
     --accent-soft: rgba(0, 212, 170, 0.10);
     --dark: #0D1B3E;
     --dark-2: #071130;
@@ -95,10 +95,14 @@ button {
 =================================================== */
 
 /* heroes internos: navbar + padding próprio */
-.perfil-hero,
-.prof-hero,
+
 .agend-hero {
     padding-top: calc(var(--navbar-h) + 52px);
+}
+.perfil-hero,
+.prof-hero {
+    margin-top: var(--navbar-h);
+    padding-top: 52px;
 }
 
 /* hero da home: tem padding-top maior */
@@ -118,6 +122,8 @@ button {
 .auth-page {
     padding-top: 0;
 }
+
+
 
 /* ===================================================
    CONTAINER
@@ -158,16 +164,32 @@ button {
 }
 
 /* Logo */
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+}
+
 .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* espaço entre imagem e texto */
+}
+
+.logo-img {
+    width: auto;
+    height: 45px;
+
+}
+
+.logo span {
     font-family: 'Outfit', sans-serif;
     font-size: 22px;
     font-weight: 800;
     color: var(--dark);
-    text-decoration: none;
-    letter-spacing: -0.5px;
 }
 
-.logo span {
+.logo .highlight {
     color: var(--blue);
 }
 
@@ -228,7 +250,7 @@ button {
 /* Botões da navbar */
 .btn-primary {
     display: inline-block;
-    background: var(--blue);
+    background: linear-gradient(135deg, var(--blue), #418aff) !important;
     color: white;
     padding: 9px 18px;
     border-radius: var(--radius-sm);
@@ -241,8 +263,10 @@ button {
     cursor: pointer;
 }
 
+
+
 .btn-primary:hover {
-    background: var(--blue-dark);
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue));
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(26, 107, 255, 0.38);
 }

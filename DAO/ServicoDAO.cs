@@ -157,7 +157,7 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                
+
                 string query = "SELECT COUNT(*) FROM Servicos WHERE ProfissionalId = @id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -257,6 +257,77 @@ namespace BD_TRAMPO
 
             return lista;
         }
+
+        public List<Servico> ListarServicos(string busca, string localizacao)
+        {
+            List<Servico> lista = new List<Servico>();
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        SELECT 
+            s.Id,
+            s.Nome,
+            s.ProfissionalId,
+            s.Descricao,
+            s.Atendimento,
+            s.Contato,
+            s.LinkOnline,
+            u.Nome AS NomeProfissional,
+            sc.Nome AS Subcategoria,
+            c.Nome AS Categoria,
+            l.Endereco
+        FROM Servicos s
+        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+        INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
+        INNER JOIN Categorias c ON sc.CategoriaId = c.Id
+        LEFT JOIN Locais l ON s.LocalId = l.Id
+        WHERE 
+            (@busca IS NULL OR 
+                s.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%' OR
+                u.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%')
+        AND
+            (@localizacao IS NULL OR 
+                l.Endereco COLLATE Latin1_General_CI_AI LIKE '%' + @localizacao + '%')
+        ";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@busca",
+                    string.IsNullOrWhiteSpace(busca) ? (object)DBNull.Value : busca);
+
+                cmd.Parameters.AddWithValue("@localizacao",
+                    string.IsNullOrWhiteSpace(localizacao) ? (object)DBNull.Value : localizacao);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add(new Servico
+                    {
+                        Id = (int)reader["Id"],
+                        ProfissionalId = (int)reader["ProfissionalId"],
+                        Nome = reader["Nome"].ToString(),
+                        Descricao = reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : "",
+                        Atendimento = reader["Atendimento"].ToString(),
+                        Contato = reader["Contato"] != DBNull.Value ? reader["Contato"].ToString() : "",
+                        NomeProfissional = reader["NomeProfissional"].ToString(),
+                        Categoria = reader["Categoria"].ToString(),
+                        Subcategoria = reader["Subcategoria"].ToString(),
+                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                            ? reader["LinkOnline"].ToString()
+                            : null,
+                        Endereco = reader["Endereco"] != DBNull.Value
+                            ? reader["Endereco"].ToString()
+                            : ""
+                    });
+                }
+            }
+
+            return lista;
+        }
+
 
 
         public void Atualizar(Servico s)

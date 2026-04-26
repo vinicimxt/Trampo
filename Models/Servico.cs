@@ -17,7 +17,7 @@ namespace BD_TRAMPO
         public int SubcategoriaId { get; set; }
         public string LinkOnline { get; set; }
 
-        public string NomeProfissional { get; set; }
+        public string? NomeProfissional { get; set; }
     }
 
 }
