@@ -10,18 +10,23 @@
 @functions {
     string GetStatusClass(string status)
     {
-        if (status == "Pendente") return "status-pendente";
-        if (status == "Confirmado") return "status-confirmado";
-        if (status == "Finalizado") return "status-finalizado";
-        if (status == "CanceladoCliente") return "status-cancelado";
-        if (status == "CanceladoProfissional") return "status-cancelado";
-        return "";
+        if (status == "Pendente") return "badge-pendente";
+        if (status == "Confirmado") return "badge-confirmado";
+        if (status == "AguardandoCliente") return "badge-finalizado";
+        if (status == "Finalizado") return "badge-finalizado";
+        if (status == "CanceladoCliente") return "badge-cancelado";
+        if (status == "CanceladoProfissional") return "badge-cancelado";
+        return "badge-cancelado";
     }
 
     string GetDataFiltro(string status)
     {
-        if (status == "CanceladoCliente") return "cancelado";
-        if (status == "CanceladoProfissional") return "cancelado";
+        if (status == "CanceladoCliente" || status == "CanceladoProfissional")
+            return "cancelado";
+
+        if (status == "AguardandoCliente")
+            return "Finalizado";
+
         return status;
     }
 
@@ -29,6 +34,7 @@
     {
         if (status == "Pendente") return "badge-pendente";
         if (status == "Confirmado") return "badge-confirmado";
+        if (status == "AguardandoCliente") return "Aguardando sua confirmação";
         if (status == "Finalizado") return "badge-finalizado";
         return "badge-cancelado";
     }
@@ -37,6 +43,7 @@
     {
         if (status == "Pendente") return "Pendente";
         if (status == "Confirmado") return "Confirmado";
+        if (status == "AguardandoCliente") return "Aguardando sua confirmação"; 
         if (status == "Finalizado") return "Finalizado";
         if (status == "CanceladoCliente") return "Cancelado por você";
         if (status == "CanceladoProfissional") return "Cancelado pelo profissional";
@@ -58,11 +65,13 @@
 
 @{
     int total = Model.Count;
-    int pendentes = Model.Count(a => a.Status == "Pendente");
-    int confirmados = Model.Count(a => a.Status == "Confirmado");
-    int finalizados = Model.Count(a => a.Status == "Finalizado");
+    int pendentes = Model.Count(a => a.StatusCalculado() == "Pendente");
+    int confirmados = Model.Count(a => a.StatusCalculado() == "Confirmado");
+    int finalizados = Model.Count(a =>
+    a.StatusCalculado() == "Finalizado" ||
+    a.StatusCalculado() == "AguardandoCliente");
     int cancelados = Model.Count(a =>
-        a.Status == "CanceladoCliente" || a.Status == "CanceladoProfissional");
+        a.StatusCalculado() == "CanceladoCliente" || a.StatusCalculado() == "CanceladoProfissional");
 }
 
 <div class="meus-agend-page">
@@ -175,7 +184,8 @@
 
             @foreach (var ag in Model)
             {
-                <div class="agend-card @GetStatusClass(ag.Status)" data-status="@GetDataFiltro(ag.Status)">
+                <div class="agend-card @GetStatusClass(ag.StatusCalculado())"
+                     data-status="@GetDataFiltro(ag.StatusCalculado())">
 
                     <!-- cabeçalho -->
                     <div class="agend-card-header">
@@ -186,9 +196,9 @@
                                 <span>📦</span> @ag.Servico
                             </div>
                         </div>
-                        <span class="status-badge @GetBadgeClass(ag.Status)">
+                        <span class="status-badge @GetBadgeClass(ag.StatusCalculado())">
                             <span class="badge-dot"></span>
-                            @GetBadgeTexto(ag.Status)
+                            @GetBadgeTexto(ag.StatusCalculado())
                         </span>
                     </div>
 
@@ -244,7 +254,7 @@
                             }
                             else if (ag.Atendimento == "Online")
                             {
-                                if (!string.IsNullOrEmpty(ag.LinkOnline) && ag.Status == "Confirmado")
+                                if (!string.IsNullOrEmpty(ag.LinkOnline) && ag.ConfirmadoProfissional)
                                 {
                                     <a href="@ag.LinkOnline" target="_blank" class="btn-link-online">
                                         🔗 Entrar na reunião
@@ -258,7 +268,22 @@
                         </div>
 
                         <div class="agend-footer-actions">
-                            @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
+                           @if (!ag.FinalizadoProfissional)
+                            {
+                                <span class="status-info">Aguardando finalização do profissional</span>
+                            }
+                            else if (!ag.ConfirmadoCliente)
+                            {
+                                <button type="button" class="btn-finalizar"
+                                        onclick="confirmarConclusao('@ag.Id')">
+                                    ✔ Confirmar finalização
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="status-finalizado">Serviço finalizado</span>
+                            }
+                            @if (ag.StatusCalculado() == "Pendente" || ag.StatusCalculado() == "Confirmado")
                             {
                                 <button type="button" class="btn-cancelar"
                                         onclick="abrirModalCancelar('@ag.Id', '@ag.Servico.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
@@ -307,6 +332,14 @@
 
 @section Scripts {
     <script>
+        
+        function confirmarConclusao(id) {
+            if (confirm("Confirmar que o serviço foi concluído?")) {
+                window.location.href = '/Agendamento/ConfirmarCliente/' + id;
+            }
+        }
+
+
         function filtrar(status, btn) {
             document.querySelectorAll('.filter-pill').forEach(function (p) {
                 p.classList.remove('active');

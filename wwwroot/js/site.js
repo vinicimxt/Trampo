@@ -89,28 +89,28 @@ if (menuToggle && navMenu) {
 }
 
 // =============================
-// NAV INDICATOR (hover)
+// NAV ACTIVE ON SCROLL
 // =============================
-const items = document.querySelectorAll(".nav-item");
-const navLinks = document.querySelector(".nav-links");
+const sections = document.querySelectorAll("section[id]");
+const navItems = document.querySelectorAll(".nav-item");
 
-if (items.length && navLinks) {
-    const indicator = document.createElement("div");
-    indicator.classList.add("nav-indicator");
-    navLinks.appendChild(indicator);
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
 
-    items.forEach(item => {
-        item.addEventListener("mouseenter", () => {
-            const rect = item.getBoundingClientRect();
-            const parentRect = navLinks.getBoundingClientRect();
+            const id = entry.target.getAttribute("id");
 
-            indicator.style.width = rect.width + "px";
-            indicator.style.left = (rect.left - parentRect.left) + "px";
-        });
+            navItems.forEach(link => {
+                link.classList.remove("active");
+
+                if (link.getAttribute("href")?.includes("#" + id)) {
+                    link.classList.add("active");
+                }
+            });
+        }
     });
+}, {
+    threshold: 0.6
+});
 
-    navLinks.addEventListener("mouseleave", () => {
-        indicator.style.width = "0";
-    });
-}
-
+sections.forEach(section => observer.observe(section));

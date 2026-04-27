@@ -23,7 +23,7 @@ namespace BD_TRAMPO
 
                 cmd.Parameters.AddWithValue("@ClienteId", ag.ClienteId);
                 cmd.Parameters.AddWithValue("@ServicoId", ag.ServicoId);
-                cmd.Parameters.AddWithValue("@ProfissionalId", ag.ProfissionalId); 
+                cmd.Parameters.AddWithValue("@ProfissionalId", ag.ProfissionalId);
                 cmd.Parameters.AddWithValue("@Data", ag.Data);
                 cmd.Parameters.AddWithValue("@Hora", ag.Hora);
                 cmd.Parameters.AddWithValue("@Status", ag.Status);
@@ -111,6 +111,9 @@ namespace BD_TRAMPO
                 a.Data,
                 a.Hora,
                 a.Status,
+                a.ConfirmadoProfissional,
+                a.FinalizadoProfissional,
+                a.ConfirmadoCliente,
                 a.Descricao,
                 a.EnderecoCliente,
                 l.Endereco AS EnderecoLocal
@@ -141,6 +144,9 @@ namespace BD_TRAMPO
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
+                        ConfirmadoProfissional = reader["ConfirmadoProfissional"] != DBNull.Value && (bool)reader["ConfirmadoProfissional"],
+                        FinalizadoProfissional = reader["FinalizadoProfissional"] != DBNull.Value && (bool)reader["FinalizadoProfissional"],
+                        ConfirmadoCliente = reader["ConfirmadoCliente"] != DBNull.Value && (bool)reader["ConfirmadoCliente"],
                         Descricao = reader["Descricao"] != DBNull.Value
                         ? reader["Descricao"].ToString()
                         : "",
@@ -361,6 +367,8 @@ namespace BD_TRAMPO
             return (0, 0, 0, 0, 0);
         }
 
+
+
         public void Finalizar(int id)
         {
             using (SqlConnection conn = conexao.Conectar())
@@ -373,6 +381,35 @@ namespace BD_TRAMPO
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public void ConfirmarProfissional(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "UPDATE Agendamentos SET ConfirmadoProfissional = 1 WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void ConfirmarCliente(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+                UPDATE Agendamentos
+                SET ConfirmadoCliente = 1
+                WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
 
 
     }

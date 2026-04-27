@@ -43,6 +43,8 @@ html {
     scroll-behavior: smooth;
 }
 
+
+
 /* ===================================================
    BASE — apenas uma vez
 =================================================== */
@@ -99,6 +101,7 @@ button {
 .agend-hero {
     padding-top: calc(var(--navbar-h) + 52px);
 }
+
 .perfil-hero,
 .prof-hero {
     margin-top: var(--navbar-h);
@@ -129,8 +132,8 @@ button {
    CONTAINER
 =================================================== */
 .container-ap {
-    width: 90%;
-    max-width: 1200px;
+    width: 92%;
+    max-width: 1350px;
     margin-inline: auto;
 }
 
@@ -159,7 +162,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 0;
+    padding: 25px 0;
     height: var(--navbar-h);
 }
 
@@ -193,6 +196,12 @@ button {
     color: var(--blue);
 }
 
+.a-logo {
+    text-decoration: none;
+    color: inherit;
+    padding-right: 7%;
+}
+
 /* Links centrais */
 .nav-links {
     display: flex;
@@ -210,6 +219,8 @@ button {
     padding: 5px 2px;
     transition: color 0.22s ease;
     position: relative;
+    white-space: nowrap;
+
 }
 
 /* underline animado */
@@ -228,9 +239,18 @@ button {
 .nav-item:hover,
 .nav-links a:hover {
     color: var(--blue);
+
 }
 
 .nav-item:hover::after {
+    width: 100%;
+}
+
+.nav-item.active {
+    color: var(--blue);
+}
+
+.nav-item.active::after {
     width: 100%;
 }
 
@@ -239,33 +259,37 @@ button {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding-left: 7%;
 }
 
 .user {
     font-size: 0.88rem;
     font-weight: 600;
     color: var(--dark);
+    white-space: nowrap;
 }
 
 /* Botões da navbar */
-.btn-primary {
+
+.btn-criar {
     display: inline-block;
     background: linear-gradient(135deg, var(--blue), #418aff) !important;
     color: white !important;
-    padding: 9px 18px;
-    border-radius: var(--radius-sm);
     text-decoration: none;
     font-weight: 600;
-    font-size: 0.9rem;
     box-shadow: 0 4px 14px rgba(26, 107, 255, 0.25);
     transition: var(--transition);
     border: none;
     cursor: pointer;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    white-space: nowrap;
 }
 
 
 
-.btn-primary:hover {
+.btn-criar:hover {
     background: linear-gradient(135deg, var(--blue-dark), var(--blue));
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(26, 107, 255, 0.38);

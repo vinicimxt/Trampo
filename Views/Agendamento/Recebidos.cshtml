@@ -55,11 +55,11 @@
 
 @{
     int total = Model.Count;
-    int pendentes = Model.Count(a => a.Status == "Pendente");
-    int confirmados = Model.Count(a => a.Status == "Confirmado");
-    int finalizados = Model.Count(a => a.Status == "Finalizado");
+    int pendentes = Model.Count(a => a.StatusAtual() == "Pendente");
+    int confirmados = Model.Count(a => a.StatusAtual() == "Confirmado");
+    int finalizados = Model.Count(a => a.StatusAtual() == "Finalizado");
     int cancelados = Model.Count(a =>
-        a.Status == "CanceladoCliente" || a.Status == "CanceladoProfissional");
+        a.StatusAtual() == "CanceladoCliente" || a.StatusAtual() == "CanceladoProfissional");
 }
 
 <div class="recebidos-page">
@@ -174,8 +174,7 @@
 
             @foreach (var ag in Model)
             {
-                <div class="agend-card @GetStatusClass(ag.Status)" data-status="@GetDataFiltro(ag.Status)">
-
+                <div class="agend-card @GetStatusClass(ag.StatusAtual())" data-status="@GetDataFiltro(ag.StatusAtual())">
                     <!-- cabeçalho: cliente + status -->
                     <div class="agend-card-header">
                         <div class="agend-avatar">@GetIniciais(ag.NomeCliente)</div>
@@ -185,9 +184,8 @@
                                 <span>📦</span> @ag.Servico
                             </div>
                         </div>
-                        <span class="status-badge @GetBadgeClass(ag.Status)">
-                            <span class="badge-dot"></span>
-                            @GetBadgeTexto(ag.Status)
+                        <span class="status-badge @GetBadgeClass(ag.StatusAtual())">
+                            @GetBadgeTexto(ag.StatusAtual())
                         </span>
                     </div>
 
@@ -260,7 +258,7 @@
                         <!-- botões de ação -->
                         <div class="agend-btns">
 
-                            @if (ag.Status == "Pendente")
+                            @if (ag.StatusAtual() == "Pendente")
                             {
                                 <!-- Confirmar -->
                                 <button type="button" class="btn-confirmar"
@@ -274,7 +272,7 @@
                                 </button>
                             }
 
-                            @if (ag.Status == "Confirmado")
+                            @if (ag.StatusAtual() == "Confirmado")
                             {
                                 <!-- Finalizar -->
                                 <button type="button" class="btn-finalizar"
@@ -283,7 +281,7 @@
                                 </button>
                             }
 
-                            @if (ag.Status == "Pendente" || ag.Status == "Confirmado")
+                            @if (ag.StatusAtual() == "Pendente" || ag.StatusAtual() == "Confirmado")
                             {
                                 <!-- Cancelar (profissional) -->
                                 <button type="button" class="btn-cancelar-pro"

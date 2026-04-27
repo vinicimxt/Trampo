@@ -9,7 +9,7 @@
         public int ServicoId { get; set; }
         public DateTime Data { get; set; }
         public TimeSpan Hora { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } // Legado, antigo uso para metodo
         public string Descricao { get; set; }
         public string NomeCliente { get; set; }
         public string NomeProfissional { get; set; }
@@ -19,6 +19,53 @@
         public string Atendimento { get; set; }
         public int? LocalId { get; set; }
         public string EnderecoLocal { get; set; } // só pra exibir
+        public bool ConfirmadoProfissional { get; set; }
+        public bool FinalizadoProfissional { get; set; }
+        public bool ConfirmadoCliente { get; set; }
+        public DateTime? DataFinalizacao { get; set; }
+        public bool PodeAvaliar()
+        {
+            return FinalizadoProfissional && ConfirmadoCliente;
+        }
+
+        public string StatusAtual()
+        {
+            if (ConfirmadoProfissional || FinalizadoProfissional || ConfirmadoCliente)
+            {
+                if (!ConfirmadoProfissional)
+                    return "Pendente";
+
+                if (!FinalizadoProfissional)
+                    return "Confirmado";
+
+                if (!ConfirmadoCliente)
+                    return "Aguardando cliente";
+
+                return "Concluído";
+            }
+
+            return Status ?? "Pendente";
+        }
+
+        public string StatusCalculado()
+        {
+            if (Status == "CanceladoCliente") return "CanceladoCliente";
+            if (Status == "CanceladoProfissional") return "CanceladoProfissional";
+
+            if (!ConfirmadoProfissional)
+                return "Pendente";
+
+            if (ConfirmadoProfissional && !FinalizadoProfissional)
+                return "Confirmado";
+
+            if (FinalizadoProfissional && !ConfirmadoCliente)
+                return "AguardandoCliente";
+
+            if (FinalizadoProfissional && ConfirmadoCliente)
+                return "Finalizado";
+
+            return Status;
+        }
 
     }
 }

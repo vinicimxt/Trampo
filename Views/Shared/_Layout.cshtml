@@ -20,7 +20,7 @@
 
         <div class="container-ap nav-wrapper">
 
-            <a href="/#home" style="text-decoration: none; color:inherit;">
+            <a href="/#home" class="a-logo">
                 <!-- LOGO -->
                 <div class="logo">
                     <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo Logo" class="logo-img">
@@ -29,9 +29,11 @@
                 </a>
                 <!-- MENU -->
                 <nav class="nav-links" id="navLinks">
-                    <a asp-controller="Home" asp-action="Index" class="nav-item">Home</a>
-                    <a href="/#services" class="nav-item">Serviços</a>
+                    <a href="/#home" class="nav-item">Home</a>
+                    <a href="/#why" class="nav-item">Por que Trampo?</a>
+                    <a href="/#about" class="nav-item">Sobre nós</a>
                     <a href="/#how" class="nav-item">Como funciona</a>
+                    <a href="/#services" class="nav-item">Serviços</a>
                     <a href="/#reviews" class="nav-item">Avaliações</a>
                     <a asp-controller="Profissional" asp-action="Lista" class="nav-item">Profissionais</a>
 
@@ -71,7 +73,7 @@
                             Login
                         </a>
 
-                        <a asp-controller="Usuario" asp-action="Cadastro" class="btn-primary">
+                        <a asp-controller="Usuario" asp-action="Cadastro" class="btn-criar">
                             Criar Conta
                         </a>
                     }

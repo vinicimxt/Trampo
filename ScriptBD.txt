@@ -210,3 +210,13 @@ SELECT * FROM Locais;
 SELECT * FROM Avaliacoes;
 
 
+ALTER TABLE Agendamentos
+ADD ConfirmadoProfissional BIT DEFAULT 0;
+
+ALTER TABLE Agendamentos
+ADD FinalizadoProfissional BIT DEFAULT 0;
+
+ALTER TABLE Agendamentos
+ADD ConfirmadoCliente BIT DEFAULT 0;
+
+

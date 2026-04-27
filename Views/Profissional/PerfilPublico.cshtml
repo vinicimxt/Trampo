@@ -2,112 +2,342 @@
 
 <link rel="stylesheet" href="~/css/perfil-publico.css" />
 
-<div class="perfil-publico">
+@functions {
+    string GetIniciais(string nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome)) return "?";
+        var p = nome.Trim().Split(' ');
+        string r = "";
+        for (int i = 0; i < p.Length && i < 2; i++)
+            if (p[i].Length > 0) r += char.ToUpper(p[i][0]);
+        return r;
+    }
 
-    <!-- HEADER -->
-    <div class="perfil-header">
-        <div class="perfil-header-content">
+    string GetTipoBadgeClass(string atend)
+    {
+        if (atend == "Local") return "tipo-local";
+        if (atend == "Domicilio") return "tipo-domicilio";
+        if (atend == "Online") return "tipo-online";
+        return "tipo-local";
+    }
 
-            
-           
-            <div class="avatar">
-                @(Model.Nome?.Substring(0, 1).ToUpper())
+    string GetTipoBadgeIcon(string atend)
+    {
+        if (atend == "Local") return "📍";
+        if (atend == "Domicilio") return "🏠";
+        if (atend == "Online") return "💻";
+        return "📌";
+    }
+
+    string GetStars(double nota)
+    {
+        int full = (int)Math.Floor(nota);
+        int empty = 5 - full;
+        return new string('★', full) + new string('☆', empty);
+    }
+
+    string GetInicialAvaliador(string nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome)) return "?";
+        return nome.Trim()[0].ToString().ToUpper();
+    }
+}
+
+@{
+    double media = ViewBag.Media ?? 0.0;
+    int totalAval = ViewBag.Avaliacoes?.Count ?? 0;
+    int totalServ = ViewBag.Servicos?.Count ?? 0;
+    string mediaStr = media.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+
+    // distribuição de notas 1-5
+    var avaliacoes = ViewBag.Avaliacoes as IEnumerable<dynamic> ?? new List<dynamic>();
+    int n5 = avaliacoes.Count(a => (int)a.Nota == 5);
+    int n4 = avaliacoes.Count(a => (int)a.Nota == 4);
+    int n3 = avaliacoes.Count(a => (int)a.Nota == 3);
+    int n2 = avaliacoes.Count(a => (int)a.Nota == 2);
+    int n1 = avaliacoes.Count(a => (int)a.Nota == 1);
+
+    Func<int, string> pctBar = (n) => totalAval > 0
+        ? ((double)n / totalAval * 100).ToString("F0", System.Globalization.CultureInfo.InvariantCulture)
+        : "0";
+}
+
+<div class="perfil-page">
+
+    <!-- =============================================
+         HERO
+    ============================================= -->
+    <div class="perfil-hero">
+        <div class="perfil-hero-dots"></div>
+        <div class="perfil-hero-inner">
+
+            <div class="perfil-hero-top">
+                <div class="perfil-hero-left">
+
+                    <div class="perfil-avatar">@GetIniciais(Model.Nome)</div>
+
+                    <div>
+                        <div class="perfil-verificado">✓ Profissional verificado</div>
+                        <div class="perfil-hero-name">@Model.Nome</div>
+
+                        @if (totalAval > 0)
+                        {
+                            <div class="perfil-rating-row">
+                                <span class="perfil-stars">@GetStars(media)</span>
+                                <span class="perfil-rating-val">@mediaStr</span>
+                                <span class="perfil-rating-count">(@totalAval avaliações)</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span style="font-size:.78rem;color:rgba(255,255,255,0.38);">Sem avaliações ainda</span>
+                        }
+                    </div>
+
+                </div>
+
+                <div class="perfil-hero-actions">
+                    <a href="#servicos" class="btn-contato">📅 Agendar agora</a>
+                    <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar-hero">⭐ Avaliar</a>
+                </div>
             </div>
 
-            <div>
-                <h1>@Model.Nome</h1>
-                <p class="sub">Profissional verificado</p>
-            </div>
-
-            <div class="perfil-actions">
-                <a href="#" class="btn-contato">
-                    💬 Falar agora
-                </a>
-
+            <!-- stats bar -->
+            <div class="perfil-stats-bar">
+                <div class="perfil-stat">
+                    <span class="perfil-stat-val">@totalServ</span>
+                    <span class="perfil-stat-lbl">Serviços</span>
+                </div>
+                <div class="perfil-stat">
+                    <span class="perfil-stat-val">@totalAval</span>
+                    <span class="perfil-stat-lbl">Avaliações</span>
+                </div>
+                <div class="perfil-stat">
+                    <span class="perfil-stat-val">@(totalAval > 0 ? mediaStr : "—")</span>
+                    <span class="perfil-stat-lbl">Nota média</span>
+                </div>
+                <div class="perfil-stat">
+                    <span class="perfil-stat-val">✓</span>
+                    <span class="perfil-stat-lbl">Verificado</span>
+                </div>
             </div>
 
         </div>
     </div>
 
-    
-    <!-- CONTEÚDO -->
-    <div class="perfil-body">
+    <!-- =============================================
+         LAYOUT PRINCIPAL
+    ============================================= -->
+    <div class="perfil-main">
 
-        <!-- SOBRE -->
-        <div class="card">
-            <h3>👤 Sobre</h3>
-            <p>
-                Profissional disponível para serviços de qualidade.
-                Entre em contato para mais informações.
-            </p>
-        </div>
+        <!-- COLUNA PRINCIPAL -->
+        <div>
 
-        <!-- SERVIÇOS -->
-        <div class="card">
-            <h3>📦 Serviços</h3>
+            <!-- SOBRE -->
+            <div class="pcard" style="animation-delay:.04s">
+                <div class="pcard-title">Sobre o profissional</div>
+                <p style="font-size:.92rem;color:var(--text-muted);line-height:1.7;">
+                    Profissional verificado e disponível para atender você com qualidade e pontualidade.
+                    Entre em contato ou agende diretamente pelo Trampo.
+                </p>
+            </div>
 
-            @if (ViewBag.Servicos.Count == 0)
-            {
-                <p>Nenhum serviço cadastrado.</p>
-            }
-            else
-            {
-                <div class="servicos-grid">
-                    @foreach (var s in ViewBag.Servicos)
-                    {
-                        <div class="servico-card">
+            <!-- SERVIÇOS -->
+            <div class="pcard" id="servicos" style="animation-delay:.08s">
+                <div class="pcard-title">Serviços disponíveis</div>
 
-                            <div class="top">
-                                <h4>@s.Nome</h4>
-                                <span class="tipo">@s.Atendimento</span>
-                            </div>
-
-                            <p class="desc">@s.Descricao</p>
-
-                            <div class="chips">
-                                <span>@s.Categoria</span>
-                                <span>@s.Subcategoria</span>
-                            </div>
-
-                            <div class="footer">
-                                <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar">
-                                    Agendar
-                                </a>
-
-                                <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar">
-                                    ⭐
-                                </a>
-                            </div>
-
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-
-        <!-- AVALIAÇÕES -->
-        <div class="card">
-            <h3>⭐ Avaliações (@ViewBag.Media.ToString("0.0"))</h3>
-
-            @if (ViewBag.Avaliacoes.Count == 0)
-            {
-                <p>Nenhuma avaliação ainda.</p>
-            }
-            else
-            {
-                foreach (var a in ViewBag.Avaliacoes)
+                @if (totalServ == 0)
                 {
-                    <div class="avaliacao">
-                        <div class="avaliacao-top">
-                            <strong>@a.NomeUsuario</strong>
-                            <span class="nota">⭐ @a.Nota</span>
-                        </div>
-                        <p>@a.Comentario</p>
+                    <div class="empty-inline">
+                        <span>📦</span>
+                        Nenhum serviço cadastrado ainda.
                     </div>
                 }
-            }
+                else
+                {
+                    <div class="servicos-grid">
+                        @foreach (var s in ViewBag.Servicos)
+                        {
+                            <div class="servico-card">
+
+                                <div class="servico-card-header">
+                                    <h4>@s.Nome</h4>
+                                    <span class="tipo-badge @GetTipoBadgeClass((string)s.Atendimento)">
+                                        @GetTipoBadgeIcon((string)s.Atendimento) @s.Atendimento
+                                    </span>
+                                </div>
+
+                                <div class="servico-card-body">
+                                    @if (!string.IsNullOrEmpty((string)s.Descricao))
+                                    {
+                                        <p class="servico-desc">@s.Descricao</p>
+                                    }
+
+                                    <div class="servico-chips">
+                                        @if (!string.IsNullOrEmpty((string)s.Categoria))
+                                        {
+                                            <span class="chip-cat">📂 @s.Categoria</span>
+                                        }
+                                        @if (!string.IsNullOrEmpty((string)s.Subcategoria))
+                                        {
+                                            <span class="chip-cat">🏷️ @s.Subcategoria</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="servico-card-footer">
+                                    <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar-pub">
+                                        📅 Agendar
+                                    </a>
+                                    <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar-card">
+                                        ⭐ Avaliar
+                                    </a>
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- AVALIAÇÕES -->
+            <div class="pcard" style="animation-delay:.12s">
+                <div class="pcard-title">Avaliações dos clientes</div>
+
+                @if (totalAval == 0)
+                {
+                    <div class="empty-inline">
+                        <span>⭐</span>
+                        Nenhuma avaliação ainda. Seja o primeiro a avaliar!
+                    </div>
+                }
+                else
+                {
+                    <!-- resumo com barras -->
+                    <div class="rating-summary">
+                        <div style="text-align:center;flex-shrink:0;">
+                            <div class="rating-big-val">@mediaStr</div>
+                            <div class="rating-big-stars">@GetStars(media)</div>
+                            <div class="rating-big-count">@totalAval avaliações</div>
+                        </div>
+
+                        <div class="rating-bars">
+                            @foreach (var item in new[] {
+                                new { estrela = 5, count = n5 },
+                                new { estrela = 4, count = n4 },
+                                new { estrela = 3, count = n3 },
+                                new { estrela = 2, count = n2 },
+                                new { estrela = 1, count = n1 }
+                            })
+                            {
+                                <div class="rating-bar-row">
+                                    <span class="rating-bar-label">@item.estrela</span>
+                                    <div class="rating-bar-track">
+                                        <div class="rating-bar-fill" style="width:@pctBar(item.count)%;">
+                                        </div>
+                                    </div>
+                                    <span class="rating-bar-count">@item.count</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- lista de avaliações -->
+                    @foreach (var a in ViewBag.Avaliacoes)
+                    {
+                        <div class="avaliacao-card">
+                            <div class="avaliacao-quote">"</div>
+                            <div class="avaliacao-header">
+                                <div class="avaliacao-avatar">@GetInicialAvaliador((string)a.NomeUsuario)</div>
+                                <div>
+                                    <div class="avaliacao-nome">@a.NomeUsuario</div>
+                                    <div class="avaliacao-nota-stars">
+                                        @GetStars((double)a.Nota)
+                                    </div>
+                                </div>
+                                <span class="avaliacao-nota-badge">⭐ @a.Nota</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty((string)a.Comentario))
+                            {
+                                <p class="avaliacao-texto">@a.Comentario</p>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="perfil-sidebar">
+
+            <!-- CTA de agendamento -->
+            <div class="scard scard-cta">
+                <div class="scard-title">Agendar serviço</div>
+                <a href="#servicos" class="btn-agendar-cta">📅 Ver serviços disponíveis</a>
+                <p class="cta-note">Confirmação imediata · Sem taxa de cadastro</p>
+            </div>
+
+            <!-- Informações do profissional -->
+            <div class="scard">
+                <div class="scard-title">Informações</div>
+
+                <div class="scard-info-row">
+                    <div class="scard-info-icon">✓</div>
+                    <div>
+                        <div class="scard-info-label">Status</div>
+                        <div class="scard-info-val" style="color:#166534;">Perfil verificado</div>
+                    </div>
+                </div>
+
+                <div class="scard-info-row">
+                    <div class="scard-info-icon">📦</div>
+                    <div>
+                        <div class="scard-info-label">Serviços</div>
+                        <div class="scard-info-val">@totalServ disponível@(totalServ != 1 ? "s" : "")</div>
+                    </div>
+                </div>
+
+                @if (totalAval > 0)
+                {
+                    <div class="scard-info-row">
+                        <div class="scard-info-icon">⭐</div>
+                        <div>
+                            <div class="scard-info-label">Avaliação</div>
+                            <div class="scard-info-val">@mediaStr / 5.0 (@totalAval avaliações)</div>
+                        </div>
+                    </div>
+                }
+
+                <div class="scard-info-row">
+                    <div class="scard-info-icon">🏙️</div>
+                    <div>
+                        <div class="scard-info-label">Plataforma</div>
+                        <div class="scard-info-val">Trampo — desde 2026</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Avalie este profissional -->
+            <div class="scard">
+                <div class="scard-title">Já foi atendido?</div>
+                <p style="font-size:.84rem;color:var(--text-muted);margin-bottom:14px;line-height:1.6;">
+                    Deixe sua avaliação e ajude outros clientes a escolherem melhor.
+                </p>
+                <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" style="display:flex;align-items:center;justify-content:center;gap:7px;
+                    width:100%;padding:11px;
+                    background:var(--amber-soft);color:#92400e;
+                    font-family:'DM Sans',sans-serif;
+                    font-size:.9rem;font-weight:700;
+                    border-radius:var(--radius-md);text-decoration:none;
+                    border:1.5px solid rgba(245,158,11,0.25);
+                    transition:var(--transition);">
+                    ⭐ Avaliar profissional
+                </a>
+            </div>
+
         </div>
 
     </div>
-
 </div>

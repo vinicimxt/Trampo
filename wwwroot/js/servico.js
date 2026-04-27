@@ -1,149 +1,174 @@
-// SUBCATEGORIAS DINÂMICAS
-document.getElementById("categoria").addEventListener("change", function () {
-    let categoriaId = this.value;
+document.addEventListener('DOMContentLoaded', function () {
 
-    fetch('/Servico/GetSubcategorias?categoriaId=' + categoriaId)
-        .then(res => res.json())
-        .then(data => {
-            let sub = document.getElementById("subcategoria");
+    /* -----------------------------------------------
+       REFERÊNCIAS
+    ----------------------------------------------- */
+    var selCategoria   = document.getElementById('categoria');
+    var selSub         = document.getElementById('subcategoria');
+    var selAtend       = document.getElementById('atendimento');
+    var inputNome      = document.getElementById('nome');
+    var inputDesc      = document.getElementById('descricao');
+    var inputContato   = document.getElementById('contato');
+    var inputLink      = document.getElementById('linkOnline');
+    var nomeMsg        = document.getElementById('nomeMsg');
+    var charCount      = document.getElementById('charCount');
+    var localDiv       = document.getElementById('localDiv');
+    var linkOnlineDiv  = document.getElementById('linkOnlineDiv');
+    var form           = document.getElementById('formServico');
+    var btnSubmit      = document.getElementById('btnSubmit');
+    var btnText        = document.getElementById('btnText');
+    var btnLoader      = document.getElementById('btnLoader');
 
-            sub.innerHTML = '<option value="">Selecione a subcategoria</option>';
+    // preview
+    var prevNome       = document.getElementById('previewNome');
+    var prevDesc       = document.getElementById('previewDesc');
+    var prevCat        = document.getElementById('previewCategoria');
+    var prevAtend      = document.getElementById('previewAtendimento');
+    var prevContato    = document.getElementById('previewContato');
+    var prevContatoVal = document.getElementById('previewContatoVal');
 
-            data.forEach(s => {
-                sub.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
-            });
+    /* -----------------------------------------------
+       SUBCATEGORIAS DINÂMICAS
+    ----------------------------------------------- */
+    if (selCategoria) {
+        selCategoria.addEventListener('change', function () {
+            var catId = this.value;
+            var catNome = this.options[this.selectedIndex].text;
+
+            // atualiza preview
+            if (prevCat) prevCat.textContent = catId ? catNome : 'Categoria';
+
+            if (!catId) {
+                selSub.innerHTML = '<option value="">Selecione a categoria primeiro</option>';
+                return;
+            }
+
+            fetch('/Servico/GetSubcategorias?categoriaId=' + catId)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    selSub.innerHTML = '<option value="">Selecione a subcategoria</option>';
+                    data.forEach(function (s) {
+                        var opt = document.createElement('option');
+                        opt.value = s.id;
+                        opt.textContent = s.nome;
+                        selSub.appendChild(opt);
+                    });
+                })
+                .catch(function () {
+                    selSub.innerHTML = '<option value="">Erro ao carregar subcategorias</option>';
+                });
         });
-});
-
-// EVENTOS
-document.getElementById("atendimento").addEventListener("change", toggleCampos);
-
-document.addEventListener("DOMContentLoaded", function () {
-    toggleCampos();
-});
-
-// ===============================
-// VALIDAÇÃO NOME
-// ===============================
-const nome = document.getElementById("nome");
-const nomeMsg = document.getElementById("nomeMsg");
-
-nome.addEventListener("input", () => {
-    if (nome.value.length < 3) {
-        nome.classList.add("input-error");
-        nome.classList.remove("input-valid");
-        nomeMsg.innerText = "Mínimo 3 caracteres";
-    } else {
-        nome.classList.remove("input-error");
-        nome.classList.add("input-valid");
-        nomeMsg.innerText = "";
     }
-});
 
-// ===============================
-// CONTADOR DESCRIÇÃO
-// ===============================
-const desc = document.getElementById("descricao");
-const contador = document.getElementById("contador");
+    /* -----------------------------------------------
+       CAMPOS DINÂMICOS (atendimento)
+    ----------------------------------------------- */
+    function toggleCampos() {
+        if (!selAtend) return;
+        var tipo = selAtend.value;
 
-desc.addEventListener("input", () => {
-    contador.innerText = desc.value.length;
-});
+        // local
+        if (localDiv) localDiv.classList.toggle('hidden', tipo !== 'Local');
 
-// ===============================
-// PREVIEW AO VIVO
-// ===============================
-const previewNome = document.getElementById("previewNome");
-const previewDesc = document.getElementById("previewDesc");
-const previewCategoria = document.getElementById("previewCategoria");
-const previewAtendimento = document.getElementById("previewAtendimento");
+        // link online
+        if (linkOnlineDiv) linkOnlineDiv.classList.toggle('hidden', tipo !== 'Online');
 
-nome.addEventListener("input", () => {
-    previewNome.innerText = nome.value || "Nome do serviço";
-});
-
-desc.addEventListener("input", () => {
-    previewDesc.innerText = desc.value || "Descrição aparecerá aqui...";
-});
-
-document.getElementById("categoria").addEventListener("change", function () {
-    let texto = this.options[this.selectedIndex].text;
-    previewCategoria.innerText = texto;
-});
-
-document.getElementById("atendimento").addEventListener("change", function () {
-    previewAtendimento.innerText = this.value;
-});
-
-// ===============================
-// LOADING NO BOTÃO
-// ===============================
-const form = document.getElementById("formServico");
-const btn = document.getElementById("btnSubmit");
-const btnText = document.getElementById("btnText");
-const loader = document.getElementById("btnLoader");
-
-form.addEventListener("submit", () => {
-    btn.disabled = true;
-    btnText.innerText = "Criando...";
-    loader.classList.remove("hidden");
-});
-
-// ===============================
-// SUBCATEGORIAS (mantido)
-// ===============================
-document.getElementById("categoria").addEventListener("change", function () {
-    let categoriaId = this.value;
-
-    fetch('/Servico/GetSubcategorias?categoriaId=' + categoriaId)
-        .then(res => res.json())
-        .then(data => {
-            let sub = document.getElementById("subcategoria");
-
-            sub.innerHTML = '<option value="">Selecione a subcategoria</option>';
-
-            data.forEach(s => {
-                sub.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
-            });
-        });
-});
-
-// ===============================
-// CAMPOS DINÂMICOS
-// ===============================
-function toggleCampos() {
-    let tipo = document.getElementById("atendimento").value.toLowerCase();
-
-    document.getElementById("linkOnlineDiv")
-        .classList.toggle("hidden", tipo !== "online");
-
-    document.getElementById("localDiv")
-        .classList.toggle("hidden", tipo !== "local");
-}
-
-document.getElementById("atendimento")
-    .addEventListener("change", toggleCampos);
-
-document.addEventListener("DOMContentLoaded", toggleCampos);
-
-const atendimento = document.getElementById("atendimento");
-const localDiv = document.getElementById("localDiv");
-
-atendimento.addEventListener("change", () => {
-    if (atendimento.value === "Local") {
-
-        const temLocal = document.querySelectorAll("select[name='localId'] option").length > 1;
-
-        if (!temLocal) {
-            alert("Você precisa cadastrar um local primeiro.");
-            atendimento.value = "Domicilio";
-            return;
+        // aviso sem local
+        if (tipo === 'Local') {
+            var hasLocais = document.querySelectorAll("select[name='localId'] option").length > 1;
+            if (!hasLocais) {
+                // não há locais — já exibe o alerta-local via Razor, não precisa de alert
+            }
         }
 
-        localDiv.classList.remove("hidden");
-    } else {
-        localDiv.classList.add("hidden");
+        // preview atendimento
+        if (prevAtend) {
+            var icons = { Domicilio: '🏠 Domicílio', Local: '📍 Local', Online: '💻 Online' };
+            prevAtend.textContent = icons[tipo] || tipo;
+        }
     }
-});
 
-    var drawerAberto = false;
+    if (selAtend) {
+        selAtend.addEventListener('change', toggleCampos);
+        toggleCampos(); // inicializa
+    }
+
+    /* -----------------------------------------------
+       VALIDAÇÃO DO NOME
+    ----------------------------------------------- */
+    if (inputNome) {
+        inputNome.addEventListener('input', function () {
+            var val = inputNome.value.trim();
+
+            if (val.length === 0) {
+                inputNome.classList.remove('input-error', 'input-valid');
+                if (nomeMsg) { nomeMsg.textContent = ''; nomeMsg.className = 'input-msg'; }
+                if (prevNome) prevNome.textContent = 'Nome do serviço';
+                return;
+            }
+
+            if (val.length < 3) {
+                inputNome.classList.add('input-error');
+                inputNome.classList.remove('input-valid');
+                if (nomeMsg) { nomeMsg.textContent = 'Mínimo 3 caracteres'; nomeMsg.className = 'input-msg'; }
+            } else {
+                inputNome.classList.remove('input-error');
+                inputNome.classList.add('input-valid');
+                if (nomeMsg) { nomeMsg.textContent = ''; nomeMsg.className = 'input-msg ok'; }
+            }
+
+            // preview
+            if (prevNome) prevNome.textContent = val || 'Nome do serviço';
+        });
+    }
+
+    /* -----------------------------------------------
+       CONTADOR DE DESCRIÇÃO
+    ----------------------------------------------- */
+    if (inputDesc) {
+        inputDesc.addEventListener('input', function () {
+            var len = inputDesc.value.length;
+            if (charCount) {
+                charCount.textContent = len + ' / 200';
+                charCount.className = 'char-count';
+                if (len > 160) charCount.classList.add('quase');
+                if (len >= 200) charCount.classList.add('cheio');
+            }
+            // preview
+            if (prevDesc) prevDesc.textContent = inputDesc.value || 'A descrição aparecerá aqui...';
+        });
+    }
+
+    /* -----------------------------------------------
+       PREVIEW — contato
+    ----------------------------------------------- */
+    if (inputContato) {
+        inputContato.addEventListener('input', function () {
+            var val = inputContato.value.trim();
+            if (prevContato && prevContatoVal) {
+                prevContato.style.display = val ? 'flex' : 'none';
+                prevContatoVal.textContent = val;
+            }
+        });
+    }
+
+    /* -----------------------------------------------
+       LOADING NO SUBMIT
+    ----------------------------------------------- */
+    if (form) {
+        form.addEventListener('submit', function () {
+            // valida nome mínimo
+            if (inputNome && inputNome.value.trim().length < 3) {
+                inputNome.classList.add('input-error');
+                if (nomeMsg) nomeMsg.textContent = 'Mínimo 3 caracteres';
+                event.preventDefault();
+                return;
+            }
+
+            if (btnSubmit) btnSubmit.disabled = true;
+            if (btnText)   btnText.textContent = 'Criando...';
+            if (btnLoader) btnLoader.classList.remove('hidden');
+        });
+    }
+
+});

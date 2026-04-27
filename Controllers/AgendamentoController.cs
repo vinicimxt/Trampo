@@ -34,7 +34,7 @@ namespace BD_TRAMPO.Controllers
 
             List<TimeSpan> todos = new List<TimeSpan>();
 
-            for (int h = 8; h <= 18; h++)
+            for (int h = 8; h <= 24; h++)
             {
                 todos.Add(new TimeSpan(h, 0, 0));
             }
@@ -168,6 +168,7 @@ namespace BD_TRAMPO.Controllers
             AgendamentoDAO dao = new AgendamentoDAO();
             var lista = dao.ListarPorCliente(clienteId);
 
+
             return View(lista);
         }
 
@@ -190,8 +191,16 @@ namespace BD_TRAMPO.Controllers
         {
             AgendamentoDAO dao = new AgendamentoDAO();
             dao.AtualizarStatus(id, "Confirmado");
-
+            dao.ConfirmarProfissional(id);
             return RedirectToAction("Recebidos");
+        }
+
+        public IActionResult ConfirmarCliente(int id)
+        {
+            AgendamentoDAO dao = new AgendamentoDAO();
+            dao.ConfirmarCliente(id);
+
+            return RedirectToAction("Meus");
         }
 
         public IActionResult Recusar(int id)
