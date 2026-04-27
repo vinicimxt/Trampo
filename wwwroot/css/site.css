@@ -98,10 +98,7 @@ button {
 
 /* heroes internos: navbar + padding próprio */
 
-.agend-hero {
-    padding-top: calc(var(--navbar-h) + 52px);
-}
-
+.agend-hero,
 .perfil-hero,
 .prof-hero {
     margin-top: var(--navbar-h);

@@ -382,6 +382,21 @@ namespace BD_TRAMPO
             }
         }
 
+        public void FinalizarProfissional(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+                UPDATE Agendamentos
+                SET FinalizadoProfissional = 1
+                WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         public void ConfirmarProfissional(int id)
         {
             using (SqlConnection conn = conexao.Conectar())
@@ -402,8 +417,8 @@ namespace BD_TRAMPO
                 string query = @"
                 UPDATE Agendamentos
                 SET ConfirmadoCliente = 1
-                WHERE Id = @Id";
-
+                WHERE Id = @Id
+                AND FinalizadoProfissional = 1";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
                 cmd.ExecuteNonQuery();

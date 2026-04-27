@@ -93,14 +93,16 @@ namespace BD_TRAMPO.Controllers
                     string.IsNullOrWhiteSpace(bairro) ||
                     string.IsNullOrWhiteSpace(cidade))
                 {
-                    return Content("Preencha o endereço completo para atendimento a domicílio.");
+                    return Content("Preencha o endereço completo.");
                 }
 
                 enderecoCliente = $"{rua}, {numero} - {bairro}, {cidade}";
             }
 
-            if (tipo == "local" && localId == null)
-                return Content("Selecione um local.");
+            else if (tipo == "local")
+            {
+                localId = servico.LocalId; // automático
+            }
 
             DateTime hoje = DateTime.Today;
 
