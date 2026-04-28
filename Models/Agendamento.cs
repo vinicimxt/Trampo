@@ -39,32 +39,32 @@
                     return "Confirmado";
 
                 if (!ConfirmadoCliente)
-                    return "Aguardando cliente";
+                    return "AguardandoCliente"; 
 
-                return "Concluído";
+                return "Finalizado"; 
             }
 
             return Status ?? "Pendente";
         }
 
+
         public string StatusCalculado()
         {
+            // CANCELADOS primeiro
             if (Status == "CanceladoCliente") return "CanceladoCliente";
             if (Status == "CanceladoProfissional") return "CanceladoProfissional";
 
+            // FLUXO NORMAL
             if (!ConfirmadoProfissional)
                 return "Pendente";
 
-            if (ConfirmadoProfissional && !FinalizadoProfissional)
+            if (!FinalizadoProfissional)
                 return "Confirmado";
 
-            if (FinalizadoProfissional && !ConfirmadoCliente)
+            if (!ConfirmadoCliente)
                 return "AguardandoCliente";
 
-            if (FinalizadoProfissional && ConfirmadoCliente)
-                return "Finalizado";
-
-            return Status;
+            return "Finalizado";
         }
 
     }

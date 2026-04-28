@@ -9,6 +9,7 @@
     {
         if (status == "Pendente") return "status-pendente";
         if (status == "Confirmado") return "status-confirmado";
+        if (status == "AguardandoCliente") return "status-aguardando";
         if (status == "Finalizado") return "status-finalizado";
         if (status == "CanceladoCliente") return "status-cancelado";
         if (status == "CanceladoProfissional") return "status-cancelado";
@@ -17,8 +18,12 @@
 
     string GetDataFiltro(string status)
     {
-        if (status == "CanceladoCliente") return "cancelado";
-        if (status == "CanceladoProfissional") return "cancelado";
+        if (status == "CanceladoCliente" || status == "CanceladoProfissional")
+            return "cancelado";
+
+        if (status == "AguardandoCliente")
+            return "Finalizado";
+
         return status;
     }
 
@@ -26,6 +31,7 @@
     {
         if (status == "Pendente") return "badge-pendente";
         if (status == "Confirmado") return "badge-confirmado";
+        if (status == "AguardandoCliente") return "badge-aguardando";
         if (status == "Finalizado") return "badge-finalizado";
         return "badge-cancelado";
     }
@@ -34,6 +40,7 @@
     {
         if (status == "Pendente") return "Pendente";
         if (status == "Confirmado") return "Confirmado";
+        if (status == "AguardandoCliente") return "Aguardando cliente";
         if (status == "Finalizado") return "Finalizado";
         if (status == "CanceladoCliente") return "Cancelado pelo cliente";
         if (status == "CanceladoProfissional") return "Cancelado por você";
@@ -57,7 +64,9 @@
     int total = Model.Count;
     int pendentes = Model.Count(a => a.StatusAtual() == "Pendente");
     int confirmados = Model.Count(a => a.StatusAtual() == "Confirmado");
-    int finalizados = Model.Count(a => a.StatusAtual() == "Finalizado");
+    int finalizados = Model.Count(a =>
+    a.StatusAtual() == "Finalizado" ||
+    a.StatusAtual() == "AguardandoCliente");
     int cancelados = Model.Count(a =>
         a.StatusAtual() == "CanceladoCliente" || a.StatusAtual() == "CanceladoProfissional");
 }
@@ -232,7 +241,7 @@
                         <div class="agend-info-extra">
                             @if (ag.Atendimento == "Domicilio")
                             {
-                                if (ag.Status == "Confirmado" && !string.IsNullOrEmpty(ag.EnderecoCliente))
+                                if (ag.ConfirmadoProfissional && !string.IsNullOrEmpty(ag.EnderecoCliente))
                                 {
                                     <span>🏠</span>
                                     <span>@ag.EnderecoCliente</span>
@@ -260,31 +269,35 @@
 
                             @if (ag.StatusAtual() == "Pendente")
                             {
-                                <!-- Confirmar -->
-                                <button type="button" class="btn-confirmar"
+                                <button class="btn-confirmar"
                                         onclick="abrirModal('confirmar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
                                     ✔ Confirmar
                                 </button>
-                                <!-- Recusar -->
-                                <button type="button" class="btn-recusar"
+
+                                <button class="btn-recusar"
                                         onclick="abrirModal('recusar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
                                     ✕ Recusar
                                 </button>
                             }
-
-                            @if (ag.StatusAtual() == "Confirmado")
+                            else if (ag.StatusAtual() == "Confirmado")
                             {
-                                <!-- Finalizar -->
-                                <button type="button" class="btn-finalizar"
+                                <button class="btn-finalizar"
                                         onclick="abrirModal('finalizar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
                                     ✅ Finalizar
                                 </button>
                             }
+                            else if (ag.StatusAtual() == "AguardandoCliente")
+                            {
+                                <span class="status-info">Aguardando confirmação do cliente</span>
+                            }
+                            else if (ag.StatusAtual() == "Finalizado")
+                            {
+                                <span class="status-finalizado">Serviço finalizado</span>
+                            }
 
                             @if (ag.StatusAtual() == "Pendente" || ag.StatusAtual() == "Confirmado")
                             {
-                                <!-- Cancelar (profissional) -->
-                                <button type="button" class="btn-cancelar-pro"
+                                <button class="btn-cancelar-pro"
                                         onclick="abrirModal('cancelar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
                                     Cancelar
                                 </button>
@@ -408,7 +421,7 @@
             }
             else if (tipo === 'finalizar') {
                 document.getElementById('descFinalizar').innerHTML = desc + ' Confirme que o serviço foi realizado.';
-                document.getElementById('linkFinalizar').href = '/Agendamento/Finalizar/' + id;
+                document.getElementById('linkFinalizar').href = '/Agendamento/FinalizarProfissional/' + id;
                 document.getElementById('modalFinalizar').classList.add('open');
             }
             else if (tipo === 'cancelar') {

@@ -34,7 +34,7 @@ namespace BD_TRAMPO.Controllers
 
             List<TimeSpan> todos = new List<TimeSpan>();
 
-            for (int h = 8; h <= 24; h++)
+            for (int h = 1; h <= 24; h++)
             {
                 todos.Add(new TimeSpan(h, 0, 0));
             }
@@ -242,18 +242,25 @@ namespace BD_TRAMPO.Controllers
                 return Content("Só é possível finalizar agendamentos confirmados.");
             }
 
-            // 4️⃣ REGRA DE TEMPO
-            DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
+            // // 4️⃣ REGRA DE TEMPO
+            // DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
 
-            if (dataHoraAgendamento > DateTime.Now)
-            {
-                return Content("Você só pode finalizar após o horário do atendimento.");
-            }
+            // if (dataHoraAgendamento > DateTime.Now)
+            // {
+            //     return Content("Você só pode finalizar após o horário do atendimento.");
+            // }
 
             // 5️⃣ EXECUTA
             dao.Finalizar(id);
 
             return Redirect(Request.Headers["Referer"].ToString());
+        }
+
+        public IActionResult FinalizarProfissional(int id)
+        {   
+            AgendamentoDAO dao = new AgendamentoDAO();
+            dao.FinalizarProfissional(id);
+            return RedirectToAction("Recebidos");
         }
 
         [HttpPost]
@@ -299,6 +306,8 @@ namespace BD_TRAMPO.Controllers
 
             return Redirect(Request.Headers["Referer"].ToString());
         }
+
+
 
     }
 }
