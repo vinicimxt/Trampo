@@ -201,14 +201,26 @@ namespace BD_TRAMPO
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
-                        Descricao = reader["Descricao"].ToString(),
+
+                        // 🔥 ESSA PARTE FALTAVA
+                        ConfirmadoProfissional = reader["ConfirmadoProfissional"] != DBNull.Value && (bool)reader["ConfirmadoProfissional"],
+                        FinalizadoProfissional = reader["FinalizadoProfissional"] != DBNull.Value && (bool)reader["FinalizadoProfissional"],
+                        ConfirmadoCliente = reader["ConfirmadoCliente"] != DBNull.Value && (bool)reader["ConfirmadoCliente"],
+
+                        Descricao = reader["Descricao"] != DBNull.Value
+                        ? reader["Descricao"].ToString()
+                        : "",
+
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                         ? reader["EnderecoCliente"].ToString()
                         : "",
+
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                         ? reader["LinkOnline"].ToString()
                         : null,
+
                         Atendimento = reader["Atendimento"].ToString(),
+
                         EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
                         ? reader["EnderecoLocal"].ToString()
                         : "",
@@ -250,9 +262,15 @@ namespace BD_TRAMPO
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
+
+                        ConfirmadoProfissional = (bool)reader["ConfirmadoProfissional"],
+                        FinalizadoProfissional = (bool)reader["FinalizadoProfissional"],
+                        ConfirmadoCliente = (bool)reader["ConfirmadoCliente"],
+
                         Descricao = reader["Descricao"] != DBNull.Value
                         ? reader["Descricao"].ToString()
                         : "",
+
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                         ? reader["EnderecoCliente"].ToString()
                         : "",
