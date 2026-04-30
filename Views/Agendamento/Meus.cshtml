@@ -279,6 +279,13 @@
                                     ✔ Confirmar finalização
                                 </button>
                             }
+                            else if (ag.PodeAvaliar())
+                            {
+                                <a href="/Avaliacao/Avaliar?agendamentoId=@ag.Id"
+                                class="btn-avaliar">
+                                    ⭐ Avaliar serviço
+                                </a>
+                            }
                             else
                             {
                                 <span class="status-finalizado">Serviço finalizado</span>

@@ -135,7 +135,7 @@ namespace BD_TRAMPO.Controllers
                 EnderecoCliente = enderecoCliente,
                 LocalId = localId
             };
-
+            
             dao.Inserir(agendamento);
 
             TempData["Sucesso"] = $"Agendamento confirmado para {data:dd/MM/yyyy} às {hora}";
@@ -219,13 +219,13 @@ namespace BD_TRAMPO.Controllers
 
             var ag = dao.BuscarPorId(id);
 
-            // 1️⃣ EXISTE?
+            // 1 EXISTE?
             if (ag == null)
             {
                 return Content("Agendamento não encontrado.");
             }
 
-            // 2️⃣ 🔐 SEGURANÇA (ANTES DE TUDO)
+            // 2 SEGURANÇA (ANTES DE TUDO)
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
@@ -236,13 +236,13 @@ namespace BD_TRAMPO.Controllers
                 return Content("Você não tem permissão para isso.");
             }
 
-            // 3️⃣ REGRA DE NEGÓCIO
+            // 3 REGRA DE NEGÓCIO
             if (ag.Status != "Confirmado")
             {
                 return Content("Só é possível finalizar agendamentos confirmados.");
             }
 
-            // // 4️⃣ REGRA DE TEMPO
+            //  4 REGRA DE TEMPO
             // DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
 
             // if (dataHoraAgendamento > DateTime.Now)
@@ -250,7 +250,7 @@ namespace BD_TRAMPO.Controllers
             //     return Content("Você só pode finalizar após o horário do atendimento.");
             // }
 
-            // 5️⃣ EXECUTA
+            // 5 EXECUTA
             dao.Finalizar(id);
 
             return Redirect(Request.Headers["Referer"].ToString());

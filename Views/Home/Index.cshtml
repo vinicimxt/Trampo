@@ -3,14 +3,20 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/home.css?v=3" />
+    <link rel="stylesheet" href="~/css/home.css?v=4" />
 }
 
+<!-- =====================================================
+     HERO
+===================================================== -->
 <section id="home" class="hero">
     <div class="hero-container">
 
         <div class="hero-left">
-            <span class="badge">● Mais de 5.000 profissionais disponíveis</span>
+            <span class="badge">
+                <span class="material-symbols-rounded icon-fill" style="font-size:14px;">verified</span>
+                Mais de 5.000 profissionais disponíveis
+            </span>
 
             <h1>
                 Agende serviços<br>
@@ -23,23 +29,22 @@
             </p>
 
             <form method="get" action="/Profissional/Lista" class="search-box">
-
                 <div class="search-field">
-                    <span>🔎</span>
-                    <input type="text" name="busca" required placeholder="Qual serviço você precisa?" />
+                    <span class="material-symbols-rounded">search</span>
+                    <input type="text" name="busca" placeholder="Qual serviço você precisa?" required />
                 </div>
 
                 <div class="divider"></div>
 
                 <div class="search-field">
-                    <span>📍</span>
+                    <span class="material-symbols-rounded">location_on</span>
                     <input type="text" name="localizacao" placeholder="Sua localização" />
                 </div>
 
                 <button type="submit" class="btn-search">
+                    <span class="material-symbols-rounded" style="font-size:16px;">search</span>
                     Buscar
                 </button>
-
             </form>
 
             <div class="popular">
@@ -76,11 +81,73 @@
 </section>
 
 
+<!-- =====================================================
+     SOBRE NÓS
+===================================================== -->
+<section id="about" class="about">
+    <div class="container-ap">
+        <div class="about-grid">
+
+            <!-- TEXTO -->
+            <div class="about-content">
+                <span class="about-tag">
+                    <span class="material-symbols-rounded" style="font-size:14px;">info</span>
+                    Sobre a plataforma
+                </span>
+
+                <h2 class="about-title">
+                    Conectando pessoas a profissionais de forma simples e rápida
+                </h2>
+
+                <p class="about-desc">
+                    O Trampo nasceu com a missão de facilitar o acesso a serviços do dia a dia.
+                    Aqui, você encontra profissionais confiáveis, agenda com poucos cliques e
+                    acompanha tudo em um só lugar.
+                </p>
+
+                <p class="about-desc">
+                    Eliminamos a burocracia e aproximamos quem precisa de quem faz,
+                    criando uma experiência moderna, prática e segura.
+                </p>
+
+                <div class="about-features">
+                    <span class="about-feature-chip">
+                        <span class="material-symbols-rounded">bolt</span>
+                        Agendamento rápido
+                    </span>
+                    <span class="about-feature-chip">
+                        <span class="material-symbols-rounded">handshake</span>
+                        Conexão direta
+                    </span>
+                    <span class="about-feature-chip">
+                        <span class="material-symbols-rounded">shield</span>
+                        Mais segurança
+                    </span>
+                </div>
+            </div>
+
+            <!-- IMAGEM -->
+            <div class="about-image">
+                <img src="~/assets/imagens/servicos/barbeiro.jpg" alt="Profissional em atendimento" />
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<!-- =====================================================
+     DIFERENCIAIS
+===================================================== -->
 <section id="why" class="why">
     <div class="container-ap">
 
         <div class="section-header fade-up">
-            <span class="section-label">Por que o Trampo?</span>
+            <span class="section-label">
+                <span class="material-symbols-rounded" style="font-size:14px;">workspace_premium</span>
+                Por que o Trampo?
+            </span>
             <h2>A plataforma feita para<br>simplificar o seu dia</h2>
             <p>Transparência, segurança e praticidade do primeiro contato até o pagamento.</p>
         </div>
@@ -88,38 +155,58 @@
         <div class="why-grid">
 
             <div class="why-card fade-up">
-                <div class="why-icon">🔒</div>
+                <div class="why-icon">
+                    <span class="material-symbols-rounded icon-fill">verified_user</span>
+                </div>
                 <div class="why-body">
                     <h3>Profissionais verificados</h3>
                     <p>Todo profissional passa por verificação de identidade e análise de reputação antes de aparecer na plataforma. Você contrata com confiança.</p>
-                    <span class="why-tag">100% verificado</span>
+                    <span class="why-tag">
+                        <span class="material-symbols-rounded" style="font-size:12px;">check_circle</span>
+                        100% verificado
+                    </span>
                 </div>
             </div>
 
             <div class="why-card fade-up" style="transition-delay:.08s">
-                <div class="why-icon">⚡</div>
+                <div class="why-icon">
+                    <span class="material-symbols-rounded icon-fill">bolt</span>
+                </div>
                 <div class="why-body">
                     <h3>Agendamento em segundos</h3>
                     <p>Sem ligações, sem espera. Escolha o serviço, veja a disponibilidade em tempo real e confirme o agendamento com um clique.</p>
-                    <span class="why-tag">Média de 45 segundos</span>
+                    <span class="why-tag">
+                        <span class="material-symbols-rounded" style="font-size:12px;">timer</span>
+                        Média de 45 segundos
+                    </span>
                 </div>
             </div>
 
             <div class="why-card fade-up" style="transition-delay:.12s">
-                <div class="why-icon">⭐</div>
+                <div class="why-icon">
+                    <span class="material-symbols-rounded icon-fill">star</span>
+                </div>
                 <div class="why-body">
                     <h3>Avaliações reais</h3>
                     <p>Todas as avaliações são de clientes reais que usaram o serviço. Nenhuma nota é fabricada — você sempre sabe o que esperar.</p>
-                    <span class="why-tag">Avaliação 4.9 / 5.0</span>
+                    <span class="why-tag">
+                        <span class="material-symbols-rounded" style="font-size:12px;">grade</span>
+                        Avaliação 4.9 / 5.0
+                    </span>
                 </div>
             </div>
 
             <div class="why-card fade-up" style="transition-delay:.16s">
-                <div class="why-icon">🛡️</div>
+                <div class="why-icon">
+                    <span class="material-symbols-rounded icon-fill">support_agent</span>
+                </div>
                 <div class="why-body">
                     <h3>Suporte humano</h3>
                     <p>Tivemos algum problema? Nossa equipe está disponível para te ajudar via chat em menos de 5 minutos, todos os dias.</p>
-                    <span class="why-tag">Suporte 7 dias por semana</span>
+                    <span class="why-tag">
+                        <span class="material-symbols-rounded" style="font-size:12px;">schedule</span>
+                        Suporte 7 dias por semana
+                    </span>
                 </div>
             </div>
 
@@ -129,44 +216,67 @@
 </section>
 
 
+<!-- =====================================================
+     COMO FUNCIONA
+===================================================== -->
 <section id="how" class="how">
     <div class="container-ap">
 
         <div class="section-header fade-up">
-            <span class="section-label">Simples e rápido</span>
+            <span class="section-label">
+                <span class="material-symbols-rounded" style="font-size:14px;">help_outline</span>
+                Simples e rápido
+            </span>
             <h2>Como funciona</h2>
             <p>Um jeito diferente para cada lado da plataforma.</p>
         </div>
 
         <div class="tab-switcher fade-up">
-            <button class="tab-btn active" onclick="switchTab('cliente', this)">🙋 Sou cliente</button>
-            <button class="tab-btn" onclick="switchTab('profissional', this)">👷 Sou profissional</button>
+            <button class="tab-btn active" onclick="switchTab('cliente', this)">
+                <span class="material-symbols-rounded" style="font-size:18px;">person</span>
+                Sou cliente
+            </button>
+            <button class="tab-btn" onclick="switchTab('profissional', this)">
+                <span class="material-symbols-rounded" style="font-size:18px;">engineering</span>
+                Sou profissional
+            </button>
         </div>
 
+        <!-- Aba cliente -->
         <div class="tab-content active" id="tab-cliente">
             <div class="steps">
 
                 <div class="step fade-up">
                     <div class="step-num">1</div>
-                    <div class="step-icon-wrap">🔍</div>
+                    <div class="step-icon-wrap">
+                        <span class="material-symbols-rounded">search</span>
+                    </div>
                     <h3>Busque o serviço</h3>
                     <p>Digite o que você precisa e sua cidade. Veja todos os profissionais disponíveis perto de você com avaliações e preços.</p>
                 </div>
 
-                <div class="step-arrow">→</div>
+                <div class="step-arrow">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                </div>
 
                 <div class="step fade-up" style="transition-delay:.10s">
                     <div class="step-num">2</div>
-                    <div class="step-icon-wrap">🗓️</div>
+                    <div class="step-icon-wrap">
+                        <span class="material-symbols-rounded">calendar_month</span>
+                    </div>
                     <h3>Escolha e agende</h3>
                     <p>Veja a disponibilidade em tempo real, compare profissionais e confirme o horário que encaixa melhor na sua rotina.</p>
                 </div>
 
-                <div class="step-arrow">→</div>
+                <div class="step-arrow">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                </div>
 
                 <div class="step fade-up" style="transition-delay:.20s">
                     <div class="step-num">3</div>
-                    <div class="step-icon-wrap">✅</div>
+                    <div class="step-icon-wrap">
+                        <span class="material-symbols-rounded">check_circle</span>
+                    </div>
                     <h3>Pronto — aproveite!</h3>
                     <p>Receba a confirmação, acompanhe pelo app e, após o serviço, avalie o profissional. Simples assim.</p>
                 </div>
@@ -174,30 +284,41 @@
             </div>
         </div>
 
+        <!-- Aba profissional -->
         <div class="tab-content" id="tab-profissional">
             <div class="steps">
 
                 <div class="step fade-up">
                     <div class="step-num">1</div>
-                    <div class="step-icon-wrap">📝</div>
+                    <div class="step-icon-wrap">
+                        <span class="material-symbols-rounded">edit_note</span>
+                    </div>
                     <h3>Crie seu perfil</h3>
                     <p>Cadastre-se gratuitamente, adicione seus serviços, defina preços e configure sua agenda em menos de 10 minutos.</p>
                 </div>
 
-                <div class="step-arrow">→</div>
+                <div class="step-arrow">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                </div>
 
                 <div class="step fade-up" style="transition-delay:.10s">
                     <div class="step-num">2</div>
-                    <div class="step-icon-wrap">📲</div>
+                    <div class="step-icon-wrap">
+                        <span class="material-symbols-rounded">notifications_active</span>
+                    </div>
                     <h3>Receba pedidos</h3>
                     <p>Clientes encontram seu perfil, verificam sua agenda e solicitam serviços. Você recebe a notificação e confirma em segundos.</p>
                 </div>
 
-                <div class="step-arrow">→</div>
+                <div class="step-arrow">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                </div>
 
                 <div class="step fade-up" style="transition-delay:.20s">
                     <div class="step-num">3</div>
-                    <div class="step-icon-wrap">💰</div>
+                    <div class="step-icon-wrap">
+                        <span class="material-symbols-rounded">payments</span>
+                    </div>
                     <h3>Ganhe mais</h3>
                     <p>Atenda, receba sua avaliação e construa reputação. Quanto mais estrelas, mais visibilidade — e mais clientes chegando até você.</p>
                 </div>
@@ -209,54 +330,17 @@
 </section>
 
 
-<section id="about" class="about">
-    <div class="container-ap">
-
-           <div class="about-grid">
-
-                <!-- TEXTO -->
-                <div class="about-content">
-                    <span class="about-tag">Sobre a plataforma</span>
-
-                    <h2 class="about-title">
-                        Conectando pessoas a profissionais de forma simples e rápida
-                    </h2>
-
-                    <p class="about-desc">
-                        O Trampo nasceu com a missão de facilitar o acesso a serviços do dia a dia.
-                        Aqui, você encontra profissionais confiáveis, agenda com poucos cliques e
-                        acompanha tudo em um só lugar.
-                    </p>
-
-                    <p class="about-desc">
-                        Eliminamos a burocracia e aproximamos quem precisa de quem faz,
-                        criando uma experiência moderna, prática e segura.
-                    </p>
-
-                    <div class="about-features">
-                        <div>⚡ Agendamento rápido</div>
-                        <div>🤝 Conexão direta</div>
-                        <div>🔒 Mais segurança</div>
-                    </div>
-                </div>
-
-                <!-- IMAGEM -->
-                <div class="about-image">
-                    <img src="~/assets/imagens/servicos/barbeiro.jpg" alt="">
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-</section>
-
-
+<!-- =====================================================
+     SERVIÇOS
+===================================================== -->
 <section id="services" class="services">
     <div class="container-ap">
 
         <div class="section-header fade-up">
-            <span class="section-label">O que você precisa?</span>
+            <span class="section-label">
+                <span class="material-symbols-rounded" style="font-size:14px;">category</span>
+                O que você precisa?
+            </span>
             <h2>Explore por categoria</h2>
             <p>Mais de 850 profissionais verificados prontos para atender você hoje mesmo.</p>
         </div>
@@ -264,7 +348,9 @@
         <div class="services-grid">
 
             <div class="service-card fade-up">
-                <div class="svc-icon ic-blue">✂️</div>
+                <div class="svc-icon ic-blue">
+                    <span class="material-symbols-rounded icon-fill">content_cut</span>
+                </div>
                 <div class="svc-name">Corte de cabelo<br>& Barba</div>
                 <div class="svc-meta">
                     <span class="svc-count">+180 profissionais</span>
@@ -274,19 +360,21 @@
             </div>
 
             <div class="service-card fade-up" style="transition-delay:.05s">
-                <div class="svc-icon ic-pink">💅</div>
+                <div class="svc-icon ic-pink">
+                    <span class="material-symbols-rounded icon-fill">spa</span>
+                </div>
                 <div class="svc-name">Manicure<br>& Pedicure</div>
                 <div class="svc-meta">
                     <span class="svc-count">+140 profissionais</span>
                     <span class="svc-rating">⭐ 4.8</span>
                 </div>
-                <a href="/Profissional/Lista?categoria=Beleza" class="btn-svc">
-                    Ver profissionais
-                </a>
+                <a href="/Profissional/Lista?categoria=Beleza" class="btn-svc">Ver profissionais</a>
             </div>
 
             <div class="service-card fade-up" style="transition-delay:.10s">
-                <div class="svc-icon ic-cyan">🚗</div>
+                <div class="svc-icon ic-cyan">
+                    <span class="material-symbols-rounded icon-fill">local_car_wash</span>
+                </div>
                 <div class="svc-name">Lava Rápido<br>& Higienização</div>
                 <div class="svc-meta">
                     <span class="svc-count">+90 parceiros</span>
@@ -296,7 +384,9 @@
             </div>
 
             <div class="service-card fade-up" style="transition-delay:.15s">
-                <div class="svc-icon ic-purple">🏠</div>
+                <div class="svc-icon ic-purple">
+                    <span class="material-symbols-rounded icon-fill">cleaning_services</span>
+                </div>
                 <div class="svc-name">Faxina<br>& Limpeza</div>
                 <div class="svc-meta">
                     <span class="svc-count">+110 profissionais</span>
@@ -306,7 +396,9 @@
             </div>
 
             <div class="service-card fade-up" style="transition-delay:.20s">
-                <div class="svc-icon ic-orange">🔧</div>
+                <div class="svc-icon ic-orange">
+                    <span class="material-symbols-rounded icon-fill">build</span>
+                </div>
                 <div class="svc-name">Assistência<br>Técnica</div>
                 <div class="svc-meta">
                     <span class="svc-count">+75 profissionais</span>
@@ -316,7 +408,9 @@
             </div>
 
             <div class="service-card fade-up" style="transition-delay:.25s">
-                <div class="svc-icon ic-green">🏋️</div>
+                <div class="svc-icon ic-green">
+                    <span class="material-symbols-rounded icon-fill">fitness_center</span>
+                </div>
                 <div class="svc-name">Personal<br>Trainer</div>
                 <div class="svc-meta">
                     <span class="svc-count">+60 profissionais</span>
@@ -326,7 +420,9 @@
             </div>
 
             <div class="service-card fade-up" style="transition-delay:.30s">
-                <div class="svc-icon ic-amber">🐾</div>
+                <div class="svc-icon ic-amber">
+                    <span class="material-symbols-rounded icon-fill">pets</span>
+                </div>
                 <div class="svc-name">Pet Shop<br>& Banho</div>
                 <div class="svc-meta">
                     <span class="svc-count">+50 parceiros</span>
@@ -336,15 +432,12 @@
             </div>
 
             <div class="service-card fade-up" style="transition-delay:.35s">
-                <div class="svc-icon ic-red">❤️‍🩹</div>
+                <div class="svc-icon ic-red">
+                    <span class="material-symbols-rounded icon-fill">health_and_safety</span>
+                </div>
                 <div class="svc-name">Saúde<br>& Bem-estar</div>
                 <div class="svc-meta">
-                    @{
-                        var counts = ViewBag.CountCategorias as Dictionary<string, int>;
-                    }
-                    <span class="svc-count">
-                        +@(counts != null && counts.ContainsKey("Beleza") ? counts["Beleza"] : 0) profissionais
-                    </span>
+                    <span class="svc-count">+45 profissionais</span>
                     <span class="svc-rating">⭐ 4.9</span>
                 </div>
                 <a href="/Profissional/Lista?categoria=Saude" class="btn-svc">Ver profissionais</a>
@@ -354,7 +447,8 @@
 
         <div class="services-footer fade-up">
             <a href="/Profissional/Lista" class="link-ver-todos">
-                Ver todas as categorias →
+                Ver todas as categorias
+                <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span>
             </a>
         </div>
 
@@ -362,44 +456,56 @@
 </section>
 
 
+<!-- =====================================================
+     PARA PROFISSIONAIS
+===================================================== -->
 <section id="pros" class="pros">
     <div class="container-ap">
         <div class="pros-inner">
 
             <div>
-                <span class="pros-label">Para profissionais</span>
+                <span class="pros-label">
+                    <span class="material-symbols-rounded" style="font-size:14px;">engineering</span>
+                    Para profissionais
+                </span>
                 <h2 class="pros-title">Transforme sua agenda<br>em renda garantida</h2>
                 <p class="pros-sub">
-                    Cadastre-se no Trampo e comece a receber agendamentos de clientes da sua região. Sem mensalidade, sem burocracia — você só paga quando trabalha.
+                    Cadastre-se no Trampo e comece a receber agendamentos de clientes da sua região.
+                    Sem mensalidade, sem burocracia — você só paga quando trabalha.
                 </p>
 
                 <div class="pros-features">
                     <div class="pros-feat">
-                        <div class="pros-feat-icon">📅</div>
+                        <div class="pros-feat-icon">
+                            <span class="material-symbols-rounded icon-fill">calendar_month</span>
+                        </div>
                         <div>
                             <div class="pros-feat-title">Agenda inteligente</div>
-                            <div class="pros-feat-text">Defina sua disponibilidade e deixe o Trampo gerenciar os horários por você. Sem conflitos, sem dor de cabeça.</div>
+                            <div class="pros-feat-text">Defina sua disponibilidade e deixe o Trampo gerenciar os horários por você.</div>
                         </div>
                     </div>
-
                     <div class="pros-feat">
-                        <div class="pros-feat-icon">🔔</div>
+                        <div class="pros-feat-icon">
+                            <span class="material-symbols-rounded icon-fill">notifications_active</span>
+                        </div>
                         <div>
                             <div class="pros-feat-title">Notificações em tempo real</div>
                             <div class="pros-feat-text">Receba alertas de novos agendamentos e lembretes automáticos para você e para o cliente.</div>
                         </div>
                     </div>
-
                     <div class="pros-feat">
-                        <div class="pros-feat-icon">📊</div>
+                        <div class="pros-feat-icon">
+                            <span class="material-symbols-rounded icon-fill">bar_chart</span>
+                        </div>
                         <div>
                             <div class="pros-feat-title">Painel de desempenho</div>
-                            <div class="pros-feat-text">Acompanhe faturamento, avaliações e histórico de clientes em um painel simples e direto.</div>
+                            <div class="pros-feat-text">Acompanhe faturamento, avaliações e histórico de clientes em um painel simples.</div>
                         </div>
                     </div>
-
                     <div class="pros-feat">
-                        <div class="pros-feat-icon">💳</div>
+                        <div class="pros-feat-icon">
+                            <span class="material-symbols-rounded icon-fill">credit_card_off</span>
+                        </div>
                         <div>
                             <div class="pros-feat-title">Sem mensalidade fixa</div>
                             <div class="pros-feat-text">Cobramos apenas uma pequena comissão por agendamento realizado. Zero custo se você não atender.</div>
@@ -407,12 +513,15 @@
                     </div>
                 </div>
 
-                <a href="Usuario/Cadastro" class="btn-pros">Cadastrar minha conta grátis</a>
+                <a href="Usuario/Cadastro" class="btn-pros">
+                    <span class="material-symbols-rounded">person_add</span>
+                    Cadastrar minha conta grátis
+                </a>
                 <p class="pros-note">Teste grátis por 30 dias · Sem cartão de crédito</p>
             </div>
 
+            <!-- Mockup -->
             <div class="pros-mockup fade-up">
-
                 <div class="mockup-header">
                     <div class="mockup-avatar">JS</div>
                     <div>
@@ -424,51 +533,27 @@
                         Online
                     </div>
                 </div>
-
                 <div class="mockup-stats">
-                    <div class="ms-box">
-                        <div class="ms-val">R$3.2k</div>
-                        <div class="ms-lbl">Este mês</div>
-                    </div>
-                    <div class="ms-box">
-                        <div class="ms-val">47</div>
-                        <div class="ms-lbl">Atendimentos</div>
-                    </div>
-                    <div class="ms-box">
-                        <div class="ms-val">4.9⭐</div>
-                        <div class="ms-lbl">Avaliação</div>
-                    </div>
+                    <div class="ms-box"><div class="ms-val">R$3.2k</div><div class="ms-lbl">Este mês</div></div>
+                    <div class="ms-box"><div class="ms-val">47</div><div class="ms-lbl">Atendimentos</div></div>
+                    <div class="ms-box"><div class="ms-val">4.9⭐</div><div class="ms-lbl">Avaliação</div></div>
                 </div>
-
                 <div class="mockup-list-label">Próximos agendamentos</div>
-
                 <div class="mockup-item">
                     <div class="mi-dot dot-green"></div>
-                    <div>
-                        <div class="mi-name">Carlos Mendes</div>
-                        <div class="mi-time">Corte · Hoje 14:00</div>
-                    </div>
+                    <div><div class="mi-name">Carlos Mendes</div><div class="mi-time">Corte · Hoje 14:00</div></div>
                     <span class="mi-status ms-ok">Confirmado</span>
                 </div>
-
                 <div class="mockup-item">
                     <div class="mi-dot dot-yellow"></div>
-                    <div>
-                        <div class="mi-name">Rafael Lima</div>
-                        <div class="mi-time">Barba · Hoje 15:30</div>
-                    </div>
+                    <div><div class="mi-name">Rafael Lima</div><div class="mi-time">Barba · Hoje 15:30</div></div>
                     <span class="mi-status ms-pend">Pendente</span>
                 </div>
-
                 <div class="mockup-item">
                     <div class="mi-dot dot-blue"></div>
-                    <div>
-                        <div class="mi-name">Pedro Souza</div>
-                        <div class="mi-time">Corte + Barba · Amanhã 09:00</div>
-                    </div>
+                    <div><div class="mi-name">Pedro Souza</div><div class="mi-time">Corte + Barba · Amanhã 09:00</div></div>
                     <span class="mi-status ms-new">Novo</span>
                 </div>
-
             </div>
 
         </div>
@@ -476,11 +561,17 @@
 </section>
 
 
+<!-- =====================================================
+     DEPOIMENTOS
+===================================================== -->
 <section id="reviews" class="reviews">
     <div class="container-ap">
 
         <div class="section-header fade-up">
-            <span class="section-label">Quem usa, aprova</span>
+            <span class="section-label">
+                <span class="material-symbols-rounded" style="font-size:14px;">thumb_up</span>
+                Quem usa, aprova
+            </span>
             <h2>O que dizem sobre o Trampo</h2>
             <p>Avaliações reais de quem já usa a plataforma todos os dias.</p>
         </div>
@@ -489,12 +580,13 @@
 
             <div class="review-card fade-up">
                 <div class="review-quote">"</div>
-                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <div class="review-stars">★★★★★</div>
                 <p class="review-text">
-                    Agendei um corte em menos de 2 minutos e recebi confirmação na hora. O profissional foi super pontual. Nunca mais ligo para barbearia.
+                    Agendei um corte em menos de 2 minutos e recebi confirmação na hora.
+                    O profissional foi super pontual. Nunca mais ligo para barbearia.
                 </p>
                 <div class="reviewer">
-                    <div class="reviewer-av" style="background: linear-gradient(135deg, #1A6BFF, #00D4AA);">MS</div>
+                    <div class="reviewer-av" style="background:linear-gradient(135deg,#1A6BFF,#00D4AA);">MS</div>
                     <div>
                         <div class="reviewer-name">Mariana Santos</div>
                         <div class="reviewer-svc">✂️ Corte de cabelo</div>
@@ -505,12 +597,13 @@
 
             <div class="review-card fade-up" style="transition-delay:.08s">
                 <div class="review-quote">"</div>
-                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <div class="review-stars">★★★★★</div>
                 <p class="review-text">
-                    Desde que entrei no Trampo minha agenda encheu. Não preciso mais ficar no WhatsApp o dia todo para gerenciar horários. Vale muito a pena.
+                    Desde que entrei no Trampo minha agenda encheu. Não preciso mais ficar no
+                    WhatsApp o dia todo para gerenciar horários. Vale muito a pena.
                 </p>
                 <div class="reviewer">
-                    <div class="reviewer-av" style="background: linear-gradient(135deg, #7C3AED, #1A6BFF);">RO</div>
+                    <div class="reviewer-av" style="background:linear-gradient(135deg,#7C3AED,#1A6BFF);">RO</div>
                     <div>
                         <div class="reviewer-name">Roberto Oliveira</div>
                         <div class="reviewer-svc">✂️ Barbeiro profissional</div>
@@ -521,12 +614,13 @@
 
             <div class="review-card fade-up" style="transition-delay:.16s">
                 <div class="review-quote">"</div>
-                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <div class="review-stars">★★★★★</div>
                 <p class="review-text">
-                    Encontrei uma ótima faxineira com ótimas avaliações. Ela chegou no horário combinado e o serviço foi impecável. Já agendei para o mês que vem.
+                    Encontrei uma ótima faxineira com ótimas avaliações. Ela chegou no horário
+                    combinado e o serviço foi impecável. Já agendei para o mês que vem.
                 </p>
                 <div class="reviewer">
-                    <div class="reviewer-av" style="background: linear-gradient(135deg, #FF5C97, #FF8700);">JL</div>
+                    <div class="reviewer-av" style="background:linear-gradient(135deg,#FF5C97,#FF8700);">JL</div>
                     <div>
                         <div class="reviewer-name">Juliana Lima</div>
                         <div class="reviewer-svc">🏠 Faxina residencial</div>
@@ -541,20 +635,33 @@
 </section>
 
 
+<!-- =====================================================
+     CTA
+===================================================== -->
 <section id="cta" class="cta">
     <div class="container-ap">
 
-        <span class="cta-label">Comece agora</span>
+        <span class="cta-label">
+            <span class="material-symbols-rounded" style="font-size:13px;">rocket_launch</span>
+            Comece agora
+        </span>
 
         <h2>Pronto para simplificar<br>sua vida?</h2>
 
         <p>
-            Mais de 12.000 agendamentos realizados. Junte-se às pessoas que já descobriram um jeito mais fácil de contratar serviços.
+            Mais de 12.000 agendamentos realizados. Junte-se às pessoas que já descobriram
+            um jeito mais fácil de contratar serviços.
         </p>
 
         <div class="cta-actions">
-            <a href="Profissional/Lista" class="btn-primary">Agendar um serviço grátis</a>
-            <a href="Usuario/Cadastro" class="btn-outline-cta">Cadastrar minha empresa</a>
+            <a href="Profissional/Lista" class="btn-primary">
+                <span class="material-symbols-rounded">calendar_add_on</span>
+                Agendar um serviço grátis
+            </a>
+            <a href="Usuario/Cadastro" class="btn-outline-cta">
+                <span class="material-symbols-rounded">storefront</span>
+                Cadastrar minha empresa
+            </a>
         </div>
 
         <p class="cta-note">Sem cartão de crédito · Cadastro em menos de 1 minuto</p>
@@ -563,28 +670,41 @@
 </section>
 
 
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 <footer id="footer" class="footer">
     <div class="container-ap">
 
         <div class="footer-top">
 
+            <!-- Marca -->
             <div>
                 <div class="footer-brand-name">
-                    <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo Logo" class="logo-img">Tram<span>po</span>
+                    <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo" class="logo-img" />
+                    Tram<span>po</span>
                 </div>
-
                 <p class="footer-brand-desc">
-                    A plataforma que conecta você aos melhores profissionais e serviços da sua cidade. Rápido, seguro e confiável.
+                    A plataforma que conecta você aos melhores profissionais e serviços da sua cidade.
+                    Rápido, seguro e confiável.
                 </p>
-                
                 <div class="footer-social">
-                    <a href="#" aria-label="Instagram">📸</a>
-                    <a href="#" aria-label="Facebook">📘</a>
-                    <a href="#" aria-label="LinkedIn">💼</a>
-                    <a href="#" aria-label="Twitter/X">🐦</a>
+                    <a href="#" aria-label="Instagram">
+                        <span class="material-symbols-rounded">photo_camera</span>
+                    </a>
+                    <a href="#" aria-label="Facebook">
+                        <span class="material-symbols-rounded">thumb_up</span>
+                    </a>
+                    <a href="#" aria-label="LinkedIn">
+                        <span class="material-symbols-rounded">work</span>
+                    </a>
+                    <a href="#" aria-label="Twitter/X">
+                        <span class="material-symbols-rounded">flutter_dash</span>
+                    </a>
                 </div>
             </div>
 
+            <!-- Plataforma -->
             <div>
                 <div class="footer-col-title">Plataforma</div>
                 <ul class="footer-col-links">
@@ -596,27 +716,34 @@
                 </ul>
             </div>
 
+            <!-- Empresa -->
             <div>
                 <div class="footer-col-title">Empresa</div>
                 <ul class="footer-col-links">
                     <li><a href="#about">Sobre nós</a></li>
                     <li><a href="#">Termos de uso</a></li>
+                    <li><a href="#">Privacidade</a></li>
                 </ul>
             </div>
 
+            <!-- Contato + Newsletter -->
             <div>
                 <div class="footer-col-title">Contato</div>
 
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon">✉️</div>
+                    <div class="footer-contact-icon">
+                        <span class="material-symbols-rounded">mail</span>
+                    </div>
                     <div class="footer-contact-text">
                         <strong>E-mail</strong>
-                        contato@trampo.com.br
+                        contato@@trampo.com.br
                     </div>
                 </div>
 
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon">📞</div>
+                    <div class="footer-contact-icon">
+                        <span class="material-symbols-rounded">call</span>
+                    </div>
                     <div class="footer-contact-text">
                         <strong>Suporte</strong>
                         (11) 4000-1234
@@ -624,34 +751,37 @@
                 </div>
 
                 <div class="footer-contact-item">
-                    <div class="footer-contact-icon">📍</div>
+                    <div class="footer-contact-icon">
+                        <span class="material-symbols-rounded">location_on</span>
+                    </div>
                     <div class="footer-contact-text">
                         <strong>Localização</strong>
                         São Paulo, SP — Brasil
                     </div>
                 </div>
 
-                <div style="margin-top: 20px;">
+                <div style="margin-top:20px;">
                     <div class="footer-newsletter-label">Receba novidades no seu e-mail</div>
                     <div class="footer-newsletter-form">
-                        <input type="email" placeholder="seu@email.com" />
-                        <button type="button">→</button>
+                        <input type="email" placeholder="seu@@email.com" />
+                        <button type="button" aria-label="Inscrever">
+                            <span class="material-symbols-rounded">send</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
         </div>
 
+        <!-- Rodapé inferior -->
         <div class="footer-bottom">
             <p class="footer-copy">© 2026 Trampo — Todos os direitos reservados</p>
-
             <div class="footer-links">
                 <a href="#">Termos de uso</a>
                 <a href="#">Privacidade</a>
                 <a href="#">Cookies</a>
                 <a href="#">Contato</a>
             </div>
-
             <div class="footer-made">
                 🇧🇷 São Paulo - Brasil
             </div>

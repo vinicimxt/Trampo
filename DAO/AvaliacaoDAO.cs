@@ -12,8 +12,8 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"INSERT INTO Avaliacoes 
-        (AgendamentoId, ProfissionalId, Nota, Comentario)
-        VALUES (@AgendamentoId, @ProfissionalId, @Nota, @Comentario)";
+                (AgendamentoId, ProfissionalId, UsuarioId, Nota, Comentario, Data)
+                VALUES (@AgendamentoId, @ProfissionalId, @UsuarioId, @Nota, @Comentario, GETDATE())";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -21,6 +21,7 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@ProfissionalId", a.ProfissionalId);
                 cmd.Parameters.AddWithValue("@Nota", a.Nota);
                 cmd.Parameters.AddWithValue("@Comentario", a.Comentario ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("UsuarioId", a.UsuarioId);
 
                 cmd.ExecuteNonQuery();
             }
@@ -75,18 +76,22 @@ namespace BD_TRAMPO
             }
         }
 
-        public bool JaAvaliou(int agendamentoId)
+        public bool JaAvaliou(int agendamentoId, int usuarioId)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "SELECT COUNT(*) FROM Avaliacoes WHERE AgendamentoId = @id";
+                string query = @"
+                SELECT COUNT(*) 
+                FROM Avaliacoes 
+                WHERE AgendamentoId = @agendamentoId
+                AND UsuarioId = @usuarioId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@id", agendamentoId);
+                cmd.Parameters.AddWithValue("@agendamentoId", agendamentoId);
+                cmd.Parameters.AddWithValue("@usuarioId", usuarioId);
 
                 return (int)cmd.ExecuteScalar() > 0;
             }
         }
-
     }
 }

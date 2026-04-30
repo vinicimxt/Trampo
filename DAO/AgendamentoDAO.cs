@@ -238,14 +238,16 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"SELECT 
-                A.*,
-                S.Atendimento,
-                S.LinkOnline,
-                L.Endereco AS EnderecoLocal
-            FROM Agendamentos A
-            INNER JOIN Servicos S ON A.ServicoId = S.Id
-            LEFT JOIN Locais L ON A.LocalId = L.Id
-            WHERE A.Id = @Id";
+                    A.*,
+                    C.UsuarioId,
+                    S.Atendimento,
+                    S.LinkOnline,
+                    L.Endereco AS EnderecoLocal
+                FROM Agendamentos A
+                LEFT JOIN Clientes C ON A.ClienteId = C.Id
+                INNER JOIN Servicos S ON A.ServicoId = S.Id
+                LEFT JOIN Locais L ON A.LocalId = L.Id
+                WHERE A.Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
@@ -258,10 +260,14 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         ClienteId = (int)reader["ClienteId"],
+                        UsuarioId = reader["UsuarioId"] != DBNull.Value 
+                        ? (int)reader["UsuarioId"] 
+                        : 0,
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
+                        
 
                         ConfirmadoProfissional = (bool)reader["ConfirmadoProfissional"],
                         FinalizadoProfissional = (bool)reader["FinalizadoProfissional"],

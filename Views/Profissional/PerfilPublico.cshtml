@@ -96,10 +96,7 @@
 
                 </div>
 
-                <div class="perfil-hero-actions">
-                    <a href="#servicos" class="btn-contato">📅 Agendar agora</a>
-                    <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar-hero">⭐ Avaliar</a>
-                </div>
+              
             </div>
 
             <!-- stats bar -->
@@ -188,9 +185,6 @@
                                 <div class="servico-card-footer">
                                     <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar-pub">
                                         📅 Agendar
-                                    </a>
-                                    <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" class="btn-avaliar-card">
-                                        ⭐ Avaliar
                                     </a>
                                 </div>
 
@@ -323,9 +317,10 @@
             <div class="scard">
                 <div class="scard-title">Já foi atendido?</div>
                 <p style="font-size:.84rem;color:var(--text-muted);margin-bottom:14px;line-height:1.6;">
-                    Deixe sua avaliação e ajude outros clientes a escolherem melhor.
+                    Para avaliar este profissional, finalize um serviço com ele.
                 </p>
-                <a href="/Avaliacao/Avaliar?profissionalId=@Model.Id" style="display:flex;align-items:center;justify-content:center;gap:7px;
+
+                <a href="/Agendamento/Meus" style="display:flex;align-items:center;justify-content:center;gap:7px;
                     width:100%;padding:11px;
                     background:var(--amber-soft);color:#92400e;
                     font-family:'DM Sans',sans-serif;
@@ -333,7 +328,8 @@
                     border-radius:var(--radius-md);text-decoration:none;
                     border:1.5px solid rgba(245,158,11,0.25);
                     transition:var(--transition);">
-                    ⭐ Avaliar profissional
+
+                    📅 Ver meus agendamentos
                 </a>
             </div>
 

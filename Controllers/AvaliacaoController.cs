@@ -16,7 +16,7 @@ namespace BD_TRAMPO.Controllers
             AgendamentoDAO agDAO = new AgendamentoDAO();
             var ag = agDAO.BuscarPorId(agendamentoId);
 
-            // 🔥 Estado padrão (permite avaliar)
+            //  Estado padrão (permite avaliar)
             ViewBag.PodeAvaliar = true;
 
             if (ag == null)
@@ -29,7 +29,7 @@ namespace BD_TRAMPO.Controllers
                 ViewBag.PodeAvaliar = false;
                 ViewBag.Mensagem = "Você não tem permissão para avaliar este atendimento.";
             }
-            else if (ag.Status != "Concluido")
+            else if (!ag.FinalizadoProfissional || !ag.ConfirmadoCliente)
             {
                 ViewBag.PodeAvaliar = false;
                 ViewBag.Mensagem = "Você só pode avaliar após o atendimento ser concluído.";
@@ -38,12 +38,15 @@ namespace BD_TRAMPO.Controllers
             {
                 AvaliacaoDAO avalDAO = new AvaliacaoDAO();
 
-                if (avalDAO.JaAvaliou(agendamentoId))
+                if (avalDAO.JaAvaliou(agendamentoId,usuarioId))
                 {
                     ViewBag.PodeAvaliar = false;
                     ViewBag.Mensagem = "Você já avaliou este atendimento.";
                 }
             }
+           
+           //Debug
+           // Console.WriteLine("AgendamentoId recebido: " + agendamentoId);
 
             // mesmo se não puder avaliar, ainda mandamos IDs (se existir)
             if (ag != null)
