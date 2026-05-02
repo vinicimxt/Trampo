@@ -219,4 +219,4 @@ ADD FinalizadoProfissional BIT DEFAULT 0;
 ALTER TABLE Agendamentos
 ADD ConfirmadoCliente BIT DEFAULT 0;
 
-
+ALTER TABLE Avaliacoes ADD UsuarioId INT;

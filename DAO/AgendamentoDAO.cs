@@ -93,39 +93,51 @@ namespace BD_TRAMPO
         }
 
 
-        public List<Agendamento> ListarPorCliente(int clienteId)
+        public List<Agendamento> ListarPorCliente(int clienteId, int usuarioId)
         {
             List<Agendamento> lista = new List<Agendamento>();
 
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-            SELECT
-                a.Id,
-                a.ClienteId,
-                p.Id AS ProfissionalId,
-                u.Nome AS ProfissionalNome,
-                s.Nome AS Servico,
-                s.Atendimento,
-                s.LinkOnline,
-                a.Data,
-                a.Hora,
-                a.Status,
-                a.ConfirmadoProfissional,
-                a.FinalizadoProfissional,
-                a.ConfirmadoCliente,
-                a.Descricao,
-                a.EnderecoCliente,
-                l.Endereco AS EnderecoLocal
-            FROM Agendamentos a
-            INNER JOIN Servicos s ON a.ServicoId = s.Id
-            INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
-            INNER JOIN Usuarios u ON p.UsuarioId = u.Id
-            LEFT JOIN Locais l ON a.LocalId = l.Id 
-            WHERE a.ClienteId = @ClienteId";
+        SELECT
+            a.Id,
+            a.ClienteId,
+            p.Id AS ProfissionalId,
+            u.Nome AS ProfissionalNome,
+            s.Nome AS Servico,
+            s.Atendimento,
+            s.LinkOnline,
+            a.Data,
+            a.Hora,
+            a.Status,
+            a.ConfirmadoProfissional,
+            a.FinalizadoProfissional,
+            a.ConfirmadoCliente,
+            a.Descricao,
+            a.EnderecoCliente,
+            l.Endereco AS EnderecoLocal,
+
+            CASE 
+                WHEN av.Id IS NOT NULL THEN 1 
+                ELSE 0 
+            END AS JaAvaliado
+
+        FROM Agendamentos a
+        INNER JOIN Servicos s ON a.ServicoId = s.Id
+        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+        LEFT JOIN Locais l ON a.LocalId = l.Id 
+
+        LEFT JOIN Avaliacoes av 
+            ON av.AgendamentoId = a.Id 
+            AND av.UsuarioId = @UsuarioId
+
+        WHERE a.ClienteId = @ClienteId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ClienteId", clienteId);
+                cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -140,22 +152,25 @@ namespace BD_TRAMPO
                         Servico = reader["Servico"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
-                        ? reader["LinkOnline"].ToString() : null,
+                            ? reader["LinkOnline"].ToString() : null,
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
+
                         ConfirmadoProfissional = reader["ConfirmadoProfissional"] != DBNull.Value && (bool)reader["ConfirmadoProfissional"],
                         FinalizadoProfissional = reader["FinalizadoProfissional"] != DBNull.Value && (bool)reader["FinalizadoProfissional"],
                         ConfirmadoCliente = reader["ConfirmadoCliente"] != DBNull.Value && (bool)reader["ConfirmadoCliente"],
+
                         Descricao = reader["Descricao"] != DBNull.Value
-                        ? reader["Descricao"].ToString()
-                        : "",
+                            ? reader["Descricao"].ToString() : "",
+
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
-                        ? reader["EnderecoCliente"].ToString()
-                        : "",
+                            ? reader["EnderecoCliente"].ToString() : "",
+
                         EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
-                        ? reader["EnderecoLocal"].ToString()
-                        : ""
+                            ? reader["EnderecoLocal"].ToString() : "",
+
+                        JaAvaliado = reader["JaAvaliado"] != DBNull.Value && (int)reader["JaAvaliado"] == 1
                     });
                 }
             }
@@ -260,14 +275,14 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         ClienteId = (int)reader["ClienteId"],
-                        UsuarioId = reader["UsuarioId"] != DBNull.Value 
-                        ? (int)reader["UsuarioId"] 
+                        UsuarioId = reader["UsuarioId"] != DBNull.Value
+                        ? (int)reader["UsuarioId"]
                         : 0,
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
-                        
+
 
                         ConfirmadoProfissional = (bool)reader["ConfirmadoProfissional"],
                         FinalizadoProfissional = (bool)reader["FinalizadoProfissional"],

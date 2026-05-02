@@ -160,7 +160,7 @@ namespace BD_TRAMPO.Controllers
         }
 
 
-        public IActionResult Meus()
+        public IActionResult Meus(string sucesso)
         {
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
@@ -168,8 +168,9 @@ namespace BD_TRAMPO.Controllers
             int clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
 
             AgendamentoDAO dao = new AgendamentoDAO();
-            var lista = dao.ListarPorCliente(clienteId);
+            var lista = dao.ListarPorCliente(clienteId, usuarioId);
 
+            ViewBag.Sucesso = TempData["Sucesso"];
 
             return View(lista);
         }

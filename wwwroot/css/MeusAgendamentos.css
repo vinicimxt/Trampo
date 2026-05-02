@@ -854,6 +854,87 @@
     }
 }
 
+/*==================================================
+AVALIAÇÃO 
+===================================================*/
+
+.alert-sucesso {
+    margin: 16px 0;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #ecfdf5;
+    border: 1px solid #86efac;
+    color: #166534;
+    font-weight: 600;
+    font-size: 0.9rem;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    animation: fadeSlide .4s ease;
+}
+
+.avaliacao-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.avaliacao-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-info.espera {
+    color: #f59e0b;
+}
+
+.status-info.andamento {
+    color: #3b82f6;
+}
+
+.avaliacao-status {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #16a34a;
+}
+
+.avaliacao-sub {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.btn-avaliar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid rgba(245,158,11,0.3);
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.btn-avaliar:hover {
+    transform: translateY(-1px);
+    background: #fde68a;
+}
+
+.status-avaliado {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f59e0b;
+}
+
+
 /* ===================================================
    KEYFRAMES
 =================================================== */
@@ -863,6 +944,17 @@
         transform: translateY(18px);
     }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
     to {
         opacity: 1;
         transform: translateY(0);

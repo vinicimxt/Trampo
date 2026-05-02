@@ -6,9 +6,12 @@ namespace BD_TRAMPO.Controllers
     {
         public IActionResult Avaliar(int agendamentoId)
         {
+            ViewBag.PodeAvaliar = false;
+
             if (HttpContext.Session.GetString("UsuarioId") == null)
             {
-                return RedirectToAction("Login", "Usuario");
+                ViewBag.Mensagem = "Você precisa estar logado para avaliar.";
+                return View();
             }
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
@@ -16,43 +19,32 @@ namespace BD_TRAMPO.Controllers
             AgendamentoDAO agDAO = new AgendamentoDAO();
             var ag = agDAO.BuscarPorId(agendamentoId);
 
-            //  Estado padrão (permite avaliar)
-            ViewBag.PodeAvaliar = true;
-
             if (ag == null)
             {
-                ViewBag.PodeAvaliar = false;
                 ViewBag.Mensagem = "Esse atendimento não foi encontrado.";
             }
-            else if (ag.UsuarioId != usuarioId)
+            else if (ag.ClienteId != usuarioId)
             {
-                ViewBag.PodeAvaliar = false;
                 ViewBag.Mensagem = "Você não tem permissão para avaliar este atendimento.";
             }
             else if (!ag.FinalizadoProfissional || !ag.ConfirmadoCliente)
             {
-                ViewBag.PodeAvaliar = false;
                 ViewBag.Mensagem = "Você só pode avaliar após o atendimento ser concluído.";
             }
             else
             {
                 AvaliacaoDAO avalDAO = new AvaliacaoDAO();
 
-                if (avalDAO.JaAvaliou(agendamentoId,usuarioId))
+                if (avalDAO.JaAvaliou(agendamentoId, usuarioId))
                 {
-                    ViewBag.PodeAvaliar = false;
                     ViewBag.Mensagem = "Você já avaliou este atendimento.";
                 }
-            }
-           
-           //Debug
-           // Console.WriteLine("AgendamentoId recebido: " + agendamentoId);
-
-            // mesmo se não puder avaliar, ainda mandamos IDs (se existir)
-            if (ag != null)
-            {
-                ViewBag.AgendamentoId = agendamentoId;
-                ViewBag.ProfissionalId = ag.ProfissionalId;
+                else
+                {
+                    ViewBag.PodeAvaliar = true;
+                    ViewBag.AgendamentoId = agendamentoId;
+                    ViewBag.ProfissionalId = ag.ProfissionalId;
+                }
             }
 
             return View();
@@ -76,7 +68,9 @@ namespace BD_TRAMPO.Controllers
             AvaliacaoDAO dao = new AvaliacaoDAO();
             dao.Inserir(a);
 
-            return RedirectToAction("PerfilPublico", "Profissional", new { id = a.ProfissionalId });
+            TempData["Erro"] = "Obrigado pela avaliação.";
+
+            return RedirectToAction("Meus", "Agendamento");
         }
     }
 }

@@ -80,14 +80,13 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = @"
-                SELECT COUNT(*) 
-                FROM Avaliacoes 
-                WHERE AgendamentoId = @agendamentoId
-                AND UsuarioId = @usuarioId";
+                string query = @"SELECT COUNT(*) 
+                         FROM Avaliacoes 
+                         WHERE AgendamentoId = @id 
+                         AND UsuarioId = @usuarioId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@agendamentoId", agendamentoId);
+                cmd.Parameters.AddWithValue("@id", agendamentoId);
                 cmd.Parameters.AddWithValue("@usuarioId", usuarioId);
 
                 return (int)cmd.ExecuteScalar() > 0;

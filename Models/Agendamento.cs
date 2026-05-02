@@ -23,6 +23,7 @@
         public bool FinalizadoProfissional { get; set; }
         public bool ConfirmadoCliente { get; set; }
         public DateTime? DataFinalizacao { get; set; }
+        public bool JaAvaliado {get; set; }
         public bool PodeAvaliar()
         {
             return FinalizadoProfissional && ConfirmadoCliente;

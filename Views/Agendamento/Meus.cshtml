@@ -4,29 +4,27 @@
     <link rel="stylesheet" href="~/css/MeusAgendamentos.css" />
 }
 
-@* =====================================================
-   FUNÇÕES HELPER 
-===================================================== *@
+@{
+    AvaliacaoDAO avalDAO = new AvaliacaoDAO();
+    int usuarioId = int.Parse(Context.Session.GetString("UsuarioId"));
+}
+
 @functions {
     string GetStatusClass(string status)
     {
-        if (status == "Pendente") return "badge-pendente";
-        if (status == "Confirmado") return "badge-confirmado";
-        if (status == "AguardandoCliente") return "badge-aguardando";
-        if (status == "Finalizado") return "badge-finalizado";
-        if (status == "CanceladoCliente") return "badge-cancelado";
-        if (status == "CanceladoProfissional") return "badge-cancelado";
-        return "badge-cancelado";
+        if (status == "Pendente") return "status-pendente";
+        if (status == "Confirmado") return "status-confirmado";
+        if (status == "AguardandoCliente") return "status-confirmado";
+        if (status == "Finalizado") return "status-finalizado";
+        if (status == "CanceladoCliente") return "status-cancelado";
+        if (status == "CanceladoProfissional") return "status-cancelado";
+        return "";
     }
 
     string GetDataFiltro(string status)
     {
-        if (status == "CanceladoCliente" || status == "CanceladoProfissional")
-            return "cancelado";
-
-        if (status == "AguardandoCliente")
-            return "Finalizado";
-
+        if (status == "CanceladoCliente" || status == "CanceladoProfissional") return "cancelado";
+        if (status == "AguardandoCliente") return "Finalizado";
         return status;
     }
 
@@ -34,7 +32,7 @@
     {
         if (status == "Pendente") return "badge-pendente";
         if (status == "Confirmado") return "badge-confirmado";
-        if (status == "AguardandoCliente") return "Aguardando sua confirmação";
+        if (status == "AguardandoCliente") return "badge-confirmado";
         if (status == "Finalizado") return "badge-finalizado";
         return "badge-cancelado";
     }
@@ -43,7 +41,7 @@
     {
         if (status == "Pendente") return "Pendente";
         if (status == "Confirmado") return "Confirmado";
-        if (status == "AguardandoCliente") return "Aguardando sua confirmação"; 
+        if (status == "AguardandoCliente") return "Aguardando sua confirmação";
         if (status == "Finalizado") return "Finalizado";
         if (status == "CanceladoCliente") return "Cancelado por você";
         if (status == "CanceladoProfissional") return "Cancelado pelo profissional";
@@ -53,13 +51,11 @@
     string GetIniciais(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome)) return "?";
-        var partes = nome.Trim().Split(' ');
-        string ini = "";
-        for (int i = 0; i < partes.Length && i < 2; i++)
-        {
-            if (partes[i].Length > 0) ini += char.ToUpper(partes[i][0]);
-        }
-        return ini;
+        var p = nome.Trim().Split(' ');
+        string r = "";
+        for (int i = 0; i < p.Length && i < 2; i++)
+            if (p[i].Length > 0) r += char.ToUpper(p[i][0]);
+        return r;
     }
 }
 
@@ -68,105 +64,97 @@
     int pendentes = Model.Count(a => a.StatusCalculado() == "Pendente");
     int confirmados = Model.Count(a => a.StatusCalculado() == "Confirmado");
     int finalizados = Model.Count(a =>
-    a.StatusCalculado() == "Finalizado" ||
-    a.StatusCalculado() == "AguardandoCliente");
+        a.StatusCalculado() == "Finalizado" || a.StatusCalculado() == "AguardandoCliente");
     int cancelados = Model.Count(a =>
         a.StatusCalculado() == "CanceladoCliente" || a.StatusCalculado() == "CanceladoProfissional");
 }
 
 <div class="meus-agend-page">
-
-    <!-- =============================================
-         HERO
-    ============================================= -->
-    <div class="meus-agend-hero">
-        <div class="meus-agend-hero-dots"></div>
-        <div class="meus-agend-hero-inner">
-
-            <div>
-                <span class="meus-agend-hero-label">Minha área</span>
-                <h1 class="meus-agend-hero-title">Meus Agendamentos</h1>
-                <p class="meus-agend-hero-sub">Acompanhe e gerencie todos os seus serviços agendados.</p>
+    <div class="meus-agend-page">
+        
+        @if (TempData["Erro"] != null)
+        {
+            <div class="alert-erro">
+                 @TempData["Erro"]
             </div>
+        }
 
-            @if (total > 0)
-            {
-                <div class="hero-counters">
-                    <div class="hero-counter">
-                        <strong class="hero-counter-val">@total</strong>
-                        <span class="hero-counter-lbl">Total</span>
-                    </div>
-                    @if (pendentes > 0)
-                    {
-                        <div class="hero-counter">
-                            <strong class="hero-counter-val" style="color:#f59e0b;">@pendentes</strong>
-                            <span class="hero-counter-lbl">Pendentes</span>
-                        </div>
-                    }
-                    @if (confirmados > 0)
-                    {
-                        <div class="hero-counter">
-                            <strong class="hero-counter-val" style="color:#22c55e;">@confirmados</strong>
-                            <span class="hero-counter-lbl">Confirmados</span>
-                        </div>
-                    }
+        <!-- resto da página -->
+        <!-- HERO -->
+        <div class="meus-agend-hero">
+            <div class="meus-agend-hero-dots"></div>
+            <div class="meus-agend-hero-inner">
+                <div>
+                    <span class="meus-agend-hero-label">Minha área</span>
+                    <h1 class="meus-agend-hero-title">Meus Agendamentos</h1>
+                    <p class="meus-agend-hero-sub">Acompanhe e gerencie todos os seus serviços agendados.</p>
                 </div>
-            }
-
+                @if (total > 0)
+                {
+                    <div class="hero-counters">
+                        <div class="hero-counter">
+                            <strong class="hero-counter-val">@total</strong>
+                            <span class="hero-counter-lbl">Total</span>
+                        </div>
+                        @if (pendentes > 0)
+                        {
+                            <div class="hero-counter">
+                                <strong class="hero-counter-val" style="color:#f59e0b;">@pendentes</strong>
+                                <span class="hero-counter-lbl">Pendentes</span>
+                            </div>
+                        }
+                        @if (confirmados > 0)
+                        {
+                            <div class="hero-counter">
+                                <strong class="hero-counter-val" style="color:#22c55e;">@confirmados</strong>
+                                <span class="hero-counter-lbl">Confirmados</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
         </div>
-    </div>
 
-    <!-- =============================================
-         FILTROS
-    ============================================= -->
-    @if (total > 0)
-    {
-        <div class="meus-agend-filters">
-            <div class="meus-agend-filters-inner">
-
-                <button class="filter-pill active" onclick="filtrar('todos', this)">
-                    <span class="filter-pill-dot dot-all"></span> Todos
+        <!-- FILTROS -->
+        @if (total > 0)
+        {
+            <div class="meus-agend-filters">
+                <div class="meus-agend-filters-inner">
+                    <button class="filter-pill active" onclick="filtrar('todos', this)">
+                        <span class="filter-pill-dot dot-all"></span> Todos
+                    </button>
+                    <button class="filter-pill" onclick="filtrar('Pendente', this)">
+                        <span class="filter-pill-dot dot-pendente"></span>
+                        Pendentes @if (pendentes > 0) {
+                        <span>(@pendentes)</span>
+                    }
                 </button>
-
-                <button class="filter-pill" onclick="filtrar('Pendente', this)">
-                    <span class="filter-pill-dot dot-pendente"></span>
-                    Pendentes @if (pendentes > 0) {
-                    <span>(@pendentes)</span>
+                <button class="filter-pill" onclick="filtrar('Confirmado', this)">
+                    <span class="filter-pill-dot dot-confirmado"></span>
+                    Confirmados @if (confirmados > 0) {
+                    <span>(@confirmados)</span>
                 }
             </button>
-
-            <button class="filter-pill" onclick="filtrar('Confirmado', this)">
-                <span class="filter-pill-dot dot-confirmado"></span>
-                Confirmados @if (confirmados > 0) {
-                <span>(@confirmados)</span>
+            <button class="filter-pill" onclick="filtrar('Finalizado', this)">
+                <span class="filter-pill-dot dot-finalizado"></span>
+                Finalizados @if (finalizados > 0) {
+                <span>(@finalizados)</span>
             }
         </button>
-
-        <button class="filter-pill" onclick="filtrar('Finalizado', this)">
-            <span class="filter-pill-dot dot-finalizado"></span>
-            Finalizados @if (finalizados > 0) {
-            <span>(@finalizados)</span>
+        <button class="filter-pill" onclick="filtrar('cancelado', this)">
+            <span class="filter-pill-dot dot-cancelado"></span>
+            Cancelados @if (cancelados > 0) {
+            <span>(@cancelados)</span>
         }
     </button>
-
-    <button class="filter-pill" onclick="filtrar('cancelado', this)">
-        <span class="filter-pill-dot dot-cancelado"></span>
-        Cancelados @if (cancelados > 0) {
-        <span>(@cancelados)</span>
-    }
-</button>
-
-<span class="filter-count">
-    <strong id="contadorFiltro">@total</strong> agendamento(s)
-</span>
-
+    <span class="filter-count">
+        <strong id="contadorFiltro">@total</strong> agendamento(s)
+    </span>
 </div>
 </div>
     }
 
-<!-- =============================================
-         LISTA
-    ============================================= -->
+<!-- LISTA -->
 <div class="meus-agend-main">
 
     @if (total == 0)
@@ -192,9 +180,7 @@
                         <div class="agend-avatar">@GetIniciais(ag.NomeProfissional)</div>
                         <div>
                             <div class="agend-prof-name">@ag.NomeProfissional</div>
-                            <div class="agend-servico">
-                                <span>📦</span> @ag.Servico
-                            </div>
+                            <div class="agend-servico"><span>📦</span> @ag.Servico</div>
                         </div>
                         <span class="status-badge @GetBadgeClass(ag.StatusCalculado())">
                             <span class="badge-dot"></span>
@@ -202,9 +188,8 @@
                         </span>
                     </div>
 
-                    <!-- corpo: data / hora / tipo -->
+                    <!-- corpo -->
                     <div class="agend-card-body">
-
                         <div class="agend-info-item">
                             <div class="agend-info-label">📅 Data</div>
                             <div class="agend-info-val">@ag.Data.ToString("dd/MM/yyyy")</div>
@@ -212,12 +197,10 @@
                                 @ag.Data.ToString("dddd", new System.Globalization.CultureInfo("pt-BR"))
                             </div>
                         </div>
-
                         <div class="agend-info-item">
                             <div class="agend-info-label">🕐 Horário</div>
                             <div class="agend-info-val">@ag.Hora</div>
                         </div>
-
                         <div class="agend-info-item">
                             <div class="agend-info-label">📌 Tipo</div>
                             <div class="agend-info-val">
@@ -227,30 +210,29 @@
                                 }
                                 else if (ag.Atendimento == "Domicilio")
                                 {
+
                                     <span class="agend-atend-chip chip-domicilio">🏠 Domicílio</span>
                                 }
                                 else if (ag.Atendimento == "Online")
                                 {
+
                                     <span class="agend-atend-chip chip-online">💻 Online</span>
                                 }
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- rodapé: endereço / link / cancelar -->
+                    <!-- rodapé -->
                     <div class="agend-card-footer">
 
                         <div class="agend-atend-info">
                             @if (ag.Atendimento == "Domicilio" && !string.IsNullOrEmpty(ag.EnderecoCliente))
                             {
-                                <span>🏠</span>
-                                <span>@ag.EnderecoCliente</span>
+                                <span>🏠</span><span>@ag.EnderecoCliente</span>
                             }
                             else if (ag.Atendimento == "Local" && !string.IsNullOrEmpty(ag.EnderecoLocal))
                             {
-                                <span>📍</span>
-                                <span>@ag.EnderecoLocal</span>
+                                <span>📍</span><span>@ag.EnderecoLocal</span>
                             }
                             else if (ag.Atendimento == "Online")
                             {
@@ -268,35 +250,55 @@
                         </div>
 
                         <div class="agend-footer-actions">
-                           @if (!ag.FinalizadoProfissional)
+
+                            @if (!ag.ConfirmadoProfissional)
                             {
-                                <span class="status-info">Aguardando confirmação do profissional</span>
+                                <span class="status-info andamento">⏳ Aguardando confirmação do profissional</span>
+                            }
+                            else if (!ag.FinalizadoProfissional)
+                            {
+                                <span class="status-info espera">🛠 Serviço em andamento</span>
                             }
                             else if (!ag.ConfirmadoCliente)
                             {
-                                <button type="button" class="btn-finalizar"
-                                        onclick="confirmarConclusao('@ag.Id')">
-                                    ✔ Confirmar finalização
+                                <button type="button" class="btn-finalizar" onclick="confirmarConclusao('@ag.Id')">
+                                    ✔ Confirmar conclusão
                                 </button>
                             }
                             else if (ag.PodeAvaliar())
                             {
-                                <a href="/Avaliacao/Avaliar?agendamentoId=@ag.Id"
-                                class="btn-avaliar">
-                                    ⭐ Avaliar serviço
-                                </a>
+                                if (!ag.JaAvaliado)
+                                {
+                                    <div class="avaliacao-box">
+
+                                        <div class="avaliacao-info">
+                                            <span class="avaliacao-status">✔ Serviço finalizado</span>
+                                            <span class="avaliacao-sub">Avaliação opcional</span>
+                                        </div>
+
+                                        <button class="btn-avaliar"
+                                                onclick="abrirModalAvaliar('@ag.Id', '@ag.ProfissionalId', '@ag.NomeProfissional.Replace("'","\\'")', '@ag.Servico.Replace("'","\\'")')">
+                                            ⭐ Avaliar experiência
+                                        </button>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="avaliacao-box">
+                                        <span class="status-avaliado">⭐ Avaliação enviada</span>
+                                    </div>
+                                }
                             }
-                            else
-                            {
-                                <span class="status-finalizado">Serviço finalizado</span>
-                            }
+
                             @if (ag.StatusCalculado() == "Pendente" || ag.StatusCalculado() == "Confirmado")
                             {
                                 <button type="button" class="btn-cancelar"
-                                        onclick="abrirModalCancelar('@ag.Id', '@ag.Servico.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                        onclick="abrirModalCancelar('@ag.Id', '@ag.Servico.Replace("'","\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
                                     ✕ Cancelar
                                 </button>
                             }
+
                         </div>
 
                     </div>
@@ -316,19 +318,17 @@
 
 
 <!-- =============================================
-     MODAL CANCELAR
+     MODAL — CANCELAR
 ============================================= -->
 <div class="modal-overlay" id="modalCancelar">
     <div class="modal-box">
         <div class="modal-icon">⚠️</div>
         <div class="modal-title">Cancelar agendamento?</div>
-        <p class="modal-sub" id="modalDesc">
-            Tem certeza que deseja cancelar este agendamento?
-        </p>
+        <p class="modal-sub" id="modalCancelarDesc"></p>
         <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="fecharModal()">Manter</button>
+            <button class="btn-modal-cancel" onclick="fecharModais()">Manter</button>
             <form id="formCancelar" asp-action="Cancelar" method="post" style="flex:1;">
-                <input type="hidden" name="id" id="modalAgendId" />
+                <input type="hidden" name="id" id="modalCancelarId" />
                 <button type="submit" class="btn-modal-confirm" style="width:100%;">
                     Sim, cancelar
                 </button>
@@ -337,56 +337,201 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        
-        function confirmarConclusao(id) {
-            if (confirm("Confirmar que o serviço foi concluído?")) {
-                window.location.href = '/Agendamento/ConfirmarCliente/' + id;
-            }
-        }
+
+<!-- =============================================
+     MODAL — AVALIAR (inline, sem redirecionar)
+============================================= -->
+<div class="modal-overlay" id="modalAvaliar">
+    <div class="modal-box modal-box-avaliar">
+
+        <!-- cabeçalho do modal -->
+        <div class="aval-header">
+            <div class="aval-header-icon">⭐</div>
+            <div>
+                <div class="modal-title" style="margin:0 0 2px;">Avaliar serviço</div>
+                <div class="aval-prof-nome" id="avalProfNome"></div>
+                <div class="aval-servico-nome" id="avalServicoNome"></div>
+            </div>
+            <button class="aval-close" onclick="fecharModais()">✕</button>
+        </div>
+
+        <form id="formAvaliar" method="post" action="/Avaliacao/Salvar">
+            <input type="hidden" name="agendamentoId" id="avalAgendId" />
+            <input type="hidden" name="profissionalId" id="avalProfId" />
+            <input type="hidden" name="nota" id="avalNota" />
+
+            <!-- Estrelas interativas -->
+            <div class="aval-section-label">Sua nota</div>
+            <div class="aval-stars" id="avalStars">
+                <button type="button" class="aval-star" data-val="1">★</button>
+                <button type="button" class="aval-star" data-val="2">★</button>
+                <button type="button" class="aval-star" data-val="3">★</button>
+                <button type="button" class="aval-star" data-val="4">★</button>
+                <button type="button" class="aval-star" data-val="5">★</button>
+            </div>
+            <div class="aval-nota-label" id="avalNotaLabel">Selecione uma nota</div>
+
+            <!-- Comentário -->
+            <div class="aval-section-label" style="margin-top:20px;">Comentário <span
+                class="aval-opt">(opcional)</span></div>
+                <textarea class="aval-textarea" name="comentario"
+                          placeholder="Conte como foi o atendimento, pontualidade, qualidade..."></textarea>
+                <div class="aval-char-count"><span id="avalCharCount">0</span>/300</div>
+
+                <!-- Ações -->
+                <div class="aval-footer">
+                    <button type="button" class="btn-modal-cancel" onclick="fecharModais()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-aval-submit" id="btnAvalSubmit" disabled>
+                        Enviar avaliação
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
 
 
-        function filtrar(status, btn) {
-            document.querySelectorAll('.filter-pill').forEach(function (p) {
-                p.classList.remove('active');
-            });
-            btn.classList.add('active');
+    @section Scripts {
+        <script>
+                /* -----------------------------------------------
+                   FILTRO
+                ----------------------------------------------- */
+                function filtrar(status, btn) {
+                    document.querySelectorAll('.filter-pill').forEach(function (p) { p.classList.remove('active'); });
+                    btn.classList.add('active');
+                    var cards = document.querySelectorAll('.agend-card');
+                    var n = 0;
+                    cards.forEach(function (c) {
+                        var show = status === 'todos' || c.dataset.status === status;
+                        c.style.display = show ? '' : 'none';
+                        if (show) n++;
+                    });
+                    var cnt = document.getElementById('contadorFiltro');
+                    if (cnt) cnt.textContent = n;
+                    var emp = document.getElementById('emptyFiltrado');
+                    if (emp) emp.classList.toggle('visivel', n === 0);
+                }
 
-            var cards = document.querySelectorAll('.agend-card');
-            var visiveis = 0;
+                /* -----------------------------------------------
+                   CONFIRMAR CONCLUSÃO
+                ----------------------------------------------- */
+                function confirmarConclusao(id) {
+                    if (confirm('Confirmar que o serviço foi concluído?')) {
+                        window.location.href = '/Agendamento/ConfirmarCliente/' + id;
+                    }
+                }
 
-            cards.forEach(function (card) {
-                var mostrar = status === 'todos' || card.dataset.status === status;
-                card.style.display = mostrar ? '' : 'none';
-                if (mostrar) visiveis++;
-            });
+                /* -----------------------------------------------
+                   FECHAR TODOS OS MODAIS
+                ----------------------------------------------- */
+                function fecharModais() {
+                    document.querySelectorAll('.modal-overlay').forEach(function (m) {
+                        m.classList.remove('open');
+                    });
+                    resetarAvaliar();
+                }
 
-            var contador = document.getElementById('contadorFiltro');
-            if (contador) contador.textContent = visiveis;
+                document.querySelectorAll('.modal-overlay').forEach(function (m) {
+                    m.addEventListener('click', function (e) { if (e.target === this) fecharModais(); });
+                });
 
-            var empty = document.getElementById('emptyFiltrado');
-            if (empty) empty.classList.toggle('visivel', visiveis === 0);
-        }
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') fecharModais();
+                });
 
-        function abrirModalCancelar(id, servico, data, hora) {
-            document.getElementById('modalAgendId').value = id;
-            document.getElementById('modalDesc').innerHTML =
-                'Tem certeza que deseja cancelar <strong>' + servico + '</strong>' +
-                ' agendado para <strong>' + data + ' às ' + hora + '</strong>?';
-            document.getElementById('modalCancelar').classList.add('open');
-        }
+                /* -----------------------------------------------
+                   MODAL — CANCELAR
+                ----------------------------------------------- */
+                function abrirModalCancelar(id, servico, data, hora) {
+                    document.getElementById('modalCancelarId').value = id;
+                    document.getElementById('modalCancelarDesc').innerHTML =
+                        'Tem certeza que deseja cancelar <strong>' + servico + '</strong>' +
+                        ' agendado para <strong>' + data + ' às ' + hora + '</strong>?';
+                    document.getElementById('modalCancelar').classList.add('open');
+                }
 
-        function fecharModal() {
-            document.getElementById('modalCancelar').classList.remove('open');
-        }
+                /* -----------------------------------------------
+                   MODAL — AVALIAR
+                ----------------------------------------------- */
+                var notaSelecionada = 0;
 
-        document.getElementById('modalCancelar').addEventListener('click', function (e) {
-            if (e.target === this) fecharModal();
-        });
+                var notaTextos = {
+                    0: 'Selecione uma nota',
+                    1: '😞 Muito ruim',
+                    2: '😕 Ruim',
+                    3: '😐 Regular',
+                    4: '😊 Bom',
+                    5: '😄 Excelente!'
+                };
 
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') fecharModal();
-        });
-    </script>
-}
+                function abrirModalAvaliar(agendId, profId, profNome, servico) {
+                    document.getElementById('avalAgendId').value = agendId;
+                    document.getElementById('avalProfId').value = profId;
+                    document.getElementById('avalProfNome').textContent = profNome;
+                    document.getElementById('avalServicoNome').textContent = servico;
+                    resetarAvaliar();
+                    document.getElementById('modalAvaliar').classList.add('open');
+                }
+
+                function resetarAvaliar() {
+                    notaSelecionada = 0;
+                    document.getElementById('avalNota').value = '';
+                    document.getElementById('avalNotaLabel').textContent = notaTextos[0];
+                    document.querySelectorAll('.aval-star').forEach(function (s) {
+                        s.classList.remove('active', 'hover');
+                    });
+                    var ta = document.querySelector('.aval-textarea');
+                    if (ta) ta.value = '';
+                    document.getElementById('avalCharCount').textContent = '0';
+                    var btn = document.getElementById('btnAvalSubmit');
+                    if (btn) btn.disabled = true;
+                }
+
+                setTimeout(() => {
+                    const alert = document.querySelector('.alert-erro');
+                    if (alert) alert.style.display = 'none';
+                }, 4000);
+
+                /* estrelas — hover e click */
+                document.querySelectorAll('.aval-star').forEach(function (star) {
+                    var val = parseInt(star.dataset.val);
+
+                    star.addEventListener('mouseenter', function () {
+                        document.querySelectorAll('.aval-star').forEach(function (s) {
+                            s.classList.toggle('hover', parseInt(s.dataset.val) <= val);
+                        });
+                        document.getElementById('avalNotaLabel').textContent = notaTextos[val];
+                    });
+
+                    star.addEventListener('mouseleave', function () {
+                        document.querySelectorAll('.aval-star').forEach(function (s) {
+                            s.classList.remove('hover');
+                        });
+                        document.getElementById('avalNotaLabel').textContent = notaTextos[notaSelecionada];
+                    });
+
+                    star.addEventListener('click', function () {
+                        notaSelecionada = val;
+                        document.getElementById('avalNota').value = val;
+                        document.querySelectorAll('.aval-star').forEach(function (s) {
+                            s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+                        });
+                        document.getElementById('avalNotaLabel').textContent = notaTextos[val];
+                        var btn = document.getElementById('btnAvalSubmit');
+                        if (btn) btn.disabled = false;
+                    });
+                });
+
+                /* contador de caracteres do comentário */
+                var taAval = document.querySelector('.aval-textarea');
+                if (taAval) {
+                    taAval.addEventListener('input', function () {
+                        var len = Math.min(taAval.value.length, 300);
+                        document.getElementById('avalCharCount').textContent = len;
+                        if (taAval.value.length > 300) taAval.value = taAval.value.slice(0, 300);
+                    });
+                }
+        </script>
+    }
