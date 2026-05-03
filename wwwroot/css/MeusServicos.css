@@ -515,7 +515,7 @@
 }
 
 /* ===================================================
-   DRAWER DE EDIÇÃO
+   DRAWER DE EDIÇÃO - MODAL OVERLAY
 =================================================== */
 .edit-drawer {
     display: none;
@@ -540,17 +540,7 @@
     flex-direction: column;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(24px);
-    }
 
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
 
 .drawer-header {
     background: var(--dark);
@@ -613,30 +603,24 @@
     color: #fff;
 }
 
-/* body com scroll interno */
-.drawer-body {
-    padding: 22px;
-    overflow-y: auto;
-    flex: 1;
-}
 
 /* campos do form */
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 16px;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
 }
 
 .form-group:last-of-type {
     margin-bottom: 0;
 }
 
-.form-label {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--dark);
-    margin-bottom: 7px;
-}
 
 .form-label .req {
     color: var(--red);
@@ -709,57 +693,98 @@
     margin-bottom: 16px;
 }
 
-/* drawer footer */
 .drawer-footer {
-    padding: 14px 22px;
-    border-top: 1px solid var(--border);
-    background: var(--bg-light);
+    padding: 16px 22px;
+    background: #f8fafc;
+
     display: flex;
+    justify-content: flex-end;
     gap: 10px;
-    flex-shrink: 0;
+
+    border-top: 1px solid #e5e7eb;
 }
 
 .btn-salvar {
-    flex: 1;
-    padding: 12px;
-    background: var(--blue);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.92rem;
-    font-weight: 700;
+
     border: none;
-    border-radius: var(--radius-md);
+    padding: 10px 16px;
+    border-radius: 10px;
+
+    font-weight: 600;
     cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 4px 14px rgba(26, 107, 255, 0.28);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+
+    transition: all .2s ease;
 }
 
 .btn-salvar:hover {
-    background: var(--blue-dark);
-    box-shadow: 0 6px 20px rgba(26, 107, 255, 0.38);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(59,130,246,0.35);
 }
 
-.btn-cancelar-drawer {
-    padding: 12px 18px;
-    background: transparent;
-    color: var(--text-muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: 1.5px solid var(--border-strong);
-    border-radius: var(--radius-md);
+.btn-cancelar {
+    background: #b1b4bb;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: var(--transition);
 }
 
-.btn-cancelar-drawer:hover {
-    background: var(--bg-white);
-    color: var(--dark);
+.btn-salvar {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: all .2s ease;
 }
+
+.btn-salvar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(59,130,246,0.35);
+}
+
+.btn-cancelar-modal {
+    background: #bcc6cf;
+    color: #334155;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+/* hover */
+.btn-cancelar-modal:hover {
+    background: #8dbaf5;
+    color: #0f172a;
+    transform: translateY(-1px);
+}
+
+/* active (clique) */
+.btn-cancelar-modal:active {
+    transform: scale(0.96);
+}
+
+/* focus (acessibilidade) */
+.btn-cancelar-modal:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.3);
+}
+
+
 
 /* ===================================================
    EMPTY STATE
@@ -967,6 +992,10 @@
     }
 }
 
+/* ========================
+ANIMAÇÕES KEY FRAMES
+ ==========================*/
+
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -976,5 +1005,17 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }

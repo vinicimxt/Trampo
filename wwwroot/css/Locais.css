@@ -222,17 +222,6 @@
     padding: 28px 24px 0;
 }
 
-/* quando o drawer estiver aberto, lista + form lado a lado */
-.locais-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-    transition: grid-template-columns 0.35s ease;
-}
-
-.locais-layout.drawer-open {
-    grid-template-columns: 1fr 380px;
-}
 
 /* ===================================================
    TOPBAR
@@ -481,14 +470,6 @@
 /* ===================================================
    DRAWER — formulário inline
 =================================================== */
-.form-drawer {
-    display: none;
-    flex-direction: column;
-}
-
-.form-drawer.open {
-    display: flex;
-}
 
 .drawer-card {
     background: var(--bg-white);
@@ -514,8 +495,10 @@
 }
 
 .drawer-header {
-    background: var(--dark);
-    padding: 20px 24px;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #fff;
+
+    padding: 16px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -732,6 +715,56 @@
     transform: translateY(-2px);
 }
 
+/*================================== 
+    MODAL OVERLAY 
+====================================*/
+
+/* OVERLAY */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s ease;
+    z-index: 9999;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* MODAL */
+.modal-drawer {
+    width: 100%;
+    max-width: 520px;
+
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 0;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+
+    overflow: hidden;
+
+    transform: translateY(20px) scale(.98);
+    opacity: 0;
+    transition: all .25s ease;
+}
+
+/* animação */
+.modal-overlay.open .modal-drawer {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
 /* ===================================================
    MODAL DE CONFIRMAÇÃO
 =================================================== */
@@ -843,13 +876,6 @@
    RESPONSIVO
 =================================================== */
 @media (max-width: 900px) {
-    .locais-layout.drawer-open {
-        grid-template-columns: 1fr;
-    }
-
-    .form-drawer.open {
-        order: -1;
-    }
 
     /* formulário sobe no mobile */
     .drawer-card {

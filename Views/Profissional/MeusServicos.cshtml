@@ -4,6 +4,13 @@
     <link rel="stylesheet" href="~/css/MeusServicos.css" />
 }
 
+@if (TempData["Sucesso"]?.ToString() == "cadastro_ok")
+{
+    <div class="alert-sucesso">
+        Conta criada! Agora cadastre seu primeiro serviço.
+    </div>
+}
+
 @functions {
     string GetBadgeClass(string atend)
     {
@@ -165,109 +172,6 @@
                     </div>
                 </div>
 
-                <!-- DRAWER DE EDIÇÃO -->
-                <div class="edit-drawer" id="editDrawer">
-                    <div class="drawer-card">
-
-                        <div class="drawer-header">
-                            <div class="drawer-header-left">
-                                <div class="drawer-header-icon">✏️</div>
-                                <div>
-                                    <div class="drawer-title" id="drawerTitle">Editar serviço</div>
-                                    <div class="drawer-sub" id="drawerSub">Atualize as informações</div>
-                                </div>
-                            </div>
-                            <button class="drawer-close" onclick="fecharDrawer()">✕</button>
-                        </div>
-
-                        <form method="post" action="/Servico/Editar" id="formEditar">
-                            <input type="hidden" name="Id" id="editId" />
-
-                            <div class="drawer-body">
-
-                                <div class="form-group">
-                                    <label class="form-label" for="editNome">
-                                        Nome do serviço <span class="req">*</span>
-                                    </label>
-                                    <input class="form-input" type="text" name="Nome" id="editNome"
-                                           placeholder="Ex: Corte de cabelo masculino" required />
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label" for="editSub">
-                                        Subcategoria <span class="req">*</span>
-                                    </label>
-                                    <div class="select-wrap">
-                                        <select class="form-select" name="SubcategoriaId" id="editSub">
-                                            @foreach (var sub in (ViewBag.Subcategorias as List<Subcategoria>) ?? new
-                                                                                                                                                                                                                                                                                                                List<Subcategoria>())
-                                            {
-                                                <option value="@sub.Id">@sub.Nome</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label" for="editAtend">Tipo de atendimento</label>
-                                    <div class="select-wrap">
-                                        <select class="form-select" name="Atendimento" id="editAtend"
-                                                onchange="atualizarCamposDinamicos()">
-                                            <option value="Domicilio">🏠 Domicílio</option>
-                                            <option value="Local">📍 Local</option>
-                                            <option value="Online">💻 Online</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="campo-dinamico" id="campoLocal">
-                                    <label class="form-label">Local de atendimento</label>
-
-                                    <select class="form-select" name="LocalId" id="editLocal">
-                                        @if (ViewBag.Locais != null)
-                                        {
-                                            foreach (var l in ViewBag.Locais)
-                                            {
-                                                <option value="@l.Id">@l.Endereco</option>
-                                            }
-                                        }
-                                    </select>
-                                </div>
-
-                                <!-- Campo dinâmico: link online -->
-                                <div class="campo-dinamico" id="campoLinkOnline">
-                                    <label class="form-label" for="editLink">Link de acesso</label>
-                                    <input class="form-input" type="url" name="LinkOnline" id="editLink"
-                                           placeholder="https://meet.google.com/..." />
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label" for="editContato">Contato</label>
-                                    <input class="form-input" type="text" name="Contato" id="editContato"
-                                           placeholder="(11) 91234-5678" />
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label" for="editDesc">Descrição</label>
-                                    <textarea class="form-textarea" name="Descricao" id="editDesc"
-                                              placeholder="Descreva detalhes do serviço..."></textarea>
-                                </div>
-
-                            </div>
-
-                            <div class="drawer-footer">
-                                <button type="button" class="btn-cancelar-drawer" onclick="fecharDrawer()">
-                                    Cancelar
-                                </button>
-                                <button type="submit" class="btn-salvar">
-                                    💾 Salvar alterações
-                                </button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-
             </div><!-- /servicos-layout -->
         }
 
@@ -292,148 +196,138 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="modalServico">
+    <div class="modal-drawer">
+
+        <div class="drawer-header">
+            <h3 id="modalServicoTitle">Editar serviço</h3>
+            <button onclick="fecharModal('modalServico')">✕</button>
+        </div>
+
+        <form method="post" action="/Servico/Editar" id="formServicoModal">
+
+            <input type="hidden" name="id" id="servicoId" />
+
+            <div class="drawer-body">
+
+                <div class="form-group">
+                    <label class="form-label">Nome</label>
+                    <input type="text" name="nome" id="editNome" class="form-input" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea name="descricao" id="editDesc" class="form-textarea"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Contato</label>
+                    <input type="text" name="contato" id="editContato" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Atendimento</label>
+                    <select name="atendimento" id="editAtendimento" class="form-select">
+                        <option value="Domicilio">🏠 Domicílio</option>
+                        <option value="Local">📍 Local</option>
+                        <option value="Online">💻 Online</option>
+                    </select>
+                </div>
+
+                <!-- LOCAL -->
+                <div id="editLocalDiv" class="form-group hidden">
+                    <label class="form-label">Local</label>
+                    <select name="localId" id="editLocal" class="form-select">
+                        <option value="">Selecione</option>
+                        @foreach (var l in ViewBag.Locais)
+                        {
+                            <option value="@l.Id">@l.Nome</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- ONLINE -->
+                <div id="editLinkDiv" class="form-group hidden">
+                    <label class="form-label">Link online</label>
+                    <input type="url" name="linkOnline" id="editLink" class="form-input" />
+                </div>
+
+            </div>
+            <div class="drawer-footer">
+                <button type="button" class="btn-cancelar-modal" onclick="fecharModal('modalServico')">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-salvar">Salvar alterações</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        var cardAtivo = null;
-        var btnAtivo = null;
-
-        /* -----------------------------------------------
-           CLICK BOTÃO EDITAR
-        ----------------------------------------------- */
         document.querySelectorAll(".btn-edit").forEach(btn => {
-
             btn.addEventListener("click", function () {
 
-                abrirDrawer(
-                    this.dataset.id,
-                    this.dataset.nome || "",
-                    this.dataset.desc || "",
-                    this.dataset.contato || "",
-                    this.dataset.atendimento || "",
-                    this.dataset.link || "",
-                    this.dataset.sub,
-                    this.dataset.local,
-                    this
-                );
+                const id = this.dataset.id;
+                const nome = this.dataset.nome || "";
+                const desc = this.dataset.desc || "";
+                const contato = this.dataset.contato || "";
+                const atendimento = this.dataset.atendimento || "";
+                const link = this.dataset.link || "";
+                const local = this.dataset.local;
 
+                document.getElementById('servicoId').value = id;
+                document.getElementById('editNome').value = nome;
+                document.getElementById('editDesc').value = desc;
+                document.getElementById('editContato').value = contato;
+                document.getElementById('editLink').value = link;
+
+                document.getElementById('editAtendimento').value = atendimento;
+
+                if (local)
+                    document.getElementById('editLocal').value = local;
+
+                atualizarCamposDinamicos();
+
+                abrirModal('modalServico');
             });
-
         });
-
-        /* -----------------------------------------------
-           ABRIR DRAWER
-        ----------------------------------------------- */
-        function abrirDrawer(id, nome, descricao, contato, atendimento, linkOnline, subcategoriaId, localId, botao) {
-
-            if (cardAtivo) cardAtivo.classList.remove('editando');
-            if (btnAtivo) btnAtivo.classList.remove('ativo');
-
-            cardAtivo = document.getElementById('card-' + id);
-            btnAtivo = botao;
-
-            if (cardAtivo) cardAtivo.classList.add('editando');
-            if (btnAtivo) btnAtivo.classList.add('ativo');
-
-            document.getElementById('editId').value = id;
-            document.getElementById('editNome').value = nome;
-            document.getElementById('editDesc').value = descricao;
-            document.getElementById('editContato').value = contato;
-            document.getElementById('editLink').value = linkOnline;
-
-            // subcategoria
-            var selSub = document.getElementById('editSub');
-            if (selSub) {
-                for (var i = 0; i < selSub.options.length; i++) {
-                    if (selSub.options[i].value == subcategoriaId) {
-                        selSub.selectedIndex = i;
-                        break;
-                    }
-                }
-            }
-
-            // atendimento
-            var selAtend = document.getElementById('editAtend');
-            if (selAtend) {
-                for (var j = 0; j < selAtend.options.length; j++) {
-                    if (selAtend.options[j].value === atendimento) {
-                        selAtend.selectedIndex = j;
-                        break;
-                    }
-                }
-            }
-
-            // local
-            var selLocal = document.getElementById('editLocal');
-            if (selLocal && localId) {
-                for (var i = 0; i < selLocal.options.length; i++) {
-                    if (selLocal.options[i].value == localId) {
-                        selLocal.selectedIndex = i;
-                        break;
-                    }
-                }
-            }
-
-            document.getElementById('drawerTitle').textContent = nome;
-            document.getElementById('drawerSub').textContent = 'Editando serviço';
-
-            atualizarCamposDinamicos();
-
-            document.getElementById('editDrawer').classList.add('open');
-            document.getElementById('servicosLayout').classList.add('drawer-open');
-        }
-
-        /* -----------------------------------------------
-           FECHAR DRAWER
-        ----------------------------------------------- */
-        function fecharDrawer() {
-            document.getElementById('editDrawer').classList.remove('open');
-            document.getElementById('servicosLayout').classList.remove('drawer-open');
-
-            if (cardAtivo) cardAtivo.classList.remove('editando');
-            if (btnAtivo) btnAtivo.classList.remove('ativo');
-
-            cardAtivo = null;
-            btnAtivo = null;
-        }
 
         /* -----------------------------------------------
            CAMPOS DINÂMICOS
         ----------------------------------------------- */
         function atualizarCamposDinamicos() {
-            var atend = document.getElementById('editAtend').value;
 
-            var campoLink = document.getElementById('campoLinkOnline');
-            var campoLocal = document.getElementById('campoLocal');
+            const tipo = document.getElementById('editAtendimento').value;
 
-            if (campoLink)
-                campoLink.classList.toggle('visivel', atend === 'Online');
+            const localDiv = document.getElementById('editLocalDiv');
+            const linkDiv = document.getElementById('editLinkDiv');
 
-            if (campoLocal)
-                campoLocal.classList.toggle('visivel', atend === 'Local');
+            if (tipo === 'Local') {
+                localDiv.classList.remove('hidden');
+                linkDiv.classList.add('hidden');
+            }
+            else if (tipo === 'Online') {
+                linkDiv.classList.remove('hidden');
+                localDiv.classList.add('hidden');
+            }
+            else {
+                localDiv.classList.add('hidden');
+                linkDiv.classList.add('hidden');
+            }
         }
 
+        document.getElementById('editAtendimento')
+            ?.addEventListener('change', atualizarCamposDinamicos);
         /* -----------------------------------------------
-           MODAL EXCLUIR
+           MODAL EXCLUIR 
         ----------------------------------------------- */
         function abrirModalExcluir(id, nome) {
             document.getElementById('modalNomeServico').textContent = '"' + nome + '"';
             document.getElementById('modalLinkExcluir').href = '/Servico/Excluir/' + id;
-            document.getElementById('modalExcluir').classList.add('open');
+            abrirModal('modalExcluir'); // já usa padrão novo
         }
-
-        function fecharModal() {
-            document.getElementById('modalExcluir').classList.remove('open');
-        }
-
-        document.getElementById('modalExcluir')?.addEventListener('click', function (e) {
-            if (e.target === this) fecharModal();
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                fecharModal();
-                fecharDrawer();
-            }
-        });
     </script>
 }

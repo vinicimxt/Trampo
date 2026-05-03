@@ -53,18 +53,23 @@ namespace BD_TRAMPO.Controllers
         [HttpPost]
         public IActionResult Editar(Servico s)
         {
+            ServicoDAO dao = new ServicoDAO();
+
+            var original = dao.BuscarPorId(s.Id);
+
+            // mantém subcategoria original
+            s.SubcategoriaId = original.SubcategoriaId;
+
             if (s.Atendimento == "Online" && string.IsNullOrEmpty(s.LinkOnline))
             {
                 return Content("Informe o link para atendimento online.");
             }
 
-            // 🔥 se não for online, limpa o link
             if (s.Atendimento != "Online")
             {
                 s.LinkOnline = null;
             }
 
-            ServicoDAO dao = new ServicoDAO();
             dao.Atualizar(s);
 
             return RedirectToAction("MeusServicos", "Profissional");
@@ -96,9 +101,13 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Cadastro", "Usuario");
             }
 
-            ServicoDAO dao = new ServicoDAO();
+            // 🔥 VALIDAÇÕES
 
-            //  VALIDAÇÕES INTELIGENTES
+            if (string.IsNullOrWhiteSpace(nome))
+            {
+                TempData["Erro"] = "Informe o nome do serviço.";
+                return RedirectToAction("Criar");
+            }
 
             if (atendimento == "Online")
             {
@@ -108,7 +117,6 @@ namespace BD_TRAMPO.Controllers
                     return RedirectToAction("Criar");
                 }
 
-                // valida formato básico de URL
                 if (!Uri.IsWellFormedUriString(linkOnline, UriKind.Absolute))
                 {
                     TempData["Erro"] = "Informe um link válido.";
@@ -123,7 +131,7 @@ namespace BD_TRAMPO.Controllers
 
                 if (locais.Count == 0)
                 {
-                    TempData["Erro"] = "Você precisa cadastrar um local antes de criar serviços presenciais.";
+                    TempData["Erro"] = "Cadastre um local antes de criar serviços presenciais.";
                     return RedirectToAction("Criar");
                 }
 
@@ -134,24 +142,33 @@ namespace BD_TRAMPO.Controllers
                 }
             }
 
-            //  SALVAR
-            Servico s = new Servico
+            try
             {
-                ProfissionalId = profissionalId,
-                Nome = nome,
-                SubcategoriaId = subcategoriaId,
-                Descricao = descricao,
-                Contato = contato,
-                Atendimento = atendimento,
-                LocalId = localId,
-                LinkOnline = linkOnline
-            };
+                ServicoDAO dao = new ServicoDAO();
 
-            dao.Inserir(s);
+                Servico s = new Servico
+                {
+                    ProfissionalId = profissionalId,
+                    Nome = nome,
+                    SubcategoriaId = subcategoriaId,
+                    Descricao = descricao,
+                    Contato = contato,
+                    Atendimento = atendimento,
+                    LocalId = localId,
+                    LinkOnline = linkOnline
+                };
 
-            TempData["Sucesso"] = "Serviço criado com sucesso 🚀";
+                dao.Inserir(s);
 
-            return RedirectToAction("MeusServicos", "Profissional");
+                TempData["Sucesso"] = "Serviço criado com sucesso 🚀";
+
+                return RedirectToAction("MeusServicos", "Profissional");
+            }
+            catch (Exception)
+            {
+                TempData["Erro"] = "Erro ao criar serviço. Tente novamente.";
+                return RedirectToAction("Criar");
+            }
         }
 
 

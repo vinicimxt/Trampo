@@ -33,27 +33,38 @@ namespace BD_TRAMPO.Controllers
         [HttpPost]
         public IActionResult Salvar(int id, string nome, string endereco)
         {
-            LocalDAO dao = new LocalDAO();
+            try
+            {
+                LocalDAO dao = new LocalDAO();
 
-            if (id > 0)
-            {
-                // EDITAR
-                dao.Atualizar(new Local
+                if (id > 0)
                 {
-                    Id = id,
-                    Nome = nome,
-                    Endereco = endereco
-                });
+                    // EDITAR
+                    dao.Atualizar(new Local
+                    {
+                        Id = id,
+                        Nome = nome,
+                        Endereco = endereco
+                    });
+
+                    TempData["Sucesso"] = "Local atualizado com sucesso ✏️";
+                }
+                else
+                {
+                    // CRIAR
+                    dao.Inserir(new Local
+                    {
+                        ProfissionalId = GetProfissionalId(),
+                        Nome = nome,
+                        Endereco = endereco
+                    });
+
+                    TempData["Sucesso"] = "Local criado com sucesso 📍";
+                }
             }
-            else
+            catch (Exception)
             {
-                // CRIAR
-                dao.Inserir(new Local
-                {
-                    ProfissionalId = GetProfissionalId(),
-                    Nome = nome,
-                    Endereco = endereco
-                });
+                TempData["Erro"] = "Erro ao salvar o local.";
             }
 
             return RedirectToAction("Lista");
@@ -64,24 +75,33 @@ namespace BD_TRAMPO.Controllers
         ----------------------------------------------- */
         public IActionResult Excluir(int id)
         {
-            new LocalDAO().Excluir(id);
+            try
+            {
+                new LocalDAO().Excluir(id);
+                TempData["Sucesso"] = "Local removido com sucesso 🗑️";
+            }
+            catch (Exception)
+            {
+                TempData["Erro"] = "Não foi possível excluir o local.";
+            }
+
             return RedirectToAction("Lista");
         }
 
 
 
-    public IActionResult Index()
-    {
-        LocalDAO dao = new LocalDAO();
+        public IActionResult Index()
+        {
+            LocalDAO dao = new LocalDAO();
 
-        int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
-        ProfissionalDAO profDAO = new ProfissionalDAO();
-        int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
-        var lista = dao.ListarPorProfissional(profissionalId);
+            var lista = dao.ListarPorProfissional(profissionalId);
 
-        return View("Lista", lista);
-    }
+            return View("Lista", lista);
+        }
 
     }
 }

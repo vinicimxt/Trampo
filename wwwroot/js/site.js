@@ -113,4 +113,97 @@ const observer = new IntersectionObserver((entries) => {
     threshold: 0.6
 });
 
+// TOAST All Pages
+function showToast(message, type = "success") {
+    const container = document.getElementById("toast-container");
+
+    if (!container) return;
+
+    const icons = {
+        success: "✅",
+        error: "⚠️",
+        info: "ℹ️"
+    };
+
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || "ℹ️"}</span>
+        <span class="toast-text">${message}</span>
+        <span class="toast-close">&times;</span>
+    `;
+
+    container.appendChild(toast);
+
+    // fechar manual
+    toast.querySelector(".toast-close").addEventListener("click", () => {
+        removeToast(toast);
+    });
+
+    // auto remove
+    setTimeout(() => {
+        removeToast(toast);
+    }, 3500);
+}
+
+function removeToast(toast) {
+    toast.style.animation = "toastOut 0.3s ease forwards";
+    setTimeout(() => toast.remove(), 300);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const body = document.body;
+
+    const sucesso = body.dataset.toastSucesso;
+    const erro = body.dataset.toastErro;
+
+    if (sucesso) {
+        showToast(sucesso, "success");
+    }
+
+    if (erro) {
+        showToast(erro, "error");
+    }
+
+});
+
+// =================================
+// MODAL OVERLAY
+// =================================
+
+// =============================
+// MODAL GLOBAL
+// =============================
+
+function abrirModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.classList.add("open");
+}
+
+function fecharModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.classList.remove("open");
+}
+
+// fecha clicando fora
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("modal-overlay")) {
+        e.target.classList.remove("open");
+    }
+});
+
+// ESC fecha tudo
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        document.querySelectorAll(".modal-overlay.open")
+            .forEach(m => m.classList.remove("open"));
+    }
+});
+
 sections.forEach(section => observer.observe(section));

@@ -11,21 +11,32 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = @"
-               INSERT INTO Profissionais 
-                   (UsuarioId, TipoDocumento, Documento)
-                   VALUES 
-                   (@UsuarioId, @TipoDocumento, @Documento)";
+                string query = @"INSERT INTO Profissionais 
+                         (UsuarioId, TipoDocumento, Documento)
+                         VALUES (@UsuarioId, @TipoDocumento, @Documento)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
                 cmd.Parameters.AddWithValue("@TipoDocumento", tipoDocumento);
                 cmd.Parameters.AddWithValue("@Documento", documento);
 
-                cmd.ExecuteNonQuery();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Number == 2627 && ex.Message.Contains("UX_Profissional_CPF"))
+                    {
+                        throw new Exception("CPF_DUPLICADO");
+                    }
+
+                    throw;
+                }
             }
         }
+
+        
 
 
         public List<Servico> ListarPorUsuario(int usuarioId)

@@ -37,7 +37,8 @@
             <div class="tip-body">
                 <div class="tip-title">Como os locais funcionam?</div>
                 <p class="tip-text">
-                    Ao criar um serviço <strong>presencial (Local)</strong>, você escolhe um dos endereços cadastrados aqui.
+                    Ao criar um serviço <strong>presencial (Local)</strong>, você escolhe um dos endereços cadastrados
+                    aqui.
                     Cadastre todos os lugares onde você atende para facilitar na hora de criar seus serviços.
                 </p>
             </div>
@@ -66,7 +67,7 @@
         {
             <div class="locais-topbar">
                 <div class="locais-topbar-title">Seus endereços</div>
-                <button class="btn-novo-local" id="btnNovoLocal" onclick="toggleDrawer()">
+                <button class="btn-novo-local" onclick="abrirModalLocal()">
                     + Novo local
                 </button>
             </div>
@@ -95,11 +96,10 @@
 
                                 <div class="local-card-actions">
                                     <button class="btn-edit-local"
-                                            onclick="abrirDrawerEditar('@l.Id', '@l.Nome.Replace("'","\\'")', '@l.Endereco.Replace("'","\\'")')">
+                                            onclick="abrirDrawerEditar('@l.Id', '@l.Nome.Replace("'", "\\'")', '@l.Endereco.Replace("'", "\\'")')">
                                         ✏️ Editar
                                     </button>
-                                    <button class="btn-del-local"
-                                            onclick="abrirModal('@l.Id', '@l.Nome.Replace("'","\\'")')">
+                                    <button class="btn-del-local" onclick="abrirModal('@l.Id', '@l.Nome.Replace("'", "\\'")')">
                                         🗑 Excluir
                                     </button>
                                 </div>
@@ -110,8 +110,8 @@
             </div>
 
             <!-- drawer do formulário (oculto por padrão) -->
-            <div class="form-drawer" id="formDrawer">
-                <div class="drawer-card">
+            <div class="modal-overlay" id="modalLocal">
+                <div class="modal-drawer">
 
                     <div class="drawer-header">
                         <div class="drawer-header-left">
@@ -133,24 +133,16 @@
                                 <label class="form-label" for="nome">
                                     Nome do local <span class="required">*</span>
                                 </label>
-                                <input class="form-input"
-                                       type="text"
-                                       name="nome"
-                                       id="inputNome"
-                                       placeholder="Ex: Estúdio Centro, Salão Principal..."
-                                       required />
+                                <input class="form-input" type="text" name="nome" id="inputNome"
+                                       placeholder="Ex: Estúdio Centro, Salão Principal..." required />
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="endereco">
                                     Endereço completo <span class="required">*</span>
                                 </label>
-                                <input class="form-input"
-                                       type="text"
-                                       name="endereco"
-                                       id="inputEndereco"
-                                       placeholder="Ex: Rua das Flores, 123 — Centro, SP"
-                                       required />
+                                <input class="form-input" type="text" name="endereco" id="inputEndereco"
+                                       placeholder="Ex: Rua das Flores, 123 — Centro, SP" required />
                             </div>
 
                         </div>
@@ -193,98 +185,124 @@
 </div>
 
 @section Scripts {
-<script>
-    var drawerAberto = false;
+    <script>
+        var drawerAberto = false;
 
-    /* -----------------------------------------------
-       DRAWER — abrir / fechar / toggle
-    ----------------------------------------------- */
-    function abrirDrawer() {
-        var drawer  = document.getElementById('formDrawer');
-        var layout  = document.getElementById('locaisLayout');
-        var btn     = document.getElementById('btnNovoLocal');
+        /* -----------------------------------------------
+           DRAWER — abrir / fechar / toggle
+        ----------------------------------------------- */
+        function abrirDrawer() {
+            const modal = document.getElementById('modalLocal');
 
-        // reseta para "novo local"
-        document.getElementById('localId').value       = '';
-        document.getElementById('inputNome').value     = '';
-        document.getElementById('inputEndereco').value = '';
-        document.getElementById('drawerTitle').textContent = 'Novo local';
-        document.getElementById('drawerSub').textContent   = 'Preencha os dados do endereço';
-        document.getElementById('formLocal').action = '/Local/Salvar';
+            // reset
+            document.getElementById('localId').value = '';
+            document.getElementById('inputNome').value = '';
+            document.getElementById('inputEndereco').value = '';
 
-        drawer.classList.add('open');
-        layout.classList.add('drawer-open');
-        if (btn) btn.classList.add('ativo');
-        drawerAberto = true;
-    }
+            document.getElementById('drawerTitle').textContent = 'Novo local';
+            document.getElementById('drawerSub').textContent = 'Preencha os dados do endereço';
 
-    function fecharDrawer() {
-        var drawer = document.getElementById('formDrawer');
-        var layout = document.getElementById('locaisLayout');
-        var btn    = document.getElementById('btnNovoLocal');
-
-        drawer.classList.remove('open');
-        layout.classList.remove('drawer-open');
-        if (btn) btn.classList.remove('ativo');
-        drawerAberto = false;
-    }
-
-    function toggleDrawer() {
-        drawerAberto ? fecharDrawer() : abrirDrawer();
-    }
-
-    /* -----------------------------------------------
-       DRAWER — modo edição
-    ----------------------------------------------- */
-    function abrirDrawerEditar(id, nome, endereco) {
-        abrirDrawer();
-
-        document.getElementById('localId').value       = id;
-        document.getElementById('inputNome').value     = nome;
-        document.getElementById('inputEndereco').value = endereco;
-        document.getElementById('drawerTitle').textContent = 'Editar local';
-        document.getElementById('drawerSub').textContent   = 'Atualize os dados do endereço';
-
-        // aponta para a action de edição
-        document.getElementById('formLocal').action = '/Local/Editar/' + id;
-    }
-
-    /* -----------------------------------------------
-       MODAL DE EXCLUSÃO
-    ----------------------------------------------- */
-    function abrirModal(id, nome) {
-        document.getElementById('modalNomeLocal').textContent = '"' + nome + '"';
-        document.getElementById('modalLinkExcluir').href = '/Local/Excluir/' + id;
-        document.getElementById('modalExcluir').classList.add('open');
-    }
-
-    function fecharModal() {
-        document.getElementById('modalExcluir').classList.remove('open');
-    }
-
-    document.getElementById('modalExcluir').addEventListener('click', function (e) {
-        if (e.target === this) fecharModal();
-    });
-
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-            fecharModal();
-            fecharDrawer();
+            modal.classList.add('open');
         }
-    });
 
-    /* -----------------------------------------------
-       BANNER DE DICA
-    ----------------------------------------------- */
-    function fecharTip() {
-        var el = document.getElementById('tipBanner');
-        if (!el) return;
-        el.style.transition  = 'opacity 0.2s ease, max-height 0.3s ease, padding 0.3s ease';
-        el.style.overflow    = 'hidden';
-        el.style.opacity     = '0';
-        el.style.maxHeight   = '0';
-        el.style.paddingTop  = '0';
-        setTimeout(function () { el.remove(); }, 320);
-    }
-</script>
+        function fecharDrawer() {
+            const modal = document.getElementById('modalLocal');
+            modal.classList.remove('open');
+        }
+
+        function abrirDrawerEditar(id, nome, endereco) {
+            abrirDrawer();
+
+            document.getElementById('localId').value = id;
+            document.getElementById('inputNome').value = nome;
+            document.getElementById('inputEndereco').value = endereco;
+
+            document.getElementById('drawerTitle').textContent = 'Editar local';
+            document.getElementById('drawerSub').textContent = 'Atualize os dados do endereço';
+        }
+
+        document.getElementById('modalLocal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharDrawer();
+            }
+        });
+
+       /* -----------------------------------------------
+           MODAL CRIAR
+        ----------------------------------------------- */
+
+
+        function abrirModalLocal() {
+            const modal = document.getElementById('modalLocal');
+
+            // reset form
+            document.getElementById('localId').value = '';
+            document.getElementById('inputNome').value = '';
+            document.getElementById('inputEndereco').value = '';
+
+            document.getElementById('drawerTitle').textContent = 'Novo local';
+            document.getElementById('drawerSub').textContent = 'Preencha os dados do endereço';
+
+            modal.classList.add('open');
+        }
+
+        /* -----------------------------------------------
+           MODAL DE EXCLUSÃO
+        ----------------------------------------------- */
+        function abrirModal(id, nome) {
+            document.getElementById('modalNomeLocal').textContent = '"' + nome + '"';
+            document.getElementById('modalLinkExcluir').href = '/Local/Excluir/' + id;
+            document.getElementById('modalExcluir').classList.add('open');
+        }
+
+        function fecharModal() {
+            document.getElementById('modalExcluir').classList.remove('open');
+        }
+
+        document.getElementById('modalExcluir').addEventListener('click', function (e) {
+            if (e.target === this) fecharModal();
+        });
+
+        /* ====================================
+        FECHAR COM ESC
+        ==================================== */
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+
+                const modalExcluir = document.getElementById('modalExcluir');
+                const modalLocal = document.getElementById('modalLocal');
+
+                if (modalExcluir?.classList.contains('open')) {
+                    fecharModal();
+                }
+
+                if (modalLocal?.classList.contains('open')) {
+                    fecharDrawer();
+                }
+            }
+        });
+
+        /* -----------------------------------------------
+           BANNER DE DICA
+        ----------------------------------------------- */
+        function fecharTip() {
+            var el = document.getElementById('tipBanner');
+            if (!el) return;
+            el.style.transition = 'opacity 0.2s ease, max-height 0.3s ease, padding 0.3s ease';
+            el.style.overflow = 'hidden';
+            el.style.opacity = '0';
+            el.style.maxHeight = '0';
+            el.style.paddingTop = '0';
+            setTimeout(function () { el.remove(); }, 320);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const abrir = '@TempData["AbrirDrawer"]';
+
+            if (abrir === 'True') {
+                abrirDrawer();
+            }
+        });
+    </script>
 }

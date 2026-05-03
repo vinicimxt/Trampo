@@ -75,6 +75,19 @@ namespace BD_TRAMPO
             return null;
         }
 
+        public void Remover(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "DELETE FROM Usuarios WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
     }
 
 }

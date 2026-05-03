@@ -1,11 +1,7 @@
 USE master;
 GO
 
-ALTER DATABASE Xamou SET MULTI_USER;
-
 ALTER DATABASE Xamou SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-GO
-
 DROP DATABASE IF EXISTS Xamou;
 GO
 
@@ -15,7 +11,7 @@ GO
 USE Xamou;
 GO
 
--- DROP TABLES (ordem correta)
+-- DROP TABLES 
 DROP TABLE IF EXISTS Avaliacoes;
 DROP TABLE IF EXISTS Agendamentos;
 DROP TABLE IF EXISTS Disponibilidade;
@@ -27,7 +23,11 @@ DROP TABLE IF EXISTS Clientes;
 DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios;
 
--- USUARIOS
+
+-- =============================
+-- TABELAS
+-- =============================
+
 CREATE TABLE Usuarios (
     Id INT PRIMARY KEY IDENTITY,
     Nome VARCHAR(100) NOT NULL,
@@ -37,59 +37,53 @@ CREATE TABLE Usuarios (
     Telefone VARCHAR(20) NULL
 );
 
--- CLIENTES
 CREATE TABLE Clientes (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT NOT NULL UNIQUE,
     BloqueadoAte DATETIME NULL,
 
-    FOREIGN KEY (UsuarioId) 
-        REFERENCES Usuarios(Id)
-        ON DELETE CASCADE
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE CASCADE
 );
 
--- PROFISSIONAIS
 CREATE TABLE Profissionais (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT NOT NULL UNIQUE,
-    TipoDocumento VARCHAR(10),
+
+    TipoDocumento VARCHAR(10), -- CPF ou CNPJ
     Documento VARCHAR(20),
 
-    FOREIGN KEY (UsuarioId) 
-        REFERENCES Usuarios(Id)
-        ON DELETE CASCADE
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE CASCADE
 );
 
--- CATEGORIAS
+--  UNIQUE apenas para CPF
+CREATE UNIQUE INDEX UX_Profissional_CPF
+ON Profissionais(Documento)
+WHERE TipoDocumento = 'CPF';
+
+-- =============================
+
 CREATE TABLE Categorias (
     Id INT PRIMARY KEY IDENTITY,
     Nome VARCHAR(100) NOT NULL
 );
 
--- SUBCATEGORIAS
 CREATE TABLE Subcategorias (
     Id INT PRIMARY KEY IDENTITY,
     Nome VARCHAR(100) NOT NULL,
     CategoriaId INT NOT NULL,
 
-    FOREIGN KEY (CategoriaId) 
-        REFERENCES Categorias(Id)
-        ON DELETE CASCADE
+    FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id) ON DELETE CASCADE
 );
 
--- LOCAIS
 CREATE TABLE Locais (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
     Nome VARCHAR(100),
     Endereco VARCHAR(255) NOT NULL,
 
-    FOREIGN KEY (ProfissionalId)
-        REFERENCES Profissionais(Id)
-        ON DELETE CASCADE
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE
 );
 
--- SERVICOS
 CREATE TABLE Servicos (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
@@ -102,18 +96,11 @@ CREATE TABLE Servicos (
     Atendimento VARCHAR(50),
     LinkOnline VARCHAR(255) NULL,
 
-    FOREIGN KEY (ProfissionalId) 
-        REFERENCES Profissionais(Id)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (SubcategoriaId) 
-        REFERENCES Subcategorias(Id),
-
-    FOREIGN KEY (LocalId) 
-        REFERENCES Locais(Id)
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE,
+    FOREIGN KEY (SubcategoriaId) REFERENCES Subcategorias(Id),
+    FOREIGN KEY (LocalId) REFERENCES Locais(Id)
 );
 
--- DISPONIBILIDADE
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
@@ -122,12 +109,9 @@ CREATE TABLE Disponibilidade (
     HoraInicio TIME NOT NULL,
     HoraFim TIME NOT NULL,
 
-    FOREIGN KEY (ProfissionalId) 
-        REFERENCES Profissionais(Id)
-        ON DELETE CASCADE
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE
 );
 
--- AGENDAMENTOS
 CREATE TABLE Agendamentos (
     Id INT PRIMARY KEY IDENTITY,
 
@@ -144,21 +128,16 @@ CREATE TABLE Agendamentos (
     DataCancelamento DATETIME NULL,
     EnderecoCliente VARCHAR(255) NULL,
 
-    FOREIGN KEY (ClienteId) 
-        REFERENCES Clientes(Id),
+    ConfirmadoProfissional BIT DEFAULT 0,
+    FinalizadoProfissional BIT DEFAULT 0,
+    ConfirmadoCliente BIT DEFAULT 0,
 
-    FOREIGN KEY (ProfissionalId) 
-        REFERENCES Profissionais(Id),
-
-    FOREIGN KEY (ServicoId) 
-        REFERENCES Servicos(Id)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (LocalId)
-        REFERENCES Locais(Id)
+    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
+    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id),
+    FOREIGN KEY (ServicoId) REFERENCES Servicos(Id) ON DELETE CASCADE,
+    FOREIGN KEY (LocalId) REFERENCES Locais(Id)
 );
 
--- AVALIACOES
 CREATE TABLE Avaliacoes (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
@@ -173,7 +152,13 @@ CREATE TABLE Avaliacoes (
     FOREIGN KEY (AgendamentoId) REFERENCES Agendamentos(Id)
 );
 
+--  evita avaliar 2x o mesmo serviço
+CREATE UNIQUE INDEX UX_Avaliacao_Agendamento
+ON Avaliacoes(AgendamentoId);
+
+-- =============================
 -- DADOS INICIAIS
+-- =============================
 
 INSERT INTO Categorias (Nome) VALUES
 ('Manutenção'),
@@ -196,6 +181,7 @@ INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
 ('Fotografia', 5),
 ('Buffet', 5);
 
+
 -- DEBUG
 
 SELECT * FROM Usuarios;
@@ -208,15 +194,3 @@ SELECT * FROM Disponibilidade;
 SELECT * FROM Agendamentos;
 SELECT * FROM Locais;
 SELECT * FROM Avaliacoes;
-
-
-ALTER TABLE Agendamentos
-ADD ConfirmadoProfissional BIT DEFAULT 0;
-
-ALTER TABLE Agendamentos
-ADD FinalizadoProfissional BIT DEFAULT 0;
-
-ALTER TABLE Agendamentos
-ADD ConfirmadoCliente BIT DEFAULT 0;
-
-ALTER TABLE Avaliacoes ADD UsuarioId INT;

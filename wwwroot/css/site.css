@@ -434,6 +434,206 @@ textarea {
 }
 
 /* ===================================================
+   Avisos toast
+=================================================== */
+
+#toast-container {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+/* TOAST BASE */
+.toast {
+    min-width: 280px;
+    max-width: 420px;
+
+    padding: 14px 18px;
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+    animation: toastIn 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast-icon {
+    font-size: 1.2rem;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.toast-message {
+    font-size: 0.82rem;
+    opacity: 0.75;
+}
+
+.toast-info {
+    background: #eff6ff;
+    color: #1e3a8a;
+    border-left: 5px solid #3b82f6;
+}
+
+/* ÍCONE */
+.toast-icon {
+    font-size: 18px;
+}
+
+/* TEXTO */
+.toast-text {
+    flex: 1;
+}
+
+/* BOTÃO FECHAR */
+.toast-close {
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.6;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+/* BARRA DE TEMPO */
+.toast::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: currentColor;
+    opacity: 0.3;
+
+    animation: toastTimer 3.5s linear forwards;
+}
+
+/* tipos */
+.toast-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border-left: 5px solid #10b981;
+}
+
+
+.toast-error {
+    background: #fef2f2;
+    color: #7f1d1d;
+    border-left: 5px solid #ef4444;
+}
+
+.toast-warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.toast-hide {
+    animation: toastOut .3s ease forwards;
+}
+
+
+
+/* ================================
+   MODAL BASE OVERLAY
+================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s ease;
+
+    z-index: 999;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-drawer {
+    width: 100%;
+    max-width: 560px;
+
+    background: #ffffff;
+    border-radius: 18px;
+
+    box-shadow: 0 25px 70px rgba(0,0,0,0.25);
+
+    overflow: hidden;
+
+    transform: translateY(20px) scale(.97);
+    transition: all .25s ease;
+}
+
+.modal-overlay.open .modal-drawer {
+    transform: translateY(0) scale(1);
+}
+
+
+.drawer-header {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #fff;
+
+    padding: 18px 22px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.drawer-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.drawer-header button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.drawer-body {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.hidden {
+    display: none !important;
+}
+/* ===================================================
    ANIMAÇÕES GLOBAIS
 =================================================== */
 @keyframes fadeUp {
@@ -459,6 +659,49 @@ textarea {
         transform: translateX(0);
     }
 }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes toastOut {
+    to {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+}
+
+@keyframes toastTimer {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}
+
+
 
 /* ===================================================
    RESPONSIVO
