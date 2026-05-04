@@ -53,31 +53,93 @@ namespace BD_TRAMPO.Controllers
         [HttpPost]
         public IActionResult Editar(Servico s)
         {
-            ServicoDAO dao = new ServicoDAO();
-
-            var original = dao.BuscarPorId(s.Id);
-
-            // mantém subcategoria original
-            s.SubcategoriaId = original.SubcategoriaId;
-
-            if (s.Atendimento == "Online" && string.IsNullOrEmpty(s.LinkOnline))
+            try
             {
-                return Content("Informe o link para atendimento online.");
-            }
+                // 🔥 VALIDAÇÕES
+                if (string.IsNullOrWhiteSpace(s.Nome))
+                {
+                    TempData["Erro"] = "Informe o nome do serviço.";
+                    return RedirectToAction("MeusServicos", "Profissional");
+                }
 
-            if (s.Atendimento != "Online")
+                if (s.Atendimento == "Online" && string.IsNullOrWhiteSpace(s.LinkOnline))
+                {
+                    TempData["Erro"] = "Informe o link do atendimento online.";
+                    return RedirectToAction("MeusServicos", "Profissional");
+                }
+
+                if (s.Atendimento != "Online")
+                {
+                    s.LinkOnline = null;
+                }
+
+                if (s.Atendimento != "Local")
+                {
+                    s.LocalId = null;
+                }
+
+                // 🔥 mantém subcategoria (segurança extra)
+                ServicoDAO dao = new ServicoDAO();
+                var original = dao.BuscarPorId(s.Id);
+                s.SubcategoriaId = original.SubcategoriaId;
+
+                dao.Atualizar(s);
+
+                TempData["Sucesso"] = "Serviço atualizado com sucesso ✏️";
+            }
+            catch (Exception)
             {
-                s.LinkOnline = null;
+                TempData["Erro"] = "Erro ao atualizar serviço. Tente novamente.";
             }
-
-            dao.Atualizar(s);
 
             return RedirectToAction("MeusServicos", "Profissional");
         }
+
         public IActionResult Excluir(int id)
         {
-            ServicoDAO dao = new ServicoDAO();
-            dao.Excluir(id);
+            try
+            {
+                ServicoDAO dao = new ServicoDAO();
+                dao.Excluir(id);
+
+                TempData["Sucesso"] = "Serviço excluído com sucesso 🗑️";
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("REFERENCE"))
+                {
+                    TempData["Erro"] = "Este serviço não pode ser excluído pois já possui agendamentos.";
+                }
+                else
+                {
+                    TempData["Erro"] = "Erro ao excluir serviço.";
+                }
+            }
+
+            return RedirectToAction("MeusServicos", "Profissional");
+        }
+
+        public IActionResult Desativar(int id)
+        {
+            try
+            {
+                ServicoDAO dao = new ServicoDAO();
+
+                if (dao.TemAgendamentos(id))
+                {
+                    dao.Desativar(id);
+                    TempData["Sucesso"] = "Serviço desativado. Ele não aparecerá mais para novos clientes.";
+                }
+                else
+                {
+                    dao.Excluir(id);
+                    TempData["Sucesso"] = "Serviço excluído com sucesso 🗑️";
+                }
+            }
+            catch
+            {
+                TempData["Erro"] = "Erro ao processar ação.";
+            }
 
             return RedirectToAction("MeusServicos", "Profissional");
         }

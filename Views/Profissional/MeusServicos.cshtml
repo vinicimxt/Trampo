@@ -1,5 +1,7 @@
 @model List<Servico>
 
+
+
 @section Styles {
     <link rel="stylesheet" href="~/css/MeusServicos.css" />
 }
@@ -39,6 +41,20 @@
 
 <div class="servicos-page">
 
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert-sucesso">
+            @TempData["Sucesso"]
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert-erro">
+            @TempData["Erro"]
+        </div>
+    }
+
     <!-- HERO -->
     <div class="servicos-hero">
         <div class="servicos-hero-dots"></div>
@@ -61,6 +77,12 @@
     <!-- CONTEÚDO -->
     <div class="servicos-main">
 
+
+        <div class="filtro-servicos">
+            <button class="filtro-btn ativo" onclick="filtrarServicos('todos')">Todos</button>
+            <button class="filtro-btn" onclick="filtrarServicos('ativos')">Ativos</button>
+            <button class="filtro-btn" onclick="filtrarServicos('inativos')">Inativos</button>
+        </div>
         @if (Model.Count == 0)
         {
             <div class="empty-state">
@@ -82,12 +104,25 @@
                 <!-- COLUNA DA LISTA -->
                 <div>
                     <div class="servicos-grid" id="servicosGrid">
+                        
                         @foreach (var s in Model)
                         {
-                            <div class="servico-card" id="card-@s.Id">
+                            <div class="servico-card @(s.Ativo ? "" : "inativo")" id="card-@s.Id">
+
 
                                 <div class="servico-header">
+                                  
                                     <h3>@s.Nome</h3>
+
+                                    @if (s.Ativo)
+                                    {
+                                        <span class="badge-ativo">Ativo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-inativo">Inativo</span>
+                                    }
+
                                     <span class="badge-atendimento @GetBadgeClass(s.Atendimento)">
                                         @GetBadgeIcon(s.Atendimento) @s.Atendimento
                                     </span>
@@ -155,15 +190,16 @@
                                 </div>
 
                                 <div class="servico-actions">
-                                    <button type="button" class="btn-edit" data-id="@s.Id" data-nome="@s.Nome"
-                                            data-local="@s.LocalId" data-desc="@s.Descricao" data-contato="@s.Contato"
-                                            data-atendimento="@s.Atendimento" data-link="@s.LinkOnline"
+                                    <button type="button" class="btn-edit" @(s.Ativo ? "" : "disabled") data-id="@s.Id"
+                                            data-nome="@s.Nome" data-local="@s.LocalId" data-desc="@s.Descricao"
+                                            data-contato="@s.Contato" data-atendimento="@s.Atendimento" data-link="@s.LinkOnline"
                                             data-sub="@s.SubcategoriaId">
                                         ✏️ Editar
                                     </button>
-                                    <button type="button" class="btn-delete"
-                                            onclick="abrirModalExcluir(@s.Id, '@s.Nome.Replace("'", "\\'")')">
-                                        🗑 Excluir
+
+                                    <button type="button" class="btn-delete" @(s.Ativo ? "" : "disabled")
+                                            onclick="abrirModalAcao(@s.Id, '@s.Nome.Replace("'", "\\'")')">
+                                        🗑 Remover
                                     </button>
                                 </div>
 
@@ -180,19 +216,25 @@
 
 
 <!-- MODAL EXCLUIR -->
-<div class="modal-overlay" id="modalExcluir">
+<div class="modal-overlay" id="modalAcao">
     <div class="modal-box">
-        <div class="modal-icon">🗑️</div>
-        <div class="modal-title">Excluir serviço?</div>
-        <p class="modal-sub">
-            Tem certeza que deseja excluir
-            <span class="modal-name" id="modalNomeServico"></span>?
-            Esta ação não pode ser desfeita.
-        </p>
+
+        <div class="modal-icon">⚠️</div>
+
+        <div class="modal-title">Remover serviço?</div>
+
+        <p class="modal-sub" id="modalTextoAcao"></p>
+
         <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
-            <a class="btn-modal-confirm" id="modalLinkExcluir" href="#">Sim, excluir</a>
+            <button onclick="fecharModal('modalAcao')" class="btn-cancelar">
+                Cancelar
+            </button>
+
+            <a id="modalConfirmarAcao" class="btn-modal-confirm">
+                Confirmar
+            </a>
         </div>
+
     </div>
 </div>
 
@@ -209,6 +251,8 @@
             <input type="hidden" name="id" id="servicoId" />
 
             <div class="drawer-body">
+
+                <input type="hidden" name="SubcategoriaId" id="editSubcategoriaId" />
 
                 <div class="form-group">
                     <label class="form-label">Nome</label>
@@ -278,12 +322,12 @@
                 const link = this.dataset.link || "";
                 const local = this.dataset.local;
 
+
                 document.getElementById('servicoId').value = id;
                 document.getElementById('editNome').value = nome;
                 document.getElementById('editDesc').value = desc;
                 document.getElementById('editContato').value = contato;
                 document.getElementById('editLink').value = link;
-
                 document.getElementById('editAtendimento').value = atendimento;
 
                 if (local)
@@ -327,7 +371,79 @@
         function abrirModalExcluir(id, nome) {
             document.getElementById('modalNomeServico').textContent = '"' + nome + '"';
             document.getElementById('modalLinkExcluir').href = '/Servico/Excluir/' + id;
-            abrirModal('modalExcluir'); // já usa padrão novo
+            abrirModal('modalExcluir');
         }
+
+        function abrirModalAcao(id, nome) {
+
+            const texto = `Este serviço pode ter agendamentos.
+
+                                            Se tiver → será desativado  
+                                            Se não tiver → será excluído`;
+
+            document.getElementById('modalTextoAcao').innerText = texto;
+
+            document.getElementById('modalConfirmarAcao')
+                .href = '/Servico/Desativar/' + id;
+
+            abrirModal('modalAcao');
+        }
+
+        /*----------------------
+        setTimeout para alerts
+        ------------------------*/
+
+        setTimeout(() => {
+            document.querySelectorAll('.alert-sucesso, .alert-erro')
+                .forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transition = 'opacity .3s';
+                    setTimeout(() => el.remove(), 300);
+                });
+        }, 3000);
+
+        /*------------------------
+        FILTRO
+        ----------------------*/
+
+        const botoesFiltro = document.querySelectorAll('.filtro-btn');
+
+        botoesFiltro.forEach(btn => {
+            btn.addEventListener('click', function () {
+
+                // remove ativo de todos
+                botoesFiltro.forEach(b => b.classList.remove('ativo'));
+
+                // adiciona no clicado
+                this.classList.add('ativo');
+
+                const tipo = this.dataset.filtro;
+                filtrarServicos(tipo);
+            });
+        });
+
+        function filtrarServicos(tipo) {
+
+            const cards = document.querySelectorAll('.servico-card');
+
+            cards.forEach(card => {
+
+                const inativo = card.classList.contains('inativo');
+
+                if (tipo === 'todos') {
+                    card.style.display = 'block';
+                }
+                else if (tipo === 'ativos') {
+                    card.style.display = inativo ? 'none' : 'block';
+                }
+                else if (tipo === 'inativos') {
+                    card.style.display = inativo ? 'block' : 'none';
+                }
+
+            });
+
+        }
+
+
     </script>
 }

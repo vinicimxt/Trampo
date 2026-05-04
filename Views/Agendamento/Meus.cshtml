@@ -75,7 +75,7 @@
         @if (TempData["Erro"] != null)
         {
             <div class="alert-erro">
-                 @TempData["Erro"]
+                @TempData["Erro"]
             </div>
         }
 
@@ -251,7 +251,12 @@
 
                         <div class="agend-footer-actions">
 
-                            @if (!ag.ConfirmadoProfissional)
+                            @if (ag.Status == "CanceladoCliente" || ag.Status == "CanceladoProfissional" || ag.Status ==
+                                   "Cancelado")
+                            {
+                                <span class="status-info cancelado">❌ Agendamento cancelado</span>
+                            }
+                            else if (!ag.ConfirmadoProfissional)
                             {
                                 <span class="status-info andamento">⏳ Aguardando confirmação do profissional</span>
                             }

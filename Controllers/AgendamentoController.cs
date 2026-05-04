@@ -21,7 +21,8 @@ namespace BD_TRAMPO.Controllers
             ViewBag.Locais = localDAO.ListarPorProfissional(servico.ProfissionalId);
             if (servico == null)
             {
-                return Content("Serviço não encontrado.");
+                TempData["Erro"] = "Serviço não encontrado.";
+                return RedirectToAction("Novo", new { servicoId });
             }
 
             ViewBag.ServicoId = servicoId;
@@ -71,11 +72,17 @@ namespace BD_TRAMPO.Controllers
                 clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
             }
             if (profissionalId == 0)
-                return Content("Erro: serviço inválido.");
+            {
+                TempData["Erro"] = "Serviço inválido.";
+                return RedirectToAction("Novo", new { servicoId });
+            }
 
             //  auto agendamento
             if (profissionalLogadoId == profissionalId)
-                return Content("Você não pode agendar seu próprio serviço.");
+            {
+                TempData["Erro"] = "Você não pode agendar seu próprio serviço.";
+                return RedirectToAction("Novo", new { servicoId });
+            }
 
             var servico = servicoDAO.BuscarPorId(servicoId);
 
@@ -107,21 +114,40 @@ namespace BD_TRAMPO.Controllers
             DateTime hoje = DateTime.Today;
 
             if (data < hoje)
-                return Content("Não é possível agendar no passado.");
+            {
+                TempData["Erro"] = "Não é possível agendar no passado";
+                return RedirectToAction("Novo", new { servicoId });
+            }
+
 
             if (data > hoje.AddDays(366))
-                return Content("Você só pode agendar até 1 ano à frente.");
+            {
+                TempData["Erro"] = "Você só pode agendar até 1 ano a frente.";
+                return RedirectToAction("Novo", new { servicoId });
+            }
+
 
             var bloqueio = clienteDAO.BuscarBloqueio(clienteId);
 
             if (bloqueio != null && bloqueio > DateTime.Now)
-                return Content("Você está bloqueado temporariamente.");
+            {
+                TempData["Erro"] = "Você está bloqueado temporariamente.";
+                return RedirectToAction("Novo", new { servicoId });
+            }
+
 
             if (dao.ContarPendentes(clienteId) >= 5)
-                return Content("Você já tem muitos agendamentos pendentes.");
+            {
+                TempData["Erro"] = "Você tem muitos agendamentos pendentes.";
+                return RedirectToAction("Novo", new { servicoId });
+            }
+
 
             if (dao.HorarioOcupado(servicoId, data, hora))
-                return Content("Esse horário já está ocupado.");
+            {
+                TempData["Erro"] = "Esse horário já está ocupado.";
+                return RedirectToAction("Novo", new { servicoId, data });
+            }
 
             var agendamento = new Agendamento
             {
@@ -135,7 +161,7 @@ namespace BD_TRAMPO.Controllers
                 EnderecoCliente = enderecoCliente,
                 LocalId = localId
             };
-            
+
             dao.Inserir(agendamento);
 
             TempData["Sucesso"] = $"Agendamento confirmado para {data:dd/MM/yyyy} às {hora}";
@@ -179,7 +205,7 @@ namespace BD_TRAMPO.Controllers
         {
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
-            // 🔥 pegar profissional real
+            //  pegar profissional real
             ProfissionalDAO profDAO = new ProfissionalDAO();
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
@@ -223,7 +249,8 @@ namespace BD_TRAMPO.Controllers
             // 1 EXISTE?
             if (ag == null)
             {
-                return Content("Agendamento não encontrado.");
+                TempData["Erro"] = "Agendamento não encontrado.";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             // 2 SEGURANÇA (ANTES DE TUDO)
@@ -234,22 +261,25 @@ namespace BD_TRAMPO.Controllers
 
             if (ag.ProfissionalId != profissionalId)
             {
-                return Content("Você não tem permissão para isso.");
+                TempData["Erro"] = "Você não tem permissão para isso.";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             // 3 REGRA DE NEGÓCIO
             if (ag.Status != "Confirmado")
             {
-                return Content("Só é possível finalizar agendamentos confirmados.");
+                TempData["Erro"] = "Só é possível finalizar agendamentos confirmados.";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             //  4 REGRA DE TEMPO
-            // DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
+            DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
 
-            // if (dataHoraAgendamento > DateTime.Now)
-            // {
-            //     return Content("Você só pode finalizar após o horário do atendimento.");
-            // }
+            if (dataHoraAgendamento > DateTime.Now)
+            {
+                TempData["Erro"] = "Você só pode finalizar após o horário do atendimento.";
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
 
             // 5 EXECUTA
             dao.Finalizar(id);
@@ -258,7 +288,7 @@ namespace BD_TRAMPO.Controllers
         }
 
         public IActionResult FinalizarProfissional(int id)
-        {   
+        {
             AgendamentoDAO dao = new AgendamentoDAO();
             dao.FinalizarProfissional(id);
             return RedirectToAction("Recebidos");
@@ -275,12 +305,18 @@ namespace BD_TRAMPO.Controllers
 
             var ag = dao.BuscarPorId(id);
 
+            if (ag == null)
+            {
+                TempData["Erro"] = "Agendamento não encontrado.";
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+
             if (ag.Status != "Pendente" && ag.Status != "Confirmado")
             {
-                return Content("Esse agendamento não pode ser cancelado.");
+                TempData["Erro"] = "Esse agendamento não pode ser cancelado.";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
-            if (ag == null)
-                return Content("Agendamento não encontrado.");
+
 
             string status = "";
 
@@ -300,7 +336,8 @@ namespace BD_TRAMPO.Controllers
 
             if (string.IsNullOrEmpty(status))
             {
-                return Content("Você não tem permissão para cancelar.");
+                TempData["Erro"] = "Você não tem permissão para cancelar.";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             dao.Cancelar(id, status);

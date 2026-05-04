@@ -194,3 +194,8 @@ SELECT * FROM Disponibilidade;
 SELECT * FROM Agendamentos;
 SELECT * FROM Locais;
 SELECT * FROM Avaliacoes;
+
+
+ALTER TABLE Servicos 
+ADD ativo BIT NOT NULL DEFAULT 1;
+

@@ -48,6 +48,7 @@ namespace BD_TRAMPO
             s.Atendimento,
             s.Contato,
             s.LinkOnline,
+            s.Ativo,
             u.Nome AS NomeProfissional,
             sc.Nome AS Subcategoria,
             c.Nome AS Categoria,
@@ -57,7 +58,7 @@ namespace BD_TRAMPO
         INNER JOIN Usuarios u ON p.UsuarioId = u.Id
         INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
         INNER JOIN Categorias c ON sc.CategoriaId = c.Id
-        LEFT JOIN Locais l ON s.LocalId = l.Id"; // 🔥 AQUI
+        LEFT JOIN Locais l ON s.LocalId = l.Id"; 
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -81,7 +82,8 @@ namespace BD_TRAMPO
                             : null,
                         Endereco = reader["Endereco"] != DBNull.Value
                             ? reader["Endereco"].ToString()
-                            : ""
+                            : "",
+                        Ativo = (bool)reader["Ativo"]
                     });
                 }
             }
@@ -104,6 +106,7 @@ namespace BD_TRAMPO
                     s.Contato,
                     s.Atendimento,
                     s.LinkOnline,
+                    s.Ativo,
                     sc.Nome AS Subcategoria,
                     c.Nome AS Categoria
                 FROM Servicos s
@@ -131,7 +134,8 @@ namespace BD_TRAMPO
                         Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "",
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                         ? reader["LinkOnline"].ToString()
-                        : null
+                        : null,
+                        Ativo = (bool)reader["Ativo"]
                     });
                 }
             }
@@ -180,7 +184,8 @@ namespace BD_TRAMPO
                 Descricao,
                 Atendimento,
                 Contato,
-                LocalId
+                LocalId,
+                SubcategoriaId
             FROM Servicos
             WHERE Id = @Id";
 
@@ -200,7 +205,8 @@ namespace BD_TRAMPO
                         Contato = reader["Contato"].ToString(),
                         LocalId = reader["LocalId"] != DBNull.Value
                         ? (int)reader["LocalId"]
-                        : (int?)null
+                        : (int?)null,
+                        SubcategoriaId = (int)reader["SubcategoriaId"]
                     };
                 }
             }
@@ -340,15 +346,20 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
+                //  busca o original
+                Servico original = BuscarPorId(s.Id);
+
                 string query = @"
-        UPDATE Servicos SET
-            Nome = @Nome,
-            Descricao = @Descricao,
-            Contato = @Contato,
-            Atendimento = @Atendimento,
-            SubcategoriaId = @SubcategoriaId,
-            LinkOnline = @LinkOnline
-        WHERE Id = @Id";
+            UPDATE Servicos SET
+                Nome = @Nome,
+                Descricao = @Descricao,
+                Contato = @Contato,
+                Atendimento = @Atendimento,
+                LocalId = @LocalId,
+                LinkOnline = @LinkOnline,
+                SubcategoriaId = @SubcategoriaId
+            WHERE Id = @Id
+        ";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -357,14 +368,23 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento);
-                cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
-                cmd.Parameters.AddWithValue("@LinkOnline",
-                string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
-                cmd.ExecuteNonQuery();
 
+                // LOCAL
+                cmd.Parameters.AddWithValue("@LocalId",
+                    s.LocalId.HasValue ? (object)s.LocalId : DBNull.Value);
+
+                // LINK
+                cmd.Parameters.AddWithValue("@LinkOnline",
+                    string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
+
+                //PRINCIPAL (FK)
+                cmd.Parameters.AddWithValue("@SubcategoriaId", original.SubcategoriaId);
+
+                Console.WriteLine("SubcategoriaId enviado: " + original.SubcategoriaId);
+
+                cmd.ExecuteNonQuery();
             }
         }
-
         public void Excluir(int id)
         {
             using (SqlConnection conn = conexao.Conectar())
@@ -378,7 +398,7 @@ namespace BD_TRAMPO
             }
         }
 
-        
+
         // PUXAR DO BANCO CARDS DINAMICOS
         public Dictionary<string, int> ContarServicosPorCategoria()
         {
@@ -403,6 +423,34 @@ namespace BD_TRAMPO
             }
 
             return dict;
+        }
+
+        public void Desativar(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "UPDATE Servicos SET Ativo = 0 WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public bool TemAgendamentos(int servicoId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "SELECT COUNT(1) FROM Agendamentos WHERE ServicoId = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", servicoId);
+
+                int count = (int)cmd.ExecuteScalar();
+
+                return count > 0;
+            }
         }
 
 

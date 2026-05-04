@@ -10,9 +10,9 @@ namespace BD_TRAMPO.Controllers
         {
             ServicoDAO dao = new ServicoDAO();
 
-            var lista = dao.ListarServicos(busca, localizacao,categoria);
-            
-            
+            var lista = dao.ListarServicos(busca, localizacao, categoria);
+
+
             return View(lista);
         }
 
@@ -48,23 +48,25 @@ namespace BD_TRAMPO.Controllers
 
             int usuarioId = int.Parse(usuarioIdStr);
 
-            // 🔥 pega o profissional do usuário
+            //  pega o profissional do usuário
             ProfissionalDAO profDAO = new ProfissionalDAO();
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
-            // 🔴 valida segurança
+            
+           
+            //  valida segurança
             if (profissionalId == 0)
             {
                 return Content("Erro: profissional não encontrado.");
             }
 
-            // 🔥 agora sim: só os serviços dele
+            //  agora sim: só os serviços dele
             ServicoDAO servDAO = new ServicoDAO();
             var lista = servDAO.ListarPorProfissional(profissionalId);
 
             SubcategoriaDAO subDao = new SubcategoriaDAO();
             ViewBag.Subcategorias = subDao.ListarTodas();
-            
+
             LocalDAO localDao = new LocalDAO();
             ViewBag.Locais = localDao.ListarPorProfissional(usuarioId);
 
@@ -80,7 +82,7 @@ namespace BD_TRAMPO.Controllers
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
             ServicoDAO servicoDAO = new ServicoDAO();
-            AvaliacaoDAO avalDAO = new AvaliacaoDAO(); // 🔥 NOVO
+            AvaliacaoDAO avalDAO = new AvaliacaoDAO();
 
             var profissional = profDAO.BuscarPorId(id);
             var servicos = servicoDAO.ListarPorProfissional(id);
@@ -90,10 +92,11 @@ namespace BD_TRAMPO.Controllers
                 return Content("Profissional não encontrado.");
             }
 
-            // 🔥 DADOS PRA VIEW
+            //  DADOS PRA VIEW
             ViewBag.Servicos = servicos;
             ViewBag.Avaliacoes = avalDAO.ListarPorProfissional(id);
             ViewBag.Media = avalDAO.MediaPorProfissional(id);
+
 
             return View(profissional);
         }
@@ -112,6 +115,8 @@ namespace BD_TRAMPO.Controllers
 
             ViewBag.TotalServicos = servicoDAO.ContarPorProfissional(profissionalId);
             ViewBag.PedidosPendentes = 0; // ou seu método real
+
+
 
             return View();
         }
