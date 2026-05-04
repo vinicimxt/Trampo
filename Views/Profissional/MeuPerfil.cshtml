@@ -37,7 +37,7 @@
         <div class="perfil-stats-inner">
 
             <div class="stat-item">
-                <div class="stat-item-icon">📦</div>
+                <div class="stat-item-icon"><span class="material-symbols-rounded">inventory_2</span></div>
                 <div>
                     <div class="stat-item-val">@(ViewBag.TotalServicos ?? 0)</div>
                     <div class="stat-item-lbl">Serviços ativos</div>
@@ -45,7 +45,7 @@
             </div>
 
             <div class="stat-item">
-                <div class="stat-item-icon">📥</div>
+                <div class="stat-item-icon"><span class="material-symbols-rounded">event</span></div>
                 <div>
                     <div class="stat-item-val">@(ViewBag.TotalAgendamentos ?? 0)</div>
                     <div class="stat-item-lbl">Agendamentos totais</div>
@@ -53,7 +53,7 @@
             </div>
 
             <div class="stat-item">
-                <div class="stat-item-icon">⏳</div>
+                <div class="stat-item-icon"><span class="material-symbols-rounded">schedule</span></div>
                 <div>
                     <div class="stat-item-val" style="color: @((ViewBag.PedidosPendentes ?? 0) > 0 ? "#ef4444" : "var(--dark)")">
                         @(ViewBag.PedidosPendentes ?? 0)
@@ -82,13 +82,13 @@
         {
             <!-- Estado vazio -->
             <div class="empty-state">
-                <div class="empty-icon">📦</div>
+                <div class="empty-icon"><span class="material-symbols-rounded">inventory_2</span></div>
                 <h3>Nenhum serviço cadastrado ainda</h3>
                 <p>
                     Crie seu primeiro serviço para aparecer para os clientes e começar a receber agendamentos.
                 </p>
                 <a href="/Servico/Criar" class="btn-primary-solid">
-                    + Criar meu primeiro serviço
+                    <span class="material-symbols-rounded">add</span> Criar meu primeiro serviço
                 </a>
             </div>
         }
@@ -100,7 +100,7 @@
                     <h3>Quer oferecer algo novo?</h3>
                     <p>Adicione um serviço e comece a receber agendamentos de novos clientes.</p>
                 </div>
-                <a href="/Servico/Criar" class="btn-criar">+ Novo serviço</a>
+                <a href="/Servico/Criar" class="btn-criar"><span class="material-symbols-rounded">add</span> Novo serviço</a>
             </div>
 
             <!-- Título da seção -->
@@ -110,7 +110,7 @@
             <div class="perfil-grid">
 
                 <a href="/Profissional/MeusServicos" class="perfil-card">
-                    <div class="card-icon">📦</div>
+                    <div class="card-icon"><span class="material-symbols-rounded">inventory_2</span></div>
                     <div class="card-content">
                         <h3>Meus Serviços</h3>
                         <p>Edite, ative ou remova seus serviços cadastrados</p>
@@ -128,7 +128,7 @@
                 </a>
 
                 <a href="/Agendamento/Recebidos" class="perfil-card">
-                    <div class="card-icon">📥</div>
+                    <div class="card-icon"><span class="material-symbols-rounded">event</span></div>
                     <div class="card-content">
                         <h3>Agendamentos Recebidos</h3>
                         <p>Veja e gerencie todos os pedidos dos clientes</p>
@@ -143,7 +143,7 @@
                 </a>
 
                 <a href="/Profissional/Dashboard" class="perfil-card destaque">
-                    <div class="card-icon">📊</div>
+                    <div class="card-icon"><span class="material-symbols-rounded">bar_chart</span></div>
                     <div class="card-content">
                         <h3>Dashboard</h3>
                         <p>Faturamento, avaliações e métricas do seu negócio</p>

@@ -143,10 +143,10 @@ button {
     width: 100%;
     z-index: 1000;
     background: rgba(255, 255, 255, 0.80);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    /* backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); */
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    transition: var(--transition);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .navbar.scrolled {

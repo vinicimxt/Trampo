@@ -355,6 +355,11 @@
     transition: var(--transition);
 }
 
+.card-icon .material-symbols-rounded {
+    color: var(--blue);
+}
+
+
 /* conteúdo */
 .card-content {
     flex: 1;

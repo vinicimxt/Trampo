@@ -10,57 +10,62 @@ document.addEventListener("DOMContentLoaded", () => {
     const navbar = document.getElementById("navbar");
     const topbar = document.getElementById("topbar");
 
+    let ticking = false;
+
     window.addEventListener("scroll", () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
 
-        const scrollY = window.scrollY;
+                const scrollY = window.scrollY;
 
-        // NAVBAR
-        if (scrollY > 80) {
+                if (scrollY > 80) {
 
-            if (topbar) {
-                topbar.classList.add("opacity-0", "h-0", "overflow-hidden");
-            }
+                    if (topbar) {
+                        topbar.classList.add("opacity-0", "h-0", "overflow-hidden");
+                    }
 
-            if (navbar) {
-                navbar.classList.add("scrolled");
-                navbar.classList.add("bg-black/80", "backdrop-blur-md", "shadow-lg");
-            }
+                    if (navbar) {
+                        navbar.classList.add("scrolled");
+                        // REMOVE o blur daqui se quiser performance
+                        navbar.classList.add("shadow-lg");
+                    }
 
-            document.body.style.paddingTop = navbar ? navbar.offsetHeight + "px" : "0px";
+                } else {
 
-        } else {
+                    if (topbar) {
+                        topbar.classList.remove("opacity-0", "h-0", "overflow-hidden");
+                    }
 
-            if (topbar) {
-                topbar.classList.remove("opacity-0", "h-0", "overflow-hidden");
-            }
+                    if (navbar) {
+                        navbar.classList.remove("scrolled");
+                    }
+                }
 
-            if (navbar) {
-                navbar.classList.remove("scrolled");
-            }
+                ticking = false;
 
-            document.body.style.paddingTop = "0px";
-        }
-
-        // BOTÃO
-        if (btnTop) {
-            if (scrollY > window.innerHeight * 0.5) {
-                btnTop.classList.add("show");
-            } else {
-                btnTop.classList.remove("show");
-            }
-        }
-
-    });
-
-    // CLICK
-    if (btnTop) {
-        btnTop.addEventListener("click", () => {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
             });
-        });
+
+            ticking = true;
+        }
+    });
+    // BOTÃO
+    if (btnTop) {
+        if (scrollY > window.innerHeight * 0.5) {
+            btnTop.classList.add("show");
+        } else {
+            btnTop.classList.remove("show");
+        }
     }
+
+// CLICK
+if (btnTop) {
+    btnTop.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+}
 
 });
 
