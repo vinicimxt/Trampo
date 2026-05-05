@@ -633,6 +633,56 @@ textarea {
 .hidden {
     display: none !important;
 }
+
+/* =================================
+DROPDROW NOTIFICAÇÕES 
+=====================================*/
+
+.notif-wrapper {
+    position: relative;
+}
+
+.notif-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: 45px;
+    right: 0;
+
+    width: 320px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+
+    display: none;
+    flex-direction: column;
+
+    z-index: 999;
+}
+
+.notif-dropdown.open {
+    display: flex;
+}
+
+.notif-header {
+    padding: 12px 14px;
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+}
+
+.ver-todas {
+    padding: 12px;
+    text-align: center;
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: var(--blue);
+    border-top: 1px solid #eee;
+}
+
+
 /* ===================================================
    ANIMAÇÕES GLOBAIS
 =================================================== */

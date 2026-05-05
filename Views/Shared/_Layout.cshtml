@@ -66,13 +66,30 @@
                         <span class="user">Olá, @nome</span>
                         
                         <div class="notif-wrapper">
-                            <a href="/Notificacao" class="notif-icon">
-                                🔔
+                            <div class="notif-icon" id="notifToggle">
+                                <span class="material-symbols-rounded">notifications</span>
+
                                 @if (ViewBag.NotifCount != null && ViewBag.NotifCount > 0)
                                 {
                                     <span class="notif-badge">@ViewBag.NotifCount</span>
                                 }
-                            </a>
+                            </div>
+
+                            <!-- DROPDOWN -->
+                            <div class="notif-dropdown" id="notifDropdown">
+                                <div class="notif-header">
+                                    Notificações
+                                </div>
+
+                                <div class="notif-list">
+                                    <!--últimas notificações -->
+                                    <p style="padding:10px;">Carregando...</p>
+                                </div>
+
+                                <a href="/Notificacao" class="ver-todas">
+                                    Ver todas →
+                                </a>
+                            </div>
                         </div>
 
                         @if (tipo == "profissional")

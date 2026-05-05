@@ -11,109 +11,105 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = BD_TRAMPO
 build_property.RootNamespace = BD_TRAMPO
-build_property.ProjectDir = C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\
+build_property.ProjectDir = C:\Users\Vinicius\Desktop\Trampo\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO
+build_property.MSBuildProjectDirectory = C:\Users\Vinicius\Desktop\Trampo
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Agendamento/Meus.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Agendamento/Meus.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWdlbmRhbWVudG9cTWV1cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Agendamento/Novo.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Agendamento/Novo.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWdlbmRhbWVudG9cTm92by5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Agendamento/Recebidos.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Agendamento/Recebidos.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWdlbmRhbWVudG9cUmVjZWJpZG9zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Avaliacao/Avaliar.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Avaliacao/Avaliar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXZhbGlhY2FvXEF2YWxpYXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Home/Index.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Home/Privacy.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Local/Editar.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9jYWxcRWRpdGFyLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Local/Lista.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Local/Lista.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9jYWxcTGlzdGEuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Notificacao/Index.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Notificacao/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90aWZpY2FjYW9cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/Dashboard.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Profissional/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXERhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/Index.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Profissional/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/Lista.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Profissional/Lista.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXExpc3RhLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/MeuPerfil.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Profissional/MeuPerfil.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXE1ldVBlcmZpbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/MeusServicos.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Profissional/MeusServicos.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXE1ldXNTZXJ2aWNvcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/PerfilPublico.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Profissional/PerfilPublico.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXFBlcmZpbFB1YmxpY28uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Servico/Criar.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Servico/Criar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vydmljb1xDcmlhci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Servico/Editar.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Servico/Editar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vydmljb1xFZGl0YXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Shared/Error.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Shared/_Layout.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Usuario/Cadastro.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Usuario/Cadastro.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb1xDYWRhc3Ryby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Usuario/Login.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/Usuario/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb1xMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/_ViewImports.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/_ViewStart.cshtml]
+[C:/Users/Vinicius/Desktop/Trampo/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

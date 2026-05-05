@@ -220,11 +220,9 @@ C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\evujqxvfkt-{0}-wvd
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\ojcjc2w1j1-{0}-qa5uk9k7e8-qa5uk9k7e8.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\nimblp1vwc-{0}-ynv36c816d-ynv36c816d.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\41jw6gam6j-{0}-b5ksntedui-b5ksntedui.gz
-C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\z0svh772be-{0}-3cpnsg2aku-3cpnsg2aku.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\xqg4aoyicw-{0}-wz5rhfsp03-wz5rhfsp03.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\6079jwda4z-{0}-xv29y4vo4k-xv29y4vo4k.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\qkoigqp3lw-{0}-qibgs8cekg-qibgs8cekg.gz
-C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\awv1xdmmad-{0}-3j06iacmjk-3j06iacmjk.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\1gcopuexw5-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\uhhuzzzsip-{0}-z7qpgzmj6r-z7qpgzmj6r.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\iiqoxo9ana-{0}-0htq903296-0htq903296.gz
@@ -233,7 +231,6 @@ C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\k42hh3k6wi-{0}-ohp
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\4nrxfa40jc-{0}-9mcqpn1hv6-9mcqpn1hv6.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\e5j2w3873y-{0}-2bfi2wp1oq-2bfi2wp1oq.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\nshtdsequr-{0}-dim4suoyv5-dim4suoyv5.gz
-C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\1xvcrroa07-{0}-4em1zncq9j-4em1zncq9j.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\lq6845l79q-{0}-t1cqhe9u97-t1cqhe9u97.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\ncbxk0iyz1-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\9p7vt9w9bb-{0}-sejl45xvog-sejl45xvog.gz
@@ -311,3 +308,7 @@ C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\1xvcrroa07-{0}-nqgms8o0pp-nqgms8o0pp.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\awv1xdmmad-{0}-nf0tc3e49l-nf0tc3e49l.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\fpsegkj8x9-{0}-dc1lawevhr-dc1lawevhr.gz
+C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\z0svh772be-{0}-iq4pw1lslt-iq4pw1lslt.gz
+C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\fpsegkj8x9-{0}-ctgxxz7m05-ctgxxz7m05.gz
+C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\awv1xdmmad-{0}-mo0izbount-mo0izbount.gz
+C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\1xvcrroa07-{0}-4c78fgb512-4c78fgb512.gz

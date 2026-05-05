@@ -175,8 +175,21 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =================================
-// MODAL OVERLAY
+// DROPDOWN
 // =================================
+
+const toggle = document.getElementById("notifToggle");
+const dropdown = document.getElementById("notifDropdown");
+
+toggle.addEventListener("click", () => {
+    dropdown.classList.toggle("open");
+});
+
+document.addEventListener("click", (e) => {
+    if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove("open");
+    }
+});
 
 // =============================
 // MODAL GLOBAL
