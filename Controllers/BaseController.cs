@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-
+using BD_TRAMPO.DAO;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BD_TRAMPO.Controllers
 {
@@ -19,6 +20,21 @@ namespace BD_TRAMPO.Controllers
             }
 
             return null;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+
+            if (usuarioIdStr != null)
+            {
+                int usuarioId = int.Parse(usuarioIdStr);
+
+                NotificacaoDAO dao = new NotificacaoDAO();
+                ViewBag.NotifCount = dao.ContarNaoLidas(usuarioId);
+            }
+
+            base.OnActionExecuting(context);
         }
 
     }

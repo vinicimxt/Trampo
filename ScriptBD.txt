@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS Categorias;
 DROP TABLE IF EXISTS Clientes;
 DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios;
+DROP TABLE IF EXISTS Notificacoes;
 
 
 -- =============================
@@ -151,6 +152,18 @@ CREATE TABLE Avaliacoes (
     FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id),
     FOREIGN KEY (AgendamentoId) REFERENCES Agendamentos(Id)
 );
+
+CREATE TABLE Notificacoes (
+    Id INT PRIMARY KEY IDENTITY,
+    UsuarioId INT,
+    Titulo NVARCHAR(100),
+    Mensagem NVARCHAR(255),
+    Tipo NVARCHAR(50), -- "Agendamento", "Cancelamento"
+    ReferenciaId INT, -- id do agendamento 
+    Lida BIT DEFAULT 0,
+    DataCriacao DATETIME DEFAULT GETDATE()
+)
+
 
 --  evita avaliar 2x o mesmo serviço
 CREATE UNIQUE INDEX UX_Avaliacao_Agendamento

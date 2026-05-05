@@ -7,7 +7,7 @@ namespace BD_TRAMPO
     {
         Conexao conexao = new Conexao();
 
-        public void Inserir(Agendamento ag)
+        public int Inserir(Agendamento ag)
         {
 
 
@@ -31,7 +31,10 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@EnderecoCliente", ag.EnderecoCliente ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@LocalId",
                 ag.LocalId.HasValue ? (object)ag.LocalId.Value : DBNull.Value);
-                cmd.ExecuteNonQuery();
+
+                object result = cmd.ExecuteScalar();
+
+                return result != null ? (int)result : 0;
 
             }
         }

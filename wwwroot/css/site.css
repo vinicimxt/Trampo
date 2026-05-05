@@ -701,7 +701,30 @@ textarea {
     }
 }
 
+/* ===================================================
+   NOTIFICAÇÕES
+=================================================== */
 
+.notif-wrapper {
+    position: relative;
+}
+
+.notif-icon {
+    position: relative;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 999px;
+}
 
 /* ===================================================
    RESPONSIVO

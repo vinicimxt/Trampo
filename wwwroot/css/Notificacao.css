@@ -1,0 +1,40 @@
+.notificacao-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    transition: .2s;
+}
+
+.notificacao-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.notificacao-item.nao-lida {
+    background: #f0f7ff;
+    border-left: 4px solid #3b82f6;
+}
+
+.notificacao-item.lida {
+    opacity: 0.7;
+}
+
+.badge-novo {
+    background: #3b82f6;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: #3b82f6;
+    border-radius: 50%;
+}

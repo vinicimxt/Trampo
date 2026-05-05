@@ -72,6 +72,22 @@ namespace BD_TRAMPO
         }
 
 
+        // SISTEMA DE NOTIFICAÇÕES 
+
+        public int BuscarUsuarioId(int clienteId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "SELECT UsuarioId FROM Clientes WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", clienteId);
+
+                object result = cmd.ExecuteScalar();
+
+                return result != null ? (int)result : 0;
+            }
+        }
 
 
 

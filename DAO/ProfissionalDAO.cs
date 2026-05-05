@@ -36,7 +36,7 @@ namespace BD_TRAMPO
             }
         }
 
-        
+
 
 
         public List<Servico> ListarPorUsuario(int usuarioId)
@@ -122,6 +122,21 @@ namespace BD_TRAMPO
             }
 
             return null;
+        }
+
+        // Sistema de notificação 
+
+        public int BuscarUsuarioId(int profissionalId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = "SELECT UsuarioId FROM Profissionais WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Id", profissionalId);
+
+                return (int)cmd.ExecuteScalar();
+            }
         }
 
         public void AtualizarEndereco(int usuarioId, string endereco)
