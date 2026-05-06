@@ -23,18 +23,7 @@ namespace BD_TRAMPO.Controllers
             return View(lista);
         }
 
-        public IActionResult Abrir(int id, int? referenciaId)
-        {
-            NotificacaoDAO dao = new NotificacaoDAO();
-            dao.MarcarComoLida(id);
 
-            if (referenciaId.HasValue)
-            {
-                return RedirectToAction("Detalhe", "Agendamento", new { id = referenciaId });
-            }
-
-            return RedirectToAction("Index");
-        }
 
         public int Contador()
         {
@@ -45,6 +34,7 @@ namespace BD_TRAMPO.Controllers
             return dao.ContarNaoLidas(usuarioId);
         }
 
+
         public IActionResult MarcarComoLida(int id)
         {
             NotificacaoDAO dao = new NotificacaoDAO();
@@ -52,24 +42,49 @@ namespace BD_TRAMPO.Controllers
 
             return RedirectToAction("Index");
         }
-        public IActionResult TesteNotificacao()
+
+        [HttpPost]
+        public IActionResult MarcarComoLidaAjax([FromBody] dynamic data)
+        {
+            int id = (int)data.id;
+
+            NotificacaoDAO dao = new NotificacaoDAO();
+            dao.MarcarComoLida(id);
+
+            return Ok();
+        }
+
+
+        public IActionResult Ultimas()
+        {
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+
+            if (usuarioIdStr == null)
+                return PartialView("_NotificacoesDropdown", new List<Notificacao>());
+
+            int usuarioId = int.Parse(usuarioIdStr);
+
+            NotificacaoDAO dao = new NotificacaoDAO();
+            var lista = dao.BuscarUltimas(usuarioId, 5);
+
+            return PartialView("_NotificacoesDropdown", lista);
+        }
+
+        public IActionResult Abrir(int id, int? referenciaId)
         {
             NotificacaoDAO dao = new NotificacaoDAO();
 
-            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
-            int usuarioId = int.Parse(usuarioIdStr);
+            // marca como lida
+            dao.MarcarComoLida(id);
 
-            dao.Inserir(new Notificacao
+            // se tiver referência (ex: agendamento)
+            if (referenciaId != null)
             {
-                UsuarioId = usuarioId,
-                Titulo = "Teste 🔥",
-                Mensagem = "Essa é uma notificação de teste.",
-                Tipo = "Teste"
-            });
+                return RedirectToAction("Detalhes", "Agendamento", new { id = referenciaId });
+            }
 
             return RedirectToAction("Index");
         }
-
 
 
     }

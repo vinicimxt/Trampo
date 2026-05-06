@@ -286,23 +286,6 @@ namespace BD_TRAMPO.Controllers
                     ReferenciaId = id
                 });
 
-                notif.Inserir(new Notificacao
-                {
-                    UsuarioId = clienteUsuarioId,
-                    Titulo = "Agendamento cancelado ❌",
-                    Mensagem = "Seu agendamento foi cancelado pelo profissional.",
-                    Tipo = "Agendamento",
-                    ReferenciaId = id
-                });
-
-                notif.Inserir(new Notificacao
-                {
-                    UsuarioId = clienteUsuarioId,
-                    Titulo = "Agendamento recusado ❌",
-                    Mensagem = "Seu agendamento foi recusado pelo profissional.",
-                    Tipo = "Agendamento",
-                    ReferenciaId = id
-                });
 
 
             }
@@ -339,7 +322,7 @@ namespace BD_TRAMPO.Controllers
                 return Redirect(Request.Headers["Referer"].ToString());
             }
 
-            // 2 SEGURANÇA (ANTES DE TUDO)
+            // 2 SEGURANÇA 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
@@ -406,14 +389,14 @@ namespace BD_TRAMPO.Controllers
 
             string status = "";
 
-            // 🔐 VERIFICA SE É CLIENTE
+            //  VERIFICA SE É CLIENTE
             int clienteId = clienteDAO.BuscarClienteIdPorUsuario(usuarioId);
             if (clienteId == ag.ClienteId)
             {
                 status = "CanceladoCliente";
             }
 
-            // 🔐 VERIFICA SE É PROFISSIONAL
+            //  VERIFICA SE É PROFISSIONAL
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
             if (profissionalId == ag.ProfissionalId)
             {
@@ -431,6 +414,20 @@ namespace BD_TRAMPO.Controllers
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
+
+        public IActionResult DetalhesModal(int id)
+        {
+            if (id <= 0)
+                return BadRequest("ID inválido");
+
+            AgendamentoDAO dao = new AgendamentoDAO();
+            var ag = dao.BuscarPorId(id);
+
+            if (ag == null)
+                return NotFound("Agendamento não encontrado");
+
+            return PartialView("_DetalhesAgendamentoModal", ag);
+        }
 
 
     }

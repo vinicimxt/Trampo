@@ -23,7 +23,7 @@ namespace BD_TRAMPO.DAO
                 cmd.Parameters.AddWithValue("@UsuarioId", n.UsuarioId);
                 cmd.Parameters.AddWithValue("@Titulo", n.Titulo);
                 cmd.Parameters.AddWithValue("@Mensagem", n.Mensagem);
-                cmd.Parameters.AddWithValue("@Tipo", n.Tipo ?? (object)DBNull.Value); 
+                cmd.Parameters.AddWithValue("@Tipo", n.Tipo ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@ReferenciaId", n.ReferenciaId ?? (object)DBNull.Value);
 
                 cmd.ExecuteNonQuery();
@@ -91,6 +91,44 @@ namespace BD_TRAMPO.DAO
 
                 cmd.ExecuteNonQuery();
             }
+        }
+
+
+        public List<Notificacao> BuscarUltimas(int usuarioId, int quantidade)
+        {
+            List<Notificacao> lista = new List<Notificacao>();
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT TOP (@Qtd) *
+            FROM Notificacoes
+            WHERE UsuarioId = @UsuarioId
+            ORDER BY DataCriacao DESC";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+                cmd.Parameters.AddWithValue("@Qtd", quantidade);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add(new Notificacao
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Titulo = reader["Titulo"].ToString(),
+                        Mensagem = reader["Mensagem"].ToString(),
+                        Lida = Convert.ToBoolean(reader["Lida"]),
+                        DataCriacao = Convert.ToDateTime(reader["DataCriacao"]),
+                        ReferenciaId = reader["ReferenciaId"] != DBNull.Value
+                            ? Convert.ToInt32(reader["ReferenciaId"])
+                            : (int?)null
+                    });
+                }
+            }
+
+            return lista;
         }
 
 

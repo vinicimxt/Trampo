@@ -1,0 +1,64 @@
+@model List<Notificacao>
+
+@functions {
+    string GetIcone(string titulo)
+    {
+        if (string.IsNullOrEmpty(titulo))
+            return "notifications";
+
+        titulo = titulo.ToLower();
+
+        if (titulo.Contains("agendamento"))
+            return "event";
+
+        if (titulo.Contains("confirmado"))
+            return "check_circle";
+
+        if (titulo.Contains("cancelado"))
+            return "cancel";
+
+        if (titulo.Contains("mensagem"))
+            return "chat";
+
+        if (titulo.Contains("pagamento"))
+            return "payments";
+
+        return "notifications";
+    }
+}
+
+@if (Model.Count == 0)
+{
+    <p class="notif-empty">Nenhuma notificação</p>
+}
+else
+{
+    foreach (var n in Model)
+    {
+        <a href="#"
+   class="notificacao-item @(n.Lida ? "lida" : "nao-lida")"
+   data-id="@n.Id"
+   data-ref="@(n.ReferenciaId ?? 0)"
+   onclick="abrirNotificacao(event, this)">
+
+            <div class="notif-item-left">
+                <span class="material-symbols-rounded">
+                    @GetIcone(n.Tipo)
+                </span>
+            </div>
+
+            <div class="notif-item-content">
+                <strong>@n.Titulo</strong>
+                <p>@n.Mensagem</p>
+                <span class="notif-data">
+                    @n.DataCriacao.ToString("dd/MM HH:mm")
+                </span>
+            </div>
+
+            @if (!n.Lida)
+            {
+                <span class="dot"></span>
+            }
+        </a>
+    }
+}

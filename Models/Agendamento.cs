@@ -14,6 +14,7 @@
         public string NomeCliente { get; set; }
         public string NomeProfissional { get; set; }
         public string Servico { get; set; }
+        public string Subcategoria { get; set; }
         public string LinkOnline { get; set; }
         public string EnderecoCliente { get; set; }
         public string Atendimento { get; set; }
@@ -23,7 +24,7 @@
         public bool FinalizadoProfissional { get; set; }
         public bool ConfirmadoCliente { get; set; }
         public DateTime? DataFinalizacao { get; set; }
-        public bool JaAvaliado {get; set; }
+        public bool JaAvaliado { get; set; }
         public bool PodeAvaliar()
         {
             return FinalizadoProfissional && ConfirmadoCliente;
@@ -31,31 +32,17 @@
 
         public string StatusAtual()
         {
-            if (ConfirmadoProfissional || FinalizadoProfissional || ConfirmadoCliente)
-            {
-                if (!ConfirmadoProfissional)
-                    return "Pendente";
+            //  PRIORIDADE MÁXIMA: CANCELAMENTO
+            if (Status == "CanceladoCliente")
+                return "CanceladoCliente";
 
-                if (!FinalizadoProfissional)
-                    return "Confirmado";
+            if (Status == "CanceladoProfissional")
+                return "CanceladoProfissional";
 
-                if (!ConfirmadoCliente)
-                    return "AguardandoCliente"; 
+            if (Status == "Cancelado")
+                return "Cancelado";
 
-                return "Finalizado"; 
-            }
-
-            return Status ?? "Pendente";
-        }
-
-
-        public string StatusCalculado()
-        {
-            // CANCELADOS primeiro
-            if (Status == "CanceladoCliente") return "CanceladoCliente";
-            if (Status == "CanceladoProfissional") return "CanceladoProfissional";
-
-            // FLUXO NORMAL
+            //  fluxo normal
             if (!ConfirmadoProfissional)
                 return "Pendente";
 
@@ -66,6 +53,33 @@
                 return "AguardandoCliente";
 
             return "Finalizado";
+        }
+
+
+        public string StatusCalculado()
+        {
+            if (Status == "CanceladoCliente")
+                return "CanceladoCliente";
+
+            if (Status == "CanceladoProfissional")
+                return "CanceladoProfissional";
+
+            if (Status == "Cancelado")
+                return "Cancelado";
+
+            if (!ConfirmadoProfissional)
+                return "Pendente";
+
+            if (ConfirmadoProfissional && !FinalizadoProfissional)
+                return "Confirmado";
+
+            if (FinalizadoProfissional && !ConfirmadoCliente)
+                return "AguardandoCliente";
+
+            if (ConfirmadoCliente)
+                return "Finalizado";
+
+            return Status;
         }
 
     }

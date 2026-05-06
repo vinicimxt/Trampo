@@ -81,9 +81,8 @@
                                     Notificações
                                 </div>
 
-                                <div class="notif-list">
-                                    <!--últimas notificações -->
-                                    <p style="padding:10px;">Carregando...</p>
+                                <div class="notif-list" id="notifList">
+                                    <p class="notif-empty">Carregando notificações...</p>
                                 </div>
 
                                 <a href="/Notificacao" class="ver-todas">
@@ -155,6 +154,17 @@
 
 
         @RenderSection("Scripts", required: false)
+
+        <div class="modal-overlay" id="modalGlobal">
+            <div class="modal-drawer">
+                <div class="drawer-header">
+                    <h3>Detalhes</h3>
+                    <button onclick="fecharModal('modalGlobal')">✕</button>
+                </div>
+
+                <div class="modal-body"></div>
+            </div>
+        </div>
 
     </body>
 

@@ -60,7 +60,7 @@ namespace BD_TRAMPO.Controllers
                 return Content("Erro: profissional não encontrado.");
             }
 
-            //  agora sim: só os serviços dele
+            // só os serviços dele
             ServicoDAO servDAO = new ServicoDAO();
             var lista = servDAO.ListarPorProfissional(profissionalId);
 

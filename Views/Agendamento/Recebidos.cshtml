@@ -4,6 +4,10 @@
     <link rel="stylesheet" href="~/css/Recebidos.css" />
 }
 
+@{
+    AvaliacaoDAO avalDAO = new AvaliacaoDAO();
+    int usuarioId = int.Parse(Context.Session.GetString("UsuarioId"));
+}
 
 @if (TempData["Sucesso"] != null)
 {
@@ -209,12 +213,22 @@
                     <!-- cabeçalho: cliente + status -->
                     <div class="agend-card-header">
                         <div class="agend-avatar">@GetIniciais(ag.NomeCliente)</div>
+
                         <div>
                             <div class="agend-cliente-name">@ag.NomeCliente</div>
-                            <div class="agend-servico">
-                                <span>📦</span> @ag.Servico
+
+                            <div class="agend-servico destaque-servico">
+                                🛠 @ag.Servico
                             </div>
+
+                            @if (!string.IsNullOrEmpty(ag.Subcategoria))
+                            {
+                                <div class="agend-subcategoria">
+                                    🏷️ @ag.Subcategoria
+                                </div>
+                            }
                         </div>
+
                         <span class="status-badge @GetBadgeClass(ag.StatusAtual())">
                             @GetBadgeTexto(ag.StatusAtual())
                         </span>

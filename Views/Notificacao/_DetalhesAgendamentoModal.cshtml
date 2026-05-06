@@ -1,0 +1,22 @@
+@model Agendamento
+
+<div class="agendamento-modal">
+
+    <h3>@Model.Servico</h3>
+
+    <p><strong>Profissional:</strong> @Model.NomeProfissional</p>
+    <p><strong>Data:</strong> @Model.Data.ToString("dd/MM/yyyy")</p>
+    <p><strong>Hora:</strong> @Model.Hora</p>
+
+    @if (Model.Atendimento == "Domicilio")
+    {
+        <p><strong>Endereço:</strong> @Model.EnderecoCliente</p>
+    }
+    else if (Model.Atendimento == "Local")
+    {
+        <p><strong>Local:</strong> @Model.EnderecoLocal</p>
+    }
+
+    <p><strong>Status:</strong> @Model.StatusCalculado()</p>
+
+</div>

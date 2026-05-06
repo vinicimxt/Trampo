@@ -57,15 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-// CLICK
-if (btnTop) {
-    btnTop.addEventListener("click", () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
+    // CLICK
+    if (btnTop) {
+        btnTop.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         });
-    });
-}
+    }
 
 });
 
@@ -180,16 +180,99 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const toggle = document.getElementById("notifToggle");
 const dropdown = document.getElementById("notifDropdown");
+const list = document.getElementById("notifList");
 
-toggle.addEventListener("click", () => {
-    dropdown.classList.toggle("open");
-});
+let carregado = false;
 
-document.addEventListener("click", (e) => {
-    if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.remove("open");
+if (toggle && dropdown && list) {
+    toggle.addEventListener("click", () => {
+        dropdown.classList.toggle("open");
+        // limpa badge ao abrir
+        const badge = toggle.querySelector(".notif-badge");
+        if (badge) badge.remove();
+
+        if (!carregado) {
+            fetch('/Notificacao/Ultimas')
+                .then(res => res.text())
+                .then(html => {
+                    list.innerHTML = html;
+                    carregado = true;
+                })
+                .catch(err => console.error("Erro ao carregar notificações:", err));
+        }
+    });
+}
+document.addEventListener("click", function (e) {
+    if (!e.target.closest(".notif-wrapper")) {
+        const dropdown = document.getElementById("notifDropdown");
+        if (dropdown) dropdown.classList.remove("open");
     }
 });
+
+function atualizarContador() {
+    fetch('/Notificacao/Contador')
+        .then(res => res.text())
+        .then(qtd => {
+
+            const toggle = document.getElementById("notifToggle");
+            let badge = toggle.querySelector(".notif-badge");
+
+            if (qtd > 0) {
+                // cria se não existir
+                if (!badge) {
+                    badge = document.createElement("span");
+                    badge.classList.add("notif-badge");
+                    toggle.appendChild(badge);
+                }
+
+                badge.textContent = qtd;
+            } else {
+                // remove se zerou
+                if (badge) badge.remove();
+            }
+        });
+}
+
+setInterval(atualizarContador, 10000);
+
+async function abrirNotificacao(e, el) {
+    e.preventDefault();
+
+    const notifId = el.dataset.id;
+    const refId = el.dataset.ref;
+
+    if (!refId || refId === "0") {
+        console.warn("Notificação sem referência válida");
+        return;
+    }
+    try {
+        await fetch('/Notificacao/MarcarComoLidaAjax', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: notifId })
+        });
+
+        const res = await fetch('/Agendamento/DetalhesModal/' + refId);
+
+        if (!res.ok) {
+            console.error("Erro ao buscar modal:", res.status);
+            return;
+        }
+
+        const html = await res.text();
+
+        const modal = document.getElementById("modalGlobal");
+        modal.querySelector(".modal-body").innerHTML = html;
+        modal.classList.add("open");
+
+        el.classList.remove("nao-lida");
+
+        atualizarContador();
+
+    } catch (err) {
+        console.error("Erro ao abrir notificação", err);
+    }
+}
 
 // =============================
 // MODAL GLOBAL

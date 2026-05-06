@@ -178,13 +178,24 @@
                     <!-- cabeçalho -->
                     <div class="agend-card-header">
                         <div class="agend-avatar">@GetIniciais(ag.NomeProfissional)</div>
+
                         <div>
-                            <div class="agend-prof-name">@ag.NomeProfissional</div>
-                            <div class="agend-servico"><span>📦</span> @ag.Servico</div>
+                            <div class="agend-cliente-name">@ag.NomeProfissional</div>
+
+                            <div class="agend-servico destaque-servico">
+                                🛠 @ag.Servico
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(ag.Subcategoria))
+                            {
+                                <div class="agend-subcategoria">
+                                    🏷️ @ag.Subcategoria
+                                </div>
+                            }
                         </div>
-                        <span class="status-badge @GetBadgeClass(ag.StatusCalculado())">
-                            <span class="badge-dot"></span>
-                            @GetBadgeTexto(ag.StatusCalculado())
+
+                        <span class="status-badge @GetBadgeClass(ag.StatusAtual())">
+                            @GetBadgeTexto(ag.StatusAtual())
                         </span>
                     </div>
 
@@ -252,7 +263,7 @@
                         <div class="agend-footer-actions">
 
                             @if (ag.Status == "CanceladoCliente" || ag.Status == "CanceladoProfissional" || ag.Status ==
-                                   "Cancelado")
+                                                               "Cancelado")
                             {
                                 <span class="status-info cancelado">❌ Agendamento cancelado</span>
                             }

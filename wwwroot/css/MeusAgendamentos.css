@@ -522,6 +522,12 @@
     border-radius: 50px;
 }
 
+.agend-subcategoria {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
 .chip-local {
     background: var(--blue-soft);
     color: var(--blue);
@@ -1043,6 +1049,7 @@
     cursor: not-allowed;
     box-shadow: none;
 }
+
 
 /* ===================================================
    RESPONSIVO

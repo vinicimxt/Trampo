@@ -103,40 +103,44 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        SELECT
-            a.Id,
-            a.ClienteId,
-            p.Id AS ProfissionalId,
-            u.Nome AS ProfissionalNome,
-            s.Nome AS Servico,
-            s.Atendimento,
-            s.LinkOnline,
-            a.Data,
-            a.Hora,
-            a.Status,
-            a.ConfirmadoProfissional,
-            a.FinalizadoProfissional,
-            a.ConfirmadoCliente,
-            a.Descricao,
-            a.EnderecoCliente,
-            l.Endereco AS EnderecoLocal,
+            SELECT 
+                A.Id,
+                A.ClienteId,
+                A.ProfissionalId,
+                A.Data,
+                A.Hora,
+                A.Status,
+                A.ConfirmadoProfissional,
+                A.FinalizadoProfissional,
+                A.ConfirmadoCliente,
+                A.Descricao,
+                A.EnderecoCliente,
+                A.LocalId,
 
-            CASE 
-                WHEN av.Id IS NOT NULL THEN 1 
-                ELSE 0 
-            END AS JaAvaliado
+                U.Nome AS ProfissionalNome,
+                S.Nome AS Servico,
+                SC.Nome AS Subcategoria,
+                S.LinkOnline,
+                S.Atendimento,
+                L.Endereco AS EnderecoLocal,
 
-        FROM Agendamentos a
-        INNER JOIN Servicos s ON a.ServicoId = s.Id
-        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
-        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
-        LEFT JOIN Locais l ON a.LocalId = l.Id 
+                CASE 
+                    WHEN av.Id IS NOT NULL THEN 1 
+                    ELSE 0 
+                END AS JaAvaliado
 
-        LEFT JOIN Avaliacoes av 
-            ON av.AgendamentoId = a.Id 
-            AND av.UsuarioId = @UsuarioId
+            FROM Agendamentos a
+            INNER JOIN Servicos s ON a.ServicoId = s.Id
+            INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
+            INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+            LEFT JOIN Subcategorias SC ON S.SubcategoriaId = SC.Id
+            LEFT JOIN Locais l ON a.LocalId = l.Id 
 
-        WHERE a.ClienteId = @ClienteId";
+            LEFT JOIN Avaliacoes av 
+                ON av.AgendamentoId = a.Id 
+                AND av.UsuarioId = @UsuarioId
+
+            WHERE a.ClienteId = @ClienteId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ClienteId", clienteId);
@@ -153,6 +157,9 @@ namespace BD_TRAMPO
                         ProfissionalId = (int)reader["ProfissionalId"],
                         NomeProfissional = reader["ProfissionalNome"].ToString(),
                         Servico = reader["Servico"].ToString(),
+                        Subcategoria = reader["Subcategoria"] != DBNull.Value
+                        ? reader["Subcategoria"].ToString()
+                        : "",
                         Atendimento = reader["Atendimento"].ToString(),
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                             ? reader["LinkOnline"].ToString() : null,
@@ -173,7 +180,7 @@ namespace BD_TRAMPO
                         EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
                             ? reader["EnderecoLocal"].ToString() : "",
 
-                        JaAvaliado = reader["JaAvaliado"] != DBNull.Value && (int)reader["JaAvaliado"] == 1
+                        JaAvaliado = reader["JaAvaliado"] != DBNull.Value && (int)reader["JaAvaliado"] == 1,
                     });
                 }
             }
@@ -193,13 +200,16 @@ namespace BD_TRAMPO
                 SELECT 
                     A.*,
                     U.Nome AS NomeCliente,
+                    S.Nome AS Servico, 
                     S.LinkOnline,
                     S.Atendimento,
-                    L.Endereco AS EnderecoLocal
+                    L.Endereco AS EnderecoLocal,
+                    SC.Nome AS Subcategoria
                 FROM Agendamentos A
                 INNER JOIN Clientes C ON A.ClienteId = C.Id
                 INNER JOIN Usuarios U ON C.UsuarioId = U.Id
                 INNER JOIN Servicos S ON A.ServicoId = S.Id 
+                INNER JOIN Subcategorias SC ON S.SubcategoriaId = SC.Id
                 LEFT JOIN Locais L ON A.LocalId = L.Id
                 WHERE A.ProfissionalId = @ProfissionalId";
 
@@ -220,7 +230,7 @@ namespace BD_TRAMPO
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
 
-                        // 🔥 ESSA PARTE FALTAVA
+
                         ConfirmadoProfissional = reader["ConfirmadoProfissional"] != DBNull.Value && (bool)reader["ConfirmadoProfissional"],
                         FinalizadoProfissional = reader["FinalizadoProfissional"] != DBNull.Value && (bool)reader["FinalizadoProfissional"],
                         ConfirmadoCliente = reader["ConfirmadoCliente"] != DBNull.Value && (bool)reader["ConfirmadoCliente"],
@@ -228,7 +238,10 @@ namespace BD_TRAMPO
                         Descricao = reader["Descricao"] != DBNull.Value
                         ? reader["Descricao"].ToString()
                         : "",
-
+                        Servico = reader["Servico"].ToString(),
+                        Subcategoria = reader["Subcategoria"] != DBNull.Value
+                        ? reader["Subcategoria"].ToString()
+                        : "",
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                         ? reader["EnderecoCliente"].ToString()
                         : "",

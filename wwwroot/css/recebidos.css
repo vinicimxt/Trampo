@@ -539,6 +539,18 @@
     min-width: 0;
 }
 
+.destaque-servico {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #111;
+}
+
+.agend-subcategoria {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
 .aguardando-chip {
     display: inline-flex;
     align-items: center;
@@ -723,7 +735,7 @@
 }
 
 /* ===================================================
-   MODAIS
+   MODALS
 =================================================== */
 .modal-overlay {
     position: fixed;
