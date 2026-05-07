@@ -4,7 +4,7 @@
     using BD_TRAMPO;
     using Microsoft.Data.SqlClient;
 
-    public class UsuarioController : Controller
+    public class UsuarioController : BaseController
     {
         public IActionResult Cadastro()
         {

@@ -3,7 +3,7 @@ using BD_TRAMPO.DAO;
 
 namespace BD_TRAMPO.Controllers
 {
-    public class LocalController : Controller
+    public class LocalController : BaseController
     {
         /* -----------------------------------------------
            Helper: pega o profissionalId da sessão

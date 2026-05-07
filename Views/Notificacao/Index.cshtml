@@ -17,11 +17,11 @@
         <div class="notificacao-lista">
             @foreach (var n in Model)
             {
-          <a href="#"
-   class="notificacao-item @(n.Lida ? "lida" : "nao-lida")"
-   data-id="@n.Id"
-   data-ref="@(n.ReferenciaId ?? 0)"
-   onclick="abrirNotificacao(event, this)">
+          <a href="/Notificacao/Abrir/@n.Id"
+        class="notificacao-item @(n.Lida ? "lida" : "nao-lida")"
+        data-id="@n.Id"
+        data-ref="@(n.ReferenciaId ?? 0)"
+        data-tipo="@n.Tipo">
 
                     <div class="notif-conteudo">
                         <strong>@n.Titulo</strong>
@@ -45,12 +45,3 @@
     }
 
 </div>
-
-@section Scripts {
-    <script>
-
-
-
-    </script>
-
-}

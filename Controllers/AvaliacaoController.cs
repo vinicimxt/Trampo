@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BD_TRAMPO.Controllers
 {
-    public class AvaliacaoController : Controller
+    public class AvaliacaoController : BaseController
     {
         public IActionResult Avaliar(int agendamentoId)
         {

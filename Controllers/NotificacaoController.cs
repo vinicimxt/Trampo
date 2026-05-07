@@ -4,7 +4,7 @@ using BD_TRAMPO.DAO;
 namespace BD_TRAMPO.Controllers
 {
 
-    public class NotificacaoController : Controller
+    public class NotificacaoController : BaseController
     {
 
 
@@ -70,17 +70,34 @@ namespace BD_TRAMPO.Controllers
             return PartialView("_NotificacoesDropdown", lista);
         }
 
-        public IActionResult Abrir(int id, int? referenciaId)
+        public IActionResult Abrir(int id)
         {
             NotificacaoDAO dao = new NotificacaoDAO();
 
-            // marca como lida
+            var notif = dao.BuscarPorId(id);
+
+            if (notif == null)
+                return RedirectToAction("Index");
+
             dao.MarcarComoLida(id);
 
-            // se tiver referência (ex: agendamento)
-            if (referenciaId != null)
+            if (notif.Tipo == "Agendamento")
             {
-                return RedirectToAction("Detalhes", "Agendamento", new { id = referenciaId });
+                return RedirectToAction("Recebidos", "Agendamento");
+            }
+
+            if (notif.Tipo == "Cancelamento")
+            {
+                return RedirectToAction("Meus", "Agendamento");
+            }
+
+            if (notif.Tipo == "Avaliacao")
+            {
+                return RedirectToAction(
+                    "Avaliar",
+                    "Avaliacao",
+                    new { agendamentoId = notif.ReferenciaId }
+                );
             }
 
             return RedirectToAction("Index");

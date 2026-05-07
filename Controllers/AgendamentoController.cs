@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BD_TRAMPO.Controllers
 {
-    public class AgendamentoController : Controller
+    public class AgendamentoController : BaseController
     {
 
         public IActionResult Novo(int servicoId, DateTime? data)
@@ -181,31 +181,14 @@ namespace BD_TRAMPO.Controllers
                 ReferenciaId = agendamentoId
             });
 
+            // cliente recebe confirmação do envio
             notif.Inserir(new Notificacao
             {
                 UsuarioId = clienteUsuarioId,
-                Titulo = "Agendamento confirmado ✅",
-                Mensagem = "Seu agendamento foi aceito!",
-            });
-
-            notif.Inserir(new Notificacao
-            {
-                UsuarioId = profissionalUsuarioId,
-                Titulo = "Agendamento cancelado ❌",
-                Mensagem = "Um cliente cancelou um agendamento.",
-                Tipo = "Cancelamento",
-                ReferenciaId = agendamentoId,
-                Lida = false
-            });
-
-            notif.Inserir(new Notificacao
-            {
-                UsuarioId = clienteUsuarioId,
-                Titulo = "Agendamento cancelado ❌",
-                Mensagem = "Seu agendamento foi cancelado pelo profissional.",
-                Tipo = "Cancelamento",
-                ReferenciaId = agendamentoId,
-                Lida = false
+                Titulo = "Agendamento enviado 📨",
+                Mensagem = "Seu pedido foi enviado para confirmação do profissional.",
+                Tipo = "Agendamento",
+                ReferenciaId = agendamentoId
             });
 
             return RedirectToAction("Meus", "Agendamento");
@@ -280,13 +263,20 @@ namespace BD_TRAMPO.Controllers
                 notif.Inserir(new Notificacao
                 {
                     UsuarioId = clienteUsuarioId,
-                    Titulo = "Agendamento confirmado ✅",
+                    Titulo = "Agendamento confirmado ✔",
                     Mensagem = $"Seu agendamento para {ag.Data:dd/MM} às {ag.Hora} foi confirmado",
                     Tipo = "Agendamento",
                     ReferenciaId = id
                 });
 
-
+                notif.Inserir(new Notificacao
+                {
+                    UsuarioId = clienteUsuarioId,
+                    Titulo = "Agendamento confirmado ✔",
+                    Mensagem = $"Seu agendamento para {ag.Data:dd/MM} às {ag.Hora} foi confirmado.",
+                    Tipo = "Agendamento",
+                    ReferenciaId = id
+                });
 
             }
 
@@ -298,17 +288,58 @@ namespace BD_TRAMPO.Controllers
             AgendamentoDAO dao = new AgendamentoDAO();
             dao.ConfirmarCliente(id);
 
+            var ag = dao.BuscarPorId(id);
+
+            if (ag != null)
+            {
+                ProfissionalDAO profDAO = new ProfissionalDAO();
+
+                int profissionalUsuarioId =
+                    profDAO.BuscarUsuarioId(ag.ProfissionalId);
+
+                NotificacaoDAO notif = new NotificacaoDAO();
+
+                notif.Inserir(new Notificacao
+                {
+                    UsuarioId = profissionalUsuarioId,
+                    Titulo = "Serviço finalizado ✔",
+                    Mensagem = "O cliente confirmou a conclusão do atendimento.",
+                    Tipo = "Finalizacao",
+                    ReferenciaId = id
+                });
+            }
+
             return RedirectToAction("Meus");
         }
-
         public IActionResult Recusar(int id)
         {
             AgendamentoDAO dao = new AgendamentoDAO();
-            dao.AtualizarStatus(id, "Cancelado");
+
+            dao.AtualizarStatus(id, "CanceladoProfissional");
+
+            var ag = dao.BuscarPorId(id);
+
+            if (ag != null)
+            {
+                ClienteDAO clienteDAO = new ClienteDAO();
+
+                int clienteUsuarioId =
+                    clienteDAO.BuscarUsuarioId(ag.ClienteId);
+
+                NotificacaoDAO notif = new NotificacaoDAO();
+
+                notif.Inserir(new Notificacao
+                {
+                    UsuarioId = clienteUsuarioId,
+                    Titulo = "Agendamento recusado ❌",
+                    Mensagem = "O profissional recusou seu agendamento.",
+                    Tipo = "Cancelamento",
+                    ReferenciaId = id
+                });
+            }
 
             return RedirectToAction("Recebidos");
         }
-
         public IActionResult Finalizar(int id)
         {
             AgendamentoDAO dao = new AgendamentoDAO();
@@ -352,6 +383,22 @@ namespace BD_TRAMPO.Controllers
 
             // 5 EXECUTA
             dao.Finalizar(id);
+
+            ClienteDAO clienteDAO = new ClienteDAO();
+
+            int clienteUsuarioId =
+                clienteDAO.BuscarUsuarioId(ag.ClienteId);
+
+            NotificacaoDAO notif = new NotificacaoDAO();
+
+            notif.Inserir(new Notificacao
+            {
+                UsuarioId = clienteUsuarioId,
+                Titulo = "Atendimento finalizado ✔",
+                Mensagem = "O profissional marcou o atendimento como concluído.",
+                Tipo = "Finalizacao",
+                ReferenciaId = id
+            });
 
             return Redirect(Request.Headers["Referer"].ToString());
         }
@@ -410,6 +457,55 @@ namespace BD_TRAMPO.Controllers
             }
 
             dao.Cancelar(id, status);
+
+            NotificacaoDAO notif = new NotificacaoDAO();
+
+            if (status == "CanceladoCliente")
+            {
+                int profissionalUsuarioId =
+                    profDAO.BuscarUsuarioId(ag.ProfissionalId);
+
+                notif.Inserir(new Notificacao
+                {
+                    UsuarioId = profissionalUsuarioId,
+                    Titulo = "Agendamento cancelado ❌",
+                    Mensagem = "Um cliente cancelou um agendamento.",
+                    Tipo = "Cancelamento",
+                    ReferenciaId = id
+                });
+
+                notif.Inserir(new Notificacao
+                {
+                    UsuarioId = usuarioId,
+                    Titulo = "Agendamento cancelado ❌",
+                    Mensagem = "Você cancelou o agendamento.",
+                    Tipo = "Cancelamento",
+                    ReferenciaId = id
+                });
+            }
+            else if (status == "CanceladoProfissional")
+            {
+                int clienteUsuarioId =
+                    clienteDAO.BuscarUsuarioId(ag.ClienteId);
+
+                notif.Inserir(new Notificacao
+                {
+                    UsuarioId = clienteUsuarioId,
+                    Titulo = "Agendamento cancelado ❌",
+                    Mensagem = "Seu agendamento foi cancelado pelo profissional.",
+                    Tipo = "Cancelamento",
+                    ReferenciaId = id
+                });
+
+                notif.Inserir(new Notificacao
+                {
+                    UsuarioId = usuarioId,
+                    Titulo = "Agendamento cancelado ❌",
+                    Mensagem = "Você cancelou um agendamento.",
+                    Tipo = "Cancelamento",
+                    ReferenciaId = id
+                });
+            }
 
             return Redirect(Request.Headers["Referer"].ToString());
         }

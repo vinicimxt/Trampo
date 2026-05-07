@@ -35,11 +35,11 @@ else
 {
     foreach (var n in Model)
     {
-        <a href="#"
+        <a href="/Notificacao/Abrir/@n.Id"
    class="notificacao-item @(n.Lida ? "lida" : "nao-lida")"
    data-id="@n.Id"
    data-ref="@(n.ReferenciaId ?? 0)"
-   onclick="abrirNotificacao(event, this)">
+   data-tipo="@n.Tipo">
 
             <div class="notif-item-left">
                 <span class="material-symbols-rounded">

@@ -235,44 +235,6 @@ function atualizarContador() {
 
 setInterval(atualizarContador, 10000);
 
-async function abrirNotificacao(e, el) {
-    e.preventDefault();
-
-    const notifId = el.dataset.id;
-    const refId = el.dataset.ref;
-
-    if (!refId || refId === "0") {
-        console.warn("Notificação sem referência válida");
-        return;
-    }
-    try {
-        await fetch('/Notificacao/MarcarComoLidaAjax', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: notifId })
-        });
-
-        const res = await fetch('/Agendamento/DetalhesModal/' + refId);
-
-        if (!res.ok) {
-            console.error("Erro ao buscar modal:", res.status);
-            return;
-        }
-
-        const html = await res.text();
-
-        const modal = document.getElementById("modalGlobal");
-        modal.querySelector(".modal-body").innerHTML = html;
-        modal.classList.add("open");
-
-        el.classList.remove("nao-lida");
-
-        atualizarContador();
-
-    } catch (err) {
-        console.error("Erro ao abrir notificação", err);
-    }
-}
 
 // =============================
 // MODAL GLOBAL

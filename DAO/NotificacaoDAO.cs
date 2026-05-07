@@ -132,6 +132,44 @@ namespace BD_TRAMPO.DAO
         }
 
 
+        public Notificacao BuscarPorId(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        SELECT *
+        FROM Notificacoes
+        WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return new Notificacao
+                    {
+                        Id = (int)reader["Id"],
+                        UsuarioId = (int)reader["UsuarioId"],
+                        Titulo = reader["Titulo"].ToString(),
+                        Mensagem = reader["Mensagem"].ToString(),
+                        Tipo = reader["Tipo"].ToString(),
+
+                        ReferenciaId = reader["ReferenciaId"] != DBNull.Value
+                            ? (int?)reader["ReferenciaId"]
+                            : null,
+
+                        Lida = (bool)reader["Lida"],
+
+                        DataCriacao = (DateTime)reader["DataCriacao"]
+                    };
+                }
+            }
+
+            return null;
+        }
 
 
     }
