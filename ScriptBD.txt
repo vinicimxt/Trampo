@@ -24,7 +24,6 @@ DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios;
 DROP TABLE IF EXISTS Notificacoes;
 
-
 -- =============================
 -- TABELAS
 -- =============================
@@ -35,6 +34,8 @@ CREATE TABLE Usuarios (
     Email VARCHAR(100) UNIQUE NOT NULL,
     Senha VARCHAR(255) NOT NULL,
     Tipo VARCHAR(20) NOT NULL,
+
+    -- telefone do cadastro/login
     Telefone VARCHAR(20) NULL
 );
 
@@ -53,10 +54,16 @@ CREATE TABLE Profissionais (
     TipoDocumento VARCHAR(10), -- CPF ou CNPJ
     Documento VARCHAR(20),
 
+    -- CONTATO PÚBLICO DO PROFISSIONAL
+    -- esse será usado no perfil público
+    Contato VARCHAR(100) NULL,
+
     FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE CASCADE
 );
 
---  UNIQUE apenas para CPF
+
+
+-- UNIQUE apenas para CPF
 CREATE UNIQUE INDEX UX_Profissional_CPF
 ON Profissionais(Documento)
 WHERE TipoDocumento = 'CPF';
@@ -93,7 +100,9 @@ CREATE TABLE Servicos (
 
     Nome NVARCHAR(100) NOT NULL,
     Descricao NVARCHAR(255),
-    Contato VARCHAR(100),
+
+    -- Contato VARCHAR(100) NULL,
+
     Atendimento VARCHAR(50),
     LinkOnline VARCHAR(255) NULL,
 
@@ -162,10 +171,9 @@ CREATE TABLE Notificacoes (
     ReferenciaId INT, -- id do agendamento 
     Lida BIT DEFAULT 0,
     DataCriacao DATETIME DEFAULT GETDATE()
-)
+);
 
-
---  evita avaliar 2x o mesmo serviço
+-- evita avaliar 2x o mesmo serviço
 CREATE UNIQUE INDEX UX_Avaliacao_Agendamento
 ON Avaliacoes(AgendamentoId);
 
@@ -194,6 +202,8 @@ INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
 ('Fotografia', 5),
 ('Buffet', 5);
 
+ALTER TABLE Servicos 
+ADD Ativo BIT NOT NULL DEFAULT 1;
 
 -- DEBUG
 
@@ -207,8 +217,15 @@ SELECT * FROM Disponibilidade;
 SELECT * FROM Agendamentos;
 SELECT * FROM Locais;
 SELECT * FROM Avaliacoes;
+SELECT * FROM Notificacoes;
 
+ALTER TABLE Servicos
+DROP COLUMN Contato;
 
-ALTER TABLE Servicos 
-ADD ativo BIT NOT NULL DEFAULT 1;
+ALTER TABLE Profissionais
+ADD Contato varchar (255) NULL;
 
+ALTER TABLE Profissionais
+DROP COLUMN Contato ;
+
+/* DELETE FROM Notificacoes WHERE ReferenciaId IS NULL */

@@ -12,9 +12,9 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"INSERT INTO Servicos 
-            (ProfissionalId, SubcategoriaId, Nome, Descricao, Contato, Atendimento, LinkOnline, LocalId)
+            (ProfissionalId, SubcategoriaId, Nome, Descricao, Atendimento, LinkOnline, LocalId)
             VALUES 
-            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Contato, @Atendimento,   @LinkOnline,@LocalId)";
+            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Atendimento,   @LinkOnline,@LocalId)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -22,7 +22,6 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Nome", s.Nome);
                 cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
                 cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@LinkOnline",
                 string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
@@ -46,7 +45,6 @@ namespace BD_TRAMPO
             s.ProfissionalId,
             s.Descricao,
             s.Atendimento,
-            s.Contato,
             s.LinkOnline,
             s.Ativo,
             u.Nome AS NomeProfissional,
@@ -73,7 +71,6 @@ namespace BD_TRAMPO
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : "",
                         Atendimento = reader["Atendimento"].ToString(),
-                        Contato = reader["Contato"] != DBNull.Value ? reader["Contato"].ToString() : "",
                         NomeProfissional = reader["NomeProfissional"].ToString(),
                         Categoria = reader["Categoria"].ToString(),
                         Subcategoria = reader["Subcategoria"].ToString(),
@@ -103,7 +100,6 @@ namespace BD_TRAMPO
                     s.Nome,
                     s.ProfissionalId,
                     s.Descricao,
-                    s.Contato,
                     s.Atendimento,
                     s.LinkOnline,
                     s.Ativo,
@@ -128,7 +124,6 @@ namespace BD_TRAMPO
                         Nome = reader["Nome"].ToString(),
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Descricao = reader["Descricao"].ToString(),
-                        Contato = reader["Contato"] != DBNull.Value ? reader["Contato"].ToString() : "",
                         Atendimento = reader["Atendimento"].ToString(),
                         Categoria = reader["Categoria"] != DBNull.Value ? reader["Categoria"].ToString() : "",
                         Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "",
@@ -183,7 +178,6 @@ namespace BD_TRAMPO
                 Nome,
                 Descricao,
                 Atendimento,
-                Contato,
                 LocalId,
                 SubcategoriaId
             FROM Servicos
@@ -202,7 +196,6 @@ namespace BD_TRAMPO
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
-                        Contato = reader["Contato"].ToString(),
                         LocalId = reader["LocalId"] != DBNull.Value
                         ? (int)reader["LocalId"]
                         : (int?)null,
@@ -277,7 +270,6 @@ namespace BD_TRAMPO
             s.ProfissionalId,
             s.Descricao,
             s.Atendimento,
-            s.Contato,
             s.LinkOnline,
             u.Nome AS NomeProfissional,
             sc.Nome AS Subcategoria,
@@ -323,7 +315,6 @@ namespace BD_TRAMPO
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : "",
                         Atendimento = reader["Atendimento"].ToString(),
-                        Contato = reader["Contato"] != DBNull.Value ? reader["Contato"].ToString() : "",
                         NomeProfissional = reader["NomeProfissional"].ToString(),
                         Categoria = reader["Categoria"].ToString(),
                         Subcategoria = reader["Subcategoria"].ToString(),
@@ -353,7 +344,6 @@ namespace BD_TRAMPO
             UPDATE Servicos SET
                 Nome = @Nome,
                 Descricao = @Descricao,
-                Contato = @Contato,
                 Atendimento = @Atendimento,
                 LocalId = @LocalId,
                 LinkOnline = @LinkOnline,
@@ -366,7 +356,6 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@Id", s.Id);
                 cmd.Parameters.AddWithValue("@Nome", s.Nome);
                 cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Contato", s.Contato ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento);
 
                 // LOCAL

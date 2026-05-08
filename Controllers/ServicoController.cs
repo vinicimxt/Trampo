@@ -145,7 +145,7 @@ namespace BD_TRAMPO.Controllers
         }
 
         [HttpPost]
-        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string contato, string atendimento, int? localId, string linkOnline)
+        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string atendimento, int? localId, string linkOnline)
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
@@ -214,7 +214,6 @@ namespace BD_TRAMPO.Controllers
                     Nome = nome,
                     SubcategoriaId = subcategoriaId,
                     Descricao = descricao,
-                    Contato = contato,
                     Atendimento = atendimento,
                     LocalId = localId,
                     LinkOnline = linkOnline

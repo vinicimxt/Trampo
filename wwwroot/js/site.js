@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (navbar) {
                         navbar.classList.add("scrolled");
                         // REMOVE o blur daqui se quiser performance
-                        navbar.classList.add("shadow-lg");
                     }
 
                 } else {

@@ -52,8 +52,8 @@ namespace BD_TRAMPO.Controllers
             ProfissionalDAO profDAO = new ProfissionalDAO();
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
 
-            
-           
+
+
             //  valida segurança
             if (profissionalId == 0)
             {
@@ -92,11 +92,9 @@ namespace BD_TRAMPO.Controllers
                 return Content("Profissional não encontrado.");
             }
 
-            //  DADOS PRA VIEW
             ViewBag.Servicos = servicos;
             ViewBag.Avaliacoes = avalDAO.ListarPorProfissional(id);
             ViewBag.Media = avalDAO.MediaPorProfissional(id);
-
 
             return View(profissional);
         }
@@ -116,9 +114,35 @@ namespace BD_TRAMPO.Controllers
             ViewBag.TotalServicos = servicoDAO.ContarPorProfissional(profissionalId);
             ViewBag.PedidosPendentes = 0; // ou seu método real
 
-
-
             return View();
+        }
+        public IActionResult Contato()
+        {
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            ProfissionalDAO dao = new ProfissionalDAO();
+
+            int profissionalId = dao.BuscarPorUsuario(usuarioId);
+
+            var prof = dao.BuscarPorId(profissionalId);
+
+            return View(prof);
+        }
+
+        [HttpPost]
+        public IActionResult SalvarContato(string contato)
+        {
+            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            ProfissionalDAO dao = new ProfissionalDAO();
+
+            int profissionalId = dao.BuscarPorUsuario(usuarioId);
+
+            dao.AtualizarContato(profissionalId, contato);
+
+            TempData["Sucesso"] = "Contato atualizado com sucesso.";
+
+            return RedirectToAction("Contato");
         }
 
 

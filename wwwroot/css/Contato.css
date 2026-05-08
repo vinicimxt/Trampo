@@ -1,0 +1,86 @@
+.contato-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 120px 20px 40px;
+    background: #f5f7fb;
+}
+
+.contato-card {
+    width: 100%;
+    max-width: 500px;
+
+    background: #fff;
+    border-radius: 20px;
+
+    padding: 32px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+.contato-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.contato-card p {
+    color: #6b7280;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.contato-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.contato-form label {
+    font-weight: 600;
+    color: #111827;
+}
+
+.contato-form input {
+    width: 100%;
+    height: 52px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+
+    padding: 0 16px;
+
+    font-size: 1rem;
+
+    transition: 0.2s;
+}
+
+.contato-form input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+}
+
+.btn-salvar-contato {
+    height: 52px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #2563eb;
+    color: #fff;
+
+    font-size: 1rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.btn-salvar-contato:hover {
+    transform: translateY(-1px);
+    background: #1d4ed8;
+}

@@ -18,7 +18,7 @@
         [HttpPost]
         public IActionResult Cadastrar(
     string nome, string email, string senha, string tipo,
-    string tipoDocumento, string documento, string telefone)
+    string tipoDocumento, string documento, string telefone, string contato)
         {
             UsuarioDAO usuarioDAO = new UsuarioDAO();
 
@@ -53,7 +53,7 @@
 
                 try
                 {
-                    profDAO.Inserir(usuarioId, tipoDocumento, documento);
+                    profDAO.Inserir(usuarioId, tipoDocumento, documento, contato);
                 }
                 catch (SqlException ex)
                 {
@@ -114,18 +114,19 @@
                 HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
                 HttpContext.Session.SetString("UsuarioTipo", usuario.Tipo);
 
-                //  Redirecionamento de page para pro 
+                // profissional
                 if (usuario.Tipo == "profissional")
                 {
                     return RedirectToAction("Dashboard", "Profissional");
                 }
-                else
-                {
-                    return RedirectToAction("Lista", "Profissional");
-                }
+
+                // cliente
+                return RedirectToAction("Lista", "Profissional");
             }
-            ViewBag.Mensagem = "Email ou senha inválidos";
-            return View("Login");
+
+            TempData["Erro"] = "Email ou senha inválidos.";
+
+            return RedirectToAction("Login");
         }
 
         public IActionResult Logout()

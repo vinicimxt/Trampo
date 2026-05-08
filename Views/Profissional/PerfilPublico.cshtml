@@ -255,7 +255,10 @@
                             {
                                 <p class="avaliacao-texto">@a.Comentario</p>
                             }
+
                         </div>
+
+                        
                     }
                 }
             </div>
@@ -291,6 +294,95 @@
                         <div class="scard-info-val">@totalServ disponível@(totalServ != 1 ? "s" : "")</div>
                     </div>
                 </div>
+
+@{
+    var contatoExibido =
+        !string.IsNullOrWhiteSpace(Model.Contato)
+        ? Model.Contato
+        : Model.Telefone;
+
+    string contatoLower = contatoExibido?.ToLower() ?? "";
+
+    string icone = "fa-solid fa-phone";
+    string textoContato = contatoExibido;
+    string linkContato = contatoExibido;
+
+    // INSTAGRAM
+    if (contatoLower.Contains("instagram.com"))
+    {
+        icone = "fa-brands fa-instagram";
+
+        textoContato = contatoExibido
+            .Replace("https://instagram.com/", "@")
+            .Replace("https://www.instagram.com/", "@")
+            .TrimEnd('/');
+
+        linkContato = contatoExibido;
+    }
+
+    // WHATSAPP
+    else if (
+        contatoLower.Contains("wa.me") ||
+        contatoLower.Contains("whatsapp"))
+    {
+        icone = "fa-brands fa-whatsapp";
+        textoContato = "WhatsApp";
+    }
+
+    // TELEGRAM
+    else if (contatoLower.Contains("t.me"))
+    {
+        icone = "fa-brands fa-telegram";
+        textoContato = "Telegram";
+    }
+
+    // EMAIL
+    else if (contatoLower.Contains("@"))
+    {
+        icone = "fa-solid fa-envelope";
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(contatoExibido))
+{
+    <div class="scard-info-row">
+
+        <div class="scard-info-icon">
+            <i class="@icone"></i>
+        </div>
+
+        <div style="min-width:0;">
+
+            <div class="scard-info-label">
+                Contato
+            </div>
+
+            <div class="scard-info-val contato-publico">
+
+                @if (
+                    contatoLower.Contains("instagram.com") ||
+                    contatoLower.Contains("wa.me") ||
+                    contatoLower.Contains("whatsapp") ||
+                    contatoLower.Contains("t.me"))
+                {
+                    <a href="@linkContato"
+                       target="_blank"
+                       class="contato-link">
+
+                        @textoContato
+                    </a>
+                }
+                else
+                {
+                    @textoContato
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+}
 
                 @if (totalAval > 0)
                 {

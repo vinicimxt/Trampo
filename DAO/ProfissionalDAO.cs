@@ -7,18 +7,34 @@ namespace BD_TRAMPO
     {
         Conexao conexao = new Conexao();
 
-        public void Inserir(int usuarioId, string tipoDocumento, string documento)
+        public void Inserir(int usuarioId, string tipoDocumento, string documento, string contato)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = @"INSERT INTO Profissionais 
-                         (UsuarioId, TipoDocumento, Documento)
-                         VALUES (@UsuarioId, @TipoDocumento, @Documento)";
+                string query = @"
+                    INSERT INTO Profissionais 
+                    (
+                        UsuarioId,
+                        TipoDocumento,
+                        Documento,
+                        Contato
+                    )
+                    VALUES
+                    (
+                        @UsuarioId,
+                        @TipoDocumento,
+                        @Documento,
+                        @Contato
+                    )";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
                 cmd.Parameters.AddWithValue("@TipoDocumento", tipoDocumento);
                 cmd.Parameters.AddWithValue("@Documento", documento);
+                cmd.Parameters.AddWithValue("@Contato",
+                    string.IsNullOrWhiteSpace(contato)
+                    ? DBNull.Value
+                    : contato);
 
                 try
                 {
@@ -50,8 +66,7 @@ namespace BD_TRAMPO
             s.Id,
             s.Nome,
             s.Descricao,
-            s.Atendimento,
-            s.Contato
+            s.Atendimento
         FROM Servicos s
         INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
         WHERE p.UsuarioId = @UsuarioId";
@@ -69,7 +84,7 @@ namespace BD_TRAMPO
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
-                        Contato = reader["Contato"].ToString()
+                        //Contato = reader["Contato"].ToString()
                     });
                 }
             }
@@ -100,10 +115,15 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        SELECT p.Id, u.Nome, u.Email
-        FROM Profissionais p
-        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
-        WHERE p.Id = @Id";
+                    SELECT 
+                        p.Id,
+                        p.Contato,
+                        u.Nome,
+                        u.Email,
+                        u.Telefone
+                    FROM Profissionais p
+                    INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+                    WHERE p.Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
@@ -116,7 +136,13 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         Nome = reader["Nome"].ToString(),
-                        Email = reader["Email"].ToString()
+                        Email = reader["Email"].ToString(),
+                        Contato = reader["Contato"] != DBNull.Value
+                            ? reader["Contato"].ToString()
+                            : "",
+                        Telefone = reader["Telefone"] != DBNull.Value
+                            ? reader["Telefone"].ToString()
+                            : ""
                     };
                 }
             }
@@ -151,6 +177,28 @@ namespace BD_TRAMPO
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@Endereco", endereco);
+                cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void AtualizarContato(int usuarioId, string contato)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            UPDATE Profissionais
+            SET Contato = @Contato
+            WHERE UsuarioId = @UsuarioId";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Contato",
+                    string.IsNullOrWhiteSpace(contato)
+                    ? DBNull.Value
+                    : contato);
+
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
 
                 cmd.ExecuteNonQuery();

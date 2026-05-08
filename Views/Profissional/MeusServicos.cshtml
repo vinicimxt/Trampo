@@ -149,16 +149,6 @@
                                         </div>
                                     }
 
-                                    @if (!string.IsNullOrEmpty(s.Contato))
-                                    {
-                                        <div class="info-row">
-                                            <div class="info-row-icon">📞</div>
-                                            <div>
-                                                <span class="info-row-label">Contato</span>
-                                                <div class="info-row-val">@s.Contato</div>
-                                            </div>
-                                        </div>
-                                    }
 
                                     @if (s.Atendimento == "Local" && !string.IsNullOrEmpty(s.Endereco))
                                     {
@@ -192,7 +182,7 @@
                                 <div class="servico-actions">
                                     <button type="button" class="btn-edit" @(s.Ativo ? "" : "disabled") data-id="@s.Id"
                                             data-nome="@s.Nome" data-local="@s.LocalId" data-desc="@s.Descricao"
-                                            data-contato="@s.Contato" data-atendimento="@s.Atendimento" data-link="@s.LinkOnline"
+                                            data-atendimento="@s.Atendimento" data-link="@s.LinkOnline"
                                             data-sub="@s.SubcategoriaId">
                                         ✏️ Editar
                                     </button>
@@ -264,10 +254,6 @@
                     <textarea name="descricao" id="editDesc" class="form-textarea"></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Contato</label>
-                    <input type="text" name="contato" id="editContato" class="form-input" />
-                </div>
 
                 <div class="form-group">
                     <label class="form-label">Atendimento</label>
@@ -317,7 +303,6 @@
                 const id = this.dataset.id;
                 const nome = this.dataset.nome || "";
                 const desc = this.dataset.desc || "";
-                const contato = this.dataset.contato || "";
                 const atendimento = this.dataset.atendimento || "";
                 const link = this.dataset.link || "";
                 const local = this.dataset.local;
@@ -326,7 +311,6 @@
                 document.getElementById('servicoId').value = id;
                 document.getElementById('editNome').value = nome;
                 document.getElementById('editDesc').value = desc;
-                document.getElementById('editContato').value = contato;
                 document.getElementById('editLink').value = link;
                 document.getElementById('editAtendimento').value = atendimento;
 

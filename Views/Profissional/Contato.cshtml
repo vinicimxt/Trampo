@@ -1,0 +1,39 @@
+@model Profissional
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Contato.css" />
+}
+
+<div class="contato-page">
+
+    <div class="contato-card">
+
+        <h2>Contato público</h2>
+
+        <p>
+            Esse contato ficará visível no seu perfil público
+            para que clientes possam falar com você.
+        </p>
+        <p>
+            Se nenhum contato for informado,
+            utilizaremos o telefone da sua conta.
+        </p>
+
+        <form method="post" asp-action="SalvarContato" class="contato-form">
+
+            <div>
+                <label>WhatsApp, telefone ou Instagram....</label>
+
+                <input type="text" name="contato" value="@Model.Contato" placeholder="(11) 99999-9999 " />
+            </div>
+
+            <button type="submit" class="btn-salvar-contato">
+                Salvar contato
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
