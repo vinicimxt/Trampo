@@ -88,6 +88,132 @@ namespace BD_TRAMPO
             }
         }
 
+        public void AtualizarConta(int id, string nome, string telefone)
+
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            UPDATE Usuarios
+            SET
+                Nome = @Nome,
+                Telefone = @Telefone
+            WHERE Id = @Id";
+
+                SqlCommand cmd =
+                    new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Nome", nome);
+
+                cmd.Parameters.AddWithValue(
+                    "@Telefone",
+                    string.IsNullOrWhiteSpace(telefone)
+                    ? DBNull.Value
+                    : telefone);
+
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public Usuario BuscarPorId(int id)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT
+                Id,
+                Nome,
+                Email,
+                Tipo,
+                Telefone
+            FROM Usuarios
+            WHERE Id = @Id";
+
+                SqlCommand cmd =
+                    new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                SqlDataReader reader =
+                    cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return new Usuario
+                    {
+                        Id = (int)reader["Id"],
+                        Nome = reader["Nome"].ToString(),
+                        Email = reader["Email"].ToString(),
+                        Tipo = reader["Tipo"].ToString(),
+
+                        Telefone =
+                            reader["Telefone"] != DBNull.Value
+                            ? reader["Telefone"].ToString()
+                            : ""
+                    };
+                }
+            }
+
+            return null;
+        }
+
+
+        // ALTERAR SENHA DO USUARIO
+        public bool VerificarSenha(
+    int usuarioId,
+    string senhaHash)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT COUNT(*)
+            FROM Usuarios
+            WHERE Id = @Id
+            AND Senha = @Senha";
+
+                SqlCommand cmd =
+                    new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Id", usuarioId);
+                cmd.Parameters.AddWithValue("@Senha", senhaHash);
+
+                int count = (int)cmd.ExecuteScalar();
+
+                return count > 0;
+            }
+        }
+
+        public void AtualizarSenha(
+    int usuarioId,
+    string novaSenhaHash)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            UPDATE Usuarios
+            SET Senha = @Senha
+            WHERE Id = @Id";
+
+                SqlCommand cmd =
+                    new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue(
+                    "@Senha",
+                    novaSenhaHash
+                );
+
+                cmd.Parameters.AddWithValue(
+                    "@Id",
+                    usuarioId
+                );
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
     }
 
 }

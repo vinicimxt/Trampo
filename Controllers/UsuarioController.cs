@@ -3,6 +3,8 @@
     using Microsoft.AspNetCore.Mvc;
     using BD_TRAMPO;
     using Microsoft.Data.SqlClient;
+    using BD_TRAMPO.Models.ViewModels;
+
 
     public class UsuarioController : BaseController
     {
@@ -16,9 +18,7 @@
         }
 
         [HttpPost]
-        public IActionResult Cadastrar(
-    string nome, string email, string senha, string tipo,
-    string tipoDocumento, string documento, string telefone, string contato)
+        public IActionResult Cadastrar(string nome, string email, string senha, string tipo, string tipoDocumento, string documento, string telefone, string contato)
         {
             UsuarioDAO usuarioDAO = new UsuarioDAO();
 
@@ -147,6 +147,149 @@
 
             return View();
         }
+
+        public IActionResult Perfil()
+        {
+            var proteger = Proteger();
+
+            if (proteger != null)
+                return proteger;
+
+            int usuarioId =
+                int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            ProfissionalDAO profDAO = new ProfissionalDAO();
+
+            var usuario = usuarioDAO.BuscarPorId(usuarioId);
+
+            if (usuario == null)
+                return RedirectToAction("Login");
+
+            var vm = new PerfilViewModel
+            {
+                UsuarioId = usuario.Id,
+                Nome = usuario.Nome,
+                Email = usuario.Email,
+                Telefone = usuario.Telefone,
+                Tipo = usuario.Tipo
+            };
+
+            // se for profissional
+            if (usuario.Tipo == "profissional")
+            {
+                int profissionalId =
+                    profDAO.BuscarPorUsuario(usuarioId);
+
+                var profissional =
+                    profDAO.BuscarPorId(profissionalId);
+
+                if (profissional != null)
+                {
+                    vm.ContatoPublico =
+                        profissional.Contato;
+                }
+            }
+
+            return View(vm);
+        }
+
+        public IActionResult MinhaConta()
+        {
+            var proteger = Proteger();
+
+            if (proteger != null)
+                return proteger;
+
+            int usuarioId =
+                int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            UsuarioDAO dao = new UsuarioDAO();
+
+            var usuario = dao.BuscarPorId(usuarioId);
+
+            return View(usuario);
+        }
+
+        [HttpPost]
+        public IActionResult SalvarConta(string nome, string telefone, string contatoPublico, string senhaAtual, string novaSenha, string confirmarSenha)
+        {
+            var proteger = Proteger();
+
+            if (proteger != null)
+                return proteger;
+
+            int usuarioId =
+                int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            UsuarioDAO dao = new UsuarioDAO();
+
+            string tipo =
+                HttpContext.Session.GetString("UsuarioTipo");
+
+            // PROFISSIONAL
+            if (!string.IsNullOrWhiteSpace(tipo) &&
+                tipo.ToLower() == "profissional")
+            {
+                ProfissionalDAO profDAO = new ProfissionalDAO();
+
+                int profissionalId =
+                    profDAO.BuscarPorUsuario(usuarioId);
+
+                profDAO.AtualizarContato(
+                    profissionalId,
+                    contatoPublico
+                );
+            }
+
+            // CONTA DO USUÁRIO
+            dao.AtualizarConta(usuarioId, nome, telefone);
+
+            // ALTERAÇÃO DE SENHA
+            if (!string.IsNullOrWhiteSpace(novaSenha))
+            {
+                if (novaSenha != confirmarSenha)
+                {
+                    TempData["Erro"] =
+                        "A confirmação da senha não confere.";
+
+                    return RedirectToAction("Perfil");
+                }
+
+                string senhaAtualHash =
+                    Seguranca.GerarHash(senhaAtual);
+
+                bool senhaCorreta =
+                    dao.VerificarSenha(
+                        usuarioId,
+                        senhaAtualHash
+                    );
+
+                if (!senhaCorreta)
+                {
+                    TempData["Erro"] =
+                        "Senha atual incorreta.";
+
+                    return RedirectToAction("Perfil");
+                }
+
+                string novaSenhaHash =
+                    Seguranca.GerarHash(novaSenha);
+
+                dao.AtualizarSenha(
+                    usuarioId,
+                    novaSenhaHash
+                );
+            }
+
+            HttpContext.Session.SetString("UsuarioNome", nome);
+
+            TempData["Sucesso"] =
+                "Conta atualizada com sucesso.";
+
+            return RedirectToAction("Perfil");
+        }
+
 
 
     }

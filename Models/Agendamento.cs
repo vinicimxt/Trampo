@@ -20,6 +20,10 @@
         public string Atendimento { get; set; }
         public int? LocalId { get; set; }
         public string EnderecoLocal { get; set; } // só pra exibir
+        public string ContatoProfissional { get; set; }
+        public string ContatoCliente { get; set; }
+
+        // Usado para regra de négocio entre cliente e profissional
         public bool ConfirmadoProfissional { get; set; }
         public bool FinalizadoProfissional { get; set; }
         public bool ConfirmadoCliente { get; set; }

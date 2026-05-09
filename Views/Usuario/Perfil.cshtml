@@ -1,0 +1,234 @@
+@model BD_TRAMPO.Models.ViewModels.PerfilViewModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/PerfilUsuario.css?v=2" />
+}
+
+@{
+    string iniciais = "";
+    if (!string.IsNullOrWhiteSpace(Model.Nome))
+    {
+        var p = Model.Nome.Trim().Split(' ');
+        for (int i = 0; i < p.Length && i < 2; i++)
+            if (p[i].Length > 0) iniciais += char.ToUpper(p[i][0]);
+    }
+    if (string.IsNullOrEmpty(iniciais)) iniciais = "?";
+}
+
+<div class="perfil-usuario-page">
+
+    <!-- HERO -->
+    <div class="perfil-usuario-hero">
+        <div class="perfil-usuario-hero-dots"></div>
+        <div class="perfil-usuario-hero-inner">
+            <div>
+                <span class="perfil-usuario-hero-label">Minha conta</span>
+                <h1 class="perfil-usuario-hero-title">Meu Perfil</h1>
+                <p class="perfil-usuario-hero-sub">Gerencie suas informações pessoais e de segurança.</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;">
+                <div class="perfil-usuario-avatar">@iniciais</div>
+                <div>
+                    <div
+                        style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:6px;">
+                        @Model.Nome
+                    </div>
+                    @if (Model.Tipo == "profissional")
+                    {
+                        <span class="tipo-chip profissional">
+                            <span class="material-symbols-rounded" style="font-size:14px;">engineering</span>
+                            Profissional
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="tipo-chip cliente">
+                            <span class="material-symbols-rounded" style="font-size:14px;">person</span>
+                            Cliente
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORM -->
+    <form method="post" asp-action="SalvarConta" id="formPerfil">
+        <div class="perfil-usuario-main">
+
+            <!-- SEÇÃO: Informações pessoais -->
+            <div class="pcard">
+                <div class="pcard-header">
+                    <div class="pcard-header-icon">
+                        <span class="material-symbols-rounded">person</span>
+                    </div>
+                    <div>
+                        <div class="pcard-header-title">Informações pessoais</div>
+                        <div class="pcard-header-sub">Seu nome e dados de contato</div>
+                    </div>
+                </div>
+                <div class="pcard-body">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="nome">
+                                <span class="material-symbols-rounded">badge</span>
+                                Nome completo
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon">
+                                    <span class="material-symbols-rounded">person</span>
+                                </span>
+                                <input class="form-input" type="text" name="nome" id="nome" value="@Model.Nome"
+                                       placeholder="Seu nome completo" />
+                            </div>
+                            <span class="field-msg" id="nomeMsg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="telefone">
+                                <span class="material-symbols-rounded">call</span>
+                                Telefone
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon">
+                                    <span class="material-symbols-rounded">smartphone</span>
+                                </span>
+                                <input class="form-input" type="text" name="telefone" id="telefone"
+                                       value="@Model.Telefone" placeholder="(11) 91234-5678" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-rounded">mail</span>
+                            E-mail
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon">
+                                <span class="material-symbols-rounded">mail</span>
+                            </span>
+                            <input class="form-input" type="email" value="@Model.Email" disabled />
+                        </div>
+                        <span class="field-msg ok" style="display:flex;">
+                            <span class="material-symbols-rounded">lock</span>
+                            O e-mail não pode ser alterado
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Alterar senha -->
+            <div class="pcard pcard-senha">
+                <div class="pcard-header">
+                    <div class="pcard-header-icon">
+                        <span class="material-symbols-rounded">lock</span>
+                    </div>
+                    <div>
+                        <div class="pcard-header-title">Alterar senha</div>
+                        <div class="pcard-header-sub">Deixe em branco para não alterar</div>
+                    </div>
+                </div>
+                <div class="pcard-body">
+
+                    <div class="form-group">
+                        <label class="form-label" for="senhaAtual">Senha atual</label>
+                        <div class="password-wrap">
+                            <input class="form-input" type="password" name="senhaAtual" id="senhaAtual"
+                                   placeholder="Digite sua senha atual" />
+                            <button type="button" class="btn-toggle-pass" onclick="toggleSenha('senhaAtual', this)">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="novaSenha">Nova senha</label>
+                        <div class="password-wrap">
+                            <input class="form-input" type="password" name="novaSenha" id="novaSenha"
+                                   placeholder="Mínimo 8 caracteres" oninput="avaliarForca(this.value)" />
+                            <button type="button" class="btn-toggle-pass" onclick="toggleSenha('novaSenha', this)">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                        </div>
+                        <!-- barras de força -->
+                        <div class="senha-forca" id="forcaWrap" style="display:none;">
+                            <div class="forca-barras">
+                                <div class="forca-barra" id="b1"></div>
+                                <div class="forca-barra" id="b2"></div>
+                                <div class="forca-barra" id="b3"></div>
+                            </div>
+                            <span class="forca-label" id="forcaLabel">Fraca</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirmarSenha">Confirmar nova senha</label>
+                        <div class="password-wrap">
+                            <input class="form-input" type="password" name="confirmarSenha" id="confirmarSenha"
+                                   placeholder="Repita a nova senha" oninput="verificarConfirmacao()" />
+                            <button type="button" class="btn-toggle-pass" onclick="toggleSenha('confirmarSenha', this)">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                        </div>
+                        <span class="field-msg" id="confirmarMsg"></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Contato público (só profissional) -->
+            @if (Model.Tipo == "profissional")
+            {
+                <div class="pcard">
+                    <div class="pcard-header">
+                        <div class="pcard-header-icon"
+                             style="background:var(--accent-soft);border-color:rgba(0,212,170,0.22);color:#007a62;">
+                            <span class="material-symbols-rounded">public</span>
+                        </div>
+                        <div>
+                            <div class="pcard-header-title">Contato público</div>
+                            <div class="pcard-header-sub">Aparece no seu perfil visível para clientes</div>
+                        </div>
+                    </div>
+                    <div class="pcard-body">
+                        <div class="form-group">
+                            <label class="form-label" for="contatoPublico">
+                                <span class="material-symbols-rounded">alternate_email</span>
+                                WhatsApp, Instagram ou link
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon">
+                                    <span class="material-symbols-rounded">link</span>
+                                </span>
+                                <input class="form-input" type="text" name="contatoPublico" id="contatoPublico"
+                                       value="@Model.ContatoPublico"
+                                       placeholder="(11) 99999-9999 ou instagram.com/seuperfil" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- RODAPÉ: botão salvar -->
+            <div class="form-footer">
+                <span class="form-footer-note">
+                    <span class="material-symbols-rounded">shield</span>
+                    Suas informações são armazenadas com segurança
+                </span>
+                <button type="submit" class="btn-salvar">
+                    <span class="material-symbols-rounded">save</span>
+                    Salvar alterações
+                </button>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+@section Scripts {
+        <script src="~/js/PerfilUsuario.js"></script>
+    }

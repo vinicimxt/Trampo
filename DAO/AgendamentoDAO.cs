@@ -116,8 +116,11 @@ namespace BD_TRAMPO
                 A.Descricao,
                 A.EnderecoCliente,
                 A.LocalId,
+                
 
                 U.Nome AS ProfissionalNome,
+                P.Contato AS ContatoProfissional,
+                U.Telefone AS TelefoneProfissional,
                 S.Nome AS Servico,
                 SC.Nome AS Subcategoria,
                 S.LinkOnline,
@@ -180,6 +183,11 @@ namespace BD_TRAMPO
                         EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
                             ? reader["EnderecoLocal"].ToString() : "",
 
+                        ContatoProfissional =
+                            reader["ContatoProfissional"] != DBNull.Value
+                            ? reader["ContatoProfissional"].ToString()
+                            : reader["TelefoneProfissional"]?.ToString(),
+
                         JaAvaliado = reader["JaAvaliado"] != DBNull.Value && (int)reader["JaAvaliado"] == 1,
                     });
                 }
@@ -200,6 +208,7 @@ namespace BD_TRAMPO
                 SELECT 
                     A.*,
                     U.Nome AS NomeCliente,
+                    U.Telefone AS ContatoCliente,
                     S.Nome AS Servico, 
                     S.LinkOnline,
                     S.Atendimento,
@@ -236,19 +245,24 @@ namespace BD_TRAMPO
                         ConfirmadoCliente = reader["ConfirmadoCliente"] != DBNull.Value && (bool)reader["ConfirmadoCliente"],
 
                         Descricao = reader["Descricao"] != DBNull.Value
-                        ? reader["Descricao"].ToString()
-                        : "",
+                            ? reader["Descricao"].ToString()
+                            : "",
                         Servico = reader["Servico"].ToString(),
                         Subcategoria = reader["Subcategoria"] != DBNull.Value
-                        ? reader["Subcategoria"].ToString()
-                        : "",
+                            ? reader["Subcategoria"].ToString()
+                            : "",
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
-                        ? reader["EnderecoCliente"].ToString()
-                        : "",
+                            ? reader["EnderecoCliente"].ToString()
+                            : "",
+
+                        ContatoCliente =
+                            reader["ContatoCliente"] != DBNull.Value
+                            ? reader["ContatoCliente"].ToString()
+                            : "",
 
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
-                        ? reader["LinkOnline"].ToString()
-                        : null,
+                            ? reader["LinkOnline"].ToString()
+                            : null,
 
                         Atendimento = reader["Atendimento"].ToString(),
 
@@ -272,12 +286,30 @@ namespace BD_TRAMPO
                     A.*,
                     C.UsuarioId,
                     S.Atendimento,
+                    P.Contato AS ContatoProfissional,
+                    UProf.Telefone AS TelefoneProfissional,
+                    UCli.Telefone AS ContatoCliente,
                     S.LinkOnline,
                     L.Endereco AS EnderecoLocal
-                FROM Agendamentos A
-                LEFT JOIN Clientes C ON A.ClienteId = C.Id
-                INNER JOIN Servicos S ON A.ServicoId = S.Id
-                LEFT JOIN Locais L ON A.LocalId = L.Id
+              FROM Agendamentos A
+              
+                    LEFT JOIN Clientes C 
+                        ON A.ClienteId = C.Id
+
+                    LEFT JOIN Usuarios UCli 
+                        ON C.UsuarioId = UCli.Id
+
+                    LEFT JOIN Profissionais P 
+                        ON A.ProfissionalId = P.Id
+
+                    LEFT JOIN Usuarios UProf 
+                        ON P.UsuarioId = UProf.Id
+
+                    INNER JOIN Servicos S 
+                        ON A.ServicoId = S.Id
+
+                    LEFT JOIN Locais L 
+                        ON A.LocalId = L.Id
                 WHERE A.Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -299,6 +331,15 @@ namespace BD_TRAMPO
                         Hora = (TimeSpan)reader["Hora"],
                         Status = reader["Status"].ToString(),
 
+                        ContatoProfissional =
+                            reader["ContatoProfissional"] != DBNull.Value
+                            ? reader["ContatoProfissional"].ToString()
+                            : reader["TelefoneProfissional"]?.ToString(),
+
+                        ContatoCliente =
+                            reader["ContatoCliente"] != DBNull.Value
+                            ? reader["ContatoCliente"].ToString()
+                            : "",
 
                         ConfirmadoProfissional = (bool)reader["ConfirmadoProfissional"],
                         FinalizadoProfissional = (bool)reader["FinalizadoProfissional"],

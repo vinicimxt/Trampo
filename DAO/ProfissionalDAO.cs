@@ -183,23 +183,25 @@ namespace BD_TRAMPO
             }
         }
 
-        public void AtualizarContato(int usuarioId, string contato)
+        public void AtualizarContato(int profissionalId,string contato)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
             UPDATE Profissionais
             SET Contato = @Contato
-            WHERE UsuarioId = @UsuarioId";
+            WHERE Id = @Id";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlCommand cmd =
+                    new SqlCommand(query, conn);
 
-                cmd.Parameters.AddWithValue("@Contato",
+                cmd.Parameters.AddWithValue(
+                    "@Contato",
                     string.IsNullOrWhiteSpace(contato)
                     ? DBNull.Value
                     : contato);
 
-                cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+                cmd.Parameters.AddWithValue("@Id", profissionalId);
 
                 cmd.ExecuteNonQuery();
             }

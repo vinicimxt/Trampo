@@ -2,6 +2,7 @@ using BD_TRAMPO.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
+
 namespace BD_TRAMPO.Controllers
 {
     public class HomeController : BaseController

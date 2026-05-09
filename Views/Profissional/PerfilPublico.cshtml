@@ -62,6 +62,10 @@
         : "0";
 }
 
+
+
+
+
 <div class="perfil-page">
 
     <!-- =============================================
@@ -312,12 +316,16 @@
     {
         icone = "fa-brands fa-instagram";
 
+        if (!contatoExibido.StartsWith("http"))
+        {
+            linkContato = "https://" + contatoExibido;
+        }
+
         textoContato = contatoExibido
             .Replace("https://instagram.com/", "@")
             .Replace("https://www.instagram.com/", "@")
+            .Replace("instagram.com/", "@")
             .TrimEnd('/');
-
-        linkContato = contatoExibido;
     }
 
     // WHATSAPP
@@ -326,20 +334,34 @@
         contatoLower.Contains("whatsapp"))
     {
         icone = "fa-brands fa-whatsapp";
+
         textoContato = "WhatsApp";
+
+        if (!contatoExibido.StartsWith("http"))
+        {
+            linkContato = "https://" + contatoExibido;
+        }
     }
 
     // TELEGRAM
     else if (contatoLower.Contains("t.me"))
     {
         icone = "fa-brands fa-telegram";
+
         textoContato = "Telegram";
+
+        if (!contatoExibido.StartsWith("http"))
+        {
+            linkContato = "https://" + contatoExibido;
+        }
     }
 
     // EMAIL
     else if (contatoLower.Contains("@"))
     {
         icone = "fa-solid fa-envelope";
+
+        linkContato = "mailto:" + contatoExibido;
     }
 }
 
@@ -363,7 +385,8 @@
                     contatoLower.Contains("instagram.com") ||
                     contatoLower.Contains("wa.me") ||
                     contatoLower.Contains("whatsapp") ||
-                    contatoLower.Contains("t.me"))
+                    contatoLower.Contains("t.me") ||
+                    contatoLower.Contains("@"))
                 {
                     <a href="@linkContato"
                        target="_blank"

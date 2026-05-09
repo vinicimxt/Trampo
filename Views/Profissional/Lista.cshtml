@@ -102,9 +102,13 @@
                     <div class="profissional-row">
                         <div class="profissional-avatar">
                             @(item.NomeProfissional?.Length > 0
-                                ? string.Concat(item.NomeProfissional.Split(' ')
-                                    .Take(2).Select(p => p[0].ToString().ToUpper()))
-                                : "?")
+                            ? string.Concat(
+                                item.NomeProfissional
+                                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                    .Take(2)
+                                    .Select(p => p[0].ToString().ToUpper())
+                                )
+                            : "?")
                         </div>
                         <span class="profissional-name">@item.NomeProfissional</span>
                     </div>
