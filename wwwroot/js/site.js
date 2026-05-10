@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let ticking = false;
 
     window.addEventListener("scroll", () => {
+
         if (!ticking) {
+
             window.requestAnimationFrame(() => {
 
                 const scrollY = window.scrollY;
@@ -26,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (navbar) {
                         navbar.classList.add("scrolled");
-                        // REMOVE o blur daqui se quiser performance
                     }
 
                 } else {
@@ -38,6 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (navbar) {
                         navbar.classList.remove("scrolled");
                     }
+
+                }
+
+                // BOTÃO TOP
+                if (btnTop) {
+
+                    if (scrollY > window.innerHeight * 0.5) {
+                        btnTop.classList.add("show");
+                    } else {
+                        btnTop.classList.remove("show");
+                    }
+
                 }
 
                 ticking = false;
@@ -46,15 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             ticking = true;
         }
+
     });
-    // BOTÃO
-    if (btnTop) {
-        if (scrollY > window.innerHeight * 0.5) {
-            btnTop.classList.add("show");
-        } else {
-            btnTop.classList.remove("show");
-        }
-    }
 
     // CLICK
     if (btnTop) {

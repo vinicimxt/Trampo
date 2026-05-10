@@ -26,5 +26,16 @@ namespace BD_TRAMPO.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public IActionResult Termos()
+        {
+            return View();
+        }
+
+        public IActionResult Privacidade()
+        {
+            return View();
+        }
+
+     
     }
 }

@@ -219,6 +219,7 @@ SELECT * FROM Locais;
 SELECT * FROM Avaliacoes;
 SELECT * FROM Notificacoes;
 
+/* 
 ALTER TABLE Servicos
 DROP COLUMN Contato;
 
@@ -228,4 +229,4 @@ ADD Contato varchar (255) NULL;
 ALTER TABLE Profissionais
 DROP COLUMN Contato ;
 
-/* DELETE FROM Notificacoes WHERE ReferenciaId IS NULL */
+DELETE FROM Notificacoes WHERE ReferenciaId IS NULL */

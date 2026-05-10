@@ -137,15 +137,19 @@
 
         </header>
         
-        <main>
-            @RenderBody()
-        </main>
 
-        <button id="btnTop" class="btn-top">
-            ↑
-        </button>
+    <main>
+        @RenderBody()
+    </main>
 
-        <script src="~/js/site.js"></script>
+    @await Html.PartialAsync("_Footer")
+
+    <button id="btnTop" class="btn-top">
+        ↑
+    </button>
+
+    <script src="~/js/site.js"></script>
+
 
         @if (TempData["Sucesso"] != null)
         {
@@ -165,6 +169,7 @@
             </script>
         }
 
+        
 
         @RenderSection("Scripts", required: false)
 
@@ -178,6 +183,8 @@
                 <div class="modal-body"></div>
             </div>
         </div>
+
+        
 
     </body>
 

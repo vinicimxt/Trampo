@@ -184,7 +184,7 @@
 .date-input {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid var(--border);
+    border: 1.5px solid #2d2f33;
     border-radius: var(--radius-md);
     font-family: 'DM Sans', sans-serif;
     font-size: 0.95rem;
@@ -329,7 +329,7 @@
 .descricao-input {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid var(--border);
+    border: 1.5px solid #2d2f33;
     border-radius: var(--radius-md);
     font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
@@ -373,7 +373,7 @@
 .agend-input {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid var(--border);
+    border: 1.5px solid #2d2f33;
     border-radius: var(--radius-md);
     font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;

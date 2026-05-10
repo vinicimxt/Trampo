@@ -248,7 +248,7 @@
 .form-input {
     width: 100%;
     padding: 11px 14px;
-    border: 1.5px solid var(--border);
+    border: 1.5px solid #2d2f33;
     border-radius: var(--radius-md);
     font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
@@ -257,6 +257,8 @@
     outline: none;
     transition: var(--transition);
 }
+
+
 
 .form-input::placeholder {
     color: #aab4cc;

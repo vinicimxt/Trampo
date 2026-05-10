@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #90b9ec ;
+}
+
+/* container central */
+.suporte-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+/* card do formulário */
+form {
+    width: 450px;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.10);
+    border: 1px solid #e9edf3ef;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* resto continua igual... */
+form h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #222;
+}
+
+form p {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Labels */
+label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Inputs */
+input, select, textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #3b3d3f;
+    background: #f8fafc;
+    font-size: 14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #4a90e2;
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74,144,226,0.15);
+}
+
+/* Textarea maior */
+textarea {
+    min-height: 120px;
+    resize: none;
+}
+
+/* Botão */
+button {
+    margin-top: 10px;
+    padding: 12px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #357bd8;
+}
+
+/* Responsivo */
+@media (max-width: 500px) {
+    form {
+        width: 90%;
+        margin: 40px auto;
+    }
+}

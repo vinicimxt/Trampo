@@ -1,0 +1,30 @@
+@section Styles {
+    <link rel="stylesheet" href="~/css/Suporte.css?v=4" />
+}
+
+
+
+<div class="suporte-container">
+
+    <form method="post" action="/Suporte/Enviar">
+        <h2>Suporte</h2>
+        <p>Descreva seu problema e te ajudamos</p>
+
+        <label>Tipo</label>
+        <select name="tipo">
+            <option>Dúvida</option>
+            <option>Problema com agendamento</option>
+            <option>Cancelamento</option>
+            <option>Outro</option>
+        </select>
+
+        <label>Assunto</label>
+        <input type="text" name="assunto" />
+
+        <label>Mensagem</label>
+        <textarea name="mensagem"></textarea>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+</div>

@@ -1,0 +1,135 @@
+<footer id="footer" class="footer">
+    <div class="container-ap">
+
+        <div class="footer-top">
+
+            <!-- Marca -->
+            <div>
+                <div class="footer-brand-name">
+                    <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo" class="logo-img" />
+                    Tram<span>po</span>
+                </div>
+                <p class="footer-brand-desc">
+                    A plataforma que conecta você aos melhores profissionais e serviços da sua cidade.
+                    Rápido, seguro e confiável.
+                </p>
+                <div class="footer-social">
+                    <a href="/#" aria-label="Instagram">
+                        <span class="material-symbols-rounded">photo_camera</span>
+                    </a>
+
+                    <a href="/#" aria-label="Facebook">
+                        <span class="material-symbols-rounded">thumb_up</span>
+                    </a>
+
+                    <a href="/#" aria-label="LinkedIn">
+                        <span class="material-symbols-rounded">work</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Plataforma -->
+            <div>
+                <div class="footer-col-title">Plataforma</div>
+                <ul class="footer-col-links">
+                    <li><a href="/#home">Início</a></li>
+                    <li><a href="/#services">Explorar serviços</a></li>
+                    <li><a href="/#how">Como funciona</a></li>
+                    <li><a href="/#pros">Para profissionais</a></li>
+                    <li><a href="/#reviews">Avaliações</a></li>
+                </ul>
+            </div>
+
+            <!-- Empresa -->
+            <div>
+                <div class="footer-col-title">Empresa</div>
+                <ul class="footer-col-links">
+                    <li><a href="/#about">Sobre nós</a></li>
+                    <li><a asp-controller="Home" asp-action="Termos">
+                        Termos de uso
+                    </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Home" asp-action="Privacidade">
+                            Privacidade
+                        </a>>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contato + Newsletter -->
+            <div>
+                <div class="footer-col-title">Contato</div>
+
+                <div class="footer-contact-item">
+                    <div class="footer-contact-icon">
+                        <span class="material-symbols-rounded">mail</span>
+                    </div>
+                    <div class="footer-contact-text">
+                        <strong>E-mail</strong>
+                        contato@trampo.com.br
+                    </div>
+                </div>
+
+                <div class="footer-contact-item">
+                    <div class="footer-contact-icon">
+                        <span class="material-symbols-rounded">call</span>
+                    </div>
+                    <div class="footer-contact-text">
+                        <strong>Suporte</strong>
+                        (11) 4000-1234
+                    </div>
+                </div>
+
+                <div class="footer-contact-item">
+                    <div class="footer-contact-icon">
+                        <span class="material-symbols-rounded">location_on</span>
+                    </div>
+                    <div class="footer-contact-text">
+                        <strong>Localização</strong>
+                        São Paulo, SP — Brasil
+                    </div>
+                </div>
+
+                <!-- RECEBER NOTÍCIAS-->
+
+               <!-- <div style="margin-top:20px;">
+                    <div class="footer-newsletter-label">Receba novidades no seu e-mail</div>
+                    <div class="footer-newsletter-form">
+                        <input type="email" placeholder="seu@email.com" />
+                        <button type="button" aria-label="Inscrever">
+                            <span class="material-symbols-rounded">send</span>
+                        </button>
+                    </div>
+                </div>-->
+
+
+            </div>
+
+        </div>
+
+        <!-- Rodapé inferior -->
+        <div class="footer-bottom">
+            <p class="footer-copy">© 2026 Trampo — Todos os direitos reservados</p>
+            <div class="footer-links">
+                <a asp-controller="Home" asp-action="Termos">
+                    Termos de uso
+                </a>
+
+                <a asp-controller="Home" asp-action="Privacidade">
+                    Privacidade
+                </a>
+
+                <!-- <a href="/#">Cookies</a> -->
+                <a asp-controller="Suporte" asp-action="ContatoAjuda">
+                    Suporte
+                </a>
+            </div>
+            <div class="footer-made">
+                🇧🇷 São Paulo - Brasil
+            </div>
+        </div>
+
+    </div>
+</footer>

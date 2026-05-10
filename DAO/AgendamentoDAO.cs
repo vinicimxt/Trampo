@@ -10,8 +10,6 @@ namespace BD_TRAMPO
         public int Inserir(Agendamento ag)
         {
 
-
-
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
