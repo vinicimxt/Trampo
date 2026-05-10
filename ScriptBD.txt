@@ -1,7 +1,10 @@
 USE master;
 GO
 
+
 ALTER DATABASE Xamou SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO 
+
 DROP DATABASE IF EXISTS Xamou;
 GO
 
@@ -12,20 +15,20 @@ USE Xamou;
 GO
 
 -- DROP TABLES 
-DROP TABLE IF EXISTS Avaliacoes;
-DROP TABLE IF EXISTS Agendamentos;
-DROP TABLE IF EXISTS Disponibilidade;
+DROP TABLE IF EXISTS Avaliacoes; 
+DROP TABLE IF EXISTS Agendamentos; 
+DROP TABLE IF EXISTS Disponibilidade; 
 DROP TABLE IF EXISTS Servicos;
-DROP TABLE IF EXISTS Locais;
-DROP TABLE IF EXISTS Subcategorias;
-DROP TABLE IF EXISTS Categorias;
-DROP TABLE IF EXISTS Clientes;
+DROP TABLE IF EXISTS Locais; 
+DROP TABLE IF EXISTS Subcategorias; 
+DROP TABLE IF EXISTS Categorias; 
+DROP TABLE IF EXISTS Clientes; 
 DROP TABLE IF EXISTS Profissionais;
-DROP TABLE IF EXISTS Usuarios;
+DROP TABLE IF EXISTS Usuarios; 
 DROP TABLE IF EXISTS Notificacoes;
 
 -- =============================
--- TABELAS
+-- USUÁRIOS BASE
 -- =============================
 
 CREATE TABLE Usuarios (
@@ -34,8 +37,6 @@ CREATE TABLE Usuarios (
     Email VARCHAR(100) UNIQUE NOT NULL,
     Senha VARCHAR(255) NOT NULL,
     Tipo VARCHAR(20) NOT NULL,
-
-    -- telefone do cadastro/login
     Telefone VARCHAR(20) NULL
 );
 
@@ -43,31 +44,24 @@ CREATE TABLE Clientes (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT NOT NULL UNIQUE,
     BloqueadoAte DATETIME NULL,
-
     FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Profissionais (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT NOT NULL UNIQUE,
-
-    TipoDocumento VARCHAR(10), -- CPF ou CNPJ
+    TipoDocumento VARCHAR(10),
     Documento VARCHAR(20),
-
-    -- CONTATO PÚBLICO DO PROFISSIONAL
-    -- esse será usado no perfil público
-    Contato VARCHAR(100) NULL,
-
+    Contato VARCHAR(255) NULL,
     FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE CASCADE
 );
 
-
-
--- UNIQUE apenas para CPF
 CREATE UNIQUE INDEX UX_Profissional_CPF
 ON Profissionais(Documento)
 WHERE TipoDocumento = 'CPF';
 
+-- =============================
+-- CATEGORIAS
 -- =============================
 
 CREATE TABLE Categorias (
@@ -79,16 +73,18 @@ CREATE TABLE Subcategorias (
     Id INT PRIMARY KEY IDENTITY,
     Nome VARCHAR(100) NOT NULL,
     CategoriaId INT NOT NULL,
-
     FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id) ON DELETE CASCADE
 );
+
+-- =============================
+-- ESTRUTURA DO PROFISSIONAL
+-- =============================
 
 CREATE TABLE Locais (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
     Nome VARCHAR(100),
     Endereco VARCHAR(255) NOT NULL,
-
     FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE
 );
 
@@ -96,35 +92,59 @@ CREATE TABLE Servicos (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
     SubcategoriaId INT NOT NULL,
-    LocalId INT NULL,
-
     Nome NVARCHAR(100) NOT NULL,
     Descricao NVARCHAR(255),
-
-    -- Contato VARCHAR(100) NULL,
-
     Atendimento VARCHAR(50),
     LinkOnline VARCHAR(255) NULL,
+    Ativo BIT DEFAULT 1,
 
     FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE,
-    FOREIGN KEY (SubcategoriaId) REFERENCES Subcategorias(Id),
+    FOREIGN KEY (SubcategoriaId) REFERENCES Subcategorias(Id)
+);
+
+CREATE TABLE ServicoLocais (
+    Id INT PRIMARY KEY IDENTITY,
+    ServicoId INT NOT NULL,
+    LocalId INT NOT NULL,
+    FOREIGN KEY (ServicoId) REFERENCES Servicos(Id) ON DELETE CASCADE,
     FOREIGN KEY (LocalId) REFERENCES Locais(Id)
 );
 
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
+
     ProfissionalId INT NOT NULL,
+    ServicoId INT NOT NULL,
 
     DiaSemana INT NOT NULL,
     HoraInicio TIME NOT NULL,
     HoraFim TIME NOT NULL,
 
+    Ativo BIT NOT NULL DEFAULT 1,
+
+    FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id),
+
+    FOREIGN KEY (ServicoId)
+        REFERENCES Servicos(Id)
+);
+
+CREATE TABLE BloqueiosAgenda (
+    Id INT PRIMARY KEY IDENTITY,
+    ProfissionalId INT NOT NULL,
+    Data DATE NOT NULL,
+    HoraInicio TIME NOT NULL,
+    HoraFim TIME NOT NULL,
+    Motivo VARCHAR(255),
     FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE
 );
 
+-- =============================
+-- AGENDAMENTOS
+-- =============================
+
 CREATE TABLE Agendamentos (
     Id INT PRIMARY KEY IDENTITY,
-
     ClienteId INT NOT NULL,
     ProfissionalId INT NOT NULL,
     ServicoId INT NOT NULL,
@@ -148,6 +168,10 @@ CREATE TABLE Agendamentos (
     FOREIGN KEY (LocalId) REFERENCES Locais(Id)
 );
 
+-- =============================
+-- AVALIAÇÕES
+-- =============================
+
 CREATE TABLE Avaliacoes (
     Id INT PRIMARY KEY IDENTITY,
     ProfissionalId INT NOT NULL,
@@ -162,20 +186,39 @@ CREATE TABLE Avaliacoes (
     FOREIGN KEY (AgendamentoId) REFERENCES Agendamentos(Id)
 );
 
+CREATE UNIQUE INDEX UX_Avaliacao_Agendamento
+ON Avaliacoes(AgendamentoId);
+
+-- =============================
+-- SUPORTE
+-- =============================
+
+CREATE TABLE ContatoSuporte (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UsuarioId INT NOT NULL,
+    Tipo VARCHAR(50) NOT NULL,
+    Assunto VARCHAR(150) NOT NULL,
+    Mensagem TEXT NOT NULL,
+    Status VARCHAR(30) NOT NULL DEFAULT 'Aberto',
+    DataCriacao DATETIME NOT NULL DEFAULT GETDATE(),
+
+    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+);
+
+-- =============================
+-- NOTIFICAÇÕES
+-- =============================
+
 CREATE TABLE Notificacoes (
     Id INT PRIMARY KEY IDENTITY,
     UsuarioId INT,
     Titulo NVARCHAR(100),
     Mensagem NVARCHAR(255),
-    Tipo NVARCHAR(50), -- "Agendamento", "Cancelamento"
-    ReferenciaId INT, -- id do agendamento 
+    Tipo NVARCHAR(50),
+    ReferenciaId INT,
     Lida BIT DEFAULT 0,
     DataCriacao DATETIME DEFAULT GETDATE()
 );
-
--- evita avaliar 2x o mesmo serviço
-CREATE UNIQUE INDEX UX_Avaliacao_Agendamento
-ON Avaliacoes(AgendamentoId);
 
 -- =============================
 -- DADOS INICIAIS
@@ -202,10 +245,9 @@ INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
 ('Fotografia', 5),
 ('Buffet', 5);
 
-ALTER TABLE Servicos 
-ADD Ativo BIT NOT NULL DEFAULT 1;
-
+-- =============================
 -- DEBUG
+-- =============================
 
 SELECT * FROM Usuarios;
 SELECT * FROM Clientes;
@@ -218,15 +260,8 @@ SELECT * FROM Agendamentos;
 SELECT * FROM Locais;
 SELECT * FROM Avaliacoes;
 SELECT * FROM Notificacoes;
+SELECT * FROM ContatoSuporte;
 
-/* 
-ALTER TABLE Servicos
-DROP COLUMN Contato;
 
-ALTER TABLE Profissionais
-ADD Contato varchar (255) NULL;
-
-ALTER TABLE Profissionais
-DROP COLUMN Contato ;
-
-DELETE FROM Notificacoes WHERE ReferenciaId IS NULL */
+ALTER TABLE Disponibilidade
+ADD Ativo BIT NOT NULL DEFAULT 1;

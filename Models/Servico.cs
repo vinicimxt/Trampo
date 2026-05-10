@@ -17,6 +17,11 @@ namespace BD_TRAMPO
         public string LinkOnline { get; set; }
         public bool Ativo { get; set; }
         public string? NomeProfissional { get; set; }
+        public string DisponibilidadeTexto { get; set; }
+        public int? DiaSemana { get; set; }
+        public string DiasTexto { get; set; }
+        public TimeSpan? HoraInicio { get; set; }
+        public TimeSpan? HoraFim { get; set; }
     }
 
 }

@@ -132,6 +132,14 @@
                         {
                             <span class="chip chip-online">💻 Online</span>
                         }
+                        @if (item.HoraInicio.HasValue && item.HoraFim.HasValue)
+                        {
+                            <span class="chip">
+                                🕒 @item.HoraInicio.Value.ToString(@"hh\:mm")
+                                às
+                                @item.HoraFim.Value.ToString(@"hh\:mm")
+                            </span>
+                        }
                     </div>
 
                     <!-- Footer do card -->

@@ -7,28 +7,48 @@ namespace BD_TRAMPO
     {
         private Conexao conexao = new Conexao();
 
-        public void Inserir(Servico s)
+        public int Inserir(Servico s)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = @"INSERT INTO Servicos 
-            (ProfissionalId, SubcategoriaId, Nome, Descricao, Atendimento, LinkOnline, LocalId)
-            VALUES 
-            (@ProfissionalId,@SubcategoriaId, @Nome, @Descricao, @Atendimento,   @LinkOnline,@LocalId)";
+                string query = @"
+        INSERT INTO Servicos
+        (ProfissionalId, SubcategoriaId, Nome, Descricao,
+         Atendimento, LinkOnline, LocalId)
+
+        VALUES
+        (@ProfissionalId, @SubcategoriaId, @Nome, @Descricao,
+         @Atendimento, @LinkOnline, @LocalId);
+
+        SELECT SCOPE_IDENTITY();
+        ";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@ProfissionalId", s.ProfissionalId);
-                cmd.Parameters.AddWithValue("@Nome", s.Nome);
                 cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
-                cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@LinkOnline",
-                string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
-                cmd.Parameters.AddWithValue("@LocalId",
-                s.LocalId.HasValue ? (object)s.LocalId : DBNull.Value);
+                cmd.Parameters.AddWithValue("@Nome", s.Nome);
 
-                cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue("@Descricao",
+                    string.IsNullOrEmpty(s.Descricao)
+                    ? (object)DBNull.Value
+                    : s.Descricao);
+
+                cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento);
+
+                cmd.Parameters.AddWithValue("@LinkOnline",
+                    string.IsNullOrEmpty(s.LinkOnline)
+                    ? (object)DBNull.Value
+                    : s.LinkOnline);
+
+                cmd.Parameters.AddWithValue("@LocalId",
+                    s.LocalId.HasValue
+                    ? (object)s.LocalId
+                    : DBNull.Value);
+
+                int idGerado = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return idGerado;
             }
         }
 
@@ -56,7 +76,7 @@ namespace BD_TRAMPO
         INNER JOIN Usuarios u ON p.UsuarioId = u.Id
         INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
         INNER JOIN Categorias c ON sc.CategoriaId = c.Id
-        LEFT JOIN Locais l ON s.LocalId = l.Id"; 
+        LEFT JOIN Locais l ON s.LocalId = l.Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -264,34 +284,56 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        SELECT 
-            s.Id,
-            s.Nome,
-            s.ProfissionalId,
-            s.Descricao,
-            s.Atendimento,
-            s.LinkOnline,
-            u.Nome AS NomeProfissional,
-            sc.Nome AS Subcategoria,
-            c.Nome AS Categoria,
-            l.Endereco
-        FROM Servicos s
-        INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
-        INNER JOIN Usuarios u ON p.UsuarioId = u.Id
-        INNER JOIN Subcategorias sc ON s.SubcategoriaId = sc.Id
-        INNER JOIN Categorias c ON sc.CategoriaId = c.Id
-        LEFT JOIN Locais l ON s.LocalId = l.Id
-        WHERE 
-            (@busca IS NULL OR 
-                s.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%' OR
-                u.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%')
-        AND
-            (@localizacao IS NULL OR 
-                l.Endereco COLLATE Latin1_General_CI_AI LIKE '%' + @localizacao + '%')
+                SELECT 
+                    s.Id,
+                    s.Nome,
+                    s.ProfissionalId,
+                    s.Descricao,
+                    s.Atendimento,
+                    s.LinkOnline,
+
+                    u.Nome AS NomeProfissional,
+                    sc.Nome AS Subcategoria,
+                    c.Nome AS Categoria,
+                    l.Endereco,
+
+                    d.HoraInicio,
+                    d.HoraFim
+
+                FROM Servicos s
+
+                INNER JOIN Profissionais p 
+                    ON s.ProfissionalId = p.Id
+
+                INNER JOIN Usuarios u 
+                    ON p.UsuarioId = u.Id
+
+                INNER JOIN Subcategorias sc 
+                    ON s.SubcategoriaId = sc.Id
+
+                INNER JOIN Categorias c 
+                    ON sc.CategoriaId = c.Id
+
+                LEFT JOIN Locais l 
+                    ON s.LocalId = l.Id
+
+                LEFT JOIN Disponibilidade d
+                    ON d.ServicoId = s.Id
+                    AND d.Ativo = 1
+
+                WHERE 
+                    (@busca IS NULL OR 
+                        s.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%' OR
+                        u.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%')
+
                 AND
-            (@categoria IS NULL OR 
-                c.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @categoria + '%')
-        ";
+                    (@localizacao IS NULL OR 
+                        l.Endereco COLLATE Latin1_General_CI_AI LIKE '%' + @localizacao + '%')
+
+                AND
+                    (@categoria IS NULL OR 
+                        c.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @categoria + '%')
+                ";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -323,7 +365,14 @@ namespace BD_TRAMPO
                             : null,
                         Endereco = reader["Endereco"] != DBNull.Value
                             ? reader["Endereco"].ToString()
-                            : ""
+                            : "",
+                        HoraInicio = reader["HoraInicio"] != DBNull.Value
+                            ? (TimeSpan?)reader["HoraInicio"]
+                            : null,
+
+                        HoraFim = reader["HoraFim"] != DBNull.Value
+                            ? (TimeSpan?)reader["HoraFim"]
+                            : null,
                     });
                 }
             }
@@ -337,39 +386,30 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                //  busca o original
-                Servico original = BuscarPorId(s.Id);
-
                 string query = @"
-            UPDATE Servicos SET
-                Nome = @Nome,
-                Descricao = @Descricao,
-                Atendimento = @Atendimento,
-                LocalId = @LocalId,
-                LinkOnline = @LinkOnline,
-                SubcategoriaId = @SubcategoriaId
-            WHERE Id = @Id
-        ";
+        UPDATE Servicos SET
+            Nome = @Nome,
+            Descricao = @Descricao,
+            Atendimento = @Atendimento,
+            LocalId = @LocalId,
+            LinkOnline = @LinkOnline,
+            SubcategoriaId = @SubcategoriaId,
+        WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@Id", s.Id);
                 cmd.Parameters.AddWithValue("@Nome", s.Nome);
                 cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento);
+                cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
 
-                // LOCAL
                 cmd.Parameters.AddWithValue("@LocalId",
                     s.LocalId.HasValue ? (object)s.LocalId : DBNull.Value);
 
-                // LINK
                 cmd.Parameters.AddWithValue("@LinkOnline",
                     string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
 
-                //PRINCIPAL (FK)
-                cmd.Parameters.AddWithValue("@SubcategoriaId", original.SubcategoriaId);
-
-                Console.WriteLine("SubcategoriaId enviado: " + original.SubcategoriaId);
+                cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
 
                 cmd.ExecuteNonQuery();
             }

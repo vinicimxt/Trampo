@@ -60,9 +60,49 @@
                     <div class="agend-card-title">📅 Escolha a data</div>
 
                     <div class="date-input-wrap">
+                        <div class="disponibilidade-info @(ViewBag.DiaInvalido == true ? "erro" : "")">
+
+                            @if (ViewBag.DiaInvalido == true)
+                            {
+                                <div class="disp-title">
+                                    ❌ Serviço indisponível nesta data
+                                </div>
+
+                                <div class="disp-text">
+                                    Este serviço atende somente:
+
+                                    <strong>@ViewBag.DiasTexto</strong>
+
+                                    das
+
+                                    <strong>@ViewBag.HoraInicio</strong>
+                                    às
+                                    <strong>@ViewBag.HoraFim</strong>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="disp-title">
+                                    📆 Disponibilidade deste serviço
+                                </div>
+
+                                <div class="disp-text">
+                                    Atendimento de
+
+                                    <strong>@ViewBag.DiasTexto</strong>
+
+                                    das
+
+                                    <strong>@ViewBag.HoraInicio</strong>
+                                    às
+                                    <strong>@ViewBag.HoraFim</strong>
+                                </div>
+                            }
+
+                        </div>
                         <input class="date-input" type="date" name="data" id="inputData"
                                value="@ViewBag.Data.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")"
-                               max="@DateTime.Today.AddDays(30).ToString("yyyy-MM-dd")"
+                               max="@DateTime.Today.AddMonths(3).ToString("yyyy-MM-dd")"
                                onchange="location.href='?servicoId=@ViewBag.ServicoId&data=' + this.value" required />
                     </div>
                 </div>

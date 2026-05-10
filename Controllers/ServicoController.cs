@@ -145,7 +145,7 @@ namespace BD_TRAMPO.Controllers
         }
 
         [HttpPost]
-        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string atendimento, int? localId, string linkOnline)
+        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string atendimento, int? localId, string linkOnline, List<int> diasSemana, TimeSpan horaInicio, TimeSpan horaFim)
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
@@ -219,7 +219,24 @@ namespace BD_TRAMPO.Controllers
                     LinkOnline = linkOnline
                 };
 
-                dao.Inserir(s);
+                int servicoIdCriado = dao.Inserir(s);
+
+                DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
+
+                foreach (var dia in diasSemana)
+                {
+                    dispDAO.Inserir(new Disponibilidade
+                    {
+                        ProfissionalId = profissionalId,
+                        ServicoId = servicoIdCriado,
+                        DiaSemana = dia,
+                        HoraInicio = horaInicio,
+                        HoraFim = horaFim,
+                        Ativo = true
+                    });
+                }
+
+                
 
                 TempData["Sucesso"] = "Serviço criado com sucesso ✔";
 

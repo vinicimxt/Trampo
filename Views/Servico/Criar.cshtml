@@ -86,7 +86,58 @@
                     <div class="char-count" id="charCount">0 / 200</div>
                 </div>
 
-            <!-- CONTATO-->
+                <div class="form-section-label" style="margin-top:8px;">Disponibilidade</div>
+
+                <!-- DIAS DA SEMANA — pills clicáveis -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Dias de atendimento <span class="req">*</span>
+                    </label>
+
+                    <div class="dias-pills" id="diasPills">
+                        <input type="hidden" name="diasSemana" id="diasSemanaInput" />
+
+                        <button type="button" class="dia-pill" data-val="1" onclick="toggleDia(this)">Seg</button>
+                        <button type="button" class="dia-pill" data-val="2" onclick="toggleDia(this)">Ter</button>
+                        <button type="button" class="dia-pill" data-val="3" onclick="toggleDia(this)">Qua</button>
+                        <button type="button" class="dia-pill" data-val="4" onclick="toggleDia(this)">Qui</button>
+                        <button type="button" class="dia-pill" data-val="5" onclick="toggleDia(this)">Sex</button>
+                        <button type="button" class="dia-pill" data-val="6" onclick="toggleDia(this)">Sáb</button>
+                        <button type="button" class="dia-pill" data-val="0" onclick="toggleDia(this)">Dom</button>
+                    </div>
+                    <span class="field-hint">Clique para selecionar os dias disponíveis</span>
+                </div>
+
+                <!-- HORÁRIOS -->
+                <div class="form-row-horario">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Horário de início
+                        </label>
+                        <div class="time-input-wrap">
+                            <span class="time-icon"></span>
+                            <input class="form-input form-time" type="time"
+                                name="horaInicio" id="horaInicio" />
+                        </div>
+                    </div>
+
+                    <div class="time-separator">até</div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Horário de fim
+                        </label>
+                        <div class="time-input-wrap">
+                            <span class="time-icon"></span>
+                            <input class="form-input form-time" type="time"
+                                name="horaFim" id="horaFim" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- CONTATO-->
                 @* <div class="form-group">
                     <label class="form-label" for="contato">
                         Contato <span class="opt">(opcional)</span>

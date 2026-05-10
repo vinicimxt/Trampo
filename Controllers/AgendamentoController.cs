@@ -10,41 +10,116 @@ namespace BD_TRAMPO.Controllers
         public IActionResult Novo(int servicoId, DateTime? data)
         {
             if (HttpContext.Session.GetString("UsuarioId") == null)
-            {
                 return RedirectToAction("Login", "Usuario");
-            }
 
             ServicoDAO servicoDAO = new ServicoDAO();
             var servico = servicoDAO.BuscarPorId(servicoId);
 
-            LocalDAO localDAO = new LocalDAO();
-            ViewBag.Locais = localDAO.ListarPorProfissional(servico.ProfissionalId);
             if (servico == null)
             {
                 TempData["Erro"] = "Serviço não encontrado.";
-                return RedirectToAction("Novo", new { servicoId });
+                return RedirectToAction("Index", "Home");
             }
-
-            ViewBag.ServicoId = servicoId;
-            ViewBag.Atendimento = servico.Atendimento ?? "Local";
 
             DateTime dia = data ?? DateTime.Today;
+            int diaSemana = (int)dia.DayOfWeek;
 
-            AgendamentoDAO dao = new AgendamentoDAO();
-            var ocupados = dao.BuscarHorariosOcupados(servicoId, dia);
+            // horários ocupados do dia
+            AgendamentoDAO agDAO = new AgendamentoDAO();
+            var ocupados = agDAO.BuscarHorariosOcupados(servicoId, dia);
 
-            List<TimeSpan> todos = new List<TimeSpan>();
+            // disponibilidade do serviço
+            DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
+            var disponibilidade = dispDAO.BuscarPorServico(servicoId);
 
-            for (int h = 1; h <= 24; h++)
+            // verifica se existe disponibilidade cadastrada
+            if (disponibilidade == null || !disponibilidade.Any())
             {
-                todos.Add(new TimeSpan(h, 0, 0));
+                TempData["Erro"] = "Profissional ainda não definiu disponibilidade.";
+                return RedirectToAction("Lista", "Profissional");
             }
 
+            // apenas regras ativas
+            var regras = disponibilidade
+                .Where(d => d.Ativo)
+                .OrderBy(d => d.DiaSemana)
+                .ToList();
+
+            // tradução dias da semana
+            Dictionary<int, string> dias = new Dictionary<int, string>()
+    {
+        {0, "Domingo"},
+        {1, "Segunda"},
+        {2, "Terça"},
+        {3, "Quarta"},
+        {4, "Quinta"},
+        {5, "Sexta"},
+        {6, "Sábado"}
+    };
+
+            // texto geral dos dias disponíveis
+            var nomesDias = regras
+                .Select(r => dias[r.DiaSemana])
+                .Distinct()
+                .ToList();
+
+            ViewBag.DiasTexto = string.Join(", ", nomesDias);
+
+            // regras SOMENTE do dia selecionado
+            var regrasDia = regras
+                .Where(r => r.DiaSemana == diaSemana)
+                .ToList();
+
+            // verifica se atende nesse dia
+            bool atendeNoDia = regrasDia.Any();
+
+            ViewBag.DiaInvalido = !atendeNoDia;
+
+            // horários do dia
+            List<TimeSpan> horarios = new List<TimeSpan>();
+
+            if (atendeNoDia)
+            {
+                foreach (var r in regrasDia)
+                {
+                    horarios.AddRange(
+                        GerarHorarios(r.HoraInicio, r.HoraFim, ocupados)
+                    );
+                }
+
+                // usa horário REAL do dia selecionado
+                ViewBag.HoraInicio = regrasDia.Min(r => r.HoraInicio).ToString(@"hh\:mm");
+                ViewBag.HoraFim = regrasDia.Max(r => r.HoraFim).ToString(@"hh\:mm");
+            }
+            else
+            {
+                // fallback visual quando dia é inválido
+                ViewBag.HoraInicio = regras.Min(r => r.HoraInicio).ToString(@"hh\:mm");
+                ViewBag.HoraFim = regras.Max(r => r.HoraFim).ToString(@"hh\:mm");
+            }
+
+            // dados da tela
+            ViewBag.ServicoId = servicoId;
             ViewBag.Data = dia;
-            ViewBag.Horarios = todos;
+            ViewBag.Horarios = horarios.Distinct().OrderBy(x => x).ToList();
             ViewBag.Ocupados = ocupados;
+            ViewBag.Atendimento = servico.Atendimento ?? "Local";
 
             return View();
+        }
+        private List<TimeSpan> GerarHorarios(TimeSpan inicio, TimeSpan fim, List<TimeSpan> ocupados)
+        {
+            var horarios = new List<TimeSpan>();
+
+            while (inicio < fim)
+            {
+                if (!ocupados.Contains(inicio))
+                    horarios.Add(inicio);
+
+                inicio = inicio.Add(TimeSpan.FromHours(1));
+            }
+
+            return horarios;
         }
 
 
@@ -112,6 +187,12 @@ namespace BD_TRAMPO.Controllers
             }
 
             DateTime hoje = DateTime.Today;
+
+            if (hora == null || hora == TimeSpan.Zero)
+            {
+                TempData["Erro"] = "Selecione um horário.";
+                return RedirectToAction("Novo", new { servicoId, data });
+            }
 
             if (data < hoje)
             {

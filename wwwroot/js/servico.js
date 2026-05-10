@@ -3,28 +3,28 @@ document.addEventListener('DOMContentLoaded', function () {
     /* -----------------------------------------------
        REFERÊNCIAS
     ----------------------------------------------- */
-    var selCategoria   = document.getElementById('categoria');
-    var selSub         = document.getElementById('subcategoria');
-    var selAtend       = document.getElementById('atendimento');
-    var inputNome      = document.getElementById('nome');
-    var inputDesc      = document.getElementById('descricao');
-    var inputContato   = document.getElementById('contato');
-    var inputLink      = document.getElementById('linkOnline');
-    var nomeMsg        = document.getElementById('nomeMsg');
-    var charCount      = document.getElementById('charCount');
-    var localDiv       = document.getElementById('localDiv');
-    var linkOnlineDiv  = document.getElementById('linkOnlineDiv');
-    var form           = document.getElementById('formServico');
-    var btnSubmit      = document.getElementById('btnSubmit');
-    var btnText        = document.getElementById('btnText');
-    var btnLoader      = document.getElementById('btnLoader');
+    var selCategoria = document.getElementById('categoria');
+    var selSub = document.getElementById('subcategoria');
+    var selAtend = document.getElementById('atendimento');
+    var inputNome = document.getElementById('nome');
+    var inputDesc = document.getElementById('descricao');
+    var inputContato = document.getElementById('contato');
+    var inputLink = document.getElementById('linkOnline');
+    var nomeMsg = document.getElementById('nomeMsg');
+    var charCount = document.getElementById('charCount');
+    var localDiv = document.getElementById('localDiv');
+    var linkOnlineDiv = document.getElementById('linkOnlineDiv');
+    var form = document.getElementById('formServico');
+    var btnSubmit = document.getElementById('btnSubmit');
+    var btnText = document.getElementById('btnText');
+    var btnLoader = document.getElementById('btnLoader');
 
     // preview
-    var prevNome       = document.getElementById('previewNome');
-    var prevDesc       = document.getElementById('previewDesc');
-    var prevCat        = document.getElementById('previewCategoria');
-    var prevAtend      = document.getElementById('previewAtendimento');
-    var prevContato    = document.getElementById('previewContato');
+    var prevNome = document.getElementById('previewNome');
+    var prevDesc = document.getElementById('previewDesc');
+    var prevCat = document.getElementById('previewCategoria');
+    var prevAtend = document.getElementById('previewAtendimento');
+    var prevContato = document.getElementById('previewContato');
     var prevContatoVal = document.getElementById('previewContatoVal');
 
     /* -----------------------------------------------
@@ -92,6 +92,28 @@ document.addEventListener('DOMContentLoaded', function () {
         selAtend.addEventListener('change', toggleCampos);
         toggleCampos(); // inicializa
     }
+
+    /* -----------------------------------------------
+   DIAS DA SEMANA — pills
+----------------------------------------------- */
+    var diasSelecionados = [];
+
+    window.toggleDia = function (btn) {
+        var val = btn.dataset.val;
+        var idx = diasSelecionados.indexOf(val);
+
+        if (idx === -1) {
+            diasSelecionados.push(val);
+            btn.classList.add('ativo');
+        } else {
+            diasSelecionados.splice(idx, 1);
+            btn.classList.remove('ativo');
+        }
+
+        // atualiza o hidden input com os valores separados por vírgula
+        var hidden = document.getElementById('diasSemanaInput');
+        if (hidden) hidden.value = diasSelecionados.join(',');
+    };
 
     /* -----------------------------------------------
        VALIDAÇÃO DO NOME
@@ -166,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (btnSubmit) btnSubmit.disabled = true;
-            if (btnText)   btnText.textContent = 'Criando...';
+            if (btnText) btnText.textContent = 'Criando...';
             if (btnLoader) btnLoader.classList.remove('hidden');
         });
     }

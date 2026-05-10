@@ -167,6 +167,113 @@
 }
 
 /* ===================================================
+   DIAS DA SEMANA — pills clicáveis
+=================================================== */
+.dias-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.dia-pill {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 9px 16px;
+    border-radius: 50px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-light);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+    min-width: 52px;
+    text-align: center;
+}
+
+.dia-pill:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-soft);
+    transform: translateY(-2px);
+}
+
+.dia-pill.ativo {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(26, 107, 255, 0.28);
+    transform: translateY(-2px);
+}
+
+/* hint abaixo das pills */
+.field-hint {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    display: block;
+}
+
+/* ===================================================
+   HORÁRIOS — layout lado a lado
+=================================================== */
+.form-row-horario {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.form-row-horario .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.time-separator {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding-bottom: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* wrap do input de horário */
+.time-input-wrap {
+    position: relative;
+}
+
+.time-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.form-time {
+    padding-left: 36px;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+}
+
+/* remove o ícone nativo de relógio no Chrome */
+.form-time::-webkit-calendar-picker-indicator {
+    opacity: 0.4;
+    cursor: pointer;
+    filter: invert(40%);
+}
+
+.form-time::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.8;
+}
+
+
+
+/* ===================================================
    CARD DO FORMULÁRIO
 =================================================== */
 .form-card {
@@ -692,6 +799,30 @@
     .form-body,
     .form-card-header {
         padding-inline: 18px;
+    }
+}
+
+/* mobile dias serviço */
+@media (max-width: 480px) {
+    .form-row-horario {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .time-separator {
+        padding-bottom: 0;
+        padding-top: 4px;
+        text-align: center;
+    }
+
+    .dias-pills {
+        gap: 6px;
+    }
+
+    .dia-pill {
+        padding: 8px 12px;
+        min-width: 46px;
+        font-size: 0.78rem;
     }
 }
 
