@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using BD_TRAMPO.DAO;
 
 namespace BD_TRAMPO
 {
@@ -138,20 +139,51 @@ namespace BD_TRAMPO
 
                 while (reader.Read())
                 {
-                    lista.Add(new Servico
+                    Servico s = new Servico
                     {
                         Id = (int)reader["Id"],
                         Nome = reader["Nome"].ToString(),
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
-                        Categoria = reader["Categoria"] != DBNull.Value ? reader["Categoria"].ToString() : "",
-                        Subcategoria = reader["Subcategoria"] != DBNull.Value ? reader["Subcategoria"].ToString() : "",
+
+                        Categoria = reader["Categoria"] != DBNull.Value
+                            ? reader["Categoria"].ToString()
+                            : "",
+
+                        Subcategoria = reader["Subcategoria"] != DBNull.Value
+                            ? reader["Subcategoria"].ToString()
+                            : "",
+
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
-                        ? reader["LinkOnline"].ToString()
-                        : null,
+                            ? reader["LinkOnline"].ToString()
+                            : null,
+
                         Ativo = (bool)reader["Ativo"]
-                    });
+                    };
+
+                    // =========================
+                    // DISPONIBILIDADE
+                    // =========================
+
+                    DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
+
+                    var disponibilidade = dispDAO.BuscarPorServico(s.Id);
+
+                    if (disponibilidade.Any())
+                    {
+                        s.HoraInicio = disponibilidade.Min(x => x.HoraInicio);
+
+                        s.HoraFim = disponibilidade.Max(x => x.HoraFim);
+
+                        s.DiasTexto = string.Join(",",
+                            disponibilidade
+                                .OrderBy(x => x.DiaSemana)
+                                .Select(x => x.DiaSemana)
+                        );
+                    }
+
+                    lista.Add(s);
                 }
             }
 
@@ -195,13 +227,13 @@ namespace BD_TRAMPO
                 string query = @"
            SELECT 
                 Id,
+                ProfissionalId,
                 Nome,
                 Descricao,
                 Atendimento,
                 LocalId,
                 SubcategoriaId
-            FROM Servicos
-            WHERE Id = @Id";
+            FROM Servicos";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
@@ -213,12 +245,13 @@ namespace BD_TRAMPO
                     servico = new Servico
                     {
                         Id = (int)reader["Id"],
+                        ProfissionalId = (int)reader["ProfissionalId"],
                         Nome = reader["Nome"].ToString(),
                         Descricao = reader["Descricao"].ToString(),
                         Atendimento = reader["Atendimento"].ToString(),
                         LocalId = reader["LocalId"] != DBNull.Value
-                        ? (int)reader["LocalId"]
-                        : (int?)null,
+                            ? (int)reader["LocalId"]
+                            : (int?)null,
                         SubcategoriaId = (int)reader["SubcategoriaId"]
                     };
                 }
@@ -284,56 +317,51 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                SELECT 
-                    s.Id,
-                    s.Nome,
-                    s.ProfissionalId,
-                    s.Descricao,
-                    s.Atendimento,
-                    s.LinkOnline,
+                    SELECT 
+                        s.Id,
+                        s.Nome,
+                        s.ProfissionalId,
+                        s.Descricao,
+                        s.Atendimento,
+                        s.LinkOnline,
 
-                    u.Nome AS NomeProfissional,
-                    sc.Nome AS Subcategoria,
-                    c.Nome AS Categoria,
-                    l.Endereco,
+                        u.Nome AS NomeProfissional,
+                        sc.Nome AS Subcategoria,
+                        c.Nome AS Categoria,
+                        l.Endereco
 
-                    d.HoraInicio,
-                    d.HoraFim
+                    FROM Servicos s
 
-                FROM Servicos s
+                    INNER JOIN Profissionais p 
+                        ON s.ProfissionalId = p.Id
 
-                INNER JOIN Profissionais p 
-                    ON s.ProfissionalId = p.Id
+                    INNER JOIN Usuarios u 
+                        ON p.UsuarioId = u.Id
 
-                INNER JOIN Usuarios u 
-                    ON p.UsuarioId = u.Id
+                    INNER JOIN Subcategorias sc 
+                        ON s.SubcategoriaId = sc.Id
 
-                INNER JOIN Subcategorias sc 
-                    ON s.SubcategoriaId = sc.Id
+                    INNER JOIN Categorias c 
+                        ON sc.CategoriaId = c.Id
 
-                INNER JOIN Categorias c 
-                    ON sc.CategoriaId = c.Id
+                    LEFT JOIN Locais l 
+                        ON s.LocalId = l.Id
 
-                LEFT JOIN Locais l 
-                    ON s.LocalId = l.Id
+                    WHERE s.Ativo = 1
 
-                LEFT JOIN Disponibilidade d
-                    ON d.ServicoId = s.Id
-                    AND d.Ativo = 1
+                    AND
+                        (@busca IS NULL OR 
+                            s.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%' OR
+                            u.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%')
 
-                WHERE 
-                    (@busca IS NULL OR 
-                        s.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%' OR
-                        u.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @busca + '%')
+                    AND
+                        (@localizacao IS NULL OR 
+                            l.Endereco COLLATE Latin1_General_CI_AI LIKE '%' + @localizacao + '%')
 
-                AND
-                    (@localizacao IS NULL OR 
-                        l.Endereco COLLATE Latin1_General_CI_AI LIKE '%' + @localizacao + '%')
-
-                AND
-                    (@categoria IS NULL OR 
-                        c.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @categoria + '%')
-                ";
+                    AND
+                        (@categoria IS NULL OR 
+                            c.Nome COLLATE Latin1_General_CI_AI LIKE '%' + @categoria + '%')
+                    ";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -355,24 +383,26 @@ namespace BD_TRAMPO
                         Id = (int)reader["Id"],
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Nome = reader["Nome"].ToString(),
-                        Descricao = reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : "",
+
+                        Descricao = reader["Descricao"] != DBNull.Value
+                            ? reader["Descricao"].ToString()
+                            : "",
+
                         Atendimento = reader["Atendimento"].ToString(),
+
                         NomeProfissional = reader["NomeProfissional"].ToString(),
+
                         Categoria = reader["Categoria"].ToString(),
+
                         Subcategoria = reader["Subcategoria"].ToString(),
+
                         LinkOnline = reader["LinkOnline"] != DBNull.Value
                             ? reader["LinkOnline"].ToString()
                             : null,
+
                         Endereco = reader["Endereco"] != DBNull.Value
                             ? reader["Endereco"].ToString()
-                            : "",
-                        HoraInicio = reader["HoraInicio"] != DBNull.Value
-                            ? (TimeSpan?)reader["HoraInicio"]
-                            : null,
-
-                        HoraFim = reader["HoraFim"] != DBNull.Value
-                            ? (TimeSpan?)reader["HoraFim"]
-                            : null,
+                            : ""
                     });
                 }
             }
@@ -393,40 +423,63 @@ namespace BD_TRAMPO
             Atendimento = @Atendimento,
             LocalId = @LocalId,
             LinkOnline = @LinkOnline,
-            SubcategoriaId = @SubcategoriaId,
+            SubcategoriaId = @SubcategoriaId
         WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@Id", s.Id);
                 cmd.Parameters.AddWithValue("@Nome", s.Nome);
-                cmd.Parameters.AddWithValue("@Descricao", s.Descricao ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Atendimento", s.Atendimento ?? (object)DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@Descricao",
+                    s.Descricao ?? (object)DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@Atendimento",
+                    s.Atendimento ?? (object)DBNull.Value);
 
                 cmd.Parameters.AddWithValue("@LocalId",
                     s.LocalId.HasValue ? (object)s.LocalId : DBNull.Value);
 
                 cmd.Parameters.AddWithValue("@LinkOnline",
-                    string.IsNullOrEmpty(s.LinkOnline) ? (object)DBNull.Value : s.LinkOnline);
+                    string.IsNullOrEmpty(s.LinkOnline)
+                        ? (object)DBNull.Value
+                        : s.LinkOnline);
 
                 cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
 
                 cmd.ExecuteNonQuery();
             }
         }
+
         public void Excluir(int id)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "DELETE FROM Servicos WHERE Id = @Id";
+                // remove disponibilidade primeiro
+                string queryDisp = @"
+                    DELETE FROM Disponibilidade
+                    WHERE ServicoId = @ServicoId
+                ";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Id", id);
+                SqlCommand cmdDisp = new SqlCommand(queryDisp, conn);
 
-                cmd.ExecuteNonQuery();
+                cmdDisp.Parameters.AddWithValue("@ServicoId", id);
+
+                cmdDisp.ExecuteNonQuery();
+
+                // remove serviço
+                string queryServico = @"
+                    DELETE FROM Servicos
+                    WHERE Id = @Id
+                ";
+
+                SqlCommand cmdServico = new SqlCommand(queryServico, conn);
+
+                cmdServico.Parameters.AddWithValue("@Id", id);
+
+                cmdServico.ExecuteNonQuery();
             }
         }
-
 
         // PUXAR DO BANCO CARDS DINAMICOS
         public Dictionary<string, int> ContarServicosPorCategoria()
@@ -458,7 +511,10 @@ namespace BD_TRAMPO
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "UPDATE Servicos SET Ativo = 0 WHERE Id = @Id";
+                string query = @"
+                    UPDATE Disponibilidade
+                    SET Ativo = 0
+                    WHERE ServicoId = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);

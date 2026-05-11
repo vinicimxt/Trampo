@@ -107,6 +107,23 @@ namespace BD_TRAMPO.DAO
             }
         }
 
+        public void RemoverPorServico(int servicoId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        DELETE FROM Disponibilidade
+        WHERE ServicoId = @ServicoId
+        ";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ServicoId", servicoId);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
 
     }
 

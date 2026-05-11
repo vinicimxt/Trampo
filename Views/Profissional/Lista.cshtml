@@ -132,6 +132,13 @@
                         {
                             <span class="chip chip-online">💻 Online</span>
                         }
+                        @if (!string.IsNullOrEmpty(item.DiasTexto))
+                        {
+                            <span class="chip">
+                                📅 @item.DiasTexto
+                            </span>
+                        }
+
                         @if (item.HoraInicio.HasValue && item.HoraFim.HasValue)
                         {
                             <span class="chip">

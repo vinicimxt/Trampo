@@ -59,10 +59,11 @@ namespace BD_TRAMPO.Controllers
 
             // texto geral dos dias disponíveis
             var nomesDias = regras
-                .Select(r => dias[r.DiaSemana])
+                .Select(r => r.DiaSemana)
                 .Distinct()
+                .OrderBy(d => d)
+                .Select(d => dias[d])
                 .ToList();
-
             ViewBag.DiasTexto = string.Join(", ", nomesDias);
 
             // regras SOMENTE do dia selecionado

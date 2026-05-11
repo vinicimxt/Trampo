@@ -6,11 +6,46 @@ namespace BD_TRAMPO.Controllers
     public class ProfissionalController : BaseController
     {
 
+        private string TraduzirDia(int dia)
+        {
+            switch (dia)
+            {
+                case 0: return "DOM";
+                case 1: return "SEG";
+                case 2: return "TER";
+                case 3: return "QUA";
+                case 4: return "QUI";
+                case 5: return "SEX";
+                case 6: return "SAB";
+                default: return "";
+            }
+        }
         public IActionResult Lista(string busca, string localizacao, string categoria)
         {
             ServicoDAO dao = new ServicoDAO();
 
             var lista = dao.ListarServicos(busca, localizacao, categoria);
+
+            DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
+
+            foreach (var servico in lista)
+            {
+                var disp = dispDAO.BuscarPorServico(servico.Id);
+
+                if (disp.Any())
+                {
+                    servico.HoraInicio = disp.Min(x => x.HoraInicio);
+                    servico.HoraFim = disp.Max(x => x.HoraFim);
+
+                    servico.DiasTexto = string.Join(", ",
+                        disp
+                            .Select(x => x.DiaSemana)
+                            .Distinct()
+                            .OrderBy(x => x)
+                            .Select(x => TraduzirDia(x))
+                    );
+                }
+            }
 
 
             return View(lista);
@@ -51,8 +86,6 @@ namespace BD_TRAMPO.Controllers
             //  pega o profissional do usuário
             ProfissionalDAO profDAO = new ProfissionalDAO();
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
-
-
 
             //  valida segurança
             if (profissionalId == 0)
@@ -144,7 +177,7 @@ namespace BD_TRAMPO.Controllers
 
             return RedirectToAction("Contato");
         }
-        
+
 
 
 
