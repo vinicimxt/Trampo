@@ -3,16 +3,16 @@ document.addEventListener('DOMContentLoaded', function () {
     /* -----------------------------------------------
        REFERÊNCIAS
     ----------------------------------------------- */
-    var form       = document.getElementById('formCadastro');
+    var form = document.getElementById('formCadastro');
     var tipoSelect = document.getElementById('tipo');
-    var telInput   = document.getElementById('telefone');
+    var telInput = document.getElementById('telefone');
     var senhaInput = document.getElementById('senha');
-    var senhaMsg   = document.getElementById('senhaMsg');
-    var docInput   = document.getElementById('documento');
-    var tipoDoc    = document.querySelector('select[name="tipoDocumento"]');
-    var docMsg     = document.getElementById('docMsg');
+    var senhaMsg = document.getElementById('senhaMsg');
+    var docInput = document.getElementById('documento');
+    var tipoDoc = document.querySelector('select[name="tipoDocumento"]');
+    var docMsg = document.getElementById('docMsg');
     var btnCadastro = document.getElementById('btnCadastro');
-    var toggleBtn  = document.getElementById('toggleSenha');
+    var toggleBtn = document.getElementById('toggleSenha');
 
     /* -----------------------------------------------
        MOSTRAR/OCULTAR senha
@@ -21,7 +21,10 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleBtn.addEventListener('click', function () {
             var isPass = senhaInput.type === 'password';
             senhaInput.type = isPass ? 'text' : 'password';
-            toggleBtn.textContent = isPass ? '🙈' : '👁';
+            var icon = document.getElementById('toggleIconCad');
+            if (icon) {
+                icon.textContent = (input.type === 'text') ? 'visibility_off' : 'visibility';
+            }
         });
     }
 
@@ -72,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (docInput) { docInput.addEventListener('input', function () { aplicarMascara(); validarDocRealtime(); }); }
-    if (tipoDoc)  {
+    if (tipoDoc) {
         tipoDoc.addEventListener('change', function () {
             docInput.value = '';
             resetInput(docInput, docMsg);

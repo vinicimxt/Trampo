@@ -1,19 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    var form       = document.getElementById('loginForm');
+    var form = document.getElementById('loginForm');
     var emailInput = document.getElementById('email');
     var senhaInput = document.getElementById('senha');
-    var btnLogin   = document.getElementById('btnLogin');
+    var btnLogin = document.getElementById('btnLogin');
     var emailError = document.getElementById('emailError');
     var senhaError = document.getElementById('senhaError');
-    var toggleBtn  = document.getElementById('toggleSenha');
+    var toggleBtn = document.getElementById('toggleSenha');
 
     // --- mostrar/ocultar senha ---
     if (toggleBtn && senhaInput) {
         toggleBtn.addEventListener('click', function () {
             var isPass = senhaInput.type === 'password';
             senhaInput.type = isPass ? 'text' : 'password';
-            toggleBtn.textContent = isPass ? '🙈' : '👁';
+            var icon = document.getElementById('toggleIcon');
+            if (icon) {
+                icon.textContent = (input.type === 'text') ? 'visibility_off' : 'visibility';
+            }
         });
     }
 
@@ -86,5 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (input) { input.classList.remove('input-error', 'input-success'); }
         if (msgEl) { msgEl.textContent = ''; msgEl.classList.remove('success'); }
     }
+
+
 
 });

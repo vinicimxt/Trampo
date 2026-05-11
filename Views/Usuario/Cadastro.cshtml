@@ -2,23 +2,20 @@
     <link rel="stylesheet" href="~/css/auth.css" />
 }
 
-
 <div class="auth-page">
 
-    <!-- =============================================
-         PAINEL ESQUERDO — branding
-    ============================================= -->
+    <!-- PAINEL ESQUERDO -->
     <div class="auth-panel">
         <div class="auth-panel-dots"></div>
 
         <div class="auth-panel-content">
             <div class="auth-logo">
-                    <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo Logo" class="logo-img">
-                        Tram<span class="highlight">po</span>
-                    </div>
+                <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo Logo" class="logo-img">
+                Tram<span class="highlight">po</span>
+            </div>
 
             <h1 class="auth-panel-title">
-                Comece a usar<br>o Trampo hoje 🚀
+                Comece a usar<br>o Trampo hoje
             </h1>
             <p class="auth-panel-sub">
                 Cadastre-se gratuitamente e agende serviços ou comece a receber clientes agora mesmo.
@@ -26,15 +23,21 @@
 
             <div class="auth-bullets">
                 <div class="auth-bullet">
-                    <div class="auth-bullet-icon">✅</div>
+                    <div class="auth-bullet-icon">
+                        <span class="material-symbols-rounded icon-fill">check_circle</span>
+                    </div>
                     <span class="auth-bullet-text">Cadastro gratuito em menos de 1 minuto</span>
                 </div>
                 <div class="auth-bullet">
-                    <div class="auth-bullet-icon">🔒</div>
+                    <div class="auth-bullet-icon">
+                        <span class="material-symbols-rounded icon-fill">shield</span>
+                    </div>
                     <span class="auth-bullet-text">Seus dados estão protegidos e seguros</span>
                 </div>
                 <div class="auth-bullet">
-                    <div class="auth-bullet-icon">⭐</div>
+                    <div class="auth-bullet-icon">
+                        <span class="material-symbols-rounded icon-fill">verified</span>
+                    </div>
                     <span class="auth-bullet-text">+850 profissionais verificados disponíveis</span>
                 </div>
             </div>
@@ -45,12 +48,9 @@
         </div>
     </div>
 
-    <!-- =============================================
-         PAINEL DIREITO — formulário
-    ============================================= -->
+    <!-- PAINEL DIREITO -->
     <div class="auth-form-side">
         <div class="auth-card">
-         
 
             <div class="auth-card-header">
                 <span class="auth-card-label">É grátis</span>
@@ -63,33 +63,57 @@
                 <!-- Nome -->
                 <div class="form-group">
                     <label class="form-label" for="nome">Nome completo</label>
-                    <input class="form-input" type="text" name="nome" id="nome" placeholder="João da Silva" required
-                           autocomplete="name" />
+                    <div class="input-icon-wrap">
+                        <span class="input-icon">
+                            <span class="material-symbols-rounded">person</span>
+                        </span>
+                        <input class="form-input has-icon" type="text"
+                               name="nome" id="nome"
+                               placeholder="João da Silva"
+                               required autocomplete="name" />
+                    </div>
                 </div>
 
                 <!-- Email -->
                 <div class="form-group">
                     <label class="form-label" for="email">E-mail</label>
-                    <input class="form-input @(TempData["Erro"] != null ? "input-error" : "")" type="email" name="email"
-                           id="email" placeholder="seu@email.com" required />
+                    <div class="input-icon-wrap">
+                        <span class="input-icon">
+                            <span class="material-symbols-rounded">mail</span>
+                        </span>
+                        <input class="form-input has-icon @(TempData["Erro"] != null ? "input-error" : "")"
+                               type="email" name="email" id="email"
+                               placeholder="seu@email.com" required />
+                    </div>
                 </div>
 
-                <!-- Telefone + Tipo em linha -->
+                <!-- Telefone + Tipo -->
                 <div class="form-row">
                     <div class="form-group" style="margin-bottom:0">
                         <label class="form-label" for="telefone">
                             Telefone <span class="optional">(opcional)</span>
                         </label>
-                        <input class="form-input" type="text" name="telefone" id="telefone"
-                               placeholder="(11) 91234-5678" autocomplete="tel" />
+                        <div class="input-icon-wrap">
+                            <span class="input-icon">
+                                <span class="material-symbols-rounded">smartphone</span>
+                            </span>
+                            <input class="form-input has-icon" type="text"
+                                   name="telefone" id="telefone"
+                                   placeholder="(11) 91234-5678"
+                                   autocomplete="tel" />
+                        </div>
                     </div>
 
                     <div class="form-group" style="margin-bottom:0">
                         <label class="form-label" for="tipo">Tipo de conta</label>
-                        <div class="select-wrap">
-                            <select class="form-select" id="tipo" name="tipo" onchange="mostrarCampos()" required>
-                                <option value="cliente">👤 Cliente</option>
-                                <option value="profissional">👷 Profissional</option>
+                        <div class="select-wrap select-icon-wrap">
+                            <span class="select-icon">
+                                <span class="material-symbols-rounded">manage_accounts</span>
+                            </span>
+                            <select class="form-select has-icon" id="tipo"
+                                    name="tipo" onchange="mostrarCampos()" required>
+                                <option value="cliente">Cliente</option>
+                                <option value="profissional">Profissional</option>
                             </select>
                         </div>
                     </div>
@@ -99,18 +123,28 @@
                 <div class="form-group" style="margin-top:18px">
                     <label class="form-label" for="senha">Senha</label>
                     <div class="password-wrap">
-                        <input class="form-input" type="password" name="senha" id="senha"
-                               placeholder="Mínimo 6 caracteres" required autocomplete="new-password" />
+                        <span class="input-icon">
+                            <span class="material-symbols-rounded">lock</span>
+                        </span>
+                        <input class="form-input has-icon" type="password"
+                               name="senha" id="senha"
+                               placeholder="Mínimo 6 caracteres"
+                               required autocomplete="new-password" />
                         <button type="button" class="toggle-pass" id="toggleSenha"
-                                aria-label="Mostrar senha">👁</button>
+                                aria-label="Mostrar senha">
+                            <span class="material-symbols-rounded" id="toggleIconCad">visibility</span>
+                        </button>
                     </div>
                     <span class="input-message" id="senhaMsg"></span>
                 </div>
 
-                <!-- Campos profissional (ocultos por padrão) -->
+                <!-- Campos profissional -->
                 <div id="camposProfissional" style="display:none;">
                     <div class="prof-box">
-                        <div class="prof-box-label">🏢 Dados profissionais</div>
+                        <div class="prof-box-label">
+                            <span class="material-symbols-rounded" style="font-size:16px;vertical-align:middle;">business_center</span>
+                            Dados profissionais
+                        </div>
 
                         <div class="form-row">
                             <div class="form-group" style="margin-bottom:0">
@@ -125,16 +159,23 @@
 
                             <div class="form-group" style="margin-bottom:0">
                                 <label class="form-label">Número do documento</label>
-                                <input class="form-input" type="text" name="documento" id="documento"
-                                       placeholder="000.000.000-00" />
+                                <div class="input-icon-wrap">
+                                    <span class="input-icon">
+                                        <span class="material-symbols-rounded">badge</span>
+                                    </span>
+                                    <input class="form-input has-icon" type="text"
+                                           name="documento" id="documento"
+                                           placeholder="000.000.000-00" />
+                                </div>
+                                <span class="input-message" id="docMsg" style="margin-top:6px;"></span>
                             </div>
                         </div>
 
-                        <span class="input-message" id="docMsg" style="margin-top:6px;"></span>
                     </div>
                 </div>
 
                 <button type="submit" class="btn-auth" id="btnCadastro" style="margin-top:24px;">
+                    <span class="material-symbols-rounded">person_add</span>
                     Criar minha conta
                 </button>
 
@@ -142,7 +183,10 @@
 
             <div class="auth-switch">
                 Já tem conta?
-                <a href="/Usuario/Login">Entrar</a>
+                <a href="/Usuario/Login">
+                    <span class="material-symbols-rounded" style="font-size:14px;vertical-align:middle;">login</span>
+                    Entrar
+                </a>
             </div>
 
         </div>

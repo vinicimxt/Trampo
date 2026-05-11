@@ -104,8 +104,10 @@
                 <!-- COLUNA DA LISTA -->
                 <div>
                     <div class="servicos-grid" id="servicosGrid">
-                        
-                        @foreach (var s in Model)
+                        @{
+                            var servicosOrdenados = Model.OrderByDescending(s => s.Ativo).ToList();
+                        }
+                        @foreach (var s in servicosOrdenados)
                         {
                             <div class="servico-card @(s.Ativo ? "" : "inativo")" id="card-@s.Id">
 
@@ -410,8 +412,8 @@
 
             const texto = `Este serviço pode ter agendamentos.
 
-                                        Se tiver → será desativado  
-                                        Se não tiver → será excluído`;
+                                                Se tiver → será desativado  
+                                                Se não tiver → será excluído`;
 
             document.getElementById('modalTextoAcao').innerText = texto;
 

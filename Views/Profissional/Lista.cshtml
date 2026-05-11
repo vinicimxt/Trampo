@@ -32,7 +32,9 @@
 
             <!-- Busca por nome / profissional -->
             <div class="filter-search">
-                <span class="filter-search-icon">🔍</span>
+                <span class="filter-search-icon"><span class="filter-search-icon material-symbols-outlined">
+                    search
+                </span></span>
                 <input type="text" id="filtro-busca" placeholder="Buscar serviço ou profissional..."
                        data-filtro="busca" />
             </div>
@@ -62,9 +64,11 @@
             <!-- Pills de atendimento -->
             <div class="filter-pills" id="filtro-atendimento-pills">
                 <button class="filter-pill active" data-atendimento="">Todos</button>
-                <button class="filter-pill" data-atendimento="Domicilio">🏠 Domicílio</button>
-                <button class="filter-pill" data-atendimento="Local">📍 Local</button>
-                <button class="filter-pill" data-atendimento="Online">💻 Online</button>
+                <button class="filter-pill" data-atendimento="Domicilio"><span class="material-symbols-outlined">home</span> Domicílio</button>
+                <button class="filter-pill" data-atendimento="Local"><span class="material-symbols-outlined">location_on</span>
+                Local </button>
+                <button class="filter-pill" data-atendimento="Online"><span class="material-symbols-outlined">laptop_mac</span>
+                Online </button>
             </div>
 
             <!-- Contador + limpar -->
@@ -118,31 +122,33 @@
 
                     <!-- Chips de info -->
                     <div class="info-chips">
-                        <span class="chip">📂 @item.Subcategoria</span>
+                        <span class="chip"><span class="material-symbols-outlined">folder</span> @item.Subcategoria</span>
 
                         @if (item.Atendimento == "Domicilio")
                         {
-                            <span class="chip chip-domicilio">🏠 Domicílio</span>
+                            <span class="chip chip-domicilio"><span class="material-symbols-outlined">home</span> Domicílio</span>
                         }
                         else if (item.Atendimento == "Local")
                         {
-                            <span class="chip chip-local">📍 Local</span>
+                            <span class="chip chip-local"><span class="material-symbols-outlined">location_on</span>
+                            Local Local</span>
                         }
                         else if (item.Atendimento == "Online")
                         {
-                            <span class="chip chip-online">💻 Online</span>
+                            <span class="chip chip-online"><span class="material-symbols-outlined">laptop_mac</span>
+                            Online Online</span>
                         }
                         @if (!string.IsNullOrEmpty(item.DiasTexto))
                         {
                             <span class="chip">
-                                📅 @item.DiasTexto
+                                <span class="material-symbols-outlined">calendar_month</span> @item.DiasTexto
                             </span>
                         }
 
                         @if (item.HoraInicio.HasValue && item.HoraFim.HasValue)
                         {
                             <span class="chip">
-                                🕒 @item.HoraInicio.Value.ToString(@"hh\:mm")
+                                 <span class="material-symbols-outlined">schedule</span> @item.HoraInicio.Value.ToString(@"hh\:mm")
                                 às
                                 @item.HoraFim.Value.ToString(@"hh\:mm")
                             </span>
@@ -171,7 +177,9 @@
 
             <!-- Estado vazio (mostrado via JS quando filtros não acham nada) -->
             <div class="empty-state" id="emptyState">
-                <div class="empty-icon">🔍</div>
+                <div class="empty-icon"><span class="filter-search-icon material-symbols-outlined">
+                    search
+                </span></div>
                 <h3>Nenhum serviço encontrado</h3>
                 <p>Tente ajustar os filtros ou buscar por outro termo.</p>
             </div>
