@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\BD-TRAMPO.csproj": {}
+    "C:\\Users\\Vinicius\\Desktop\\Trampo\\BD-TRAMPO.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\BD-TRAMPO.csproj": {
+    "C:\\Users\\Vinicius\\Desktop\\Trampo\\BD-TRAMPO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\BD-TRAMPO.csproj",
+        "projectUniqueName": "C:\\Users\\Vinicius\\Desktop\\Trampo\\BD-TRAMPO.csproj",
         "projectName": "BD-TRAMPO",
-        "projectPath": "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\BD-TRAMPO.csproj",
+        "projectPath": "C:\\Users\\Vinicius\\Desktop\\Trampo\\BD-TRAMPO.csproj",
         "packagesPath": "C:\\Users\\Vinicius\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\obj\\",
+        "outputPath": "C:\\Users\\Vinicius\\Desktop\\Trampo\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
