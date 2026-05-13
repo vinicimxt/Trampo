@@ -19,6 +19,8 @@
 
         public string StatusAssinatura { get; set; }
 
+        
+
     }
 
 }

@@ -68,7 +68,7 @@ namespace BD_TRAMPO.Controllers
             AvaliacaoDAO dao = new AvaliacaoDAO();
             dao.Inserir(a);
 
-            TempData["Erro"] = "Obrigado pela avaliação.";
+            TempData["Sucesso"] = "Obrigado pela avaliação.⭐";
 
             return RedirectToAction("Meus", "Agendamento");
         }

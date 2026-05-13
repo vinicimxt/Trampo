@@ -463,19 +463,30 @@ namespace BD_TRAMPO
 
 
 
-        public void Finalizar(int id)
+        public void Finalizar(int id, decimal valorFinal, decimal taxa, decimal valorLiquido)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "UPDATE Agendamentos SET Status = 'Finalizado' WHERE Id = @Id";
+                string query = @"
+        UPDATE Agendamentos
+        SET
+            Status = 'Finalizado',
+            FinalizadoProfissional = 1,
+            ValorFinal = @ValorFinal,
+            Taxa = @Taxa,
+            ValorLiquido = @ValorLiquido
+        WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
+
                 cmd.Parameters.AddWithValue("@Id", id);
+                cmd.Parameters.AddWithValue("@ValorFinal", valorFinal);
+                cmd.Parameters.AddWithValue("@Taxa", taxa);
+                cmd.Parameters.AddWithValue("@ValorLiquido", valorLiquido);
 
                 cmd.ExecuteNonQuery();
             }
         }
-
         public void FinalizarProfissional(int id)
         {
             using (SqlConnection conn = conexao.Conectar())
@@ -522,14 +533,14 @@ namespace BD_TRAMPO
         // METODO CONTA PREMIUIM
 
         public int ContarAgendamentosSemana(int profissionalId)
-{
-    using (SqlConnection conn = conexao.Conectar())
-    {
-        DateTime inicioSemana = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                DateTime inicioSemana = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
 
-        DateTime fimSemana = inicioSemana.AddDays(7);
+                DateTime fimSemana = inicioSemana.AddDays(7);
 
-        string query = @"
+                string query = @"
             SELECT COUNT(*)
             FROM Agendamentos
             WHERE ProfissionalId = @ProfissionalId
@@ -537,15 +548,15 @@ namespace BD_TRAMPO
             AND Data < @FimSemana
             AND Status != 'Cancelado'";
 
-        SqlCommand cmd = new SqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand(query, conn);
 
-        cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
-        cmd.Parameters.AddWithValue("@InicioSemana", inicioSemana);
-        cmd.Parameters.AddWithValue("@FimSemana", fimSemana);
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
+                cmd.Parameters.AddWithValue("@InicioSemana", inicioSemana);
+                cmd.Parameters.AddWithValue("@FimSemana", fimSemana);
 
-        return (int)cmd.ExecuteScalar();
-    }
-}
+                return (int)cmd.ExecuteScalar();
+            }
+        }
 
 
 

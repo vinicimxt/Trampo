@@ -29,6 +29,13 @@
         public bool ConfirmadoCliente { get; set; }
         public DateTime? DataFinalizacao { get; set; }
         public bool JaAvaliado { get; set; }
+
+        public decimal? ValorFinal { get; set; }
+
+        public decimal? Taxa { get; set; }
+
+        public decimal? ValorLiquido { get; set; }
+        
         public bool PodeAvaliar()
         {
             return FinalizadoProfissional && ConfirmadoCliente;

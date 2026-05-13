@@ -224,21 +224,21 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Novo", new { servicoId });
             }
 
-            // VALIDAÇÃO PREMIUM
-            bool premium = profDAO.EhPremium(profissionalId);
+            // // VALIDAÇÃO PREMIUM
+            // bool premium = profDAO.EhPremium(profissionalId);
 
-            if (!premium)
-            {
-                int totalSemana = dao.ContarAgendamentosSemana(profissionalId);
+            // if (!premium)
+            // {
+            //     int totalSemana = dao.ContarAgendamentosSemana(profissionalId);
 
-                if (totalSemana >= 3)
-                {
-                    TempData["Erro"] =
-                        "Este profissional atingiu o limite semanal do plano gratuito.";
+            //     if (totalSemana >= 3)
+            //     {
+            //         TempData["Erro"] =
+            //             "Este profissional atingiu o limite semanal do plano gratuito.";
 
-                    return RedirectToAction("Novo", new { servicoId, data });
-                }
-            }
+            //         return RedirectToAction("Novo", new { servicoId, data });
+            //     }
+            // }
 
 
             if (dao.HorarioOcupado(servicoId, data, hora))
@@ -366,16 +366,7 @@ namespace BD_TRAMPO.Controllers
                     Tipo = "Agendamento",
                     ReferenciaId = id
                 });
-
-                notif.Inserir(new Notificacao
-                {
-                    UsuarioId = clienteUsuarioId,
-                    Titulo = "Agendamento confirmado ✔",
-                    Mensagem = $"Seu agendamento para {ag.Data:dd/MM} às {ag.Hora} foi confirmado.",
-                    Tipo = "Agendamento",
-                    ReferenciaId = id
-                });
-
+                
             }
 
             return RedirectToAction("Recebidos");
@@ -438,7 +429,8 @@ namespace BD_TRAMPO.Controllers
 
             return RedirectToAction("Recebidos");
         }
-        public IActionResult Finalizar(int id)
+        [HttpPost]
+        public IActionResult Finalizar(int id, decimal valorFinal)
         {
             AgendamentoDAO dao = new AgendamentoDAO();
 
@@ -471,16 +463,35 @@ namespace BD_TRAMPO.Controllers
             }
 
             //  4 REGRA DE TEMPO
-            DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
+            // DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
 
-            if (dataHoraAgendamento > DateTime.Now)
+            // if (dataHoraAgendamento > DateTime.Now)
+            // {
+            //     TempData["Erro"] = "Você só pode finalizar após o horário do atendimento.";
+            //     return Redirect(Request.Headers["Referer"].ToString());
+            // }
+
+
+            if (valorFinal <= 0)
             {
-                TempData["Erro"] = "Você só pode finalizar após o horário do atendimento.";
+                TempData["Erro"] = "Informe um valor válido.";
                 return Redirect(Request.Headers["Referer"].ToString());
             }
 
+            var profissional = profDAO.BuscarPorId(profissionalId);
+
+            decimal percentual =
+                profissional.Plano == "Premium"
+                ? 0.04m
+                : 0.10m;
+            // CALCULAR TAXA 
+            decimal taxa = Math.Round(valorFinal * percentual, 2);
+
+            decimal valorLiquido =
+                valorFinal - taxa;
+
             // 5 EXECUTA
-            dao.Finalizar(id);
+            dao.Finalizar(id, valorFinal, taxa, valorLiquido);
 
             ClienteDAO clienteDAO = new ClienteDAO();
 

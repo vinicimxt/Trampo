@@ -271,3 +271,9 @@ ADD DataAssinatura DATETIME NULL;
 
 ALTER TABLE Profissionais
 ADD StatusAssinatura NVARCHAR(20) NOT NULL DEFAULT 'Ativo';
+
+ALTER TABLE Agendamentos
+ADD
+    ValorFinal DECIMAL(10,2) NULL,
+    Taxa DECIMAL(10,2) NULL,
+    ValorLiquido DECIMAL(10,2) NULL;
