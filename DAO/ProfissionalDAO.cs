@@ -12,20 +12,26 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                    INSERT INTO Profissionais 
-                    (
-                        UsuarioId,
-                        TipoDocumento,
-                        Documento,
-                        Contato
-                    )
-                    VALUES
-                    (
-                        @UsuarioId,
-                        @TipoDocumento,
-                        @Documento,
-                        @Contato
-                    )";
+                    INSERT INTO Profissionais
+                        (
+                            UsuarioId,
+                            TipoDocumento,
+                            Documento,
+                            Contato,
+                            Plano,
+                            DataAssinatura,
+                            StatusAssinatura
+                        )
+                   VALUES
+                        (
+                            @UsuarioId,
+                            @TipoDocumento,
+                            @Documento,
+                            @Contato,
+                            @Plano,
+                            @DataAssinatura,
+                            @StatusAssinatura
+                        )";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
@@ -35,6 +41,11 @@ namespace BD_TRAMPO
                     string.IsNullOrWhiteSpace(contato)
                     ? DBNull.Value
                     : contato);
+                cmd.Parameters.AddWithValue("@Plano", "Free");
+
+                cmd.Parameters.AddWithValue("@DataAssinatura", DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@StatusAssinatura", "Ativo");
 
                 try
                 {
@@ -118,6 +129,9 @@ namespace BD_TRAMPO
                     SELECT 
                         p.Id,
                         p.Contato,
+                        p.Plano,
+                        p.DataAssinatura,
+                        p.StatusAssinatura,
                         u.Nome,
                         u.Email,
                         u.Telefone
@@ -135,14 +149,26 @@ namespace BD_TRAMPO
                     return new Profissional
                     {
                         Id = (int)reader["Id"],
+
                         Nome = reader["Nome"].ToString(),
+
                         Email = reader["Email"].ToString(),
+
                         Contato = reader["Contato"] != DBNull.Value
                             ? reader["Contato"].ToString()
                             : "",
+
                         Telefone = reader["Telefone"] != DBNull.Value
                             ? reader["Telefone"].ToString()
-                            : ""
+                            : "",
+
+                        Plano = reader["Plano"].ToString(),
+
+                        StatusAssinatura = reader["StatusAssinatura"].ToString(),
+
+                        DataAssinatura = reader["DataAssinatura"] != DBNull.Value
+                            ? Convert.ToDateTime(reader["DataAssinatura"])
+                            : null
                     };
                 }
             }
@@ -183,7 +209,7 @@ namespace BD_TRAMPO
             }
         }
 
-        public void AtualizarContato(int profissionalId,string contato)
+        public void AtualizarContato(int profissionalId, string contato)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
@@ -207,7 +233,53 @@ namespace BD_TRAMPO
             }
         }
 
+        // SIMULAÇÃO DE CONTAS PREMIUMS
 
+        public void AtivarPremium(int profissionalId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            UPDATE Profissionais
+            SET 
+                Plano = 'Premium',
+                DataAssinatura = GETDATE(),
+                StatusAssinatura = 'Ativo'
+            WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Id", profissionalId);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public bool EhPremium(int profissionalId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT Plano
+            FROM Profissionais
+            WHERE Id = @Id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Id", profissionalId);
+
+                object result = cmd.ExecuteScalar();
+
+                if (result != null)
+                {
+                    string plano = result.ToString();
+
+                    return plano == "Premium";
+                }
+
+                return false;
+            }
+        }
 
     }
 }

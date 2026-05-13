@@ -224,6 +224,22 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Novo", new { servicoId });
             }
 
+            // VALIDAÇÃO PREMIUM
+            bool premium = profDAO.EhPremium(profissionalId);
+
+            if (!premium)
+            {
+                int totalSemana = dao.ContarAgendamentosSemana(profissionalId);
+
+                if (totalSemana >= 3)
+                {
+                    TempData["Erro"] =
+                        "Este profissional atingiu o limite semanal do plano gratuito.";
+
+                    return RedirectToAction("Novo", new { servicoId, data });
+                }
+            }
+
 
             if (dao.HorarioOcupado(servicoId, data, hora))
             {
@@ -606,6 +622,10 @@ namespace BD_TRAMPO.Controllers
 
             return PartialView("_DetalhesAgendamentoModal", ag);
         }
+
+        //CONTA PREMIUM 
+
+
 
 
     }

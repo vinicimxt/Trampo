@@ -519,6 +519,34 @@ namespace BD_TRAMPO
             }
         }
 
+        // METODO CONTA PREMIUIM
+
+        public int ContarAgendamentosSemana(int profissionalId)
+{
+    using (SqlConnection conn = conexao.Conectar())
+    {
+        DateTime inicioSemana = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
+
+        DateTime fimSemana = inicioSemana.AddDays(7);
+
+        string query = @"
+            SELECT COUNT(*)
+            FROM Agendamentos
+            WHERE ProfissionalId = @ProfissionalId
+            AND Data >= @InicioSemana
+            AND Data < @FimSemana
+            AND Status != 'Cancelado'";
+
+        SqlCommand cmd = new SqlCommand(query, conn);
+
+        cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
+        cmd.Parameters.AddWithValue("@InicioSemana", inicioSemana);
+        cmd.Parameters.AddWithValue("@FimSemana", fimSemana);
+
+        return (int)cmd.ExecuteScalar();
+    }
+}
+
 
 
     }

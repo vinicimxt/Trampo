@@ -12,20 +12,21 @@
 @if (TempData["Sucesso"] != null)
 {
     <div class="alert-sucesso">
+        <span class="material-symbols-rounded">check_circle</span>
         @TempData["Sucesso"]
     </div>
 }
-
 @if (TempData["Erro"] != null)
 {
     <div class="alert-erro">
+        <span class="material-symbols-rounded">error</span>
         @TempData["Erro"]
     </div>
 }
-
 @if (TempData["Info"] != null)
 {
     <div class="alert-info">
+        <span class="material-symbols-rounded">info</span>
         @TempData["Info"]
     </div>
 }
@@ -41,18 +42,12 @@
         if (status == "CanceladoProfissional") return "status-cancelado";
         return "";
     }
-
     string GetDataFiltro(string status)
     {
-        if (status == "CanceladoCliente" || status == "CanceladoProfissional")
-            return "cancelado";
-
-        if (status == "AguardandoCliente")
-            return "Finalizado";
-
+        if (status == "CanceladoCliente" || status == "CanceladoProfissional") return "cancelado";
+        if (status == "AguardandoCliente") return "Finalizado";
         return status;
     }
-
     string GetBadgeClass(string status)
     {
         if (status == "Pendente") return "badge-pendente";
@@ -61,7 +56,6 @@
         if (status == "Finalizado") return "badge-finalizado";
         return "badge-cancelado";
     }
-
     string GetBadgeTexto(string status)
     {
         if (status == "Pendente") return "Pendente";
@@ -72,16 +66,13 @@
         if (status == "CanceladoProfissional") return "Cancelado por você";
         return status;
     }
-
     string GetIniciais(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome)) return "?";
         var partes = nome.Trim().Split(' ');
         string ini = "";
         for (int i = 0; i < partes.Length && i < 2; i++)
-        {
             if (partes[i].Length > 0) ini += char.ToUpper(partes[i][0]);
-        }
         return ini;
     }
 }
@@ -91,17 +82,14 @@
     int pendentes = Model.Count(a => a.StatusAtual() == "Pendente");
     int confirmados = Model.Count(a => a.StatusAtual() == "Confirmado");
     int finalizados = Model.Count(a =>
-    a.StatusAtual() == "Finalizado" ||
-    a.StatusAtual() == "AguardandoCliente");
+        a.StatusAtual() == "Finalizado" || a.StatusAtual() == "AguardandoCliente");
     int cancelados = Model.Count(a =>
         a.StatusAtual() == "CanceladoCliente" || a.StatusAtual() == "CanceladoProfissional");
 }
 
 <div class="recebidos-page">
 
-    <!-- =============================================
-         HERO
-    ============================================= -->
+    <!-- HERO -->
     <div class="recebidos-hero">
         <div class="recebidos-hero-dots"></div>
         <div class="recebidos-hero-inner">
@@ -146,9 +134,7 @@
         </div>
     </div>
 
-    <!-- =============================================
-         FILTROS
-    ============================================= -->
+    <!-- FILTROS -->
     @if (total > 0)
     {
         <div class="recebidos-filters">
@@ -190,15 +176,15 @@
 </div>
     }
 
-<!-- =============================================
-         LISTA
-    ============================================= -->
+<!-- LISTA -->
 <div class="recebidos-main">
 
     @if (total == 0)
     {
         <div class="empty-state">
-            <div class="empty-icon">📥</div>
+            <div class="empty-icon">
+                <span class="material-symbols-rounded">inbox</span>
+            </div>
             <h3>Nenhum pedido recebido ainda</h3>
             <p>Quando clientes agendarem seus serviços, os pedidos aparecerão aqui para você confirmar ou recusar.</p>
         </div>
@@ -210,35 +196,40 @@
             @foreach (var ag in Model)
             {
                 <div class="agend-card @GetStatusClass(ag.StatusAtual())" data-status="@GetDataFiltro(ag.StatusAtual())">
-                    <!-- cabeçalho: cliente + status -->
+
+                    <!-- cabeçalho -->
                     <div class="agend-card-header">
                         <div class="agend-avatar">@GetIniciais(ag.NomeCliente)</div>
 
                         <div>
                             <div class="agend-cliente-name">@ag.NomeCliente</div>
-
                             <div class="agend-servico destaque-servico">
-                                🛠 @ag.Servico
+                                <span class="material-symbols-rounded" style="font-size:14px;">build</span>
+                                @ag.Servico
                             </div>
-
                             @if (!string.IsNullOrEmpty(ag.Subcategoria))
                             {
                                 <div class="agend-subcategoria">
-                                    🏷️ @ag.Subcategoria
+                                    <span class="material-symbols-rounded" style="font-size:13px;">label</span>
+                                    @ag.Subcategoria
                                 </div>
                             }
                         </div>
 
                         <span class="status-badge @GetBadgeClass(ag.StatusAtual())">
+                            <span class="badge-dot"></span>
                             @GetBadgeTexto(ag.StatusAtual())
                         </span>
                     </div>
 
-                    <!-- corpo: data / hora / tipo -->
+                    <!-- corpo -->
                     <div class="agend-card-body">
 
                         <div class="agend-info-item">
-                            <div class="agend-info-label">📅 Data</div>
+                            <div class="agend-info-label">
+                                <span class="material-symbols-rounded">calendar_month</span>
+                                Data
+                            </div>
                             <div class="agend-info-val">@ag.Data.ToString("dd/MM/yyyy")</div>
                             <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">
                                 @ag.Data.ToString("dddd", new System.Globalization.CultureInfo("pt-BR"))
@@ -246,50 +237,62 @@
                         </div>
 
                         <div class="agend-info-item">
-                            <div class="agend-info-label">🕐 Horário</div>
+                            <div class="agend-info-label">
+                                <span class="material-symbols-rounded">schedule</span>
+                                Horário
+                            </div>
                             <div class="agend-info-val">@ag.Hora</div>
                         </div>
 
                         <div class="agend-info-item">
-                            <div class="agend-info-label">📌 Atendimento</div>
+                            <div class="agend-info-label">
+                                <span class="material-symbols-rounded">place</span>
+                                Atendimento
+                            </div>
                             <div class="agend-info-val">
                                 @if (ag.Atendimento == "Local")
                                 {
-                                    <span class="agend-atend-chip chip-local">📍 Presencial</span>
+                                    <span class="agend-atend-chip chip-local">
+                                        <span class="material-symbols-rounded">location_on</span>
+                                        Presencial
+                                    </span>
                                 }
                                 else if (ag.Atendimento == "Domicilio")
                                 {
-                                    <span class="agend-atend-chip chip-domicilio">🏠 Domicílio</span>
+                                    <span class="agend-atend-chip chip-domicilio">
+                                        <span class="material-symbols-rounded">home</span>
+                                        Domicílio
+                                    </span>
                                 }
                                 else if (ag.Atendimento == "Online")
                                 {
-                                    <span class="agend-atend-chip chip-online">💻 Online</span>
+                                    <span class="agend-atend-chip chip-online">
+                                        <span class="material-symbols-rounded">laptop</span>
+                                        Online
+                                    </span>
                                 }
                             </div>
                         </div>
 
                         <div class="agend-info-item">
-
                             <div class="agend-info-val">
-
                                 @if (ag.ConfirmadoProfissional)
                                 {
                                     <div class="ag-contato">
-                                        <span>📞 @ag.ContatoCliente</span>
+                                        <span class="material-symbols-rounded"
+                                              style="font-size:15px;color:var(--blue);">call</span>
+                                        <span>@ag.ContatoCliente</span>
                                     </div>
                                 }
                                 else
                                 {
-                                    <span>
-                                        🔒 Contato do cliente será liberado após confirmação
+                                    <span class="aguardando-chip">
+                                        <span class="material-symbols-rounded" style="font-size:14px;">lock</span>
+                                        Contato liberado após confirmação
                                     </span>
                                 }
-
                             </div>
-
                         </div>
-
-                        
 
                     </div>
 
@@ -302,62 +305,75 @@
                             {
                                 if (ag.ConfirmadoProfissional && !string.IsNullOrEmpty(ag.EnderecoCliente))
                                 {
-                                    <span>🏠</span>
+                                    <span class="material-symbols-rounded" style="font-size:16px;">home</span>
                                     <span>@ag.EnderecoCliente</span>
                                 }
                                 else
                                 {
-                                    <span class="aguardando-chip">🔒 Endereço visível após confirmação</span>
+                                    <span class="aguardando-chip">
+                                        <span class="material-symbols-rounded" style="font-size:14px;">lock</span>
+                                        Endereço visível após confirmação
+                                    </span>
                                 }
                             }
                             else if (ag.Atendimento == "Online" && !string.IsNullOrEmpty(ag.LinkOnline))
                             {
                                 <a href="@ag.LinkOnline" target="_blank" class="btn-link-online">
-                                    🔗 Acessar reunião
+                                    <span class="material-symbols-rounded" style="font-size:16px;">video_call</span>
+                                    Acessar reunião
                                 </a>
                             }
                             else if (ag.Atendimento == "Local" && !string.IsNullOrEmpty(ag.EnderecoLocal))
                             {
-                                <span>📍</span>
+                                <span class="material-symbols-rounded" style="font-size:16px;">location_on</span>
                                 <span>@ag.EnderecoLocal</span>
                             }
                         </div>
 
-                        <!-- botões de ação -->
+                        <!-- botões -->
                         <div class="agend-btns">
 
                             @if (ag.StatusAtual() == "Pendente")
                             {
                                 <button class="btn-confirmar"
                                         onclick="abrirModal('confirmar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
-                                    ✔ Confirmar
+                                    <span class="material-symbols-rounded">check_circle</span>
+                                    Confirmar
                                 </button>
-
                                 <button class="btn-recusar"
                                         onclick="abrirModal('recusar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
-                                    ✕ Recusar
+                                    <span class="material-symbols-rounded">cancel</span>
+                                    Recusar
                                 </button>
                             }
                             else if (ag.StatusAtual() == "Confirmado")
                             {
                                 <button class="btn-finalizar"
                                         onclick="abrirModal('finalizar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
-                                    ✅ Finalizar
+                                    <span class="material-symbols-rounded">task_alt</span>
+                                    Finalizar
                                 </button>
                             }
                             else if (ag.StatusAtual() == "AguardandoCliente")
                             {
-                                <span class="status-info">Aguardando confirmação do cliente</span>
+                                <span class="status-info">
+                                    <span class="material-symbols-rounded" style="font-size:15px;">hourglass_top</span>
+                                    Aguardando confirmação do cliente
+                                </span>
                             }
                             else if (ag.StatusAtual() == "Finalizado")
                             {
-                                <span class="status-finalizado">Serviço finalizado</span>
+                                <span class="status-finalizado">
+                                    <span class="material-symbols-rounded" style="font-size:15px;">verified</span>
+                                    Serviço finalizado
+                                </span>
                             }
 
                             @if (ag.StatusAtual() == "Pendente" || ag.StatusAtual() == "Confirmado")
                             {
                                 <button class="btn-cancelar-pro"
                                         onclick="abrirModal('cancelar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                    <span class="material-symbols-rounded">close</span>
                                     Cancelar
                                 </button>
                             }
@@ -380,19 +396,20 @@
 </div>
 
 
-<!-- =============================================
-     MODAIS DE AÇÃO
-============================================= -->
-
 <!-- Modal Confirmar -->
 <div class="modal-overlay" id="modalConfirmar">
     <div class="modal-box">
-        <div class="modal-icon">✅</div>
+        <div class="modal-icon">
+            <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#22c55e;">check_circle</span>
+        </div>
         <div class="modal-title">Confirmar agendamento?</div>
         <p class="modal-sub" id="descConfirmar"></p>
         <div class="modal-actions">
             <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
-            <a class="btn-modal-green" id="linkConfirmar" href="#">Sim, confirmar</a>
+            <a class="btn-modal-green" id="linkConfirmar" href="#">
+                <span class="material-symbols-rounded">check</span>
+                Sim, confirmar
+            </a>
         </div>
     </div>
 </div>
@@ -400,12 +417,17 @@
 <!-- Modal Recusar -->
 <div class="modal-overlay" id="modalRecusar">
     <div class="modal-box">
-        <div class="modal-icon">❌</div>
+        <div class="modal-icon">
+            <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#ef4444;">cancel</span>
+        </div>
         <div class="modal-title">Recusar pedido?</div>
         <p class="modal-sub" id="descRecusar"></p>
         <div class="modal-actions">
             <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
-            <a class="btn-modal-red" id="linkRecusar" href="#">Sim, recusar</a>
+            <a class="btn-modal-red" id="linkRecusar" href="#">
+                <span class="material-symbols-rounded">close</span>
+                Sim, recusar
+            </a>
         </div>
     </div>
 </div>
@@ -413,12 +435,17 @@
 <!-- Modal Finalizar -->
 <div class="modal-overlay" id="modalFinalizar">
     <div class="modal-box">
-        <div class="modal-icon">🏁</div>
+        <div class="modal-icon">
+            <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#1A6BFF;">task_alt</span>
+        </div>
         <div class="modal-title">Finalizar atendimento?</div>
         <p class="modal-sub" id="descFinalizar"></p>
         <div class="modal-actions">
             <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
-            <a class="btn-modal-blue" id="linkFinalizar" href="#">Sim, finalizar</a>
+            <a class="btn-modal-blue" id="linkFinalizar" href="#">
+                <span class="material-symbols-rounded">check</span>
+                Sim, finalizar
+            </a>
         </div>
     </div>
 </div>
@@ -426,14 +453,19 @@
 <!-- Modal Cancelar -->
 <div class="modal-overlay" id="modalCancelar">
     <div class="modal-box">
-        <div class="modal-icon">⚠️</div>
+        <div class="modal-icon">
+            <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#ef4444;">warning</span>
+        </div>
         <div class="modal-title">Cancelar agendamento?</div>
         <p class="modal-sub" id="descCancelar"></p>
         <div class="modal-actions">
             <button class="btn-modal-cancel" onclick="fecharModais()">Manter</button>
             <form id="formCancelar" asp-action="Cancelar" method="post" style="flex:1;">
                 <input type="hidden" name="id" id="cancelarId" />
-                <button type="submit" class="btn-modal-red" style="width:100%;">Sim, cancelar</button>
+                <button type="submit" class="btn-modal-red" style="width:100%;">
+                    <span class="material-symbols-rounded">close</span>
+                    Sim, cancelar
+                </button>
             </form>
         </div>
     </div>
@@ -441,9 +473,6 @@
 
 @section Scripts {
     <script>
-        /* -----------------------------------------------
-           FILTRO
-        ----------------------------------------------- */
         function filtrar(status, btn) {
             document.querySelectorAll('.filter-pill').forEach(function (p) { p.classList.remove('active'); });
             btn.classList.add('active');
@@ -460,12 +489,8 @@
             if (emp) emp.classList.toggle('visivel', n === 0);
         }
 
-        /* -----------------------------------------------
-           MODAIS
-        ----------------------------------------------- */
         function abrirModal(tipo, id, cliente, data, hora) {
             fecharModais();
-
             var desc = 'Agendamento de <strong>' + cliente + '</strong> para <strong>' + data + ' às ' + hora + '</strong>.';
 
             if (tipo === 'confirmar') {
@@ -496,7 +521,6 @@
             });
         }
 
-        // fecha clicando fora ou ESC
         document.querySelectorAll('.modal-overlay').forEach(function (m) {
             m.addEventListener('click', function (e) { if (e.target === this) fecharModais(); });
         });

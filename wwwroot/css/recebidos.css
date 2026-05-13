@@ -49,6 +49,48 @@
 }
 
 /* ===================================================
+   ALERTS
+=================================================== */
+.alert-sucesso,
+.alert-erro,
+.alert-info {
+    max-width: 1000px;
+    margin: 16px auto 0;
+    padding: 13px 20px;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeUp 0.3s ease both;
+}
+
+.alert-sucesso {
+    background: var(--green-soft);
+    color: #166534;
+    border: 1px solid rgba(34, 197, 94, .22);
+}
+
+.alert-erro {
+    background: var(--red-soft);
+    color: #991b1b;
+    border: 1px solid var(--red-border);
+}
+
+.alert-info {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: 1px solid var(--blue-mid);
+}
+
+.alert-sucesso .material-symbols-rounded,
+.alert-erro .material-symbols-rounded,
+.alert-info .material-symbols-rounded {
+    font-size: 18px;
+}
+
+/* ===================================================
    HERO
 =================================================== */
 .recebidos-hero {
@@ -163,15 +205,14 @@
     white-space: nowrap;
 }
 
-/* badge de pendentes com pulso */
-.hero-counter.has-pending .hero-counter-val {
-    color: var(--amber);
-}
-
 .hero-counter.has-pending {
     border-color: rgba(245, 158, 11, 0.30);
     background: rgba(245, 158, 11, 0.08);
     animation: pulse-border 2.5s ease infinite;
+}
+
+.hero-counter.has-pending .hero-counter-val {
+    color: var(--amber);
 }
 
 @keyframes pulse-border {
@@ -284,15 +325,15 @@
     padding: 32px 24px 0;
 }
 
-/* ===================================================
-   LISTA + CARD
-=================================================== */
 .agend-lista {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
+/* ===================================================
+   CARD
+=================================================== */
 .agend-card {
     background: var(--bg-white);
     border: 1.5px solid var(--border);
@@ -322,13 +363,18 @@
     background: var(--green);
 }
 
+.agend-card.status-aguardando::before {
+    background: var(--purple);
+}
+
 .agend-card.status-finalizado::before {
     background: var(--purple);
+    opacity: .6;
 }
 
 .agend-card.status-cancelado::before {
     background: var(--red);
-    opacity: 0.5;
+    opacity: .4;
 }
 
 .agend-card:hover {
@@ -338,7 +384,7 @@
 }
 
 .agend-card.status-cancelado {
-    opacity: 0.68;
+    opacity: .68;
 }
 
 .agend-card.status-cancelado:hover {
@@ -403,7 +449,21 @@
     color: var(--text-muted);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+
+.agend-subcategoria {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.destaque-servico {
+    font-weight: 600;
+    color: var(--dark);
 }
 
 /* badge de status */
@@ -430,7 +490,7 @@
 .badge-pendente {
     background: var(--amber-soft);
     color: #92400e;
-    border: 1px solid rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245, 158, 11, .25);
 }
 
 .badge-pendente .badge-dot {
@@ -440,17 +500,28 @@
 .badge-confirmado {
     background: var(--green-soft);
     color: #166534;
-    border: 1px solid rgba(34, 197, 94, 0.25);
+    border: 1px solid rgba(34, 197, 94, .25);
 }
 
 .badge-confirmado .badge-dot {
     background: var(--green);
 }
 
+.badge-aguardando {
+    background: var(--purple-soft);
+    color: #5b21b6;
+    border: 1px solid rgba(139, 92, 246, .22);
+}
+
+.badge-aguardando .badge-dot {
+    background: var(--purple);
+}
+
 .badge-finalizado {
     background: var(--purple-soft);
     color: #5b21b6;
-    border: 1px solid rgba(139, 92, 246, 0.22);
+    border: 1px solid rgba(139, 92, 246, .22);
+    opacity: .7;
 }
 
 .badge-finalizado .badge-dot {
@@ -460,7 +531,7 @@
 .badge-cancelado {
     background: var(--red-soft);
     color: #991b1b;
-    border: 1px solid rgba(239, 68, 68, 0.18);
+    border: 1px solid var(--red-border);
     opacity: .75;
 }
 
@@ -471,14 +542,14 @@
 /* corpo */
 .agend-card-body {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     padding: 0 26px;
 }
 
 .agend-info-item {
-    padding: 16px 0;
+    padding: 14px 0;
     border-right: 1px solid var(--border);
-    padding-right: 20px;
+    padding-right: 18px;
 }
 
 .agend-info-item:first-child {
@@ -486,98 +557,143 @@
 }
 
 .agend-info-item:nth-child(2) {
-    padding-inline: 20px;
+    padding-inline: 18px;
+}
+
+.agend-info-item:nth-child(3) {
+    padding-inline: 18px;
 }
 
 .agend-info-item:last-child {
     border-right: none;
-    padding-left: 20px;
+    padding-left: 18px;
     padding-right: 0;
 }
 
 .agend-info-label {
-    font-size: 0.72rem;
+    font-size: 0.70rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: .8px;
     margin-bottom: 5px;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+}
+
+.agend-info-label .material-symbols-rounded {
+    font-size: 13px;
 }
 
 .agend-info-val {
-    font-size: 0.92rem;
+    font-size: 0.90rem;
     font-weight: 600;
     color: var(--dark);
     line-height: 1.3;
 }
 
-/* ===================================================
-   ÁREA DE AÇÕES — principal diferença do lado profissional
-=================================================== */
+/* chips de atendimento */
+.agend-atend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 50px;
+}
+
+.agend-atend-chip .material-symbols-rounded {
+    font-size: 14px;
+}
+
+.chip-local {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: 1px solid var(--blue-mid);
+}
+
+.chip-domicilio {
+    background: var(--accent-soft);
+    color: #007a62;
+    border: 1px solid rgba(0, 212, 170, .22);
+}
+
+.chip-online {
+    background: var(--purple-soft);
+    color: #6d28d9;
+    border: 1px solid rgba(139, 92, 246, .20);
+}
+
+/* contato do cliente */
+.ag-contato {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .84rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+/* área de ações */
 .agend-actions-area {
-    padding: 18px 26px;
-    border-top: 1px solid var(--border);
-    background: var(--bg-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding: 14px 26px;
+    background: var(--bg-light);
+    border-top: 1px solid var(--border);
     flex-wrap: wrap;
 }
 
-/* info de endereço / link */
 .agend-info-extra {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.83rem;
+    gap: 6px;
+    font-size: .83rem;
     color: var(--text-muted);
     flex: 1;
     min-width: 0;
 }
 
-.destaque-servico {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #111;
+.agend-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
 }
 
-.agend-subcategoria {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 2px;
-}
-
+/* aguardando chip */
 .aguardando-chip {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.78rem;
+    font-size: .78rem;
     font-weight: 500;
     padding: 5px 12px;
     border-radius: 50px;
     background: var(--slate-soft);
     color: var(--slate);
-    border: 1px solid rgba(100, 116, 139, 0.18);
+    border: 1px solid rgba(100, 116, 139, .18);
 }
 
+/* link online */
 .btn-link-online {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.83rem;
+    font-size: .83rem;
     font-weight: 700;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: var(--radius-sm);
     text-decoration: none;
     transition: var(--transition);
     background: var(--purple-soft);
     color: #6d28d9;
-    border: 1.5px solid rgba(139, 92, 246, 0.22);
+    border: 1.5px solid rgba(139, 92, 246, .22);
 }
 
 .btn-link-online:hover {
@@ -586,53 +702,48 @@
     border-color: var(--purple);
 }
 
-/* botões de ação do profissional */
-.agend-btns {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-}
-
-.btn-confirmar {
+/* botões de ação */
+.btn-confirmar,
+.btn-recusar,
+.btn-finalizar,
+.btn-cancelar-pro {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.83rem;
+    font-size: .83rem;
     font-weight: 700;
-    padding: 9px 18px;
+    padding: 9px 16px;
     border-radius: var(--radius-sm);
-    text-decoration: none;
     transition: var(--transition);
+    cursor: pointer;
+    border: 1.5px solid transparent;
+}
+
+.btn-confirmar .material-symbols-rounded,
+.btn-recusar .material-symbols-rounded,
+.btn-finalizar .material-symbols-rounded,
+.btn-cancelar-pro .material-symbols-rounded {
+    font-size: 16px;
+}
+
+.btn-confirmar {
     background: var(--green-soft);
     color: var(--green-dark);
-    border: 1.5px solid rgba(34, 197, 94, 0.28);
-    cursor: pointer;
+    border-color: rgba(34, 197, 94, .28);
 }
 
 .btn-confirmar:hover {
     background: var(--green);
     color: #fff;
     border-color: var(--green);
-    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.28);
+    box-shadow: 0 4px 14px rgba(34, 197, 94, .28);
 }
 
 .btn-recusar {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.83rem;
-    font-weight: 600;
-    padding: 9px 16px;
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    transition: var(--transition);
     background: var(--red-soft);
     color: var(--red);
-    border: 1.5px solid var(--red-border);
-    cursor: pointer;
+    border-color: var(--red-border);
 }
 
 .btn-recusar:hover {
@@ -642,43 +753,22 @@
 }
 
 .btn-finalizar {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.83rem;
-    font-weight: 700;
-    padding: 9px 18px;
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    transition: var(--transition);
     background: var(--blue-soft);
     color: var(--blue);
-    border: 1.5px solid var(--blue-mid);
-    cursor: pointer;
+    border-color: var(--blue-mid);
 }
 
 .btn-finalizar:hover {
     background: var(--blue);
     color: #fff;
     border-color: var(--blue);
-    box-shadow: 0 4px 14px rgba(26, 107, 255, 0.28);
+    box-shadow: 0 4px 14px rgba(26, 107, 255, .28);
 }
 
 .btn-cancelar-pro {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--text-muted);
-    border: 1.5px solid var(--border-strong);
-    cursor: pointer;
-    transition: var(--transition);
+    border-color: var(--border-strong);
 }
 
 .btn-cancelar-pro:hover {
@@ -687,8 +777,31 @@
     background: var(--red-soft);
 }
 
+/* status chips */
+.status-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .78rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.status-finalizado {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .78rem;
+    font-weight: 600;
+    color: #166534;
+    background: var(--green-soft);
+    padding: 5px 10px;
+    border-radius: 50px;
+    border: 1px solid rgba(34, 197, 94, .22);
+}
+
 /* ===================================================
-   EMPTY STATE
+   EMPTY
 =================================================== */
 .empty-state {
     text-align: center;
@@ -697,13 +810,17 @@
     border-radius: var(--radius-xl);
     border: 1.5px dashed var(--border-strong);
     box-shadow: var(--card-shadow);
-    animation: fadeUp 0.4s ease both;
+    animation: fadeUp .4s ease both;
 }
 
 .empty-icon {
-    font-size: 3.5rem;
     margin-bottom: 18px;
-    opacity: 0.45;
+    color: var(--text-muted);
+    opacity: .45;
+}
+
+.empty-icon .material-symbols-rounded {
+    font-size: 52px;
 }
 
 .empty-state h3 {
@@ -715,7 +832,7 @@
 }
 
 .empty-state p {
-    font-size: 0.9rem;
+    font-size: .9rem;
     color: var(--text-muted);
     max-width: 360px;
     margin-inline: auto;
@@ -726,7 +843,7 @@
     text-align: center;
     padding: 48px 24px;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: .9rem;
     display: none;
 }
 
@@ -735,12 +852,12 @@
 }
 
 /* ===================================================
-   MODALS
+   MODAIS
 =================================================== */
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(7, 17, 48, 0.55);
+    background: rgba(7, 17, 48, .55);
     backdrop-filter: blur(4px);
     z-index: 2000;
     display: flex;
@@ -749,7 +866,7 @@
     padding: 24px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.22s ease;
+    transition: opacity .22s ease;
 }
 
 .modal-overlay.open {
@@ -763,9 +880,9 @@
     padding: 36px 32px;
     width: 100%;
     max-width: 420px;
-    box-shadow: 0 32px 80px rgba(7, 17, 48, 0.30);
-    transform: translateY(16px) scale(0.97);
-    transition: transform 0.22s ease;
+    box-shadow: 0 32px 80px rgba(7, 17, 48, .30);
+    transform: translateY(16px) scale(.97);
+    transition: transform .22s ease;
     text-align: center;
 }
 
@@ -774,7 +891,6 @@
 }
 
 .modal-icon {
-    font-size: 2.8rem;
     margin-bottom: 14px;
 }
 
@@ -787,15 +903,10 @@
 }
 
 .modal-sub {
-    font-size: 0.88rem;
+    font-size: .88rem;
     color: var(--text-muted);
     line-height: 1.65;
     margin-bottom: 28px;
-}
-
-.modal-highlight {
-    font-weight: 700;
-    color: var(--dark);
 }
 
 .modal-actions {
@@ -810,7 +921,7 @@
     border: 1.5px solid var(--border-strong);
     background: transparent;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
+    font-size: .9rem;
     font-weight: 600;
     color: var(--text-muted);
     cursor: pointer;
@@ -822,19 +933,35 @@
     color: var(--dark);
 }
 
-.btn-modal-green {
+.btn-modal-green,
+.btn-modal-red,
+.btn-modal-blue {
     flex: 1;
     padding: 11px;
     border-radius: var(--radius-md);
     border: none;
-    background: var(--green);
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
+    font-size: .9rem;
     font-weight: 700;
     color: #fff;
     cursor: pointer;
     transition: var(--transition);
-    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-modal-green .material-symbols-rounded,
+.btn-modal-red .material-symbols-rounded,
+.btn-modal-blue .material-symbols-rounded {
+    font-size: 16px;
+}
+
+.btn-modal-green {
+    background: var(--green);
+    box-shadow: 0 4px 14px rgba(34, 197, 94, .28);
 }
 
 .btn-modal-green:hover {
@@ -842,18 +969,8 @@
 }
 
 .btn-modal-red {
-    flex: 1;
-    padding: 11px;
-    border-radius: var(--radius-md);
-    border: none;
     background: var(--red);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #fff;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.28);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, .28);
 }
 
 .btn-modal-red:hover {
@@ -861,18 +978,8 @@
 }
 
 .btn-modal-blue {
-    flex: 1;
-    padding: 11px;
-    border-radius: var(--radius-md);
-    border: none;
     background: var(--blue);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #fff;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 4px 14px rgba(26, 107, 255, 0.28);
+    box-shadow: 0 4px 14px rgba(26, 107, 255, .28);
 }
 
 .btn-modal-blue:hover {
@@ -880,52 +987,21 @@
 }
 
 /* ===================================================
-   Alerts 
-=================================================== */
-
-/* SUCESSO */
-.alert-sucesso {
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #86efac;
-
-    padding: 12px 16px;
-    border-radius: 10px;
-    margin-bottom: 16px;
-
-    font-size: .9rem;
-    font-weight: 500;
-}
-
-/* ERRO */
-.alert-erro {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fca5a5;
-
-    padding: 12px 16px;
-    border-radius: 10px;
-    margin-bottom: 16px;
-
-    font-size: .9rem;
-    font-weight: 500;
-}
-
-/* ===================================================
    RESPONSIVO
 =================================================== */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .agend-card-body {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .agend-info-item:last-child {
+    .agend-info-item:nth-child(3) {
         border-right: none;
     }
 
-    .agend-info-item:nth-child(2) {
+    .agend-info-item:nth-child(4) {
+        border-top: 1px solid var(--border);
+        padding-left: 0;
         border-right: none;
-        padding-right: 0;
     }
 
     .recebidos-hero-inner {
@@ -944,10 +1020,11 @@
     }
 
     .agend-info-item {
-        border-right: none;
+        border-right: none !important;
         padding-left: 0 !important;
         padding-right: 0 !important;
         border-bottom: 1px solid var(--border);
+        border-top: none !important;
     }
 
     .agend-info-item:last-child {

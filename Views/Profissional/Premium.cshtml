@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Plano Premium";
+}
+
+<div class="premium-page">
+
+    <h1>Plano Premium</h1>
+
+    <p>
+        Desbloqueie recursos avançados da plataforma Trampo.
+    </p>
+
+    <div class="premium-card">
+
+        <h2>Premium</h2>
+
+        <h3>R$ 29,90/mês</h3>
+
+        <ul>
+            <li>✔ Atendimentos ilimitados</li>
+            <li>✔ Destaque na busca</li>
+            <li>✔ Selo premium</li>
+            <li>✔ Prioridade para clientes</li>
+            <li>✔ Métricas avançadas</li>
+        </ul>
+
+        <form asp-action="AssinarPremium" method="post">
+            <button type="submit" class="btn-premium">
+                Assinar Premium
+            </button>
+        </form>
+
+    </div>
+
+</div>

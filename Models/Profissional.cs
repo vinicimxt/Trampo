@@ -13,6 +13,12 @@
         public string? Email { get; set; }
         public string Telefone { get; set; }
 
+        public string Plano { get; set; }
+
+        public DateTime? DataAssinatura { get; set; }
+
+        public string StatusAssinatura { get; set; }
+
     }
 
 }
