@@ -15,11 +15,11 @@ namespace BD_TRAMPO
                 string query = @"
         INSERT INTO Servicos
         (ProfissionalId, SubcategoriaId, Nome, Descricao,
-         Atendimento, LinkOnline, LocalId)
+         Atendimento, LinkOnline, LocalId, TipoPreco, PrecoBase)
 
         VALUES
         (@ProfissionalId, @SubcategoriaId, @Nome, @Descricao,
-         @Atendimento, @LinkOnline, @LocalId);
+         @Atendimento, @LinkOnline, @LocalId, @TipoPreco, @PrecoBase);
 
         SELECT SCOPE_IDENTITY();
         ";
@@ -45,6 +45,13 @@ namespace BD_TRAMPO
                 cmd.Parameters.AddWithValue("@LocalId",
                     s.LocalId.HasValue
                     ? (object)s.LocalId
+                    : DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@TipoPreco", s.TipoPreco);
+
+                cmd.Parameters.AddWithValue("@PrecoBase",
+                    s.PrecoBase.HasValue
+                    ? s.PrecoBase.Value
                     : DBNull.Value);
 
                 int idGerado = Convert.ToInt32(cmd.ExecuteScalar());
@@ -225,15 +232,18 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-           SELECT 
-                Id,
-                ProfissionalId,
-                Nome,
-                Descricao,
-                Atendimento,
-                LocalId,
-                SubcategoriaId
-            FROM Servicos";
+                    SELECT 
+                        Id,
+                        ProfissionalId,
+                        Nome,
+                        Descricao,
+                        Atendimento,
+                        LocalId,
+                        SubcategoriaId,
+                        TipoPreco,
+                        PrecoBase
+                    FROM Servicos
+                    WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
@@ -252,7 +262,12 @@ namespace BD_TRAMPO
                         LocalId = reader["LocalId"] != DBNull.Value
                             ? (int)reader["LocalId"]
                             : (int?)null,
-                        SubcategoriaId = (int)reader["SubcategoriaId"]
+                        SubcategoriaId = (int)reader["SubcategoriaId"],
+                        TipoPreco = reader["TipoPreco"].ToString(),
+
+                        PrecoBase = reader["PrecoBase"] != DBNull.Value
+                            ? Convert.ToDecimal(reader["PrecoBase"])
+                            : null
                     };
                 }
             }
@@ -324,6 +339,8 @@ namespace BD_TRAMPO
                         s.Descricao,
                         s.Atendimento,
                         s.LinkOnline,
+                        s.TipoPreco,
+                        s.PrecoBase,
 
                         u.Nome AS NomeProfissional,
                         sc.Nome AS Subcategoria,
@@ -390,6 +407,12 @@ namespace BD_TRAMPO
 
                         Atendimento = reader["Atendimento"].ToString(),
 
+                        TipoPreco = reader["TipoPreco"].ToString(),
+
+                        PrecoBase = reader["PrecoBase"] != DBNull.Value
+                            ? Convert.ToDecimal(reader["PrecoBase"])
+                            : null,
+
                         NomeProfissional = reader["NomeProfissional"].ToString(),
 
                         Categoria = reader["Categoria"].ToString(),
@@ -403,6 +426,7 @@ namespace BD_TRAMPO
                         Endereco = reader["Endereco"] != DBNull.Value
                             ? reader["Endereco"].ToString()
                             : ""
+
                     });
                 }
             }
@@ -417,14 +441,16 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-        UPDATE Servicos SET
-            Nome = @Nome,
-            Descricao = @Descricao,
-            Atendimento = @Atendimento,
-            LocalId = @LocalId,
-            LinkOnline = @LinkOnline,
-            SubcategoriaId = @SubcategoriaId
-        WHERE Id = @Id";
+                UPDATE Servicos SET
+                    Nome = @Nome,
+                    Descricao = @Descricao,
+                    Atendimento = @Atendimento,
+                    LocalId = @LocalId,
+                    LinkOnline = @LinkOnline,
+                    SubcategoriaId = @SubcategoriaId,
+                    TipoPreco = @TipoPreco,
+                    PrecoBase = @PrecoBase
+                WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -446,6 +472,13 @@ namespace BD_TRAMPO
                         : s.LinkOnline);
 
                 cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
+
+                cmd.Parameters.AddWithValue("@TipoPreco", s.TipoPreco);
+
+                cmd.Parameters.AddWithValue("@PrecoBase",
+                    s.PrecoBase.HasValue
+                    ? s.PrecoBase.Value
+                    : DBNull.Value);
 
                 cmd.ExecuteNonQuery();
             }
@@ -512,11 +545,12 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                    UPDATE Disponibilidade
-                    SET Ativo = 0
-                    WHERE ServicoId = @Id";
+            UPDATE Servicos
+            SET Ativo = 0
+            WHERE Id = @Id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
+
                 cmd.Parameters.AddWithValue("@Id", id);
 
                 cmd.ExecuteNonQuery();

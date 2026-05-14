@@ -39,8 +39,9 @@ namespace BD_TRAMPO.Controllers
             return Json(lista);
         }
 
-         [HttpPost]
-        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string atendimento, int? localId, string linkOnline, string diasSemana, TimeSpan horaInicio, TimeSpan horaFim)
+        [HttpPost]
+        public IActionResult Salvar(string nome, int subcategoriaId, string descricao, string atendimento, int? localId, string linkOnline, string diasSemana, TimeSpan horaInicio, TimeSpan horaFim, string tipoPreco,
+        decimal? precoBase)
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
 
@@ -59,6 +60,12 @@ namespace BD_TRAMPO.Controllers
             }
 
             //  VALIDAÇÕES
+
+            if (tipoPreco == "Fixo" && (!precoBase.HasValue || precoBase <= 0))
+            {
+                TempData["Erro"] = "Informe um preço válido.";
+                return RedirectToAction("Criar");
+            }
 
             if (string.IsNullOrWhiteSpace(nome))
             {
@@ -111,7 +118,9 @@ namespace BD_TRAMPO.Controllers
                     Descricao = descricao,
                     Atendimento = atendimento,
                     LocalId = localId,
-                    LinkOnline = linkOnline
+                    LinkOnline = linkOnline,
+                    TipoPreco = tipoPreco,
+                    PrecoBase = precoBase
                 };
 
                 int servicoIdCriado = dao.Inserir(s);
@@ -123,7 +132,7 @@ namespace BD_TRAMPO.Controllers
                     .ToList();
 
                 DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
-                
+
                 foreach (var dia in dias)
                 {
                     dispDAO.Inserir(new Disponibilidade
@@ -210,6 +219,17 @@ namespace BD_TRAMPO.Controllers
                     s.LocalId = null;
                 }
 
+                if (s.TipoPreco == "Fixo" && (!s.PrecoBase.HasValue || s.PrecoBase <= 0))
+                {
+                    TempData["Erro"] = "Informe um preço válido.";
+                    return RedirectToAction("MeusServicos", "Profissional");
+                }
+
+                if (s.TipoPreco == "Combinar")
+                {
+                    s.PrecoBase = null;
+                }
+
                 //  mantém subcategoria (segurança extra)
                 ServicoDAO dao = new ServicoDAO();
                 var original = dao.BuscarPorId(s.Id);
@@ -227,7 +247,7 @@ namespace BD_TRAMPO.Controllers
                     .Select(int.Parse)
                     .ToList();
 
-                   
+
                 foreach (var dia in dias)
                 {
                     dispDAO.Inserir(new Disponibilidade
@@ -247,7 +267,7 @@ namespace BD_TRAMPO.Controllers
             {
                 TempData["Erro"] = "Erro ao atualizar serviço. Tente novamente.";
             }
-            
+
             // TRATAMENTO DE ERROS
             // catch (Exception ex)  
             // {
@@ -295,8 +315,14 @@ namespace BD_TRAMPO.Controllers
                 }
                 else
                 {
+                    DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
+
+                    dispDAO.RemoverPorServico(id);
+
                     dao.Excluir(id);
-                    TempData["Sucesso"] = "Serviço excluído com sucesso 🗑️";
+
+                    TempData["Sucesso"] =
+                        "Serviço excluído com sucesso 🗑️";
                 }
             }
             catch

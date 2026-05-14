@@ -851,6 +851,25 @@
     display: block;
 }
 
+.status-finalizado{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:10px 14px;
+
+    border-radius:50px;
+
+    background:rgba(34,197,94,.12);
+
+    color:#16a34a;
+
+    font-size:.88rem;
+    font-weight:600;
+
+    flex-wrap:wrap;
+}
+
 /* ===================================================
    MODAIS
 =================================================== */

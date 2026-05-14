@@ -22,6 +22,9 @@ namespace BD_TRAMPO
         public string DiasTexto { get; set; }
         public TimeSpan? HoraInicio { get; set; }
         public TimeSpan? HoraFim { get; set; }
+        public string TipoPreco { get; set; }
+
+        public decimal? PrecoBase { get; set; }
     }
 
 }

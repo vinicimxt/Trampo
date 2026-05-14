@@ -86,6 +86,21 @@
                     <div class="char-count" id="charCount">0 / 200</div>
                 </div>
 
+                <!-- TIPO DE SERVIÇO-->
+
+                <label>Tipo de preço</label>
+
+                <select name="TipoPreco" id="tipoPreco">
+                    <option value="Fixo">Preço Fixo</option>
+                    <option value="Combinar">A combinar</option>
+                </select>
+                
+                <div id="boxPreco">
+                    <label>Preço do serviço</label>
+
+                    <input type="number" name="PrecoBase" step="0.01" min="1" placeholder="Ex: 120.00" />
+                </div>
+
                 <div class="form-section-label" style="margin-top:8px;">Disponibilidade</div>
 
                 <!-- DIAS DA SEMANA — pills clicáveis -->
@@ -116,8 +131,7 @@
                         </label>
                         <div class="time-input-wrap">
                             <span class="time-icon"></span>
-                            <input class="form-input form-time" type="time"
-                                name="horaInicio" id="horaInicio" />
+                            <input class="form-input form-time" type="time" name="horaInicio" id="horaInicio" />
                         </div>
                     </div>
 
@@ -129,8 +143,7 @@
                         </label>
                         <div class="time-input-wrap">
                             <span class="time-icon"></span>
-                            <input class="form-input form-time" type="time"
-                                name="horaFim" id="horaFim" />
+                            <input class="form-input form-time" type="time" name="horaFim" id="horaFim" />
                         </div>
                     </div>
                 </div>

@@ -366,7 +366,7 @@ namespace BD_TRAMPO.Controllers
                     Tipo = "Agendamento",
                     ReferenciaId = id
                 });
-                
+
             }
 
             return RedirectToAction("Recebidos");
@@ -434,7 +434,28 @@ namespace BD_TRAMPO.Controllers
         {
             AgendamentoDAO dao = new AgendamentoDAO();
 
+            ServicoDAO servicoDAO = new ServicoDAO();
+
+
             var ag = dao.BuscarPorId(id);
+
+            var servico = servicoDAO.BuscarPorId(ag.ServicoId);
+
+            // PREÇO FIXO
+            if (servico.TipoPreco == "Fixo")
+            {
+                valorFinal = servico.PrecoBase.Value;
+            }
+
+            // A COMBINAR
+            else
+            {
+                if (valorFinal <= 0)
+                {
+                    TempData["Erro"] = "Informe um valor válido.";
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+            }
 
             // 1 EXISTE?
             if (ag == null)
@@ -461,6 +482,7 @@ namespace BD_TRAMPO.Controllers
                 TempData["Erro"] = "Só é possível finalizar agendamentos confirmados.";
                 return Redirect(Request.Headers["Referer"].ToString());
             }
+
 
             //  4 REGRA DE TEMPO
             // DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;

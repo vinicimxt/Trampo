@@ -246,6 +246,27 @@
 
                         <div class="agend-info-item">
                             <div class="agend-info-label">
+                                <span class="material-symbols-rounded">payments</span>
+                                Preço
+                            </div>
+                            <div class="agend-info-val">
+                                @if (ag.TipoPreco == "Fixo")
+                                {
+                                    <span class="valor-fixo">
+                                        R$ @ag.PrecoBase
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="valor-combinar">
+                                        A combinar
+                                    </span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="agend-info-item">
+                            <div class="agend-info-label">
                                 <span class="material-symbols-rounded">place</span>
                                 Atendimento
                             </div>
@@ -353,7 +374,10 @@
                                     '@ag.Id',
                                     '@ag.NomeCliente.Replace("'", "\\'")',
                                     '@ag.Data.ToString("dd/MM/yyyy")',
-                                    '@ag.Hora'
+                                    '@ag.Hora',
+                                    '@ag.TipoPreco',
+                                    '@ag.PrecoBase',
+                                    '@(ag.PlanoProfissional == "Premium" ? 4 : 10)'
                                     )">
                                     <span class="material-symbols-rounded">task_alt</span>
                                     Finalizar
@@ -369,8 +393,18 @@
                             else if (ag.StatusAtual() == "Finalizado")
                             {
                                 <span class="status-finalizado">
-                                    <span class="material-symbols-rounded" style="font-size:15px;">verified</span>
+                                    <span class="material-symbols-rounded">
+                                        verified
+                                    </span>
+
                                     Serviço finalizado
+
+                                    @if (ag.ValorFinal.HasValue)
+                                    {
+                                        <strong>
+                                            • R$ @ag.ValorFinal.Value.ToString("F2")
+                                        </strong>
+                                    }
                                 </span>
                             }
 
@@ -473,22 +507,7 @@
 
             <input type="hidden" name="id" id="finalizarId">
 
-            <div style="margin-top:20px;text-align:left;">
-
-                <label style="font-weight:600;">
-                    Valor cobrado
-                </label>
-
-                <input type="number" name="valorFinal" step="0.01" min="1" required placeholder="Ex: 120.00" style="
-                width:100%;
-                margin-top:8px;
-                padding:12px;
-                border-radius:12px;
-                border:none;
-                outline:none;
-                " />
-
-            </div>
+            <div id="containerPreco"></div>
 
             <div class="modal-actions">
 
@@ -509,7 +528,6 @@
             </div>
 
         </form>
-
     </div>
 
 </div>
@@ -552,8 +570,21 @@
             if (emp) emp.classList.toggle('visivel', n === 0);
         }
 
-        function abrirModal(tipo, id, cliente, data, hora) {
+        function abrirModal(tipo, id, cliente, data, hora, tipoPreco, precoBase, percentualTaxa) {
             fecharModais();
+            
+            precoBase = parseFloat(
+                precoBase.toString().replace(',', '.')
+            );
+
+            percentualTaxa = parseFloat(percentualTaxa);
+
+            let taxa =
+                precoBase * (percentualTaxa / 100);
+
+            let liquido =
+                precoBase - taxa;
+
             var desc = 'Agendamento de <strong>' + cliente + '</strong> para <strong>' + data + ' às ' + hora + '</strong>.';
 
             if (tipo === 'confirmar') {
@@ -572,6 +603,86 @@
                     desc + ' Confirme que o serviço foi realizado.';
 
                 document.getElementById('finalizarId').value = id;
+
+                let htmlPreco = '';
+
+                // SERVIÇO COM PREÇO FIXO
+                if (tipoPreco === 'Fixo') {
+
+                    htmlPreco = `
+                                                <div style="margin-top:20px;text-align:left;">
+
+                                                    <label style="font-weight:600;">
+                                                        Valor do serviço
+                                                    </label>
+
+                                                    <input
+                                                        type="number"
+                                                        name="valorFinal"
+                                                        value="${precoBase}"
+                                                        readonly
+                                                        class="input-valor-final"
+                                                        style="
+                                                            width:100%;
+                                                            margin-top:8px;
+                                                            padding:12px;
+                                                            border-radius:12px;
+                                                            border:none;
+                                                            outline:none;
+                                                        "
+                                                    />
+
+                                                </div>
+
+                                                  <div class="resumo-financeiro">
+
+                                                    <div class="resumo-item">
+                                                        Taxa da plataforma (${percentualTaxa}%):
+                                                        <strong>R$ ${taxa.toFixed(2)}</strong>
+                                                    </div>
+
+                                                    <div class="resumo-item destaque">
+                                                        Você receberá:
+                                                        <strong>R$ ${liquido.toFixed(2)}</strong>
+                                                    </div>
+
+                                                </div>
+                                            `;
+                }
+
+                // SERVIÇO A COMBINAR
+                else {
+
+                    htmlPreco = `
+                                                <div style="margin-top:20px;text-align:left;">
+
+                                                    <label style="font-weight:600;">
+                                                        Valor cobrado
+                                                    </label>
+
+                                                    <input
+                                                        type="number"
+                                                        name="valorFinal"
+                                                        step="0.01"
+                                                        min="1"
+                                                        required
+                                                        placeholder="Ex: 120.00"
+                                                        class="input-valor-final"
+                                                        style="
+                                                            width:100%;
+                                                            margin-top:8px;
+                                                            padding:12px;
+                                                            border-radius:12px;
+                                                            border:none;
+                                                            outline:none;
+                                                        "
+                                                    />
+
+                                                </div>
+                                            `;
+                }
+
+                document.getElementById('containerPreco').innerHTML = htmlPreco;
 
                 document.getElementById('modalFinalizar')
                     .classList.add('open');
@@ -596,6 +707,31 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') fecharModais();
         });
+
+
+
+        function calcularResumoFinanceiro(percentual) {
+
+            let valor = parseFloat(
+                document.getElementById('valorFinalInput').value
+            );
+
+            if (!valor || valor <= 0) {
+                document.getElementById('resumoFinanceiro').style.display = 'none';
+                return;
+            }
+
+            let taxa = valor * (percentual / 100);
+            let liquido = valor - taxa;
+
+            document.getElementById('resumoFinanceiro').style.display = 'block';
+
+            document.getElementById('taxaTexto').innerText =
+                'R$ ' + taxa.toFixed(2);
+
+            document.getElementById('liquidoTexto').innerText =
+                'R$ ' + liquido.toFixed(2);
+        }
 
 
     </script>

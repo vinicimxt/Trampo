@@ -195,3 +195,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+//FINANCEIRO 
+
+document.getElementById("tipoPreco")
+    .addEventListener("change", function () {
+
+    var box = document.getElementById("boxPreco");
+    
+// if (tipoPreco === "Fixo") {
+//     esconderInputValor();
+// }
+
+    if (this.value === "Combinar") {
+        box.style.display = "none";
+    } else {
+        box.style.display = "block";
+    }
+});
+

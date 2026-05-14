@@ -12,25 +12,29 @@
 }
 
 @functions {
-    string GetBadgeClass(string atend) {
-        if (atend == "Local")     return "badge-local";
+    string GetBadgeClass(string atend)
+    {
+        if (atend == "Local") return "badge-local";
         if (atend == "Domicilio") return "badge-domicilio";
-        if (atend == "Online")    return "badge-online";
+        if (atend == "Online") return "badge-online";
         return "badge-default";
     }
-    string GetBadgeIcon(string atend) {
-        if (atend == "Local")     return "location_on";
+    string GetBadgeIcon(string atend)
+    {
+        if (atend == "Local") return "location_on";
         if (atend == "Domicilio") return "home";
-        if (atend == "Online")    return "laptop";
+        if (atend == "Online") return "laptop";
         return "place";
     }
-    string GetBadgeLabel(string atend) {
-        if (atend == "Local")     return "Presencial";
+    string GetBadgeLabel(string atend)
+    {
+        if (atend == "Local") return "Presencial";
         if (atend == "Domicilio") return "Domicílio";
-        if (atend == "Online")    return "Online";
+        if (atend == "Online") return "Online";
         return atend;
     }
-    string GetIniciais(string nome) {
+    string GetIniciais(string nome)
+    {
         if (string.IsNullOrWhiteSpace(nome)) return "?";
         var p = nome.Trim().Split(' ');
         string r = "";
@@ -73,14 +77,15 @@
     <!-- CONTEÚDO -->
     <div class="servicos-main">
 
+        <!-- substitua os 3 botões de filtro por: -->
         <div class="filtro-servicos">
-            <button class="filtro-btn ativo" onclick="filtrarServicos('todos')">
+            <button class="filtro-btn ativo" data-filtro="todos" onclick="filtrarServicos('todos')">
                 <span class="material-symbols-rounded">list</span> Todos
             </button>
-            <button class="filtro-btn" onclick="filtrarServicos('ativos')">
+            <button class="filtro-btn" data-filtro="ativos" onclick="filtrarServicos('ativos')">
                 <span class="material-symbols-rounded">check_circle</span> Ativos
             </button>
-            <button class="filtro-btn" onclick="filtrarServicos('inativos')">
+            <button class="filtro-btn" data-filtro="inativos" onclick="filtrarServicos('inativos')">
                 <span class="material-symbols-rounded">cancel</span> Inativos
             </button>
         </div>
@@ -193,7 +198,8 @@
                                                 <span class="info-row-label">Link</span>
                                                 <a href="@s.LinkOnline" target="_blank" class="servico-link">
                                                     Acessar
-                                                    <span class="material-symbols-rounded" style="font-size:14px;">open_in_new</span>
+                                                    <span class="material-symbols-rounded"
+                                                          style="font-size:14px;">open_in_new</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -207,24 +213,16 @@
                                 </div>
 
                                 <div class="servico-actions">
-                                    <button type="button" class="btn-edit"
-                                            @(s.Ativo ? "" : "disabled")
-                                            data-id="@s.Id"
-                                            data-nome="@s.Nome"
-                                            data-local="@s.LocalId"
-                                            data-desc="@s.Descricao"
-                                            data-atendimento="@s.Atendimento"
-                                            data-link="@s.LinkOnline"
-                                            data-sub="@s.SubcategoriaId"
-                                            data-hora-inicio="@s.HoraInicio"
-                                            data-hora-fim="@s.HoraFim"
-                                            data-dias="@s.DiasTexto">
+                                    <button type="button" class="btn-edit" @(s.Ativo ? "" : "disabled") data-id="@s.Id"
+                                            data-nome="@s.Nome" data-local="@s.LocalId" data-desc="@s.Descricao"
+                                            data-atendimento="@s.Atendimento" data-link="@s.LinkOnline" data-sub="@s.SubcategoriaId"
+                                            data-hora-inicio="@s.HoraInicio" data-hora-fim="@s.HoraFim" data-dias="@s.DiasTexto"
+                                            data-tipo-preco="@s.TipoPreco" data-preco="@s.PrecoBase">
                                         <span class="material-symbols-rounded">edit</span>
                                         Editar
                                     </button>
 
-                                    <button type="button" class="btn-delete"
-                                            @(s.Ativo ? "" : "disabled")
+                                    <button type="button" class="btn-delete" @(s.Ativo ? "" : "disabled")
                                             onclick="abrirModalAcao(@s.Id, '@s.Nome.Replace("'", "\\'")')">
                                         <span class="material-symbols-rounded">delete</span>
                                         Remover
@@ -302,6 +300,37 @@
                     </select>
                 </div>
 
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Tipo de preço
+                    </label>
+
+                    <select name="TipoPreco" id="editTipoPreco" class="form-select">
+
+                        <option value="Fixo">
+                            Preço fixo
+                        </option>
+
+                        <option value="Combinar">
+                            A combinar
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group" id="editPrecoDiv">
+
+                    <label class="form-label">
+                        Preço do serviço
+                    </label>
+
+                    <input type="number" step="0.01" min="0" name="PrecoBase" id="editPreco" class="form-input"
+                           placeholder="Ex: 80.00" />
+
+                </div>
+
                 <!-- LOCAL -->
                 <div id="editLocalDiv" class="form-group hidden">
                     <label class="form-label">Local</label>
@@ -366,102 +395,135 @@
 
 
 @section Scripts {
-<script>
-    /* abrir drawer de edição */
-    document.querySelectorAll('.btn-edit').forEach(function(btn) {
-        btn.addEventListener('click', function () {
-            document.getElementById('servicoId').value      = this.dataset.id;
-            document.getElementById('editNome').value       = this.dataset.nome    || '';
-            document.getElementById('editDesc').value       = this.dataset.desc    || '';
-            document.getElementById('editLink').value       = this.dataset.link    || '';
-            document.getElementById('editAtendimento').value= this.dataset.atendimento || '';
+    <script>
+        /* abrir drawer de edição */
+        document.querySelectorAll('.btn-edit').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.getElementById('servicoId').value = this.dataset.id;
+                document.getElementById('editNome').value = this.dataset.nome || '';
+                document.getElementById('editDesc').value = this.dataset.desc || '';
+                document.getElementById('editLink').value = this.dataset.link || '';
+                document.getElementById('editAtendimento').value = this.dataset.atendimento || '';
 
-            var local = this.dataset.local;
-            if (local) document.getElementById('editLocal').value = local;
+                document.getElementById('editTipoPreco').value =
+                    this.dataset.tipoPreco || 'Combinar';
 
-            atualizarCamposDinamicos();
-            preencherDisponibilidade(
-                this.dataset.dias      || '',
-                this.dataset.horaInicio|| '',
-                this.dataset.horaFim   || ''
+                document.getElementById('editPreco').value =
+                    this.dataset.preco || '';
+
+                var local = this.dataset.local;
+                if (local) document.getElementById('editLocal').value = local;
+
+                atualizarCamposDinamicos();
+                preencherDisponibilidade(
+                    this.dataset.dias || '',
+                    this.dataset.horaInicio || '',
+                    this.dataset.horaFim || ''
+                );
+                abrirModal('modalServico');
+            });
+        });
+
+        /* campos dinâmicos */
+        function atualizarCamposDinamicos() {
+
+            var atendimento =
+                document.getElementById('editAtendimento').value;
+
+            var tipoPreco =
+                document.getElementById('editTipoPreco').value;
+
+            var localDiv =
+                document.getElementById('editLocalDiv');
+
+            var linkDiv =
+                document.getElementById('editLinkDiv');
+
+            var precoDiv =
+                document.getElementById('editPrecoDiv');
+
+            localDiv.classList.toggle(
+                'hidden',
+                atendimento !== 'Local'
             );
-            abrirModal('modalServico');
+
+            linkDiv.classList.toggle(
+                'hidden',
+                atendimento !== 'Online'
+            );
+
+            precoDiv.classList.toggle(
+                'hidden',
+                tipoPreco !== 'Fixo'
+            );
+        }
+        document.getElementById('editAtendimento')
+            ?.addEventListener('change', atualizarCamposDinamicos);
+            
+        document.getElementById('editTipoPreco')
+            ?.addEventListener('change', atualizarCamposDinamicos);
+
+        /* modal remover */
+        function abrirModalAcao(id, nome) {
+            document.getElementById('modalTextoAcao').innerText =
+                'Este serviço pode ter agendamentos.\nSe tiver → será desativado.\nSe não tiver → será excluído.';
+            document.getElementById('modalConfirmarAcao').href = '/Servico/Desativar/' + id;
+            abrirModal('modalAcao');
+        }
+
+        /* auto-hide alerts */
+        setTimeout(function () {
+            document.querySelectorAll('.alert-sucesso, .alert-erro').forEach(function (el) {
+                el.style.transition = 'opacity .3s';
+                el.style.opacity = '0';
+                setTimeout(function () { el.remove(); }, 300);
+            });
+        }, 3000);
+
+        /* filtros */
+        document.querySelectorAll('.filtro-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.filtro-btn')
+                    .forEach(function (b) { b.classList.remove('ativo'); });
+                this.classList.add('ativo');
+            });
         });
-    });
 
-    /* campos dinâmicos */
-    function atualizarCamposDinamicos() {
-        var tipo     = document.getElementById('editAtendimento').value;
-        var localDiv = document.getElementById('editLocalDiv');
-        var linkDiv  = document.getElementById('editLinkDiv');
-        localDiv.classList.toggle('hidden', tipo !== 'Local');
-        linkDiv.classList.toggle('hidden',  tipo !== 'Online');
-    }
-    document.getElementById('editAtendimento')
-        ?.addEventListener('change', atualizarCamposDinamicos);
-
-    /* modal remover */
-    function abrirModalAcao(id, nome) {
-        document.getElementById('modalTextoAcao').innerText =
-            'Este serviço pode ter agendamentos.\nSe tiver → será desativado.\nSe não tiver → será excluído.';
-        document.getElementById('modalConfirmarAcao').href = '/Servico/Desativar/' + id;
-        abrirModal('modalAcao');
-    }
-
-    /* auto-hide alerts */
-    setTimeout(function () {
-        document.querySelectorAll('.alert-sucesso, .alert-erro').forEach(function(el) {
-            el.style.transition = 'opacity .3s';
-            el.style.opacity    = '0';
-            setTimeout(function() { el.remove(); }, 300);
-        });
-    }, 3000);
-
-    /* filtros */
-    var botoesFiltro = document.querySelectorAll('.filtro-btn');
-    botoesFiltro.forEach(function(btn) {
-        btn.addEventListener('click', function () {
-            botoesFiltro.forEach(function(b) { b.classList.remove('ativo'); });
-            this.classList.add('ativo');
-            filtrarServicos(this.dataset.filtro || this.textContent.trim().toLowerCase());
-        });
-    });
-
-    function filtrarServicos(tipo) {
-        document.querySelectorAll('.servico-card').forEach(function(card) {
-            var inativo = card.classList.contains('inativo');
-            if      (tipo === 'todos')   card.style.display = '';
-            else if (tipo === 'ativos')  card.style.display = inativo ? 'none' : '';
-            else if (tipo === 'inativos')card.style.display = inativo ? ''     : 'none';
-        });
-    }
-
-    /* preencher disponibilidade no drawer */
-    var diasSelecionadosEdit = [];
-
-    function preencherDisponibilidade(dias, horaInicio, horaFim) {
-        diasSelecionadosEdit = [];
-        document.querySelectorAll('#diasPillsEdit .dia-pill')
-            .forEach(function(b) { b.classList.remove('ativo'); });
-
-        if (dias && dias.trim()) {
-            dias.split(',').forEach(function(d) {
-                d = d.trim();
-                var btn = document.querySelector('#diasPillsEdit .dia-pill[data-val="' + d + '"]');
-                if (btn) { btn.classList.add('ativo'); diasSelecionadosEdit.push(d); }
+        function filtrarServicos(tipo) {
+            document.querySelectorAll('.servico-card').forEach(function (card) {
+                var inativo = card.classList.contains('inativo');
+                if (tipo === 'todos') card.style.display = '';
+                else if (tipo === 'ativos') card.style.display = inativo ? 'none' : '';
+                else if (tipo === 'inativos') card.style.display = inativo ? '' : 'none';
             });
         }
-        document.getElementById('diasSemanaEdit').value  = diasSelecionadosEdit.join(',');
-        document.getElementById('editHoraInicio').value  = horaInicio || '';
-        document.getElementById('editHoraFim').value     = horaFim    || '';
-    }
 
-    function toggleDiaEdit(btn) {
-        btn.classList.toggle('ativo');
-        diasSelecionadosEdit = [];
-        document.querySelectorAll('#diasPillsEdit .dia-pill.ativo')
-            .forEach(function(x) { diasSelecionadosEdit.push(x.dataset.val); });
-        document.getElementById('diasSemanaEdit').value = diasSelecionadosEdit.join(',');
-    }
-</script>
+        /* preencher disponibilidade no drawer */
+        var diasSelecionadosEdit = [];
+
+        function preencherDisponibilidade(dias, horaInicio, horaFim) {
+            diasSelecionadosEdit = [];
+            document.querySelectorAll('#diasPillsEdit .dia-pill')
+                .forEach(function (b) { b.classList.remove('ativo'); });
+
+            if (dias && dias.trim()) {
+                dias.split(',').forEach(function (d) {
+                    d = d.trim();
+                    var btn = document.querySelector('#diasPillsEdit .dia-pill[data-val="' + d + '"]');
+                    if (btn) { btn.classList.add('ativo'); diasSelecionadosEdit.push(d); }
+                });
+            }
+            document.getElementById('diasSemanaEdit').value = diasSelecionadosEdit.join(',');
+            document.getElementById('editHoraInicio').value = horaInicio || '';
+            document.getElementById('editHoraFim').value = horaFim || '';
+        }
+
+        function toggleDiaEdit(btn) {
+            btn.classList.toggle('ativo');
+            diasSelecionadosEdit = [];
+            document.querySelectorAll('#diasPillsEdit .dia-pill.ativo')
+                .forEach(function (x) { diasSelecionadosEdit.push(x.dataset.val); });
+            document.getElementById('diasSemanaEdit').value = diasSelecionadosEdit.join(',');
+        }
+    </script>
 }

@@ -186,6 +186,31 @@
                                 🛠 @ag.Servico
                             </div>
 
+                            <div class="agend-info-item">
+                                <div class="agend-info-label">💰 Valor</div>
+
+                                <div class="agend-info-val">
+
+                                   @if (ag.ValorFinal.HasValue)
+                                        {
+                                            <span class="valor-final">
+                                                R$ @ag.ValorFinal.Value.ToString("N2")
+                                            </span>
+                                        }
+                                        else if (ag.TipoPreco == "Combinar")
+                                        {
+                                            <span>A combinar</span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                R$ @ag.PrecoBase?.ToString("N2")
+                                            </span>
+                                        }
+
+                                </div>
+                            </div>
+
                             @if (!string.IsNullOrEmpty(ag.Subcategoria))
                             {
                                 <div class="agend-subcategoria">
@@ -208,10 +233,14 @@
                                 @ag.Data.ToString("dddd", new System.Globalization.CultureInfo("pt-BR"))
                             </div>
                         </div>
+
                         <div class="agend-info-item">
                             <div class="agend-info-label">🕐 Horário</div>
                             <div class="agend-info-val">@ag.Hora</div>
                         </div>
+
+
+
                         <div class="agend-info-item">
                             <div class="agend-info-label">📌 Tipo</div>
                             <div class="agend-info-val">
@@ -234,9 +263,9 @@
 
                         <div class="agend-info-item">
                            
-                                <div class="ag-info-val">
-                                    <span>📞 @ag.ContatoProfissional</span>
-                                </div>
+                            <div class="ag-info-val">
+                                <span>📞 @ag.ContatoProfissional</span>
+                            </div>
                             
                         </div>
 
@@ -272,7 +301,7 @@
                         <div class="agend-footer-actions">
 
                             @if (ag.Status == "CanceladoCliente" || ag.Status == "CanceladoProfissional" || ag.Status ==
-                                                                                           "Cancelado")
+                                    "Cancelado")
                             {
                                 <span class="status-info cancelado">❌ Agendamento cancelado</span>
                             }

@@ -29,13 +29,16 @@
         public bool ConfirmadoCliente { get; set; }
         public DateTime? DataFinalizacao { get; set; }
         public bool JaAvaliado { get; set; }
+        public string PlanoProfissional { get; set; }
 
         public decimal? ValorFinal { get; set; }
 
         public decimal? Taxa { get; set; }
 
         public decimal? ValorLiquido { get; set; }
-        
+        public string TipoPreco { get; set; }
+        public decimal? PrecoBase { get; set; }
+
         public bool PodeAvaliar()
         {
             return FinalizadoProfissional && ConfirmadoCliente;

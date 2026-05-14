@@ -123,6 +123,8 @@ namespace BD_TRAMPO
                 SC.Nome AS Subcategoria,
                 S.LinkOnline,
                 S.Atendimento,
+                S.TipoPreco,
+                S.PrecoBase,
                 L.Endereco AS EnderecoLocal,
 
                 CASE 
@@ -187,6 +189,11 @@ namespace BD_TRAMPO
                             : reader["TelefoneProfissional"]?.ToString(),
 
                         JaAvaliado = reader["JaAvaliado"] != DBNull.Value && (int)reader["JaAvaliado"] == 1,
+                        TipoPreco = reader["TipoPreco"].ToString(),
+
+                        PrecoBase = reader["PrecoBase"] != DBNull.Value
+                        ? Convert.ToDecimal(reader["PrecoBase"])
+                        : null,
                     });
                 }
             }
@@ -206,18 +213,36 @@ namespace BD_TRAMPO
                 SELECT 
                     A.*,
                     U.Nome AS NomeCliente,
+                    P.Plano AS PlanoProfissional,
                     U.Telefone AS ContatoCliente,
                     S.Nome AS Servico, 
                     S.LinkOnline,
                     S.Atendimento,
+                    S.TipoPreco,
+                    S.PrecoBase,
                     L.Endereco AS EnderecoLocal,
                     SC.Nome AS Subcategoria
+
                 FROM Agendamentos A
-                INNER JOIN Clientes C ON A.ClienteId = C.Id
-                INNER JOIN Usuarios U ON C.UsuarioId = U.Id
-                INNER JOIN Servicos S ON A.ServicoId = S.Id 
-                INNER JOIN Subcategorias SC ON S.SubcategoriaId = SC.Id
-                LEFT JOIN Locais L ON A.LocalId = L.Id
+
+                INNER JOIN Clientes C 
+                    ON A.ClienteId = C.Id
+
+                INNER JOIN Usuarios U 
+                    ON C.UsuarioId = U.Id
+
+                INNER JOIN Profissionais P
+                    ON A.ProfissionalId = P.Id
+
+                INNER JOIN Servicos S 
+                    ON A.ServicoId = S.Id 
+
+                INNER JOIN Subcategorias SC 
+                    ON S.SubcategoriaId = SC.Id
+
+                LEFT JOIN Locais L 
+                    ON A.LocalId = L.Id
+
                 WHERE A.ProfissionalId = @ProfissionalId";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -267,6 +292,14 @@ namespace BD_TRAMPO
                         EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
                         ? reader["EnderecoLocal"].ToString()
                         : "",
+
+                        TipoPreco = reader["TipoPreco"].ToString(),
+
+                        PrecoBase = reader["PrecoBase"] != DBNull.Value
+                        ? Convert.ToDecimal(reader["PrecoBase"])
+                        : null,
+
+                        PlanoProfissional = reader["PlanoProfissional"].ToString(),
                     });
                 }
             }
@@ -284,12 +317,14 @@ namespace BD_TRAMPO
                     A.*,
                     C.UsuarioId,
                     S.Atendimento,
+                    S.TipoPreco,
+                    S.PrecoBase,
                     P.Contato AS ContatoProfissional,
                     UProf.Telefone AS TelefoneProfissional,
                     UCli.Telefone AS ContatoCliente,
                     S.LinkOnline,
                     L.Endereco AS EnderecoLocal
-              FROM Agendamentos A
+                FROM Agendamentos A
               
                     LEFT JOIN Clientes C 
                         ON A.ClienteId = C.Id
@@ -321,6 +356,7 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         ClienteId = (int)reader["ClienteId"],
+                        ServicoId = (int)reader["ServicoId"],
                         UsuarioId = reader["UsuarioId"] != DBNull.Value
                         ? (int)reader["UsuarioId"]
                         : 0,
@@ -350,6 +386,12 @@ namespace BD_TRAMPO
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                         ? reader["EnderecoCliente"].ToString()
                         : "",
+
+                        TipoPreco = reader["TipoPreco"].ToString(),
+
+                        PrecoBase = reader["PrecoBase"] != DBNull.Value
+                        ? Convert.ToDecimal(reader["PrecoBase"])
+                        : null,
                     };
                 }
             }

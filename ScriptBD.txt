@@ -277,3 +277,9 @@ ADD
     ValorFinal DECIMAL(10,2) NULL,
     Taxa DECIMAL(10,2) NULL,
     ValorLiquido DECIMAL(10,2) NULL;
+
+ALTER TABLE Servicos
+ADD TipoPreco VARCHAR(20) NOT NULL DEFAULT 'Fixo';
+
+ALTER TABLE Servicos
+ADD PrecoBase DECIMAL(10,2) NULL;
