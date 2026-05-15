@@ -211,6 +211,26 @@
             return View(usuario);
         }
 
+        public IActionResult PainelCliente()
+        {
+            var proteger = Proteger();
+
+            if (proteger != null)
+                return proteger;
+
+            int usuarioId =
+                int.Parse(HttpContext.Session.GetString("UsuarioId"));
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+            var usuario = usuarioDAO.BuscarPorId(usuarioId);
+
+            if (usuario == null)
+                return RedirectToAction("Login");
+
+            return View(usuario);
+        }
+
         [HttpPost]
         public IActionResult SalvarConta(string nome, string telefone, string contatoPublico, string senhaAtual, string novaSenha, string confirmarSenha)
         {

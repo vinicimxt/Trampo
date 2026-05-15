@@ -37,6 +37,10 @@
     double gapCanc = circ - (pCanc / 100 * circ);
 }
 
+@{
+    bool premium = ViewBag.Plano == "Premium";
+}
+
 <div class="dash-page">
 
     <!-- HERO -->
@@ -294,24 +298,91 @@
         <!-- ============================================
              PAGAMENTOS — placeholder backend futuro
         ============================================= -->
-        <div class="pagamentos-card">
-            <div class="pag-inner">
+        <div class="pagamentos-card" style="position:relative;">
+
+            @if (!premium)
+            {
+                <div class="pag-blur-overlay">
+
+                    <div class="premium-lock-card">
+
+                        <div class="premium-glow"></div>
+
+                        <span class="material-symbols-rounded premium-lock-icon">
+                            workspace_premium
+                        </span>
+
+                        <div class="premium-badge">
+                            PREMIUM
+                        </div>
+
+                        <h3>
+                            Desbloqueie seu painel financeiro
+                        </h3>
+
+                        <p>
+                            Veja faturamento total, ganhos líquidos,
+                            taxas da plataforma e histórico completo
+                            dos seus atendimentos.
+                        </p>
+
+                        <div class="premium-benefits">
+
+                            <div class="premium-benefit">
+                                <span class="material-symbols-rounded">payments</span>
+                                Controle financeiro completo
+                            </div>
+
+                            <div class="premium-benefit">
+                                <span class="material-symbols-rounded">monitoring</span>
+                                Relatórios avançados
+                            </div>
+
+                            <div class="premium-benefit">
+                                <span class="material-symbols-rounded">trending_up</span>
+                                Métricas de crescimento
+                            </div>
+
+                        </div>
+
+                        <a href="/Pagamento/CheckoutPremium" class="btn-premium-dashboard">
+
+                            <span class="material-symbols-rounded">
+                                workspace_premium
+                            </span>
+
+                            Assinar Premium
+
+                        </a>
+
+                    </div>
+
+                </div>
+            }
+
+            <div class="pag-inner @(premium ? "" : "pag-conteudo-bloqueado")">
 
                 <div class="pag-section-title">💳 Pagamentos</div>
 
                 <!-- Stats fictícios (serão reais quando o backend estiver pronto) -->
                 <div class="pag-stats-grid">
                     <div class="pag-stat">
-                        <span class="pag-stat-val">R$—</span>
+                        <span class="pag-stat-val">
+                            R$ @ViewBag.Faturamento
+                        </span>
                         <span class="pag-stat-lbl">Faturamento total</span>
                     </div>
                     <div class="pag-stat">
-                        <span class="pag-stat-val">R$—</span>
-                        <span class="pag-stat-lbl">Este mês</span>
+                        <span class="pag-stat-val">
+                            R$ @ViewBag.Taxas
+                        </span>
+                        <span class="pag-stat-lbl">Taxas da plataforma</span>
                     </div>
                     <div class="pag-stat">
-                        <span class="pag-stat-val">R$—</span>
-                        <span class="pag-stat-lbl">A receber</span>
+                        <span class="pag-stat-val">
+                            R$ @ViewBag.Liquido
+                        </span>
+                        <span class="pag-stat-lbl">Valor líquido</span>
                     </div>
                 </div>
 
@@ -329,39 +400,37 @@
 
                 <!-- Lista mockada com blur (preview do que virá) -->
                 <div style="position:relative; margin-top:16px;">
-                    <div class="pag-list">
+                    @foreach (var pag in ViewBag.UltimosPagamentos)
+                    {
                         <div class="pag-item">
-                            <div class="pag-item-icon">💈</div>
-                            <div>
-                                <div class="pag-item-name">Corte de cabelo — Carlos M.</div>
-                                <div class="pag-item-date">Hoje, 14:00</div>
+
+                            <div class="pag-item-icon">
+                                💳
                             </div>
-                            <div class="pag-item-val">R$55,00</div>
-                        </div>
-                        <div class="pag-item">
-                            <div class="pag-item-icon">🧔</div>
+
                             <div>
-                                <div class="pag-item-name">Barba — Rafael L.</div>
-                                <div class="pag-item-date">Ontem, 15:30</div>
+
+                                <div class="pag-item-name">
+                                    @pag.Servico — @pag.NomeCliente
+                                </div>
+
+                                <div class="pag-item-date">
+                                    @pag.Data.ToString("dd/MM/yyyy")
+                                    às
+                                    @pag.Hora
+                                </div>
+
                             </div>
-                            <div class="pag-item-val">R$35,00</div>
-                        </div>
-                        <div class="pag-item">
-                            <div class="pag-item-icon">💈</div>
-                            <div>
-                                <div class="pag-item-name">Corte + Barba — Pedro S.</div>
-                                <div class="pag-item-date">Seg, 09:00</div>
+
+                            <div class="pag-item-val">
+                                R$ @pag.ValorFinal.ToString("N2")
                             </div>
-                            <div class="pag-item-val">R$80,00</div>
+
                         </div>
-                    </div>
+                    }
 
                     <!-- overlay de blur sobre a lista mockada -->
-                    <div class="pag-blur-overlay">
-                        <div class="pag-blur-badge">
-                            🔒 Disponível em breve
-                        </div>
-                    </div>
+
                 </div>
 
             </div>

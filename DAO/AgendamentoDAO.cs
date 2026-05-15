@@ -600,6 +600,109 @@ namespace BD_TRAMPO
             }
         }
 
+        // DASHBOARD ,calculo direto do banco
+        public (decimal faturamento, decimal taxas, decimal liquido) DashboardFinanceiro(int profissionalId)
+
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT
+                ISNULL(SUM(ValorFinal), 0) AS Faturamento,
+                ISNULL(SUM(Taxa), 0) AS Taxas,
+                ISNULL(SUM(ValorFinal - Taxa), 0) AS Liquido
+            FROM Agendamentos
+            WHERE ProfissionalId = @ProfissionalId
+            AND ConfirmadoCliente = 1
+            AND FinalizadoProfissional = 1
+                ";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    decimal faturamento =
+                        Convert.ToDecimal(reader["Faturamento"]);
+
+                    decimal taxas =
+                        Convert.ToDecimal(reader["Taxas"]);
+
+                    decimal liquido =
+                        Convert.ToDecimal(reader["Liquido"]);
+
+                    return (faturamento, taxas, liquido);
+                }
+            }
+
+            return (0, 0, 0);
+        }
+
+        // Cards dinamicos dos ultimos pagamentos feitos
+        public List<Agendamento> UltimosPagamentos(int profissionalId)
+        {
+            List<Agendamento> lista = new List<Agendamento>();
+
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT TOP 5
+                A.ValorFinal,
+                A.Data,
+                A.Hora,
+
+                S.Nome AS Servico,
+
+                U.Nome AS NomeCliente
+
+            FROM Agendamentos A
+
+            INNER JOIN Servicos S
+                ON A.ServicoId = S.Id
+
+            INNER JOIN Clientes C
+                ON A.ClienteId = C.Id
+
+            INNER JOIN Usuarios U
+                ON C.UsuarioId = U.Id
+
+            WHERE A.ProfissionalId = @ProfissionalId
+            AND A.ConfirmadoCliente = 1
+            AND A.FinalizadoProfissional = 1
+
+            ORDER BY A.Data DESC ";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    lista.Add(new Agendamento
+                    {
+                        Servico = reader["Servico"].ToString(),
+
+                        NomeCliente = reader["NomeCliente"].ToString(),
+
+                        Data = Convert.ToDateTime(reader["Data"]),
+
+                        Hora = (TimeSpan)reader["Hora"],
+
+                        ValorFinal = Convert.ToDecimal(reader["ValorFinal"])
+                    });
+                }
+            }
+
+            return lista;
+        }
+
+
+
 
 
     }

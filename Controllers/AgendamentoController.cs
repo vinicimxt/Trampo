@@ -656,9 +656,8 @@ namespace BD_TRAMPO.Controllers
             return PartialView("_DetalhesAgendamentoModal", ag);
         }
 
-        //CONTA PREMIUM 
 
-
+    
 
 
     }

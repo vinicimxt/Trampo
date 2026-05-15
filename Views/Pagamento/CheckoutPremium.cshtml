@@ -1,0 +1,61 @@
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Plano Premium";
+
+    var usuarioId = Context.Session.GetString("UsuarioId");
+    var tipoUsuario = Context.Session.GetString("UsuarioTipo");
+}
+
+<div class="premium-page">
+
+    <h1>Plano Premium</h1>
+
+    <p>
+        Desbloqueie recursos avançados da plataforma Trampo.
+    </p>
+
+    <div class="premium-card">
+
+        <h2>Premium</h2>
+
+        <h3>R$ 29,90/mês</h3>
+
+        <ul>
+            <li>✔ Atendimentos ilimitados</li>
+            <li>✔ Destaque na busca</li>
+            <li>✔ Selo premium</li>
+            <li>✔ Prioridade para clientes</li>
+            <li>✔ Métricas avançadas</li>
+        </ul>
+
+        @if (usuarioId == null)
+        {
+            <a asp-controller="Usuario"
+               asp-action="Login"
+               class="btn-premium">
+                Fazer login para assinar
+            </a>
+        }
+        else if (tipoUsuario != "profissional")
+        {
+            <button class="btn-premium-disabled" disabled>
+                Apenas profissionais podem assinar
+            </button>
+        }
+        else
+        {
+            <form asp-controller="Pagamento"
+                  asp-action="CheckoutPremium"
+                  method="get">
+
+                <button type="submit">
+                    Continuar assinatura
+                </button>
+
+            </form>
+        }
+
+    </div>
+
+</div>

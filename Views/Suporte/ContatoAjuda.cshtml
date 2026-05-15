@@ -1,30 +1,217 @@
 @section Styles {
-    <link rel="stylesheet" href="~/css/Suporte.css?v=4" />
+    <link rel="stylesheet" href="~/css/Suporte.css?v=5" />
 }
 
+<div class="suporte-page">
 
+    <!-- HERO -->
+    <div class="suporte-hero">
+        <div class="suporte-hero-dots"></div>
+        <div class="suporte-hero-inner">
+            <span class="suporte-hero-label">Estamos aqui</span>
+            <h1 class="suporte-hero-title">Central de Suporte</h1>
+            <p class="suporte-hero-sub">Descreva seu problema e nossa equipe entrará em contato em breve.</p>
+        </div>
+    </div>
 
-<div class="suporte-container">
+    <!-- LAYOUT -->
+    <div class="suporte-main">
 
-    <form method="post" action="/Suporte/Enviar">
-        <h2>Suporte</h2>
-        <p>Descreva seu problema e te ajudamos</p>
+        <!-- FORMULÁRIO -->
+        <div class="suporte-form-card">
 
-        <label>Tipo</label>
-        <select name="tipo">
-            <option>Dúvida</option>
-            <option>Problema com agendamento</option>
-            <option>Cancelamento</option>
-            <option>Outro</option>
-        </select>
+            <div class="suporte-form-header">
+                <div class="suporte-form-header-icon">
+                    <span class="material-symbols-rounded">support_agent</span>
+                </div>
+                <div>
+                    <div class="suporte-form-header-title">Abrir chamado</div>
+                    <div class="suporte-form-header-sub">Respondemos em até 24 horas úteis</div>
+                </div>
+            </div>
 
-        <label>Assunto</label>
-        <input type="text" name="assunto" />
+            <form method="post" action="/Suporte/Enviar" id="formSuporte">
+                <div class="suporte-form-body">
 
-        <label>Mensagem</label>
-        <textarea name="mensagem"></textarea>
+                    <!-- Tipo (chips rápidos) -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="material-symbols-rounded">category</span>
+                            Tipo de solicitação <span class="req">*</span>
+                        </label>
 
-        <button type="submit">Enviar</button>
-    </form>
+                        <div class="tipo-chips" id="tipoChips">
+                            <button type="button" class="tipo-chip-btn ativo" data-val="Dúvida"
+                                    onclick="selecionarTipo(this)">
+                                <span class="material-symbols-rounded">help</span> Dúvida
+                            </button>
+                            <button type="button" class="tipo-chip-btn" data-val="Problema com agendamento"
+                                    onclick="selecionarTipo(this)">
+                                <span class="material-symbols-rounded">event_busy</span> Agendamento
+                            </button>
+                            <button type="button" class="tipo-chip-btn" data-val="Cancelamento"
+                                    onclick="selecionarTipo(this)">
+                                <span class="material-symbols-rounded">cancel</span> Cancelamento
+                            </button>
+                            <button type="button" class="tipo-chip-btn" data-val="Pagamento"
+                                    onclick="selecionarTipo(this)">
+                                <span class="material-symbols-rounded">payments</span> Pagamento
+                            </button>
+                            <button type="button" class="tipo-chip-btn" data-val="Outro" onclick="selecionarTipo(this)">
+                                <span class="material-symbols-rounded">more_horiz</span> Outro
+                            </button>
+                        </div>
 
+                        <!-- hidden que vai pro backend -->
+                        <input type="hidden" name="tipo" id="tipoHidden" value="Dúvida" />
+                    </div>
+
+                    <!-- Assunto -->
+                    <div class="form-group">
+                        <label class="form-label" for="assunto">
+                            <span class="material-symbols-rounded">title</span>
+                            Assunto <span class="req">*</span>
+                        </label>
+                        <input class="form-input" type="text" name="assunto" id="assunto"
+                               placeholder="Resuma seu problema em poucas palavras" required maxlength="120" />
+                    </div>
+
+                    <!-- Mensagem -->
+                    <div class="form-group">
+                        <label class="form-label" for="mensagem">
+                            <span class="material-symbols-rounded">chat</span>
+                            Mensagem <span class="req">*</span>
+                        </label>
+                        <textarea class="form-textarea" name="mensagem" id="mensagem"
+                                  placeholder="Descreva detalhadamente o que aconteceu, quando ocorreu e o que você esperava que fosse acontecer..."
+                                  required maxlength="1000" oninput="contarChars(this)"></textarea>
+                        <div class="char-count" id="charCount">0 / 1000</div>
+                    </div>
+
+                </div>
+
+                <div class="suporte-form-footer">
+                    <span class="suporte-form-footer-note">
+                        <span class="material-symbols-rounded">verified_user</span>
+                        Seus dados são tratados com segurança
+                    </span>
+                    <button type="submit" class="btn-enviar" id="btnEnviar">
+                        <span class="material-symbols-rounded">send</span>
+                        Enviar mensagem
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="suporte-sidebar">
+
+            <!-- Informações de contato -->
+            <div class="scard">
+                <div class="scard-title">Outros canais</div>
+
+                <div class="scard-item">
+                    <div class="scard-item-icon">
+                        <span class="material-symbols-rounded">mail</span>
+                    </div>
+                    <div>
+                        <div class="scard-item-label">E-mail</div>
+                        <div class="scard-item-val">suporte@@trampo.com.br</div>
+                    </div>
+                </div>
+
+                <div class="scard-item">
+                    <div class="scard-item-icon">
+                        <span class="material-symbols-rounded">schedule</span>
+                    </div>
+                    <div>
+                        <div class="scard-item-label">Horário de atendimento</div>
+                        <div class="scard-item-val">Seg–Sex, 9h às 18h</div>
+                    </div>
+                </div>
+
+                <div class="scard-item">
+                    <div class="scard-item-icon">
+                        <span class="material-symbols-rounded">timer</span>
+                    </div>
+                    <div>
+                        <div class="scard-item-label">Tempo de resposta</div>
+                        <div class="scard-item-val">Até 24 horas úteis</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ rápido -->
+            <div class="scard">
+                <div class="scard-title">Dúvidas frequentes</div>
+
+                <div class="faq-item">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                    Como cancelo um agendamento?
+                </div>
+                <div class="faq-item">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                    Como altero minhas informações de perfil?
+                </div>
+                <div class="faq-item">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                    O profissional não apareceu — o que fazer?
+                </div>
+                <div class="faq-item">
+                    <span class="material-symbols-rounded">arrow_forward</span>
+                    Como avalio um serviço realizado?
+                </div>
+            </div>
+
+            <!-- CTA WhatsApp -->
+            <div class="scard scard-dark">
+                <div class="scard-title">Atendimento rápido</div>
+                <p class="scard-dark-sub">
+                    Para urgências, fale com a gente diretamente pelo WhatsApp.
+                </p>
+                <a href="https://wa.me/5511400012345" target="_blank" class="btn-whatsapp">
+                    <span class="material-symbols-rounded">chat</span>
+                    Falar no WhatsApp
+                </a>
+            </div>
+
+        </div>
+
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        /* chips de tipo */
+        function selecionarTipo(btn) {
+            document.querySelectorAll('.tipo-chip-btn').forEach(function (b) {
+                b.classList.remove('ativo');
+            });
+            btn.classList.add('ativo');
+            document.getElementById('tipoHidden').value = btn.dataset.val;
+        }
+
+        /* contador de caracteres */
+        function contarChars(el) {
+            var len = el.value.length;
+            var max = parseInt(el.getAttribute('maxlength')) || 1000;
+            var count = document.getElementById('charCount');
+            if (!count) return;
+            count.textContent = len + ' / ' + max;
+            count.className = 'char-count';
+            if (len > max * 0.8) count.classList.add('quase');
+            if (len >= max) count.classList.add('cheio');
+        }
+
+        /* loading no submit */
+        document.getElementById('formSuporte').addEventListener('submit', function () {
+            var btn = document.getElementById('btnEnviar');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML =
+                    '<span class="material-symbols-rounded">hourglass_top</span> Enviando...';
+            }
+        });
+    </script>
+}

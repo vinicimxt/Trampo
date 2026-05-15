@@ -66,6 +66,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90aWZpY2FjYW9cX05vdGlmaWNhY29lc0Ryb3Bkb3duLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Pagamento/CheckoutPremium.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnYW1lbnRvXENoZWNrb3V0UHJlbWl1bS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Pagamento/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnYW1lbnRvXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Pagamento/Sucesso.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnYW1lbnRvXFN1Y2Vzc28uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXERhc2hib2FyZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -84,10 +96,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/PerfilPublico.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXFBlcmZpbFB1YmxpY28uY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Profissional/Premium.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlzc2lvbmFsXFByZW1pdW0uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Servico/Criar.cshtml]
@@ -120,6 +128,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Usuario/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb1xMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Usuario/PainelCliente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXN1YXJpb1xQYWluZWxDbGllbnRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Vinicius/source/repos/BD-TRAMPO/BD-TRAMPO/Views/Usuario/Perfil.cshtml]

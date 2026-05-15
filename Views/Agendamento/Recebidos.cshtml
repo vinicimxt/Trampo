@@ -357,12 +357,22 @@
                             @if (ag.StatusAtual() == "Pendente")
                             {
                                 <button class="btn-confirmar"
-                                        onclick="abrirModal('confirmar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                        onclick="abrirModal('confirmar', '@ag.Id',
+                                    '@ag.NomeCliente.Replace("'", "\\'")',
+                                    '@ag.Data.ToString("dd/MM/yyyy")',
+                                    '@ag.Hora',
+                                    '@ag.TipoPreco',
+                                    '@ag.PrecoBase')">
                                     <span class="material-symbols-rounded">check_circle</span>
                                     Confirmar
                                 </button>
                                 <button class="btn-recusar"
-                                        onclick="abrirModal('recusar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                        onclick="abrirModal('recusar', '@ag.Id',
+                                    '@ag.NomeCliente.Replace("'", "\\'")',
+                                    '@ag.Data.ToString("dd/MM/yyyy")',
+                                    '@ag.Hora',
+                                    '@ag.TipoPreco',
+                                    '@ag.PrecoBase')">
                                     <span class="material-symbols-rounded">cancel</span>
                                     Recusar
                                 </button>

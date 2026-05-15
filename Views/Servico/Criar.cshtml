@@ -88,19 +88,45 @@
 
                 <!-- TIPO DE SERVIÇO-->
 
-                <label>Tipo de preço</label>
+                <div class="form-group">
 
-                <select name="TipoPreco" id="tipoPreco">
-                    <option value="Fixo">Preço Fixo</option>
-                    <option value="Combinar">A combinar</option>
-                </select>
-                
-                <div id="boxPreco">
-                    <label>Preço do serviço</label>
+                    <label class="form-label" for="tipoPreco">
+                        Tipo de preço <span class="req">*</span>
+                    </label>
 
-                    <input type="number" name="PrecoBase" step="0.01" min="1" placeholder="Ex: 120.00" />
+                    <div class="select-wrap">
+                        <select name="TipoPreco" id="tipoPreco" class="form-select">
+
+                            <option value="Fixo">
+                                Preço Fixo
+                            </option>
+
+                            <option value="Combinar">
+                                A combinar
+                            </option>
+
+                        </select>
+                    </div>
+
                 </div>
 
+                <div class="form-group" id="boxPreco">
+
+                    <label class="form-label" for="precoBase">
+                        Preço do serviço <span class="req">*</span>
+                    </label>
+
+                    <input type="number" name="PrecoBase" id="precoBase" class="form-input" step="0.01" min="1"
+                           placeholder="Ex: 120.00" />
+
+                    <span class="input-msg">
+                        Valor exibido para o cliente
+                    </span>
+
+                </div>
+
+
+                <!-- HORARIOS DE ATENDIMENTO-->
                 <div class="form-section-label" style="margin-top:8px;">Disponibilidade</div>
 
                 <!-- DIAS DA SEMANA — pills clicáveis -->

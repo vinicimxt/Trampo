@@ -63,11 +63,28 @@ namespace BD_TRAMPO.Controllers
             int usuarioId = int.Parse(usuarioIdStr);
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
+
             int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+
+            // BUSCA O PROFISSIONAL
+            var profissional = profDAO.BuscarPorId(profissionalId);
+
+            // ENVIA O PLANO PRA VIEW
+            ViewBag.Plano = profissional.Plano;
 
             AgendamentoDAO agDAO = new AgendamentoDAO();
 
             var dados = agDAO.DashboardProfissional(profissionalId);
+
+            var financeiro = agDAO.DashboardFinanceiro(profissionalId);
+
+            ViewBag.Faturamento = financeiro.faturamento;
+
+            ViewBag.Taxas = financeiro.taxas;
+
+            ViewBag.Liquido = financeiro.liquido;
+
+            ViewBag.UltimosPagamentos = agDAO.UltimosPagamentos(profissionalId);
 
             return View(dados);
         }
@@ -135,20 +152,33 @@ namespace BD_TRAMPO.Controllers
         public IActionResult MeuPerfil()
         {
             var auth = Proteger();
-            if (auth != null) return auth;
 
-            int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
+            if (auth != null)
+                return auth;
+
+            int usuarioId =
+                int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
-            int profissionalId = profDAO.BuscarPorUsuario(usuarioId);
+
+            int profissionalId =
+                profDAO.BuscarPorUsuario(usuarioId);
+
+            // BUSCA O OBJETO COMPLETO
+            var profissional =
+                profDAO.BuscarPorId(profissionalId);
 
             ServicoDAO servicoDAO = new ServicoDAO();
 
-            ViewBag.TotalServicos = servicoDAO.ContarPorProfissional(profissionalId);
-            ViewBag.PedidosPendentes = 0; // ou seu método real
+            ViewBag.TotalServicos =
+                servicoDAO.ContarPorProfissional(profissionalId);
 
-            return View();
+            ViewBag.PedidosPendentes = 0;
+
+            // ENVIA O MODEL
+            return View(profissional);
         }
+        
         public IActionResult Contato()
         {
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
@@ -183,26 +213,7 @@ namespace BD_TRAMPO.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult AssinarPremium()
-        {
-            string usuarioSession = HttpContext.Session.GetString("UsuarioId");
 
-            if (string.IsNullOrEmpty(usuarioSession))
-                return RedirectToAction("Login", "Usuario");
-
-            int usuarioId = int.Parse(usuarioSession);
-
-            ProfissionalDAO dao = new ProfissionalDAO();
-
-            int profissionalId = dao.BuscarPorUsuario(usuarioId);
-
-            dao.AtivarPremium(profissionalId);
-
-            TempData["Sucesso"] = "Plano Premium ativado com sucesso!";
-
-            return RedirectToAction("Dashboard");
-        }
 
 
     }

@@ -15,7 +15,7 @@
 
             <div class="perfil-hero-left">
                 <span class="perfil-hero-label">Painel do Profissional</span>
-                <h1 class="perfil-hero-title">Olá, @ViewBag.NomeProfissional 👋</h1>
+                <h1 class="perfil-hero-title">Olá, @Model.Nome 👋</h1>
                 <p class="perfil-hero-sub">Gerencie seus serviços, agendamentos e acompanhe seu desempenho.</p>
             </div>
 
@@ -23,6 +23,7 @@
                 <div class="status-dot"></div>
                 <div class="status-text">
                     Perfil ativo
+                    
                     <span>Visível para clientes</span>
                 </div>
             </div>
@@ -142,6 +143,24 @@
                         }
 
                         <span class="card-arrow">→</span>
+                    </a>
+
+                     <a href="/Usuario/Meus" class="perfil-card">
+
+                        <div class="card-icon">
+                            <span class="material-symbols-rounded">event</span>
+                        </div>
+
+                        <div class="card-content">
+                            <h3>Meus Agendamentos</h3>
+
+                            <p>
+                                Veja pedidos ativos e histórico
+                            </p>
+                        </div>
+
+                        <span class="card-arrow">→</span>
+
                     </a>
 
                     <a href="/Usuario/Perfil" class="perfil-card">

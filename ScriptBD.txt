@@ -1,11 +1,14 @@
 USE master;
 GO
 
+IF DB_ID('Xamou') IS NOT NULL
+BEGIN
+    ALTER DATABASE Xamou
+    SET SINGLE_USER
+    WITH ROLLBACK IMMEDIATE;
 
-ALTER DATABASE Xamou SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-GO 
-
-DROP DATABASE IF EXISTS Xamou;
+    DROP DATABASE Xamou;
+END
 GO
 
 CREATE DATABASE Xamou;
@@ -26,260 +29,450 @@ DROP TABLE IF EXISTS Clientes;
 DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios; 
 DROP TABLE IF EXISTS Notificacoes;
+DROP TABLE IF EXISTS Assinaturas;
 
--- =============================
--- USUÁRIOS BASE
--- =============================
+/* =========================================================
+   USUÁRIOS
+========================================================= */
 
 CREATE TABLE Usuarios (
     Id INT PRIMARY KEY IDENTITY,
-    Nome VARCHAR(100) NOT NULL,
-    Email VARCHAR(100) UNIQUE NOT NULL,
-    Senha VARCHAR(255) NOT NULL,
-    Tipo VARCHAR(20) NOT NULL,
-    Telefone VARCHAR(20) NULL
+
+    Nome NVARCHAR(100) NOT NULL,
+
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+
+    Senha NVARCHAR(255) NOT NULL,
+
+    Tipo NVARCHAR(20) NOT NULL
+        CHECK (Tipo IN ('Cliente', 'Profissional')),
+
+    Telefone NVARCHAR(20) NULL
 );
 
 CREATE TABLE Clientes (
     Id INT PRIMARY KEY IDENTITY,
+
     UsuarioId INT NOT NULL UNIQUE,
-    BloqueadoAte DATETIME NULL,
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE CASCADE
+
+    BloqueadoAte DATETIME2 NULL,
+
+    CONSTRAINT FK_Clientes_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Profissionais (
     Id INT PRIMARY KEY IDENTITY,
+
     UsuarioId INT NOT NULL UNIQUE,
-    TipoDocumento VARCHAR(10),
-    Documento VARCHAR(20),
-    Contato VARCHAR(255) NULL,
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id) ON DELETE CASCADE
+
+    TipoDocumento NVARCHAR(10) NULL,
+
+    Documento NVARCHAR(20) NULL,
+
+    Contato NVARCHAR(255) NULL,
+
+    Plano NVARCHAR(20) NOT NULL DEFAULT 'Free'
+        CHECK (Plano IN ('Free', 'Premium')),
+
+    StatusAssinatura NVARCHAR(20) NOT NULL DEFAULT 'Ativo'
+        CHECK (StatusAssinatura IN ('Ativo', 'Cancelado', 'Pendente')),
+
+    DataAssinatura DATETIME2 NULL,
+
+    CONSTRAINT FK_Profissionais_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX UX_Profissional_CPF
+CREATE UNIQUE INDEX UX_Profissionais_CPF
 ON Profissionais(Documento)
 WHERE TipoDocumento = 'CPF';
 
--- =============================
--- CATEGORIAS
--- =============================
+
+/* =========================================================
+   CATEGORIAS
+========================================================= */
 
 CREATE TABLE Categorias (
     Id INT PRIMARY KEY IDENTITY,
-    Nome VARCHAR(100) NOT NULL
+
+    Nome NVARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Subcategorias (
     Id INT PRIMARY KEY IDENTITY,
-    Nome VARCHAR(100) NOT NULL,
+
+    Nome NVARCHAR(100) NOT NULL,
+
     CategoriaId INT NOT NULL,
-    FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id) ON DELETE CASCADE
+
+    CONSTRAINT FK_Subcategorias_Categorias
+        FOREIGN KEY (CategoriaId)
+        REFERENCES Categorias(Id)
+        ON DELETE CASCADE
 );
 
--- =============================
--- ESTRUTURA DO PROFISSIONAL
--- =============================
+
+/* =========================================================
+   ESTRUTURA DO PROFISSIONAL
+========================================================= */
 
 CREATE TABLE Locais (
     Id INT PRIMARY KEY IDENTITY,
+
     ProfissionalId INT NOT NULL,
-    Nome VARCHAR(100),
-    Endereco VARCHAR(255) NOT NULL,
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE
+
+    Nome NVARCHAR(100) NULL,
+
+    Endereco NVARCHAR(255) NOT NULL,
+
+    CONSTRAINT FK_Locais_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Servicos (
     Id INT PRIMARY KEY IDENTITY,
-    ProfissionalId INT NOT NULL,
-    SubcategoriaId INT NOT NULL,
-    Nome NVARCHAR(100) NOT NULL,
-    Descricao NVARCHAR(255),
-    Atendimento VARCHAR(50),
-    LinkOnline VARCHAR(255) NULL,
-    Ativo BIT DEFAULT 1,
 
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE,
-    FOREIGN KEY (SubcategoriaId) REFERENCES Subcategorias(Id)
+    ProfissionalId INT NOT NULL,
+
+    SubcategoriaId INT NOT NULL,
+
+    Nome NVARCHAR(100) NOT NULL,
+
+    Descricao NVARCHAR(255) NULL,
+
+    Atendimento NVARCHAR(50) NOT NULL
+        CHECK (Atendimento IN ('Domicilio', 'Local', 'Online')),
+
+    TipoPreco NVARCHAR(20) NOT NULL DEFAULT 'Fixo'
+        CHECK (TipoPreco IN ('Fixo', 'Combinar')),
+
+    PrecoBase DECIMAL(10,2) NULL,
+
+    LinkOnline NVARCHAR(255) NULL,
+
+    Ativo BIT NOT NULL DEFAULT 1,
+
+    CONSTRAINT FK_Servicos_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_Servicos_Subcategorias
+        FOREIGN KEY (SubcategoriaId)
+        REFERENCES Subcategorias(Id)
 );
 
 CREATE TABLE ServicoLocais (
     Id INT PRIMARY KEY IDENTITY,
+
     ServicoId INT NOT NULL,
+
     LocalId INT NOT NULL,
-    FOREIGN KEY (ServicoId) REFERENCES Servicos(Id) ON DELETE CASCADE,
-    FOREIGN KEY (LocalId) REFERENCES Locais(Id)
+
+    CONSTRAINT FK_ServicoLocais_Servicos
+        FOREIGN KEY (ServicoId)
+        REFERENCES Servicos(Id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_ServicoLocais_Locais
+        FOREIGN KEY (LocalId)
+        REFERENCES Locais(Id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
 
     ProfissionalId INT NOT NULL,
+
     ServicoId INT NOT NULL,
 
-    DiaSemana INT NOT NULL,
+    DiaSemana INT NOT NULL
+        CHECK (DiaSemana BETWEEN 0 AND 6),
+
     HoraInicio TIME NOT NULL,
+
     HoraFim TIME NOT NULL,
 
     Ativo BIT NOT NULL DEFAULT 1,
 
-    FOREIGN KEY (ProfissionalId)
-        REFERENCES Profissionais(Id),
+    CONSTRAINT FK_Disponibilidade_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE,
 
-    FOREIGN KEY (ServicoId)
+    CONSTRAINT FK_Disponibilidade_Servicos
+        FOREIGN KEY (ServicoId)
         REFERENCES Servicos(Id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE BloqueiosAgenda (
     Id INT PRIMARY KEY IDENTITY,
+
     ProfissionalId INT NOT NULL,
+
     Data DATE NOT NULL,
+
     HoraInicio TIME NOT NULL,
+
     HoraFim TIME NOT NULL,
-    Motivo VARCHAR(255),
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id) ON DELETE CASCADE
+
+    Motivo NVARCHAR(255) NULL,
+
+    CONSTRAINT FK_BloqueiosAgenda_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
 );
 
--- =============================
--- AGENDAMENTOS
--- =============================
+
+/* =========================================================
+   AGENDAMENTOS
+========================================================= */
 
 CREATE TABLE Agendamentos (
     Id INT PRIMARY KEY IDENTITY,
+
     ClienteId INT NOT NULL,
+
     ProfissionalId INT NOT NULL,
+
     ServicoId INT NOT NULL,
+
     LocalId INT NULL,
 
     Data DATE NOT NULL,
+
     Hora TIME NOT NULL,
 
-    Status VARCHAR(50) NOT NULL,
-    Descricao VARCHAR(255),
-    DataCancelamento DATETIME NULL,
-    EnderecoCliente VARCHAR(255) NULL,
+    Status NVARCHAR(50) NOT NULL
+        CHECK (Status IN (
+            'Pendente',
+            'Confirmado',
+            'Concluido',
+            'Cancelado'
+        )),
 
-    ConfirmadoProfissional BIT DEFAULT 0,
-    FinalizadoProfissional BIT DEFAULT 0,
-    ConfirmadoCliente BIT DEFAULT 0,
+    Descricao NVARCHAR(255) NULL,
 
-    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id),
-    FOREIGN KEY (ServicoId) REFERENCES Servicos(Id) ON DELETE CASCADE,
-    FOREIGN KEY (LocalId) REFERENCES Locais(Id)
+    EnderecoCliente NVARCHAR(255) NULL,
+
+    DataCancelamento DATETIME2 NULL,
+
+    ValorFinal DECIMAL(10,2) NULL,
+
+    Taxa DECIMAL(10,2) NULL,
+
+    ValorLiquido DECIMAL(10,2) NULL,
+
+    ConfirmadoProfissional BIT NOT NULL DEFAULT 0,
+
+    FinalizadoProfissional BIT NOT NULL DEFAULT 0,
+
+    ConfirmadoCliente BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_Agendamentos_Clientes
+        FOREIGN KEY (ClienteId)
+        REFERENCES Clientes(Id),
+
+    CONSTRAINT FK_Agendamentos_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id),
+
+    CONSTRAINT FK_Agendamentos_Servicos
+        FOREIGN KEY (ServicoId)
+        REFERENCES Servicos(Id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_Agendamentos_Locais
+        FOREIGN KEY (LocalId)
+        REFERENCES Locais(Id)
 );
 
--- =============================
--- AVALIAÇÕES
--- =============================
+
+/* =========================================================
+   AVALIAÇÕES
+========================================================= */
 
 CREATE TABLE Avaliacoes (
     Id INT PRIMARY KEY IDENTITY,
-    ProfissionalId INT NOT NULL,
-    UsuarioId INT NOT NULL,
-    AgendamentoId INT NOT NULL,
-    Nota INT NOT NULL,
-    Comentario NVARCHAR(500),
-    Data DATETIME DEFAULT GETDATE(),
 
-    FOREIGN KEY (ProfissionalId) REFERENCES Profissionais(Id),
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id),
-    FOREIGN KEY (AgendamentoId) REFERENCES Agendamentos(Id)
+    ProfissionalId INT NOT NULL,
+
+    UsuarioId INT NOT NULL,
+
+    AgendamentoId INT NOT NULL,
+
+    Nota INT NOT NULL
+        CHECK (Nota BETWEEN 1 AND 5),
+
+    Comentario NVARCHAR(500) NULL,
+
+    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_Avaliacoes_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id),
+
+    CONSTRAINT FK_Avaliacoes_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id),
+
+    CONSTRAINT FK_Avaliacoes_Agendamentos
+        FOREIGN KEY (AgendamentoId)
+        REFERENCES Agendamentos(Id)
 );
 
-CREATE UNIQUE INDEX UX_Avaliacao_Agendamento
+CREATE UNIQUE INDEX UX_Avaliacoes_Agendamento
 ON Avaliacoes(AgendamentoId);
 
--- =============================
--- SUPORTE
--- =============================
+
+/* =========================================================
+   SUPORTE
+========================================================= */
 
 CREATE TABLE ContatoSuporte (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    UsuarioId INT NOT NULL,
-    Tipo VARCHAR(50) NOT NULL,
-    Assunto VARCHAR(150) NOT NULL,
-    Mensagem TEXT NOT NULL,
-    Status VARCHAR(30) NOT NULL DEFAULT 'Aberto',
-    DataCriacao DATETIME NOT NULL DEFAULT GETDATE(),
+    Id INT PRIMARY KEY IDENTITY,
 
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+    UsuarioId INT NOT NULL,
+
+    Tipo NVARCHAR(50) NOT NULL,
+
+    Assunto NVARCHAR(150) NOT NULL,
+
+    Mensagem NVARCHAR(MAX) NOT NULL,
+
+    Status NVARCHAR(30) NOT NULL DEFAULT 'Aberto'
+        CHECK (Status IN ('Aberto', 'Respondido', 'Fechado')),
+
+    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_ContatoSuporte_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
 );
 
--- =============================
--- NOTIFICAÇÕES
--- =============================
+
+/* =========================================================
+   NOTIFICAÇÕES
+========================================================= */
 
 CREATE TABLE Notificacoes (
     Id INT PRIMARY KEY IDENTITY,
-    UsuarioId INT,
-    Titulo NVARCHAR(100),
-    Mensagem NVARCHAR(255),
-    Tipo NVARCHAR(50),
-    ReferenciaId INT,
-    Lida BIT DEFAULT 0,
-    DataCriacao DATETIME DEFAULT GETDATE()
+
+    UsuarioId INT NOT NULL,
+
+    Titulo NVARCHAR(100) NOT NULL,
+
+    Mensagem NVARCHAR(255) NOT NULL,
+
+    Tipo NVARCHAR(50) NULL,
+
+    ReferenciaId INT NULL,
+
+    Lida BIT NOT NULL DEFAULT 0,
+
+    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_Notificacoes_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
 );
 
--- =============================
--- DADOS INICIAIS
--- =============================
 
-INSERT INTO Categorias (Nome) VALUES
+/* =========================================================
+   ASSINATURAS
+========================================================= */
+
+CREATE TABLE Assinaturas (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ProfissionalId INT NOT NULL,
+
+    Plano NVARCHAR(20) NOT NULL
+        CHECK (Plano IN ('Free', 'Premium')),
+
+    Valor DECIMAL(10,2) NOT NULL,
+
+    StatusPagamento NVARCHAR(20) NOT NULL
+        CHECK (StatusPagamento IN (
+            'Pendente',
+            'Pago',
+            'Cancelado'
+        )),
+
+    MetodoPagamento NVARCHAR(20) NULL,
+
+    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_Assinaturas_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
+   DADOS INICIAIS
+========================================================= */
+
+INSERT INTO Categorias (Nome)
+VALUES
 ('Manutenção'),
 ('Beleza'),
 ('Tecnologia'),
 ('Aulas'),
 ('Eventos');
 
-INSERT INTO Subcategorias (Nome, CategoriaId) VALUES
+INSERT INTO Subcategorias (Nome, CategoriaId)
+VALUES
 ('Elétrica', 1),
 ('Hidráulica', 1),
 ('Construção', 1),
 ('Jardinagem', 1),
+
 ('Cabelo', 2),
 ('Estética', 2),
+
 ('Informática', 3),
 ('Desenvolvimento', 3),
+
 ('Idiomas', 4),
 ('Música', 4),
+
 ('Fotografia', 5),
 ('Buffet', 5);
 
--- =============================
--- DEBUG
--- =============================
+
+/* =========================================================
+   DEBUG
+========================================================= */
 
 SELECT * FROM Usuarios;
 SELECT * FROM Clientes;
 SELECT * FROM Profissionais;
+
 SELECT * FROM Categorias;
 SELECT * FROM Subcategorias;
-SELECT * FROM Servicos;
-SELECT * FROM Disponibilidade;
-SELECT * FROM Agendamentos;
+
 SELECT * FROM Locais;
+SELECT * FROM Servicos;
+SELECT * FROM ServicoLocais;
+SELECT * FROM Disponibilidade;
+SELECT * FROM BloqueiosAgenda;
+
+SELECT * FROM Agendamentos;
 SELECT * FROM Avaliacoes;
-SELECT * FROM Notificacoes;
+
 SELECT * FROM ContatoSuporte;
-
-
-ALTER TABLE Profissionais
-ADD Plano NVARCHAR(20) NOT NULL DEFAULT 'Free';
-
-ALTER TABLE Profissionais
-ADD DataAssinatura DATETIME NULL;
-
-ALTER TABLE Profissionais
-ADD StatusAssinatura NVARCHAR(20) NOT NULL DEFAULT 'Ativo';
-
-ALTER TABLE Agendamentos
-ADD
-    ValorFinal DECIMAL(10,2) NULL,
-    Taxa DECIMAL(10,2) NULL,
-    ValorLiquido DECIMAL(10,2) NULL;
-
-ALTER TABLE Servicos
-ADD TipoPreco VARCHAR(20) NOT NULL DEFAULT 'Fixo';
-
-ALTER TABLE Servicos
-ADD PrecoBase DECIMAL(10,2) NULL;
+SELECT * FROM Notificacoes;
+SELECT * FROM Assinaturas;

@@ -1,0 +1,115 @@
+@model Usuario
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/PainelCliente.css?v=1" />
+}
+
+<div class="perfil-page">
+
+    <!-- HERO -->
+    <div class="perfil-hero">
+
+        <div class="perfil-hero-inner">
+
+            <div class="perfil-hero-left">
+                <span class="perfil-hero-label">
+                    Área do Cliente
+                </span>
+
+                <h1 class="perfil-hero-title">
+                    Olá, @Model.Nome 👋
+                </h1>
+
+                <p class="perfil-hero-sub">
+                    Gerencie seus agendamentos e sua conta.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- GRID -->
+    <div class="perfil-main">
+
+        <div class="perfil-section-title">
+            Minha Área
+        </div>
+
+        <div class="perfil-grid">
+
+            <!-- AGENDAMENTOS -->
+            <a href="/Agendamento/Meus"
+               class="perfil-card">
+
+                <div class="card-icon">
+                    <span class="material-symbols-rounded">
+                        event
+                    </span>
+                </div>
+
+                <div class="card-content">
+                    <h3>Meus Agendamentos</h3>
+
+                    <p>
+                        Veja pedidos ativos e histórico
+                    </p>
+                </div>
+
+                <span class="card-arrow">→</span>
+
+            </a>
+
+            <!-- PERFIL -->
+            <a href="/Usuario/Perfil"
+               class="perfil-card">
+
+                <div class="card-icon">
+                    <span class="material-symbols-rounded">
+                        person
+                    </span>
+                </div>
+
+                <div class="card-content">
+                    <h3>Meu Perfil</h3>
+
+                    <p>
+                        Edite seus dados e segurança
+                    </p>
+                </div>
+
+                <span class="card-arrow">→</span>
+
+            </a>
+
+            <!-- NOTIFICAÇÕES -->
+            <a href="/Notificacao"
+               class="perfil-card">
+
+                <div class="card-icon">
+                    <span class="material-symbols-rounded">
+                        notifications
+                    </span>
+                </div>
+
+                <div class="card-content">
+                    <h3>Notificações</h3>
+
+                    <p>
+                        Acompanhe atualizações da plataforma
+                    </p>
+                </div>
+
+                <span class="card-arrow">→</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+        <script src="~/js/PainelCliente.js"></script>
+    }
