@@ -37,6 +37,12 @@
                     <span>Tram<span class="highlight">po</span></span>
                 </div>
             </a>
+
+              @{
+                    var nome = Context.Session.GetString("UsuarioNome");
+                    var tipo = Context.Session.GetString("UsuarioTipo");
+                }
+
             <!-- MENU -->
             <nav class="nav-links" id="navLinks">
 
@@ -49,17 +55,61 @@
                 <a href="/#reviews" class="nav-item">Avaliações</a>
                 <a asp-controller="Profissional" asp-action="Lista" class="nav-item">Profissionais</a>
 
+                <div class="mobile-auth">
+
+                    @if (nome != null)
+                    {
+                        <div class="mobile-user">
+                            Olá, @nome
+                        </div>
+
+                        @if (tipo == "profissional")
+                        {
+                            <a asp-controller="Profissional" asp-action="MeuPerfil" class="mobile-link">
+
+                                Painel
+                            </a>
+
+                            <a href="/Pagamento/CheckoutPremium" class="mobile-link premium">
+
+                                Premium
+                            </a>
+                        }
+
+                        @if (tipo == "cliente")
+                        {
+                            <a asp-controller="Usuario" asp-action="PainelCliente" class="mobile-link">
+
+                                Painel
+                            </a>
+                        }
+
+                        <a asp-controller="Usuario" asp-action="Logout" class="mobile-link logout">
+
+                            Sair
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Usuario" asp-action="Login" class="mobile-link">
+
+                            Login
+                        </a>
+
+                        <a asp-controller="Usuario" asp-action="Cadastro" class="mobile-link criar">
+
+                            Criar Conta
+                        </a>
+                    }
+
+                </div>
 
             </nav>
 
             <!-- USER AREA -->
             <div class="nav-right">
 
-                @{
-                    var nome = Context.Session.GetString("UsuarioNome");
-                    var tipo = Context.Session.GetString("UsuarioTipo");
-                }
-
+              
                     
                 @if (nome != null)
                 {

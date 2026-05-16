@@ -143,6 +143,8 @@ CREATE TABLE Servicos (
 
     SubcategoriaId INT NOT NULL,
 
+    LocalId INT NULL,
+
     Nome NVARCHAR(100) NOT NULL,
 
     Descricao NVARCHAR(255) NULL,
@@ -166,7 +168,11 @@ CREATE TABLE Servicos (
 
     CONSTRAINT FK_Servicos_Subcategorias
         FOREIGN KEY (SubcategoriaId)
-        REFERENCES Subcategorias(Id)
+        REFERENCES Subcategorias(Id),
+
+    CONSTRAINT FK_Servicos_Locais
+        FOREIGN KEY (LocalId)
+        REFERENCES Locais(Id)
 );
 
 CREATE TABLE ServicoLocais (

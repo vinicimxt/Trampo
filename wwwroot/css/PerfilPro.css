@@ -561,6 +561,84 @@
 }
 
 /* ===================================================
+   BADGE PREMIUM // FREE 
+=================================================== */
+
+.badge-plano{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    padding:10px 14px;
+
+    border-radius:999px;
+
+    font-size:.78rem;
+    font-weight:800;
+
+    letter-spacing:.5px;
+
+    text-transform:uppercase;
+
+    margin-left:16px;
+
+    border:1px solid transparent;
+}
+
+.badge-plano .material-symbols-rounded{
+    font-size:18px;
+}
+
+.badge-plano.premium{
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #facc15
+        );
+
+    color:#3b2400;
+
+    box-shadow:
+        0 10px 24px rgba(245,158,11,.35);
+
+    border-color:
+        rgba(255,255,255,.25);
+}
+
+
+.badge-plano.premium{
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #facc15
+        );
+
+    color:#3b2400;
+
+    box-shadow:
+        0 10px 24px rgba(245,158,11,.35);
+
+    border-color:
+        rgba(255,255,255,.25);
+}
+
+.badge-plano.free{
+
+    background:
+        rgba(255,255,255,.08);
+
+    color:
+        rgba(255,255,255,.88);
+
+    border-color:
+        rgba(255,255,255,.12);
+}
+
+/* ===================================================
    RESPONSIVO
 =================================================== */
 @media (max-width: 900px) {

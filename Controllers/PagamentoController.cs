@@ -23,40 +23,40 @@ namespace BD_TRAMPO.Controllers
             if (tipo != "profissional")
             {
                 TempData["Erro"] =
-                    "Apenas profissionais podem assinar o plano.";
+                    "Apenas profissionais podem assinar.";
 
                 return RedirectToAction("Index", "Home");
             }
 
             return View();
         }
+        // [HttpPost]
+        // public IActionResult AssinarPremium()
+        // {
+        //     string usuarioSession = HttpContext.Session.GetString("UsuarioId");
 
-        [HttpPost]
-        public IActionResult AssinarPremium()
-        {
-            string usuarioSession = HttpContext.Session.GetString("UsuarioId");
+        //     if (string.IsNullOrEmpty(usuarioSession))
+        //         return RedirectToAction("Login", "Usuario");
 
-            if (string.IsNullOrEmpty(usuarioSession))
-                return RedirectToAction("Login", "Usuario");
+        //     int usuarioId = int.Parse(usuarioSession);
 
-            int usuarioId = int.Parse(usuarioSession);
+        //     ProfissionalDAO dao = new ProfissionalDAO();
 
-            ProfissionalDAO dao = new ProfissionalDAO();
+        //     int profissionalId = dao.BuscarPorUsuario(usuarioId);
 
-            int profissionalId = dao.BuscarPorUsuario(usuarioId);
+        //     dao.AtivarPremium(profissionalId);
 
-            dao.AtivarPremium(profissionalId);
+        //     TempData["Sucesso"] = "Plano Premium ativado com sucesso!";
 
-            TempData["Sucesso"] = "Plano Premium ativado com sucesso!";
-
-            return RedirectToAction("Dashboard");
-        }
+        //     return RedirectToAction("Dashboard");
+        // }
 
 
         [HttpPost]
         public IActionResult ConfirmarPremium()
         {
-            string usuarioSession = HttpContext.Session.GetString("UsuarioId");
+            string usuarioSession =
+                HttpContext.Session.GetString("UsuarioId");
 
             if (string.IsNullOrEmpty(usuarioSession))
                 return RedirectToAction("Login", "Usuario");
@@ -65,13 +65,30 @@ namespace BD_TRAMPO.Controllers
 
             ProfissionalDAO dao = new ProfissionalDAO();
 
-            int profissionalId = dao.BuscarPorUsuario(usuarioId);
+            int profissionalId =
+                dao.BuscarPorUsuario(usuarioId);
+
+            // já é premium?
+            if (dao.EhPremium(profissionalId))
+            {
+                TempData["Erro"] =
+                    "Você já possui o plano premium.";
+
+                return RedirectToAction(
+                    "Dashboard",
+                    "Profissional"
+                );
+            }
 
             dao.AtivarPremium(profissionalId);
 
-            TempData["Sucesso"] = "Plano Premium ativado com sucesso!";
+            TempData["Sucesso"] =
+                "Plano Premium ativado com sucesso!";
 
-            return RedirectToAction("Dashboard", "Profissional");
+            return RedirectToAction(
+                "Dashboard",
+                "Profissional"
+            );
         }
 
     }

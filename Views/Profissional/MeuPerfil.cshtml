@@ -20,12 +20,44 @@
             </div>
 
             <div class="perfil-hero-status">
+
                 <div class="status-dot"></div>
+
                 <div class="status-text">
+
                     Perfil ativo
-                    
-                    <span>Visível para clientes</span>
+
+                    <span>
+                        Visível para clientes
+                    </span>
+
                 </div>
+
+                @if (Model.Plano == "Premium")
+                {
+                    <div class="badge-plano premium">
+
+                        <span class="material-symbols-rounded">
+                            workspace_premium
+                        </span>
+
+                        PREMIUM
+
+                    </div>
+                }
+                else
+                {
+                    <div class="badge-plano free">
+
+                        <span class="material-symbols-rounded">
+                            verified
+                        </span>
+
+                        FREE
+
+                    </div>
+                }
+
             </div>
 
         </div>
@@ -95,7 +127,7 @@
             </div>
         }
         else
-            {
+        {
             <!-- Ação rápida -->
             <div class="acao-rapida">
                 <div class="acao-rapida-text">
@@ -145,7 +177,7 @@
                         <span class="card-arrow">→</span>
                     </a>
 
-                     <a href="/Usuario/Meus" class="perfil-card">
+                    <a href="/Agendamento/Meus" class="perfil-card">
 
                         <div class="card-icon">
                             <span class="material-symbols-rounded">event</span>
