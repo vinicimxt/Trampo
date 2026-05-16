@@ -160,7 +160,7 @@
     @if (total == 0)
     {
         <div class="empty-state">
-            <div class="empty-icon">📅</div>
+            <div class="empty-icon"><span class="material-symbols-rounded">inbox</span></div>
             <h3>Nenhum agendamento ainda</h3>
             <p>Você ainda não agendou nenhum serviço. Explore os profissionais disponíveis e agende agora mesmo.</p>
             <a href="/Profissional/Lista" class="btn-explorar">Explorar serviços →</a>
@@ -187,7 +187,10 @@
                             </div>
 
                             <div class="agend-info-item">
-                                <div class="agend-info-label">💰 Valor</div>
+                                <div class="agend-info-label">
+                                    <span class="material-symbols-rounded">payments</span>
+                                     Valor
+                                     </div>
 
                                 <div class="agend-info-val">
 
@@ -214,7 +217,7 @@
                             @if (!string.IsNullOrEmpty(ag.Subcategoria))
                             {
                                 <div class="agend-subcategoria">
-                                    🏷️ @ag.Subcategoria
+                                    <span class="material-symbols-rounded" style="font-size:13px;">label</span> @ag.Subcategoria
                                 </div>
                             }
                         </div>
@@ -227,7 +230,7 @@
                     <!-- corpo -->
                     <div class="agend-card-body">
                         <div class="agend-info-item">
-                            <div class="agend-info-label">📅 Data</div>
+                            <div class="agend-info-label"><span class="material-symbols-rounded">inbox</span> Data</div>
                             <div class="agend-info-val">@ag.Data.ToString("dd/MM/yyyy")</div>
                             <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">
                                 @ag.Data.ToString("dddd", new System.Globalization.CultureInfo("pt-BR"))
@@ -235,28 +238,28 @@
                         </div>
 
                         <div class="agend-info-item">
-                            <div class="agend-info-label">🕐 Horário</div>
+                            <div class="agend-info-label"><span class="material-symbols-rounded">schedule</span> Horário</div>
                             <div class="agend-info-val">@ag.Hora</div>
                         </div>
 
 
 
                         <div class="agend-info-item">
-                            <div class="agend-info-label">📌 Tipo</div>
+                            <div class="agend-info-label"><span class="material-symbols-rounded">place</span> Atendimento</div>
                             <div class="agend-info-val">
                                 @if (ag.Atendimento == "Local")
                                 {
-                                    <span class="agend-atend-chip chip-local">📍 Presencial</span>
+                                    <span class="agend-atend-chip chip-local"><span class="material-symbols-rounded">location_on</span> Presencial</span>
                                 }
                                 else if (ag.Atendimento == "Domicilio")
                                 {
 
-                                    <span class="agend-atend-chip chip-domicilio">🏠 Domicílio</span>
+                                    <span class="agend-atend-chip chip-domicilio"><span class="material-symbols-rounded">home</span> Domicílio</span>
                                 }
                                 else if (ag.Atendimento == "Online")
                                 {
 
-                                    <span class="agend-atend-chip chip-online">💻 Online</span>
+                                    <span class="agend-atend-chip chip-online"><span class="material-symbols-rounded">laptop</span> Online</span>
                                 }
                             </div>
                         </div>
@@ -264,7 +267,8 @@
                         <div class="agend-info-item">
                            
                             <div class="ag-info-val">
-                                <span>📞 @ag.ContatoProfissional</span>
+                                <span><span class="material-symbols-rounded"
+                                 style="font-size:15px;color:var(--blue);">call</span> @ag.ContatoProfissional</span>
                             </div>
                             
                         </div>
@@ -277,23 +281,23 @@
                         <div class="agend-atend-info">
                             @if (ag.Atendimento == "Domicilio" && !string.IsNullOrEmpty(ag.EnderecoCliente))
                             {
-                                <span>🏠</span><span>@ag.EnderecoCliente</span>
+                                <span><span class="material-symbols-rounded">home</span></span><span>@ag.EnderecoCliente</span>
                             }
                             else if (ag.Atendimento == "Local" && !string.IsNullOrEmpty(ag.EnderecoLocal))
                             {
-                                <span>📍</span><span>@ag.EnderecoLocal</span>
+                                <span><span class="material-symbols-rounded">location_on</span></span><span>@ag.EnderecoLocal</span>
                             }
                             else if (ag.Atendimento == "Online")
                             {
                                 if (!string.IsNullOrEmpty(ag.LinkOnline) && ag.ConfirmadoProfissional)
                                 {
                                     <a href="@ag.LinkOnline" target="_blank" class="btn-link-online">
-                                        🔗 Entrar na reunião
+                                        <span class="material-symbols-rounded" style="font-size:16px;">video_call</span> Entrar na reunião
                                     </a>
                                 }
                                 else
                                 {
-                                    <span class="aguardando-chip">🔒 Link disponível após confirmação</span>
+                                    <span class="aguardando-chip"> <span class="material-symbols-rounded" style="font-size:14px;">lock</span> Link disponível após confirmação</span>
                                 }
                             }
                         </div>
@@ -303,11 +307,11 @@
                             @if (ag.Status == "CanceladoCliente" || ag.Status == "CanceladoProfissional" || ag.Status ==
                                     "Cancelado")
                             {
-                                <span class="status-info cancelado">❌ Agendamento cancelado</span>
+                                <span class="status-info cancelado"><span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#ef4444;">cancel</span> Agendamento cancelado</span>
                             }
                             else if (!ag.ConfirmadoProfissional)
                             {
-                                <span class="status-info andamento">⏳ Aguardando confirmação do profissional</span>
+                                <span class="status-info andamento"><span class="material-symbols-rounded" style="font-size:15px;">hourglass_top</span> Aguardando confirmação do profissional</span>
                             }
                             else if (!ag.FinalizadoProfissional)
                             {
@@ -316,7 +320,7 @@
                             else if (!ag.ConfirmadoCliente)
                             {
                                 <button type="button" class="btn-finalizar" onclick="confirmarConclusao('@ag.Id')">
-                                    ✔ Confirmar conclusão
+                                  <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#22c55e;">check_circle Confirmar conclusão</span>   
                                 </button>
                             }
                             else if (ag.PodeAvaliar())
@@ -349,7 +353,7 @@
                             {
                                 <button type="button" class="btn-cancelar"
                                         onclick="abrirModalCancelar('@ag.Id', '@ag.Servico.Replace("'","\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
-                                    ✕ Cancelar
+                                    <span class="material-symbols-rounded">close</span> Cancelar
                                 </button>
                             }
 
@@ -384,6 +388,7 @@
             <form id="formCancelar" asp-action="Cancelar" method="post" style="flex:1;">
                 <input type="hidden" name="id" id="modalCancelarId" />
                 <button type="submit" class="btn-modal-confirm" style="width:100%;">
+                    <span class="material-symbols-rounded">close</span>
                     Sim, cancelar
                 </button>
             </form>

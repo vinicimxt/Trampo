@@ -162,6 +162,12 @@
                         </a>
 
                     }
+                    @if (Context.Session.GetString("UsuarioEmail") == "admin@trampo.com")
+                    {
+                        <a href="/Admin/Dashboard" class="btn-outline">
+                            Admin
+                        </a>
+                    }
 
                     <a asp-controller="Usuario" asp-action="Logout" class="btn-logout">
                         Sair

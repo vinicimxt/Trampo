@@ -1,0 +1,193 @@
+@{
+    ViewData["Title"] = "Painel Administrativo";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin-Dashboard.css" />
+}
+
+<div class="admin-page">
+
+    <div class="admin-hero">
+
+        <div>
+            <span class="admin-label">
+                Painel administrativo
+            </span>
+
+            <h1 class="admin-title">
+                Dashboard da Plataforma
+            </h1>
+
+            <p class="admin-sub">
+                Métricas gerais, faturamento e crescimento do sistema.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="admin-grid">
+
+        <div class="admin-card">
+            <span class="admin-icon">👥</span>
+
+            <div class="admin-value">
+                @ViewBag.TotalUsuarios
+            </div>
+
+            <div class="admin-text">
+                Usuários cadastrados
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <span class="admin-icon">🧰</span>
+
+            <div class="admin-value">
+                @ViewBag.TotalProfissionais
+            </div>
+
+            <div class="admin-text">
+                Profissionais
+            </div>
+        </div>
+
+        <div class="admin-card premium">
+            <span class="admin-icon">👑</span>
+
+            <div class="admin-value">
+                @ViewBag.TotalPremium
+            </div>
+
+            <div class="admin-text">
+                Assinantes premium
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <span class="admin-icon">📅</span>
+
+            <div class="admin-value">
+                @ViewBag.TotalAgendamentos
+            </div>
+
+            <div class="admin-text">
+                Agendamentos
+            </div>
+        </div>
+
+        <div class="admin-card money">
+            <span class="admin-icon">💸</span>
+
+            <div class="admin-value">
+                R$ @ViewBag.TotalTaxas
+            </div>
+
+            <div class="admin-text">
+                Taxas arrecadadas
+            </div>
+        </div>
+
+        <div class="admin-card premium-money">
+            <span class="admin-icon">💎</span>
+
+            <div class="admin-value">
+                R$ @ViewBag.TotalPremiumReceita
+            </div>
+
+            <div class="admin-text">
+                Receita premium
+            </div>
+        </div>
+
+        <div class="admin-card total">
+            <span class="admin-icon">🏦</span>
+
+            <div class="admin-value">
+                R$ @ViewBag.TotalLiquido
+            </div>
+
+            <div class="admin-text">
+                Receita total da plataforma
+            </div>
+        </div>
+
+    </div>
+
+    <div class="admin-lists">
+
+    <div class="admin-table-card">
+
+        <div class="admin-table-title">
+            👑 Últimas assinaturas premium
+        </div>
+
+        @foreach (var item in ViewBag.UltimasAssinaturas)
+        {
+            <div class="admin-row">
+
+                <div>
+                    <div class="admin-row-title">
+                        @item.Nome
+                    </div>
+
+                    <div class="admin-row-sub">
+                        @item.Plano
+                    </div>
+                </div>
+
+                <div class="admin-row-right">
+                    <strong>
+                        R$ @item.Valor
+                    </strong>
+
+                    <span>
+                        @item.Data.ToString("dd/MM")
+                    </span>
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+        <div class="admin-table-card">
+
+        <div class="admin-table-title">
+            💳 Últimos pagamentos
+        </div>
+
+        @foreach (var item in ViewBag.UltimosPagamentos)
+        {
+            <div class="admin-row">
+
+                <div>
+                    <div class="admin-row-title">
+                        @item.Servico
+                    </div>
+
+                    <div class="admin-row-sub">
+                        @item.NomeCliente
+                    </div>
+                </div>
+
+                <div class="admin-row-right">
+
+                    <strong>
+                        R$ @item.ValorFinal
+                    </strong>
+
+                    <span>
+                        Taxa: R$ @item.Taxa
+                    </span>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+</div>

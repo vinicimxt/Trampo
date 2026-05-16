@@ -1050,6 +1050,32 @@
     box-shadow: none;
 }
 
+/* Symbols icons */
+
+.btn-confirmar .material-symbols-rounded,
+.btn-recusar .material-symbols-rounded,
+.btn-finalizar .material-symbols-rounded,
+.btn-cancelar-pro .material-symbols-rounded {
+    font-size: 16px;
+}
+
+.agend-info-label .material-symbols-rounded {
+    font-size: 13px;
+}
+
+.agend-atend-chip .material-symbols-rounded {
+    font-size: 14px;
+}
+
+.alert-sucesso .material-symbols-rounded,
+.alert-erro .material-symbols-rounded,
+.alert-info .material-symbols-rounded {
+    font-size: 18px;
+}
+
+.empty-icon .material-symbols-rounded {
+    font-size: 52px;
+}
 
 /* ===================================================
    RESPONSIVO

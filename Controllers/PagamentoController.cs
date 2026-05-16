@@ -58,6 +58,9 @@ namespace BD_TRAMPO.Controllers
             string usuarioSession =
                 HttpContext.Session.GetString("UsuarioId");
 
+            string nomeUsuario =
+                HttpContext.Session.GetString("UsuarioNome");
+
             if (string.IsNullOrEmpty(usuarioSession))
                 return RedirectToAction("Login", "Usuario");
 
@@ -78,9 +81,31 @@ namespace BD_TRAMPO.Controllers
                     "Dashboard",
                     "Profissional"
                 );
+
             }
 
+            AssinaturaDAO assDAO = new AssinaturaDAO();
+
+            assDAO.Inserir(
+                profissionalId,
+                "Premium",
+                29.90m,
+                "Pago",
+                "Cartão"
+            );
+
             dao.AtivarPremium(profissionalId);
+
+            NotificacaoDAO notifDAO = new NotificacaoDAO();
+
+            notifDAO.Inserir(new Notificacao
+            {
+                UsuarioId = 1,
+                Titulo = "💎 Novo Premium",
+                Mensagem = $"{nomeUsuario} assinou o plano Premium.",
+                Tipo = "admin",
+                ReferenciaId = profissionalId
+            });
 
             TempData["Sucesso"] =
                 "Plano Premium ativado com sucesso!";

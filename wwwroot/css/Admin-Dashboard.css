@@ -1,0 +1,160 @@
+.admin-page {
+    padding: 40px;
+    min-height: 100vh;
+    background: #071130;
+    color: white;
+}
+
+.admin-hero {
+    margin-bottom: 34px;
+}
+
+.admin-label {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+.admin-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    margin-top: 8px;
+}
+
+.admin-sub {
+    color: #94a3b8;
+    margin-top: 8px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.admin-card {
+    background: #0f1c44;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 22px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .20);
+    transition: .25s;
+}
+
+.admin-card:hover {
+    transform: translateY(-4px);
+}
+
+.admin-icon {
+    font-size: 2rem;
+}
+
+.admin-value {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+}
+
+.admin-text {
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+.admin-card.money {
+    background: linear-gradient(135deg, #052e16, #14532d);
+}
+
+.admin-card.premium {
+    background: linear-gradient(135deg, #3b0764, #6b21a8);
+}
+
+.admin-card.premium-money {
+    background: linear-gradient(135deg, #312e81, #4338ca);
+}
+
+.admin-card.total {
+    background: linear-gradient(135deg, #78350f, #ea580c);
+}
+
+.admin-lists{
+    margin-top:34px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+}
+
+.admin-table-card{
+    background:#0f1c44;
+    border-radius:22px;
+    padding:24px;
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.admin-table-title{
+    font-size:1rem;
+    font-weight:700;
+    margin-bottom:22px;
+}
+
+.admin-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.admin-row:last-child{
+    border-bottom:none;
+}
+
+.admin-row-title{
+    font-weight:700;
+}
+
+.admin-row-sub{
+    font-size:.85rem;
+    color:#94a3b8;
+    margin-top:3px;
+}
+
+.admin-row-right{
+    text-align:right;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.admin-row-right span{
+    font-size:.8rem;
+    color:#94a3b8;
+}
+
+@media(max-width:900px){
+
+    .admin-lists{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:768px) {
+
+    .admin-page {
+        padding: 20px;
+    }
+
+    .admin-title {
+        font-size: 1.8rem;
+    }
+
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

@@ -53,7 +53,8 @@
                 <p class="dash-hero-sub">Acompanhe seus resultados e métricas de atendimento.</p>
             </div>
             <div class="dash-hero-right">
-                <span style="font-size:1.4rem;">📅</span>
+                <span style="font-size:1.4rem; color:white"><span class="material-symbols-rounded dash-hero-icon">calendar_month</span>
+                </span>
                 <div class="dash-hero-date">
                     <div class="dash-hero-date-val">
                         @DateTime.Now.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pt-BR"))
@@ -74,31 +75,33 @@
             <div class="kpi-grid">
 
                 <div class="kpi-card total">
-                    <div class="kpi-icon">📥</div>
+                    <div class="kpi-icon">
+                        <span class="material-symbols-rounded">event_note</span>
+                    </div>
                     <div class="kpi-val">@total</div>
                     <div class="kpi-lbl">Agendamentos totais</div>
                 </div>
 
                 <div class="kpi-card pendente">
-                    <div class="kpi-icon">⏳</div>
+                    <div class="kpi-icon"><span class="material-symbols-rounded">pending_actions</span></div>
                     <div class="kpi-val">@pendentes</div>
                     <div class="kpi-lbl">Aguardando resposta</div>
                 </div>
 
                 <div class="kpi-card confirmado">
-                    <div class="kpi-icon">✅</div>
+                    <div class="kpi-icon"><span class="material-symbols-rounded">check_circle</span></div>
                     <div class="kpi-val">@confirmados</div>
                     <div class="kpi-lbl">Confirmados</div>
                 </div>
 
                 <div class="kpi-card finalizado">
-                    <div class="kpi-icon">🏁</div>
+                    <div class="kpi-icon"><span class="material-symbols-rounded">flag</span></div>
                     <div class="kpi-val">@finalizados</div>
                     <div class="kpi-lbl">Finalizados</div>
                 </div>
 
                 <div class="kpi-card cancelado">
-                    <div class="kpi-icon">❌</div>
+                    <div class="kpi-icon"><span class="material-symbols-rounded">cancel</span></div>
                     <div class="kpi-val">@cancelados</div>
                     <div class="kpi-lbl">Cancelados</div>
                 </div>
@@ -362,7 +365,7 @@
 
             <div class="pag-inner @(premium ? "" : "pag-conteudo-bloqueado")">
 
-                <div class="pag-section-title">💳 Pagamentos</div>
+                <div class="pag-section-title"><span class="material-symbols-rounded">credit_card</span> Pagamentos</div>
 
                 <!-- Stats fictícios (serão reais quando o backend estiver pronto) -->
                 <div class="pag-stats-grid">
@@ -388,7 +391,7 @@
 
                 <!-- Aviso de "em breve" -->
                 <div class="pag-coming-soon">
-                    <div class="pag-coming-icon">🚀</div>
+                    <div class="pag-coming-icon"><span class="material-symbols-rounded" style="color:white"">rocket_launch</span></div>
                     <div>
                         <div class="pag-coming-title">Módulo de pagamentos em breve</div>
                         <div class="pag-coming-sub">
@@ -405,7 +408,7 @@
                         <div class="pag-item">
 
                             <div class="pag-item-icon">
-                                💳
+                                <span class="material-symbols-rounded" style="color:rgb(238, 223, 12)"">credit_card</span>
                             </div>
 
                             <div>

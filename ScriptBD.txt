@@ -143,8 +143,6 @@ CREATE TABLE Servicos (
 
     SubcategoriaId INT NOT NULL,
 
-    LocalId INT NULL,
-
     Nome NVARCHAR(100) NOT NULL,
 
     Descricao NVARCHAR(255) NULL,
@@ -168,11 +166,7 @@ CREATE TABLE Servicos (
 
     CONSTRAINT FK_Servicos_Subcategorias
         FOREIGN KEY (SubcategoriaId)
-        REFERENCES Subcategorias(Id),
-
-    CONSTRAINT FK_Servicos_Locais
-        FOREIGN KEY (LocalId)
-        REFERENCES Locais(Id)
+        REFERENCES Subcategorias(Id)
 );
 
 CREATE TABLE ServicoLocais (
@@ -190,7 +184,7 @@ CREATE TABLE ServicoLocais (
     CONSTRAINT FK_ServicoLocais_Locais
         FOREIGN KEY (LocalId)
         REFERENCES Locais(Id)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE Disponibilidade (
@@ -259,13 +253,13 @@ CREATE TABLE Agendamentos (
 
     Hora TIME NOT NULL,
 
-    Status NVARCHAR(50) NOT NULL
-        CHECK (Status IN (
-            'Pendente',
-            'Confirmado',
-            'Concluido',
-            'Cancelado'
-        )),
+       CHECK (Status IN (
+        'Pendente',
+        'Confirmado',
+        'Finalizado',
+        'Cancelado',
+        'AguardandoCliente'
+    )),
 
     Descricao NVARCHAR(255) NULL,
 
@@ -322,7 +316,7 @@ CREATE TABLE Avaliacoes (
 
     Comentario NVARCHAR(500) NULL,
 
-    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    Data DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
 
     CONSTRAINT FK_Avaliacoes_Profissionais
         FOREIGN KEY (ProfissionalId)
@@ -427,6 +421,7 @@ CREATE TABLE Assinaturas (
 );
 
 
+
 /* =========================================================
    DADOS INICIAIS
 ========================================================= */
@@ -482,3 +477,23 @@ SELECT * FROM Avaliacoes;
 SELECT * FROM ContatoSuporte;
 SELECT * FROM Notificacoes;
 SELECT * FROM Assinaturas;
+
+
+ALTER TABLE Agendamentos
+DROP CONSTRAINT CKAgendamenStatu__123EB7A3;
+
+ALTER TABLE Agendamentos
+ADD CONSTRAINT CK_Agendamentos_Status
+CHECK (Status IN (
+    'Pendente',
+    'Confirmado',
+    'Finalizado',
+    'Cancelado',
+    'AguardandoCliente'
+));
+
+INSERT INTO Usuarios (Nome,Email,Senha,Tipo) VALUES ('ADMIN' , 'admin@trampo.com','admin123', 'admin');
+
+UPDATE Usuarios
+SET Tipo = 'admin'
+WHERE Email = 'admin@trampo.com'
