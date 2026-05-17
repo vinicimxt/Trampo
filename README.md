@@ -75,15 +75,7 @@ O projeto foi desenvolvido utilizando o padrão MVC (Model-View-Controller), sep
 - persistência de dados
 
 ---
-
-## Estrutura do projeto
-
-- Controllers → regras e fluxo da aplicação
-- Models → entidades do sistema
-- DAO → acesso ao banco de dados
-- Views → interface do usuário
-- ViewModels → comunicação entre controller e view
-- wwwroot → arquivos estáticos (CSS, JS e imagens)
+## Folders
 
 BD_TRAMPO/
 │
@@ -99,6 +91,19 @@ BD_TRAMPO/
 ├── ScriptsSQL/
 ├── ViewModels/
 └── Program.cs
+
+---
+
+
+## Estrutura do projeto
+
+- Controllers → regras e fluxo da aplicação
+- Models → entidades do sistema
+- DAO → acesso ao banco de dados
+- Views → interface do usuário
+- ViewModels → comunicação entre controller e view
+- wwwroot → arquivos estáticos (CSS, JS e imagens)
+
 
 ---
 
