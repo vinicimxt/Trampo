@@ -31,75 +31,159 @@
             </div>
 
             <form method="post" action="/Suporte/Enviar" id="formSuporte">
+
                 <div class="suporte-form-body">
 
-                    <!-- Tipo (chips rápidos) -->
+                    <!-- Tipo -->
                     <div class="form-group">
+
                         <label class="form-label">
-                            <span class="material-symbols-rounded">category</span>
-                            Tipo de solicitação <span class="req">*</span>
+
+                            <span class="material-symbols-rounded" aria-hidden="true">
+                                category
+                            </span>
+
+                            Tipo de solicitação
+                            <span class="req">*</span>
+
                         </label>
 
-                        <div class="tipo-chips" id="tipoChips">
+                        <div class="tipo-chips" id="tipoChips" role="group" aria-label="Tipo de solicitação">
+
                             <button type="button" class="tipo-chip-btn ativo" data-val="Dúvida"
-                                    onclick="selecionarTipo(this)">
-                                <span class="material-symbols-rounded">help</span> Dúvida
+                                    onclick="selecionarTipo(this)" aria-pressed="true">
+
+                                <span class="material-symbols-rounded" aria-hidden="true">
+                                    help
+                                </span>
+
+                                Dúvida
+
                             </button>
+
                             <button type="button" class="tipo-chip-btn" data-val="Problema com agendamento"
-                                    onclick="selecionarTipo(this)">
-                                <span class="material-symbols-rounded">event_busy</span> Agendamento
+                                    onclick="selecionarTipo(this)" aria-pressed="false">
+
+                                <span class="material-symbols-rounded" aria-hidden="true">
+                                    event_busy
+                                </span>
+
+                                Agendamento
+
                             </button>
+
                             <button type="button" class="tipo-chip-btn" data-val="Cancelamento"
-                                    onclick="selecionarTipo(this)">
-                                <span class="material-symbols-rounded">cancel</span> Cancelamento
+                                    onclick="selecionarTipo(this)" aria-pressed="false">
+
+                                <span class="material-symbols-rounded" aria-hidden="true">
+                                    cancel
+                                </span>
+
+                                Cancelamento
+
                             </button>
+
                             <button type="button" class="tipo-chip-btn" data-val="Pagamento"
-                                    onclick="selecionarTipo(this)">
-                                <span class="material-symbols-rounded">payments</span> Pagamento
+                                    onclick="selecionarTipo(this)" aria-pressed="false">
+
+                                <span class="material-symbols-rounded" aria-hidden="true">
+                                    payments
+                                </span>
+
+                                Pagamento
+
                             </button>
-                            <button type="button" class="tipo-chip-btn" data-val="Outro" onclick="selecionarTipo(this)">
-                                <span class="material-symbols-rounded">more_horiz</span> Outro
+
+                            <button type="button" class="tipo-chip-btn" data-val="Outro" onclick="selecionarTipo(this)"
+                                    aria-pressed="false">
+
+                                <span class="material-symbols-rounded" aria-hidden="true">
+                                    more_horiz
+                                </span>
+
+                                Outro
+
                             </button>
+
                         </div>
 
-                        <!-- hidden que vai pro backend -->
+                        <!-- hidden -->
                         <input type="hidden" name="tipo" id="tipoHidden" value="Dúvida" />
+
                     </div>
 
                     <!-- Assunto -->
                     <div class="form-group">
+
                         <label class="form-label" for="assunto">
-                            <span class="material-symbols-rounded">title</span>
-                            Assunto <span class="req">*</span>
+
+                            <span class="material-symbols-rounded" aria-hidden="true">
+                                title
+                            </span>
+
+                            Assunto
+                            <span class="req">*</span>
+
                         </label>
+
                         <input class="form-input" type="text" name="assunto" id="assunto"
                                placeholder="Resuma seu problema em poucas palavras" required maxlength="120" />
+
                     </div>
 
                     <!-- Mensagem -->
                     <div class="form-group">
+
                         <label class="form-label" for="mensagem">
-                            <span class="material-symbols-rounded">chat</span>
-                            Mensagem <span class="req">*</span>
+
+                            <span class="material-symbols-rounded" aria-hidden="true">
+                                chat
+                            </span>
+
+                            Mensagem
+                            <span class="req">*</span>
+
                         </label>
+
                         <textarea class="form-textarea" name="mensagem" id="mensagem"
                                   placeholder="Descreva detalhadamente o que aconteceu, quando ocorreu e o que você esperava que fosse acontecer..."
-                                  required maxlength="1000" oninput="contarChars(this)"></textarea>
-                        <div class="char-count" id="charCount">0 / 1000</div>
+                                  required maxlength="1000" oninput="contarChars(this)"
+                                  aria-describedby="charCount"></textarea>
+
+                        <div class="char-count" id="charCount" aria-live="polite">
+
+                            0 / 1000
+
+                        </div>
+
                     </div>
 
                 </div>
 
                 <div class="suporte-form-footer">
+
                     <span class="suporte-form-footer-note">
-                        <span class="material-symbols-rounded">verified_user</span>
+
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            verified_user
+                        </span>
+
                         Seus dados são tratados com segurança
+
                     </span>
+
                     <button type="submit" class="btn-enviar" id="btnEnviar">
-                        <span class="material-symbols-rounded">send</span>
+
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            send
+                        </span>
+
                         Enviar mensagem
+
                     </button>
+
                 </div>
+
             </form>
 
         </div>

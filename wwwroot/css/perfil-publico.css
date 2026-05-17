@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded');
+
 :root {
     --blue: #1A6BFF;
     --blue-dark: #1258d6;
@@ -401,6 +403,10 @@
     letter-spacing: 0.5px;
 }
 
+.tipo-badge .material-symbols-rounded {
+    font-size: 18px;
+}
+
 .tipo-local {
     background: var(--blue-soft);
     color: var(--blue);
@@ -800,6 +806,15 @@
     text-align: center;
 }
 
+.logo-img-perfil {
+    width: 42px;
+    height: auto;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+}
+
 /* ===================================================
    EMPTY
 =================================================== */
@@ -815,6 +830,75 @@
     display: block;
     margin-bottom: 8px;
     opacity: 0.4;
+}
+
+
+
+
+/* ===================================================
+   ICONS MATERIAL
+=================================================== */
+.chip-cat,
+.btn-agendar-pub {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chip-cat .material-symbols-rounded {
+    font-size: 16px;
+}
+
+.btn-agendar-pub .material-symbols-rounded {
+    font-size: 18px;
+}
+
+.btn-agendar-cta,
+.scard-info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.scard-info-icon .material-symbols-rounded {
+    font-size: 20px;
+}
+
+.btn-agendar-cta .material-symbols-rounded {
+    font-size: 18px;
+}
+
+.scard-info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.scard-info-icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--bg-light);
+
+    border: 1px solid var(--border);
+
+    flex-shrink: 0;
+}
+
+.scard-info-icon .material-symbols-rounded {
+    font-size: 22px;
+
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 500,
+        'GRAD' 0,
+        'opsz' 24;
 }
 
 /* ===================================================

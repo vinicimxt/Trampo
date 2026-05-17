@@ -1,0 +1,617 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root {
+    --blue: #1A6BFF;
+    --blue-dark: #1258d6;
+    --blue-soft: rgba(26, 107, 255, 0.08);
+    --accent: #00D4AA;
+    --amber: #f59e0b;
+    --amber-dark: #d97706;
+    --dark: #0D1B3E;
+    --text-muted: #6B7A99;
+    --border: #DDE5F5;
+    --bg-light: #F0F4FF;
+    --bg-white: #FFFFFF;
+    --radius-xl: 24px;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 8px;
+    --transition: all 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+    --navbar-h: 64px;
+}
+
+/* ===================================================
+   PÁGINA
+=================================================== */
+.premium-page {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    min-height: 100vh;
+    padding: calc(var(--navbar-h) + 60px) 24px 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* gradientes de fundo */
+.premium-page::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: -120px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(26, 107, 255, 0.20) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.premium-page::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    right: -80px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* grade de pontos */
+.premium-page-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+
+.premium-inner {
+    max-width: 960px;
+    margin-inline: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===================================================
+   HERO — cabeçalho da página
+=================================================== */
+.premium-hero {
+    text-align: center;
+    margin-bottom: 56px;
+}
+
+.premium-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.28);
+    color: var(--amber);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+}
+
+.premium-hero-badge .material-symbols-rounded {
+    font-size: 16px;
+}
+
+.premium-hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    margin-bottom: 14px;
+}
+
+.premium-hero-title span {
+    color: var(--amber);
+}
+
+.premium-hero-sub {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.50);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-inline: auto;
+}
+
+/* ===================================================
+   LAYOUT — card de plano + comparação
+=================================================== */
+.premium-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+/* ===================================================
+   CARD PRINCIPAL DO PLANO
+=================================================== */
+.premium-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid rgba(245, 158, 11, 0.25);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(245, 158, 11, 0.10);
+    animation: fadeUp 0.5s ease both;
+    position: relative;
+}
+
+/* faixa dourada no topo */
+.premium-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--amber), #fcd34d, var(--amber));
+    background-size: 200% auto;
+    animation: shimmer-bar 3s linear infinite;
+}
+
+@keyframes shimmer-bar {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 200% 0;
+    }
+}
+
+/* badge "popular" */
+.premium-popular-badge {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--amber);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.40);
+}
+
+.premium-popular-badge .material-symbols-rounded {
+    font-size: 13px;
+}
+
+.premium-card-header {
+    padding: 36px 32px 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    text-align: center;
+}
+
+.plan-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.plan-name .material-symbols-rounded {
+    font-size: 16px;
+}
+
+.plan-price {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.plan-price-currency {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.60);
+    padding-bottom: 8px;
+}
+
+.plan-price-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3.6rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.plan-price-period {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.40);
+    padding-bottom: 8px;
+}
+
+.plan-price-note {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* body do card — features */
+.premium-card-body {
+    padding: 28px 32px;
+}
+
+.premium-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 28px;
+}
+
+.premium-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.92rem;
+}
+
+.premium-feature:last-child {
+    border-bottom: none;
+}
+
+.feature-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--amber);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.feature-icon .material-symbols-rounded {
+    font-size: 16px;
+}
+
+.feature-text {
+    color: rgba(255, 255, 255, 0.80);
+    line-height: 1.4;
+}
+
+.feature-text strong {
+    color: #fff;
+    font-weight: 600;
+    display: block;
+}
+
+.feature-text span {
+    font-size: 0.80rem;
+    color: rgba(255, 255, 255, 0.40);
+}
+
+/* botões CTA */
+.btn-assinar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--amber), var(--amber-dark));
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.35);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-assinar .material-symbols-rounded {
+    font-size: 20px;
+}
+
+.btn-assinar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.20) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: 0.6s;
+}
+
+.btn-assinar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(245, 158, 11, 0.50);
+}
+
+.btn-assinar:hover::after {
+    transform: translateX(100%);
+}
+
+.btn-assinar-disabled {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.35);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 1.5px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--radius-md);
+    cursor: not-allowed;
+}
+
+.btn-assinar-disabled .material-symbols-rounded {
+    font-size: 18px;
+}
+
+.btn-assinar-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 15px;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 24px rgba(26, 107, 255, 0.30);
+    text-decoration: none;
+}
+
+.btn-assinar-login .material-symbols-rounded {
+    font-size: 20px;
+}
+
+.btn-assinar-login:hover {
+    background: var(--blue-dark);
+    transform: translateY(-2px);
+}
+
+.btn-cta-note {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-cta-note .material-symbols-rounded {
+    font-size: 13px;
+}
+
+/* ===================================================
+   COLUNA DIREITA — benefícios e comparação
+=================================================== */
+.premium-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeUp 0.5s ease .1s both;
+}
+
+.pside-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+
+.pside-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pside-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: linear-gradient(180deg, var(--amber), #fcd34d);
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+/* tabela de comparação Gratuito vs Premium */
+.compare-table {
+    width: 100%;
+}
+
+.compare-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.84rem;
+}
+
+.compare-row:last-child {
+    border-bottom: none;
+}
+
+.compare-row-label {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.compare-cell {
+    width: 72px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.compare-cell-header {
+    width: 72px;
+    text-align: center;
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.compare-row-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    margin-bottom: 4px;
+}
+
+.icon-yes {
+    color: var(--amber);
+}
+
+.icon-no {
+    color: rgba(255, 255, 255, 0.20);
+}
+
+.icon-yes .material-symbols-rounded,
+.icon-no .material-symbols-rounded {
+    font-size: 18px;
+}
+
+/* depoimentos mini */
+.testimonial {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.testimonial:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.testimonial-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.testimonial-text {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.55;
+}
+
+.testimonial-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.40);
+    margin-top: 4px;
+}
+
+.testimonial-stars {
+    color: var(--amber);
+    font-size: 0.72rem;
+}
+
+/* ===================================================
+   RESPONSIVO
+=================================================== */
+@media (max-width: 860px) {
+    .premium-layout {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin-inline: auto;
+    }
+
+    .premium-side {
+        order: -1;
+    }
+}
+
+@media (max-width: 480px) {
+    .premium-page {
+        padding: calc(var(--navbar-h) + 36px) 16px 60px;
+    }
+
+    .premium-card-header,
+    .premium-card-body {
+        padding-inline: 20px;
+    }
+
+    .premium-card-header {
+        padding-top: 28px;
+    }
+
+    .premium-hero-title {
+        font-size: 1.8rem;
+    }
+
+    .plan-price-value {
+        font-size: 2.8rem;
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

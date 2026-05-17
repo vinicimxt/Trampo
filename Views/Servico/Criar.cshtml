@@ -27,7 +27,9 @@
         <div class="form-card">
 
             <div class="form-card-header">
-                <div class="form-card-header-icon">🛠</div>
+                <div class="form-card-header-icon"> <span aria-hidden="true" class="material-symbols-rounded">
+                    handyman
+                </span></div>
                 <div>
                     <h2>Informações do Serviço</h2>
                     <p>Quanto mais detalhes, mais clientes você atrai</p>
@@ -138,13 +140,20 @@
                     <div class="dias-pills" id="diasPills">
                         <input type="hidden" name="diasSemana" id="diasSemanaInput" />
 
-                        <button type="button" class="dia-pill" data-val="1" onclick="toggleDia(this)">Seg</button>
-                        <button type="button" class="dia-pill" data-val="2" onclick="toggleDia(this)">Ter</button>
-                        <button type="button" class="dia-pill" data-val="3" onclick="toggleDia(this)">Qua</button>
-                        <button type="button" class="dia-pill" data-val="4" onclick="toggleDia(this)">Qui</button>
-                        <button type="button" class="dia-pill" data-val="5" onclick="toggleDia(this)">Sex</button>
-                        <button type="button" class="dia-pill" data-val="6" onclick="toggleDia(this)">Sáb</button>
-                        <button type="button" class="dia-pill" data-val="0" onclick="toggleDia(this)">Dom</button>
+                        <button aria-label="Segunda" type="button" class="dia-pill" data-val="1"
+                                onclick="toggleDia(this)">Seg</button>
+                        <button aria-label="Terça" type="button" class="dia-pill" data-val="2"
+                                onclick="toggleDia(this)">Ter</button>
+                        <button aria-label="Quarta" type="button" class="dia-pill" data-val="3"
+                                onclick="toggleDia(this)">Qua</button>
+                        <button aria-label="Quinta" type="button" class="dia-pill" data-val="4"
+                                onclick="toggleDia(this)">Qui</button>
+                        <button aria-label="Sexta" type="button" class="dia-pill" data-val="5"
+                                onclick="toggleDia(this)">Sex</button>
+                        <button aria-label="Sábado" type="button" class="dia-pill" data-val="6"
+                                onclick="toggleDia(this)">Sáb</button>
+                        <button aria-label="Domingo" type="button" class="dia-pill" data-val="0"
+                                onclick="toggleDia(this)">Dom</button>
                     </div>
                     <span class="field-hint">Clique para selecionar os dias disponíveis</span>
                 </div>
@@ -191,9 +200,9 @@
                     <label class="form-label" for="atendimento">Tipo de atendimento</label>
                     <div class="select-wrap">
                         <select name="atendimento" id="atendimento" class="form-select">
-                            <option value="Domicilio">🏠 Domicílio — vou até o cliente</option>
-                            <option value="Local">📍 Local — cliente vem até mim</option>
-                            <option value="Online">💻 Online — atendimento remoto</option>
+                            <option value="Domicilio"> Domicílio — vou até o cliente</option>
+                            <option value="Local"> Local — cliente vem até mim</option>
+                            <option value="Online"> Online — atendimento remoto</option>
                         </select>
                     </div>
                 </div>
@@ -205,9 +214,13 @@
                     @if (ViewBag.Locais == null || ViewBag.Locais.Count == 0)
                     {
                         <div class="alerta-local">
-                            <span>⚠️ Você ainda não cadastrou nenhum local.</span>
+                            <span> <span aria-hidden="true" class="material-symbols-rounded">
+                                warning
+                            </span> Você ainda não cadastrou nenhum local.</span>
                             <a href="/Local?abrir=true" target="_blank" class="btn-criar-local">
-                                + Cadastrar local
+                                <span aria-hidden="true" class="material-symbols-rounded">
+                                    add
+                                </span> Cadastrar local
                             </a>
                         </div>
                     }
@@ -233,74 +246,80 @@
                 </div>
 
                 <!-- BOTÃO SUBMIT -->
-                <button type="submit" class="btn-submit" id="btnSubmit">
-                    <span id="btnText">Criar Serviço 🚀</span>
-                    <span id="btnLoader" class="loader hidden"></span>
-                </button>
+                <button aria-label="Criar serviço" type="submit" class="btn-submit" id="btnSubmit">
+                    <span  id="btnText">Criar Serviço 
+                        <span id="btnLoader" class="loader hidden"></span>
+                    </button>
 
-            </form>
-        </div>
-
-        <!-- ============================================
-             PAINEL DIREITO — preview + dicas
-        ============================================= -->
-        <div class="side-panel">
-
-            <!-- Preview ao vivo -->
-            <div class="preview-card">
-                <div class="preview-header">
-                    <div class="preview-header-dot"></div>
-                    <span class="preview-header-label">Preview ao vivo</span>
-                </div>
-
-                <div class="preview-body">
-                    <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:12px;">
-                        Assim seu serviço aparecerá para os clientes:
-                    </p>
-
-                    <div class="preview-service-card">
-                        <div class="prev-nome" id="previewNome">Nome do serviço</div>
-                        <div class="prev-desc" id="previewDesc">A descrição aparecerá aqui...</div>
-
-                        <div class="prev-tags">
-                            <span class="prev-tag cat" id="previewCategoria">Categoria</span>
-                            <span class="prev-tag atend" id="previewAtendimento">🏠 Domicílio</span>
-                        </div>
-
-                        @* <div class="prev-contato" id="previewContato" style="display:none;">
-                            📞 <span id="previewContatoVal"></span>
-                        </div> *@
-                    </div>
-                </div>
+                </form>
             </div>
 
-            <!-- Dicas -->
-            <div class="tip-card">
-                <div class="tip-card-title">💡 Dicas para atrair mais clientes</div>
+            <!-- ============================================
+             PAINEL DIREITO — preview + dicas
+        ============================================= -->
+            <div class="side-panel">
 
-                <div class="tip-item">
-                    <div class="tip-icon">✍️</div>
-                    <span>Use um nome claro e específico. "Corte masculino degradê" converte mais que só "Corte".</span>
+                <!-- Preview ao vivo -->
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <div class="preview-header-dot"></div>
+                        <span class="preview-header-label">Preview ao vivo</span>
+                    </div>
+
+                    <div class="preview-body">
+                        <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:12px;">
+                            Assim seu serviço aparecerá para os clientes:
+                        </p>
+
+                        <div class="preview-service-card">
+                            <div class="prev-nome" id="previewNome">Nome do serviço</div>
+                            <div class="prev-desc" id="previewDesc">A descrição aparecerá aqui...</div>
+
+                            <div class="prev-tags">
+                                <span class="prev-tag cat" id="previewCategoria">Categoria</span>
+                                <span class="prev-tag atend" id="previewAtendimento"><span aria-hidden="true" class="material-symbols-rounded">home</span> Domicílio</span>
+                            </div>
+
+                            @* <div class="prev-contato" id="previewContato" style="display:none;">
+                            📞 <span id="previewContatoVal"></span>
+                        </div> *@
+                        </div>
+                    </div>
                 </div>
-                <div class="tip-item">
-                    <div class="tip-icon">📝</div>
-                    <span>Preencha a descrição com o que está incluído e o tempo médio de atendimento.</span>
-                </div>
-                @* <div class="tip-item">
+
+                <!-- Dicas -->
+                <div class="tip-card">
+                    <div class="tip-card-title"><span aria-hidden="true" class="material-symbols-rounded">
+                        lightbulb
+                    </span> Dicas para atrair mais clientes</div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon"><span aria-hidden="true" class="material-symbols-rounded">
+                            edit_note
+                        </span></div>
+                        <span>Use um nome claro e específico. "Corte masculino degradê" converte mais que só "Corte".</span>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon"><span aria-hidden="true" class="material-symbols-rounded">
+                            description
+                        </span></div>
+                        <span>Preencha a descrição com o que está incluído e o tempo médio de atendimento.</span>
+                    </div>
+                    @* <div class="tip-item">
                     <div class="tip-icon">📞</div>
                     <span>Adicione um contato para clientes tirarem dúvidas antes de agendar.</span>
                 </div> *@
-                <div class="tip-item">
-                    <div class="tip-icon">📍</div>
-                    <span>Escolha o tipo de atendimento correto — isso aparece nos filtros de busca.</span>
+                    <div class="tip-item">
+                        <div class="tip-icon"><span class="material-symbols-rounded">location_on</span></div>
+                        <span>Escolha o tipo de atendimento correto — isso aparece nos filtros de busca.</span>
+                    </div>
                 </div>
+
             </div>
 
         </div>
-
     </div>
-</div>
 
-@section Scripts {
-    <script src="~/js/servico.js"></script>
-}
+    @section Scripts {
+        <script src="~/js/servico.js"></script>
+    }

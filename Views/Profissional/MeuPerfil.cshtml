@@ -15,7 +15,7 @@
 
             <div class="perfil-hero-left">
                 <span class="perfil-hero-label">Painel do Profissional</span>
-                <h1 class="perfil-hero-title">Olá, @Model.Nome 👋</h1>
+                <h1 class="perfil-hero-title">Olá, @Model.Nome </h1>
                 <p class="perfil-hero-sub">Gerencie seus serviços, agendamentos e acompanhe seu desempenho.</p>
             </div>
 
@@ -37,7 +37,7 @@
                 {
                     <div class="badge-plano premium">
 
-                        <span class="material-symbols-rounded">
+                        <span aria-hidden="true" class="material-symbols-rounded">
                             workspace_premium
                         </span>
 
@@ -49,7 +49,7 @@
                 {
                     <div class="badge-plano free">
 
-                        <span class="material-symbols-rounded">
+                        <span aria-hidden="true" class="material-symbols-rounded">
                             verified
                         </span>
 
@@ -116,13 +116,13 @@
         {
             <!-- Estado vazio -->
             <div class="empty-state">
-                <div class="empty-icon"><span class="material-symbols-rounded">inventory_2</span></div>
+                <div class="empty-icon"><span aria-hidden="true" class="material-symbols-rounded">inventory_2</span></div>
                 <h3>Nenhum serviço cadastrado ainda</h3>
                 <p>
                     Crie seu primeiro serviço para aparecer para os clientes e começar a receber agendamentos.
                 </p>
                 <a href="/Servico/Criar" class="btn-primary-solid">
-                    <span class="material-symbols-rounded">add</span> Criar meu primeiro serviço
+                    <span aria-hidden="true" class="material-symbols-rounded">add</span> Criar meu primeiro serviço
                 </a>
             </div>
         }
@@ -163,7 +163,7 @@
                     </a>
 
                     <a href="/Agendamento/Recebidos" class="perfil-card">
-                        <div class="card-icon"><span class="material-symbols-rounded">event</span></div>
+                        <div class="card-icon"><span aria-hidden="true" class="material-symbols-rounded">event</span></div>
                         <div class="card-content">
                             <h3>Agendamentos Recebidos</h3>
                             <p>Veja e gerencie todos os pedidos dos clientes</p>
@@ -180,7 +180,7 @@
                     <a href="/Agendamento/Meus" class="perfil-card">
 
                         <div class="card-icon">
-                            <span class="material-symbols-rounded">event</span>
+                            <span aria-hidden="true" class="material-symbols-rounded">event</span>
                         </div>
 
                         <div class="card-content">
@@ -198,7 +198,7 @@
                     <a href="/Usuario/Perfil" class="perfil-card">
 
                         <div class="card-icon">
-                            <span class="material-symbols-rounded">person</span>
+                            <span aria-hidden="true" class="material-symbols-rounded">person</span>
                         </div>
 
                         <div class="card-content">

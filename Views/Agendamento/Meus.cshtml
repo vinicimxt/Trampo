@@ -71,7 +71,7 @@
 
 <div class="meus-agend-page">
     <div class="meus-agend-page">
-        
+
         @if (TempData["Erro"] != null)
         {
             <div class="alert-erro">
@@ -123,36 +123,41 @@
                     <button class="filter-pill active" onclick="filtrar('todos', this)">
                         <span class="filter-pill-dot dot-all"></span> Todos
                     </button>
+
                     <button class="filter-pill" onclick="filtrar('Pendente', this)">
                         <span class="filter-pill-dot dot-pendente"></span>
                         Pendentes @if (pendentes > 0) {
                         <span>(@pendentes)</span>
                     }
                 </button>
+
                 <button class="filter-pill" onclick="filtrar('Confirmado', this)">
                     <span class="filter-pill-dot dot-confirmado"></span>
                     Confirmados @if (confirmados > 0) {
                     <span>(@confirmados)</span>
                 }
             </button>
+
             <button class="filter-pill" onclick="filtrar('Finalizado', this)">
                 <span class="filter-pill-dot dot-finalizado"></span>
                 Finalizados @if (finalizados > 0) {
                 <span>(@finalizados)</span>
             }
         </button>
+
         <button class="filter-pill" onclick="filtrar('cancelado', this)">
             <span class="filter-pill-dot dot-cancelado"></span>
             Cancelados @if (cancelados > 0) {
             <span>(@cancelados)</span>
         }
     </button>
+
     <span class="filter-count">
         <strong id="contadorFiltro">@total</strong> agendamento(s)
     </span>
 </div>
 </div>
-    }
+        }
 
 <!-- LISTA -->
 <div class="meus-agend-main">
@@ -160,7 +165,9 @@
     @if (total == 0)
     {
         <div class="empty-state">
-            <div class="empty-icon"><span class="material-symbols-rounded">inbox</span></div>
+            <div class="empty-icon">
+                <span aria-hidden="true" class="material-symbols-rounded">inbox</span>
+            </div>
             <h3>Nenhum agendamento ainda</h3>
             <p>Você ainda não agendou nenhum serviço. Explore os profissionais disponíveis e agende agora mesmo.</p>
             <a href="/Profissional/Lista" class="btn-explorar">Explorar serviços →</a>
@@ -188,28 +195,28 @@
 
                             <div class="agend-info-item">
                                 <div class="agend-info-label">
-                                    <span class="material-symbols-rounded">payments</span>
-                                     Valor
-                                     </div>
+                                    <span aria-hidden="true" class="material-symbols-rounded">payments</span>
+                                    Valor
+                                </div>
 
                                 <div class="agend-info-val">
 
-                                   @if (ag.ValorFinal.HasValue)
-                                        {
-                                            <span class="valor-final">
-                                                R$ @ag.ValorFinal.Value.ToString("N2")
-                                            </span>
-                                        }
-                                        else if (ag.TipoPreco == "Combinar")
-                                        {
-                                            <span>A combinar</span>
-                                        }
-                                        else
-                                        {
-                                            <span>
-                                                R$ @ag.PrecoBase?.ToString("N2")
-                                            </span>
-                                        }
+                                    @if (ag.ValorFinal.HasValue)
+                                    {
+                                        <span class="valor-final">
+                                            R$ @ag.ValorFinal.Value.ToString("N2")
+                                        </span>
+                                    }
+                                    else if (ag.TipoPreco == "Combinar")
+                                    {
+                                        <span>A combinar</span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            R$ @ag.PrecoBase?.ToString("N2")
+                                        </span>
+                                    }
 
                                 </div>
                             </div>
@@ -217,7 +224,9 @@
                             @if (!string.IsNullOrEmpty(ag.Subcategoria))
                             {
                                 <div class="agend-subcategoria">
-                                    <span class="material-symbols-rounded" style="font-size:13px;">label</span> @ag.Subcategoria
+                                    <span aria-hidden="true" class="material-symbols-rounded"
+                                          style="font-size:13px;">label</span>
+                                    @ag.Subcategoria
                                 </div>
                             }
                         </div>
@@ -230,7 +239,10 @@
                     <!-- corpo -->
                     <div class="agend-card-body">
                         <div class="agend-info-item">
-                            <div class="agend-info-label"><span class="material-symbols-rounded">inbox</span> Data</div>
+                            <div class="agend-info-label">
+                                <span aria-hidden="true" class="material-symbols-rounded">inbox</span>
+                                Data
+                            </div>
                             <div class="agend-info-val">@ag.Data.ToString("dd/MM/yyyy")</div>
                             <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">
                                 @ag.Data.ToString("dddd", new System.Globalization.CultureInfo("pt-BR"))
@@ -238,39 +250,54 @@
                         </div>
 
                         <div class="agend-info-item">
-                            <div class="agend-info-label"><span class="material-symbols-rounded">schedule</span> Horário</div>
+                            <div class="agend-info-label">
+                                <span aria-hidden="true" class="material-symbols-rounded">schedule</span> Horário
+                            </div>
                             <div class="agend-info-val">@ag.Hora</div>
                         </div>
 
 
 
                         <div class="agend-info-item">
-                            <div class="agend-info-label"><span class="material-symbols-rounded">place</span> Atendimento</div>
+                            <div class="agend-info-label">
+                                <span aria-hidden="true" class="material-symbols-rounded">place</span> Atendimento
+                            </div>
                             <div class="agend-info-val">
                                 @if (ag.Atendimento == "Local")
                                 {
-                                    <span class="agend-atend-chip chip-local"><span class="material-symbols-rounded">location_on</span> Presencial</span>
+                                    <span class="agend-atend-chip chip-local">
+                                        <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
+                                        Presencial
+                                    </span>
                                 }
                                 else if (ag.Atendimento == "Domicilio")
                                 {
 
-                                    <span class="agend-atend-chip chip-domicilio"><span class="material-symbols-rounded">home</span> Domicílio</span>
+                                    <span class="agend-atend-chip chip-domicilio">
+                                        <span class="material-symbols-rounded" aria-hidden="true">home</span> Domicílio
+
+                                    </span>
                                 }
                                 else if (ag.Atendimento == "Online")
                                 {
 
-                                    <span class="agend-atend-chip chip-online"><span class="material-symbols-rounded">laptop</span> Online</span>
+                                    <span class="agend-atend-chip chip-online">
+                                        <span class="material-symbols-rounded" aria-hidden="true">laptop</span> Online
+                                    </span>
                                 }
                             </div>
                         </div>
 
                         <div class="agend-info-item">
-                           
+
                             <div class="ag-info-val">
-                                <span><span class="material-symbols-rounded"
-                                 style="font-size:15px;color:var(--blue);">call</span> @ag.ContatoProfissional</span>
+                                <span aria-label="contato do profissional @ag.ContatoProfissional">
+                                    <span class="material-symbols-rounded" aria-hidden="true"
+                                          style="font-size:15px;color:var(--blue);">call</span>
+                                    @ag.ContatoProfissional
+                                </span>
                             </div>
-                            
+
                         </div>
 
                     </div>
@@ -281,316 +308,341 @@
                         <div class="agend-atend-info">
                             @if (ag.Atendimento == "Domicilio" && !string.IsNullOrEmpty(ag.EnderecoCliente))
                             {
-                                <span><span class="material-symbols-rounded">home</span></span><span>@ag.EnderecoCliente</span>
+                                <span>
+                                    <span class="material-symbols-rounded" aria-hidden="true">home
+                                    </span>
+                                </span>
+                                <span aria-label="endereço do clieten @ag.EnderecoCliente">@ag.EnderecoCliente</span>
                             }
                             else if (ag.Atendimento == "Local" && !string.IsNullOrEmpty(ag.EnderecoLocal))
                             {
-                                <span><span class="material-symbols-rounded">location_on</span></span><span>@ag.EnderecoLocal</span>
+                                <span>
+                                    <span aria-hidden="true" class="material-symbols-rounded">location_on
+                                    </span>
+                                </span>
+                                <span aria-label="endereço de atendimento:@ag.EnderecoLocal">@ag.EnderecoLocal</span>
                             }
                             else if (ag.Atendimento == "Online")
                             {
                                 if (!string.IsNullOrEmpty(ag.LinkOnline) && ag.ConfirmadoProfissional)
                                 {
                                     <a href="@ag.LinkOnline" target="_blank" class="btn-link-online">
-                                        <span class="material-symbols-rounded" style="font-size:16px;">video_call</span> Entrar na reunião
+                                        <span aria-hidden="true" class="material-symbols-rounded"
+                                              style="font-size:16px;">video_call</span> 
+                                        Entrar na reunião
                                     </a>
                                 }
                                 else
                                 {
-                                    <span class="aguardando-chip"> <span class="material-symbols-rounded" style="font-size:14px;">lock</span> Link disponível após confirmação</span>
+                                    <span class="aguardando-chip"> 
+                                        <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">lock</span> 
+                                    Link disponível após confirmação
+                                    </span>
+                                    }
                                 }
-                            }
-                        </div>
+                            </div>
 
-                        <div class="agend-footer-actions">
+                            <div class="agend-footer-actions">
 
-                            @if (ag.Status == "CanceladoCliente" || ag.Status == "CanceladoProfissional" || ag.Status ==
-                                    "Cancelado")
-                            {
-                                <span class="status-info cancelado"><span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#ef4444;">cancel</span> Agendamento cancelado</span>
-                            }
+                                @if (ag.Status == "CanceladoCliente" || ag.Status == "CanceladoProfissional" || ag.Status ==
+                                        "Cancelado")
+                                {
+                                    <span class="status-info cancelado">
+                                        <span aria-hidden="true" class="material-symbols-rounded icon-fill"
+                                            style="font-size:2.8rem;color:#ef4444;">cancel
+                                        </span> 
+                                            Agendamento cancelado
+                                    </span>
+                                    }
                             else if (!ag.ConfirmadoProfissional)
-                            {
-                                <span class="status-info andamento"><span class="material-symbols-rounded" style="font-size:15px;">hourglass_top</span> Aguardando confirmação do profissional</span>
-                            }
+                                    {
+                                        <span class="status-info andamento">
+                                            <span aria-hidden="true" class="material-symbols-rounded" style="font-size:15px;">hourglass_top</span> 
+                                            Aguardando confirmação do
+                                            profissional
+                                        </span>
+                                        }
                             else if (!ag.FinalizadoProfissional)
-                            {
-                                <span class="status-info espera">🛠 Serviço em andamento</span>
-                            }
-                            else if (!ag.ConfirmadoCliente)
-                            {
-                                <button type="button" class="btn-finalizar" onclick="confirmarConclusao('@ag.Id')">
-                                  <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#22c55e;">check_circle Confirmar conclusão</span>   
-                                </button>
-                            }
-                            else if (ag.PodeAvaliar())
-                            {
-                                if (!ag.JaAvaliado)
-                                {
-                                    <div class="avaliacao-box">
+                                        {
+                                            <span class="status-info espera">🛠 Serviço em andamento</span>
+                                        }
+                                        else if (!ag.ConfirmadoCliente)
+                                        {
+                                            <button aria-label="finalizar atendimento" type="button" class="btn-finalizar" onclick="confirmarConclusao('@ag.Id')">
+                                                <span aria-hidden="true" class="material-symbols-rounded icon-fill"
+                                                      style="font-size:2.8rem;color:#22c55e;">check_circle Confirmar conclusão</span>
+                                            </button>
+                                        }
+                                        else if (ag.PodeAvaliar())
+                                        {
+                                            if (!ag.JaAvaliado)
+                                            {
+                                                <div class="avaliacao-box">
 
-                                        <div class="avaliacao-info">
-                                            <span class="avaliacao-status">✔ Serviço finalizado,</span>
-                                            <span class="avaliacao-sub">Avaliação opcional</span>
-                                        </div>
+                                                    <div class="avaliacao-info">
+                                                        <span class="avaliacao-status">✔ Serviço finalizado,</span>
+                                                        <span class="avaliacao-sub">Avaliação opcional</span>
+                                                    </div>
 
-                                        <button class="btn-avaliar"
-                                                onclick="abrirModalAvaliar('@ag.Id', '@ag.ProfissionalId', '@ag.NomeProfissional.Replace("'","\\'")', '@ag.Servico.Replace("'","\\'")')">
-                                            ⭐ Avaliar experiência
-                                        </button>
+                                                    <button aria-label="Avaliar profissional" class="btn-avaliar"
+                                                            onclick="abrirModalAvaliar('@ag.Id', '@ag.ProfissionalId', '@ag.NomeProfissional.Replace("'","\\'")', '@ag.Servico.Replace("'","\\'")')">
+                                                        ⭐ Avaliar experiência
+                                                    </button>
+
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="avaliacao-box">
+                                                    <span class="status-avaliado">⭐ Avaliação enviada</span>
+                                                </div>
+                                            }
+                                        }
+
+                                        @if (ag.StatusCalculado() == "Pendente" || ag.StatusCalculado() == "Confirmado")
+                                        {
+                                            <button aria-label="cancelar" type="button" class="btn-cancelar"
+                                                    onclick="abrirModalCancelar('@ag.Id', '@ag.Servico.Replace("'","\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                                <span aria-hidden="true" class="material-symbols-rounded">close</span> Cancelar
+                                            </button>
+                                        }
 
                                     </div>
-                                }
-                                else
-                                {
-                                    <div class="avaliacao-box">
-                                        <span class="status-avaliado">⭐ Avaliação enviada</span>
-                                    </div>
-                                }
-                            }
 
-                            @if (ag.StatusCalculado() == "Pendente" || ag.StatusCalculado() == "Confirmado")
-                            {
-                                <button type="button" class="btn-cancelar"
-                                        onclick="abrirModalCancelar('@ag.Id', '@ag.Servico.Replace("'","\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
-                                    <span class="material-symbols-rounded">close</span> Cancelar
-                                </button>
-                            }
+                                </div>
 
+                            </div>
+                        }
+
+                        <div class="empty-filtrado" id="emptyFiltrado">
+                            Nenhum agendamento com esse status.
                         </div>
 
                     </div>
+                }
 
-                </div>
-            }
-
-            <div class="empty-filtrado" id="emptyFiltrado">
-                Nenhum agendamento com esse status.
             </div>
-
         </div>
-    }
-
-</div>
-</div>
 
 
-<!-- =============================================
+        <!-- =============================================
      MODAL — CANCELAR
 ============================================= -->
-<div class="modal-overlay" id="modalCancelar">
-    <div class="modal-box">
-        <div class="modal-icon">⚠️</div>
-        <div class="modal-title">Cancelar agendamento?</div>
-        <p class="modal-sub" id="modalCancelarDesc"></p>
-        <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="fecharModais()">Manter</button>
-            <form id="formCancelar" asp-action="Cancelar" method="post" style="flex:1;">
-                <input type="hidden" name="id" id="modalCancelarId" />
-                <button type="submit" class="btn-modal-confirm" style="width:100%;">
-                    <span class="material-symbols-rounded">close</span>
-                    Sim, cancelar
-                </button>
-            </form>
+        <div class="modal-overlay" id="modalCancelar">
+            <div class="modal-box">
+                <div class="modal-icon">
+                    <span class="material-symbols-rounded">warning</span>
+                </div>
+                <div class="modal-title">Cancelar agendamento?</div>
+                <p class="modal-sub" id="modalCancelarDesc"></p>
+                <div class="modal-actions">
+                    <button aria-label="manter" class="btn-modal-cancel" onclick="fecharModais()">Manter</button>
+                    <form id="formCancelar" asp-action="Cancelar" method="post" style="flex:1;">
+                        <input type="hidden" name="id" id="modalCancelarId" />
+                        <button aria-label="cancelar" type="submit" class="btn-modal-confirm" style="width:100%;">
+                            <span aria-hidden="true" class="material-symbols-rounded">close</span>
+                            Sim, cancelar
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
 
-<!-- =============================================
+        <!-- =============================================
      MODAL — AVALIAR (inline, sem redirecionar)
 ============================================= -->
-<div class="modal-overlay" id="modalAvaliar">
-    <div class="modal-box modal-box-avaliar">
+        <div class="modal-overlay" id="modalAvaliar">
+            <div class="modal-box modal-box-avaliar">
 
-        <!-- cabeçalho do modal -->
-        <div class="aval-header">
-            <div class="aval-header-icon">⭐</div>
-            <div>
-                <div class="modal-title" style="margin:0 0 2px;">Avaliar serviço</div>
-                <div class="aval-prof-nome" id="avalProfNome"></div>
-                <div class="aval-servico-nome" id="avalServicoNome"></div>
-            </div>
-            <button class="aval-close" onclick="fecharModais()">✕</button>
-        </div>
-
-        <form id="formAvaliar" method="post" action="/Avaliacao/Salvar">
-            <input type="hidden" name="agendamentoId" id="avalAgendId" />
-            <input type="hidden" name="profissionalId" id="avalProfId" />
-            <input type="hidden" name="nota" id="avalNota" />
-
-            <!-- Estrelas interativas -->
-            <div class="aval-section-label">Sua nota</div>
-            <div class="aval-stars" id="avalStars">
-                <button type="button" class="aval-star" data-val="1">★</button>
-                <button type="button" class="aval-star" data-val="2">★</button>
-                <button type="button" class="aval-star" data-val="3">★</button>
-                <button type="button" class="aval-star" data-val="4">★</button>
-                <button type="button" class="aval-star" data-val="5">★</button>
-            </div>
-            <div class="aval-nota-label" id="avalNotaLabel">Selecione uma nota</div>
-
-            <!-- Comentário -->
-            <div class="aval-section-label" style="margin-top:20px;">Comentário <span
-                class="aval-opt">(opcional)</span></div>
-                <textarea class="aval-textarea" name="comentario"
-                          placeholder="Conte como foi o atendimento, pontualidade, qualidade..."></textarea>
-                <div class="aval-char-count"><span id="avalCharCount">0</span>/300</div>
-
-                <!-- Ações -->
-                <div class="aval-footer">
-                    <button type="button" class="btn-modal-cancel" onclick="fecharModais()">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn-aval-submit" id="btnAvalSubmit" disabled>
-                        Enviar avaliação
-                    </button>
+                <!-- cabeçalho do modal -->
+                <div class="aval-header">
+                    <div class="aval-header-icon">⭐</div>
+                    <div>
+                        <div class="modal-title" style="margin:0 0 2px;">Avaliar serviço</div>
+                        <div class="aval-prof-nome" id="avalProfNome"></div>
+                        <div class="aval-servico-nome" id="avalServicoNome"></div>
+                    </div>
+                    <button class="aval-close" onclick="fecharModais()">✕</button>
                 </div>
-            </form>
 
-        </div>
-    </div>
+                <form id="formAvaliar" method="post" action="/Avaliacao/Salvar">
+                    <input type="hidden" name="agendamentoId" id="avalAgendId" />
+                    <input type="hidden" name="profissionalId" id="avalProfId" />
+                    <input type="hidden" name="nota" id="avalNota" />
+
+                    <!-- Estrelas interativas -->
+                    <div class="aval-section-label">Sua nota</div>
+                    <div class="aval-stars" id="avalStars">
+                        <button aria-label="avaliar em 1 estrela" type="button" class="aval-star" data-val="1">★</button>
+                        <button aria-label="avaliar em 2 estrela" type="button" class="aval-star" data-val="2">★</button>
+                        <button aria-label="avaliar em 3 estrela" type="button" class="aval-star" data-val="3">★</button>
+                        <button aria-label="avaliar em 4 estrela" type="button" class="aval-star" data-val="4">★</button>
+                        <button aria-label="avaliar em 5 estrela" type="button" class="aval-star" data-val="5">★</button>
+                    </div>
+                    <div class="aval-nota-label" id="avalNotaLabel">Selecione uma nota</div>
+
+                    <!-- Comentário -->
+                    <div class="aval-section-label" style="margin-top:20px;">Comentário <span
+                        class="aval-opt">(opcional)</span></div>
+                        <textarea class="aval-textarea" name="comentario"
+                                  placeholder="Conte como foi o atendimento, pontualidade, qualidade..."></textarea>
+                        <div class="aval-char-count"><span id="avalCharCount">0</span>/300</div>
+
+                        <!-- Ações -->
+                        <div class="aval-footer">
+                            <button type="button" class="btn-modal-cancel" onclick="fecharModais()">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-aval-submit" id="btnAvalSubmit" disabled>
+                                Enviar avaliação
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
 
 
-    @section Scripts {
-        <script>
-                /* -----------------------------------------------
-                   FILTRO
-                ----------------------------------------------- */
-                function filtrar(status, btn) {
-                    document.querySelectorAll('.filter-pill').forEach(function (p) { p.classList.remove('active'); });
-                    btn.classList.add('active');
-                    var cards = document.querySelectorAll('.agend-card');
-                    var n = 0;
-                    cards.forEach(function (c) {
-                        var show = status === 'todos' || c.dataset.status === status;
-                        c.style.display = show ? '' : 'none';
-                        if (show) n++;
-                    });
-                    var cnt = document.getElementById('contadorFiltro');
-                    if (cnt) cnt.textContent = n;
-                    var emp = document.getElementById('emptyFiltrado');
-                    if (emp) emp.classList.toggle('visivel', n === 0);
-                }
+            @section Scripts {
+                <script>
+                        /* -----------------------------------------------
+                           FILTRO
+                        ----------------------------------------------- */
+                        function filtrar(status, btn) {
+                            document.querySelectorAll('.filter-pill').forEach(function (p) { p.classList.remove('active'); });
+                            btn.classList.add('active');
+                            var cards = document.querySelectorAll('.agend-card');
+                            var n = 0;
+                            cards.forEach(function (c) {
+                                var show = status === 'todos' || c.dataset.status === status;
+                                c.style.display = show ? '' : 'none';
+                                if (show) n++;
+                            });
+                            var cnt = document.getElementById('contadorFiltro');
+                            if (cnt) cnt.textContent = n;
+                            var emp = document.getElementById('emptyFiltrado');
+                            if (emp) emp.classList.toggle('visivel', n === 0);
+                        }
 
-                /* -----------------------------------------------
-                   CONFIRMAR CONCLUSÃO
-                ----------------------------------------------- */
-                function confirmarConclusao(id) {
-                    if (confirm('Confirmar que o serviço foi concluído?')) {
-                        window.location.href = '/Agendamento/ConfirmarCliente/' + id;
-                    }
-                }
+                        /* -----------------------------------------------
+                           CONFIRMAR CONCLUSÃO
+                        ----------------------------------------------- */
+                        function confirmarConclusao(id) {
+                            if (confirm('Confirmar que o serviço foi concluído?')) {
+                                window.location.href = '/Agendamento/ConfirmarCliente/' + id;
+                            }
+                        }
 
-                /* -----------------------------------------------
-                   FECHAR TODOS OS MODAIS
-                ----------------------------------------------- */
-                function fecharModais() {
-                    document.querySelectorAll('.modal-overlay').forEach(function (m) {
-                        m.classList.remove('open');
-                    });
-                    resetarAvaliar();
-                }
+                        /* -----------------------------------------------
+                           FECHAR TODOS OS MODAIS
+                        ----------------------------------------------- */
+                        function fecharModais() {
+                            document.querySelectorAll('.modal-overlay').forEach(function (m) {
+                                m.classList.remove('open');
+                            });
+                            resetarAvaliar();
+                        }
 
-                document.querySelectorAll('.modal-overlay').forEach(function (m) {
-                    m.addEventListener('click', function (e) { if (e.target === this) fecharModais(); });
-                });
-
-                document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape') fecharModais();
-                });
-
-                /* -----------------------------------------------
-                   MODAL — CANCELAR
-                ----------------------------------------------- */
-                function abrirModalCancelar(id, servico, data, hora) {
-                    document.getElementById('modalCancelarId').value = id;
-                    document.getElementById('modalCancelarDesc').innerHTML =
-                        'Tem certeza que deseja cancelar <strong>' + servico + '</strong>' +
-                        ' agendado para <strong>' + data + ' às ' + hora + '</strong>?';
-                    document.getElementById('modalCancelar').classList.add('open');
-                }
-
-                /* -----------------------------------------------
-                   MODAL — AVALIAR
-                ----------------------------------------------- */
-                var notaSelecionada = 0;
-
-                var notaTextos = {
-                    0: 'Selecione uma nota',
-                    1: '😞 Muito ruim',
-                    2: '😕 Ruim',
-                    3: '😐 Regular',
-                    4: '😊 Bom',
-                    5: '😄 Excelente!'
-                };
-
-                function abrirModalAvaliar(agendId, profId, profNome, servico) {
-                    document.getElementById('avalAgendId').value = agendId;
-                    document.getElementById('avalProfId').value = profId;
-                    document.getElementById('avalProfNome').textContent = profNome;
-                    document.getElementById('avalServicoNome').textContent = servico;
-                    resetarAvaliar();
-                    document.getElementById('modalAvaliar').classList.add('open');
-                }
-
-                function resetarAvaliar() {
-                    notaSelecionada = 0;
-                    document.getElementById('avalNota').value = '';
-                    document.getElementById('avalNotaLabel').textContent = notaTextos[0];
-                    document.querySelectorAll('.aval-star').forEach(function (s) {
-                        s.classList.remove('active', 'hover');
-                    });
-                    var ta = document.querySelector('.aval-textarea');
-                    if (ta) ta.value = '';
-                    document.getElementById('avalCharCount').textContent = '0';
-                    var btn = document.getElementById('btnAvalSubmit');
-                    if (btn) btn.disabled = true;
-                }
-
-                setTimeout(() => {
-                    const alert = document.querySelector('.alert-erro');
-                    if (alert) alert.style.display = 'none';
-                }, 4000);
-
-                /* estrelas — hover e click */
-                document.querySelectorAll('.aval-star').forEach(function (star) {
-                    var val = parseInt(star.dataset.val);
-
-                    star.addEventListener('mouseenter', function () {
-                        document.querySelectorAll('.aval-star').forEach(function (s) {
-                            s.classList.toggle('hover', parseInt(s.dataset.val) <= val);
+                        document.querySelectorAll('.modal-overlay').forEach(function (m) {
+                            m.addEventListener('click', function (e) { if (e.target === this) fecharModais(); });
                         });
-                        document.getElementById('avalNotaLabel').textContent = notaTextos[val];
-                    });
 
-                    star.addEventListener('mouseleave', function () {
-                        document.querySelectorAll('.aval-star').forEach(function (s) {
-                            s.classList.remove('hover');
+                        document.addEventListener('keydown', function (e) {
+                            if (e.key === 'Escape') fecharModais();
                         });
-                        document.getElementById('avalNotaLabel').textContent = notaTextos[notaSelecionada];
-                    });
 
-                    star.addEventListener('click', function () {
-                        notaSelecionada = val;
-                        document.getElementById('avalNota').value = val;
-                        document.querySelectorAll('.aval-star').forEach(function (s) {
-                            s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+                        /* -----------------------------------------------
+                           MODAL — CANCELAR
+                        ----------------------------------------------- */
+                        function abrirModalCancelar(id, servico, data, hora) {
+                            document.getElementById('modalCancelarId').value = id;
+                            document.getElementById('modalCancelarDesc').innerHTML =
+                                'Tem certeza que deseja cancelar <strong>' + servico + '</strong>' +
+                                ' agendado para <strong>' + data + ' às ' + hora + '</strong>?';
+                            document.getElementById('modalCancelar').classList.add('open');
+                        }
+
+                        /* -----------------------------------------------
+                           MODAL — AVALIAR
+                        ----------------------------------------------- */
+                        var notaSelecionada = 0;
+
+                        var notaTextos = {
+                            0: 'Selecione uma nota',
+                            1: '😞 Muito ruim',
+                            2: '😕 Ruim',
+                            3: '😐 Regular',
+                            4: '😊 Bom',
+                            5: '😄 Excelente!'
+                        };
+
+                        function abrirModalAvaliar(agendId, profId, profNome, servico) {
+                            document.getElementById('avalAgendId').value = agendId;
+                            document.getElementById('avalProfId').value = profId;
+                            document.getElementById('avalProfNome').textContent = profNome;
+                            document.getElementById('avalServicoNome').textContent = servico;
+                            resetarAvaliar();
+                            document.getElementById('modalAvaliar').classList.add('open');
+                        }
+
+                        function resetarAvaliar() {
+                            notaSelecionada = 0;
+                            document.getElementById('avalNota').value = '';
+                            document.getElementById('avalNotaLabel').textContent = notaTextos[0];
+                            document.querySelectorAll('.aval-star').forEach(function (s) {
+                                s.classList.remove('active', 'hover');
+                            });
+                            var ta = document.querySelector('.aval-textarea');
+                            if (ta) ta.value = '';
+                            document.getElementById('avalCharCount').textContent = '0';
+                            var btn = document.getElementById('btnAvalSubmit');
+                            if (btn) btn.disabled = true;
+                        }
+
+                        setTimeout(() => {
+                            const alert = document.querySelector('.alert-erro');
+                            if (alert) alert.style.display = 'none';
+                        }, 4000);
+
+                        /* estrelas — hover e click */
+                        document.querySelectorAll('.aval-star').forEach(function (star) {
+                            var val = parseInt(star.dataset.val);
+
+                            star.addEventListener('mouseenter', function () {
+                                document.querySelectorAll('.aval-star').forEach(function (s) {
+                                    s.classList.toggle('hover', parseInt(s.dataset.val) <= val);
+                                });
+                                document.getElementById('avalNotaLabel').textContent = notaTextos[val];
+                            });
+
+                            star.addEventListener('mouseleave', function () {
+                                document.querySelectorAll('.aval-star').forEach(function (s) {
+                                    s.classList.remove('hover');
+                                });
+                                document.getElementById('avalNotaLabel').textContent = notaTextos[notaSelecionada];
+                            });
+
+                            star.addEventListener('click', function () {
+                                notaSelecionada = val;
+                                document.getElementById('avalNota').value = val;
+                                document.querySelectorAll('.aval-star').forEach(function (s) {
+                                    s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+                                });
+                                document.getElementById('avalNotaLabel').textContent = notaTextos[val];
+                                var btn = document.getElementById('btnAvalSubmit');
+                                if (btn) btn.disabled = false;
+                            });
                         });
-                        document.getElementById('avalNotaLabel').textContent = notaTextos[val];
-                        var btn = document.getElementById('btnAvalSubmit');
-                        if (btn) btn.disabled = false;
-                    });
-                });
 
-                /* contador de caracteres do comentário */
-                var taAval = document.querySelector('.aval-textarea');
-                if (taAval) {
-                    taAval.addEventListener('input', function () {
-                        var len = Math.min(taAval.value.length, 300);
-                        document.getElementById('avalCharCount').textContent = len;
-                        if (taAval.value.length > 300) taAval.value = taAval.value.slice(0, 300);
-                    });
-                }
-        </script>
-    }
+                        /* contador de caracteres do comentário */
+                        var taAval = document.querySelector('.aval-textarea');
+                        if (taAval) {
+                            taAval.addEventListener('input', function () {
+                                var len = Math.min(taAval.value.length, 300);
+                                document.getElementById('avalCharCount').textContent = len;
+                                if (taAval.value.length > 300) taAval.value = taAval.value.slice(0, 300);
+                            });
+                        }
+                </script>
+            }

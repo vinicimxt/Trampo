@@ -23,10 +23,11 @@
 
     string GetTipoBadgeIcon(string atend)
     {
-        if (atend == "Local") return "📍";
-        if (atend == "Domicilio") return "🏠";
-        if (atend == "Online") return "💻";
-        return "📌";
+        if (atend == "Local") return "location_on";
+        if (atend == "Domicilio") return "home";
+        if (atend == "Online") return "laptop_mac";
+
+        return "place";
     }
 
     string GetStars(double nota)
@@ -150,8 +151,15 @@
                 @if (totalServ == 0)
                 {
                     <div class="empty-inline">
-                        <span>📦</span>
-                        Nenhum serviço cadastrado ainda.
+
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            inventory_2
+                        </span>
+
+                        <span>
+                            Nenhum serviço cadastrado ainda.
+                        </span>
+
                     </div>
                 }
                 else
@@ -163,33 +171,71 @@
 
                                 <div class="servico-card-header">
                                     <h4>@s.Nome</h4>
+
                                     <span class="tipo-badge @GetTipoBadgeClass((string)s.Atendimento)">
-                                        @GetTipoBadgeIcon((string)s.Atendimento) @s.Atendimento
+
+                                        <span aria-hidden="true" class="material-symbols-rounded">
+                                            @GetTipoBadgeIcon((string)s.Atendimento)
+                                        </span>
+
+                                        @s.Atendimento
+
                                     </span>
                                 </div>
-
                                 <div class="servico-card-body">
+
                                     @if (!string.IsNullOrEmpty((string)s.Descricao))
                                     {
-                                        <p class="servico-desc">@s.Descricao</p>
+                                        <p class="servico-desc">
+                                            @s.Descricao
+                                        </p>
                                     }
 
                                     <div class="servico-chips">
+
                                         @if (!string.IsNullOrEmpty((string)s.Categoria))
                                         {
-                                            <span class="chip-cat">📂 @s.Categoria</span>
+                                            <span class="chip-cat">
+
+                                                <span class="material-symbols-rounded" aria-hidden="true">
+                                                    folder
+                                                </span>
+
+                                                @s.Categoria
+
+                                            </span>
                                         }
+
                                         @if (!string.IsNullOrEmpty((string)s.Subcategoria))
                                         {
-                                            <span class="chip-cat">🏷️ @s.Subcategoria</span>
+                                            <span class="chip-cat">
+
+                                                <span class="material-symbols-rounded" aria-hidden="true">
+                                                    sell
+                                                </span>
+
+                                                @s.Subcategoria
+
+                                            </span>
                                         }
+
                                     </div>
+
                                 </div>
 
                                 <div class="servico-card-footer">
-                                    <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar-pub">
-                                        📅 Agendar
+
+                                    <a href="/Agendamento/novo?servicoId=@s.Id" class="btn-agendar-pub"
+                                       aria-label="Agendar serviço @s.Nome">
+
+                                        <span class="material-symbols-rounded" aria-hidden="true">
+                                            calendar_month
+                                        </span>
+
+                                        Agendar
+
                                     </a>
+
                                 </div>
 
                             </div>
@@ -274,152 +320,208 @@
 
             <!-- CTA de agendamento -->
             <div class="scard scard-cta">
-                <div class="scard-title">Agendar serviço</div>
-                <a href="#servicos" class="btn-agendar-cta">📅 Ver serviços disponíveis</a>
-                <p class="cta-note">Confirmação imediata · Sem taxa de cadastro</p>
+
+                <div class="scard-title">
+                    Agendar serviço
+                </div>
+
+                <a href="#servicos" class="btn-agendar-cta" aria-label="Ver serviços disponíveis">
+
+                    <span class="material-symbols-rounded" aria-hidden="true">
+                        calendar_month
+                    </span>
+
+                    Ver serviços disponíveis
+
+                </a>
+
+                <p class="cta-note">
+                    Confirmação imediata · Sem taxa de cadastro
+                </p>
+
             </div>
 
             <!-- Informações do profissional -->
             <div class="scard">
-                <div class="scard-title">Informações</div>
 
-                <div class="scard-info-row">
-                    <div class="scard-info-icon">✓</div>
-                    <div>
-                        <div class="scard-info-label">Status</div>
-                        <div class="scard-info-val" style="color:#166534;">Perfil verificado</div>
-                    </div>
+                <div class="scard-title">
+                    Informações
                 </div>
 
                 <div class="scard-info-row">
-                    <div class="scard-info-icon">📦</div>
-                    <div>
-                        <div class="scard-info-label">Serviços</div>
-                        <div class="scard-info-val">@totalServ disponível@(totalServ != 1 ? "s" : "")</div>
+
+                    <div class="scard-info-icon">
+
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            verified
+                        </span>
+
                     </div>
-                </div>
 
-@{
-    var contatoExibido =
-        !string.IsNullOrWhiteSpace(Model.Contato)
-        ? Model.Contato
-        : Model.Telefone;
+                    <div>
 
-    string contatoLower = contatoExibido?.ToLower() ?? "";
-
-    string icone = "fa-solid fa-phone";
-    string textoContato = contatoExibido;
-    string linkContato = contatoExibido;
-
-    // INSTAGRAM
-    if (contatoLower.Contains("instagram.com"))
-    {
-        icone = "fa-brands fa-instagram";
-
-        if (!contatoExibido.StartsWith("http"))
-        {
-            linkContato = "https://" + contatoExibido;
-        }
-
-        textoContato = contatoExibido
-            .Replace("https://instagram.com/", "@")
-            .Replace("https://www.instagram.com/", "@")
-            .Replace("instagram.com/", "@")
-            .TrimEnd('/');
-    }
-
-    // WHATSAPP
-    else if (
-        contatoLower.Contains("wa.me") ||
-        contatoLower.Contains("whatsapp"))
-    {
-        icone = "fa-brands fa-whatsapp";
-
-        textoContato = "WhatsApp";
-
-        if (!contatoExibido.StartsWith("http"))
-        {
-            linkContato = "https://" + contatoExibido;
-        }
-    }
-
-    // TELEGRAM
-    else if (contatoLower.Contains("t.me"))
-    {
-        icone = "fa-brands fa-telegram";
-
-        textoContato = "Telegram";
-
-        if (!contatoExibido.StartsWith("http"))
-        {
-            linkContato = "https://" + contatoExibido;
-        }
-    }
-
-    // EMAIL
-    else if (contatoLower.Contains("@"))
-    {
-        icone = "fa-solid fa-envelope";
-
-        linkContato = "mailto:" + contatoExibido;
-    }
-}
-
-@if (!string.IsNullOrWhiteSpace(contatoExibido))
-{
-    <div class="scard-info-row">
-
-        <div class="scard-info-icon">
-            <i class="@icone"></i>
-        </div>
-
-        <div style="min-width:0;">
-
-            <div class="scard-info-label">
-                Contato
-            </div>
-
-            <div class="scard-info-val contato-publico">
-
-                @if (
-                    contatoLower.Contains("instagram.com") ||
-                    contatoLower.Contains("wa.me") ||
-                    contatoLower.Contains("whatsapp") ||
-                    contatoLower.Contains("t.me") ||
-                    contatoLower.Contains("@"))
-                {
-                    <a href="@linkContato"
-                       target="_blank"
-                       class="contato-link">
-
-                        @textoContato
-                    </a>
-                }
-                else
-                {
-                    @textoContato
-                }
-
-            </div>
-
-        </div>
-
-    </div>
-}
-
-                @if (totalAval > 0)
-                {
-                    <div class="scard-info-row">
-                        <div class="scard-info-icon">⭐</div>
-                        <div>
-                            <div class="scard-info-label">Avaliação</div>
-                            <div class="scard-info-val">@mediaStr / 5.0 (@totalAval avaliações)</div>
+                        <div class="scard-info-label">
+                            Status
                         </div>
+
+                        <div class="scard-info-val" style="color:#166534;">
+
+                            Perfil verificado
+
+                        </div>
+
                     </div>
-                }
+
+                </div>
 
                 <div class="scard-info-row">
-                    <div class="scard-info-icon">🏙️</div>
+
+                    <div class="scard-info-icon">
+
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            inventory_2
+                        </span>
+
+                    </div>
+
+                    <div>
+
+                        <div class="scard-info-label">
+                            Serviços
+                        </div>
+
+                        <div class="scard-info-val">
+                            @totalServ disponível@(totalServ != 1 ? "s" : "")
+                        </div>
+
+                    </div>
+
+                </div>
+           
+
+            @{
+                var contatoExibido =
+                    !string.IsNullOrWhiteSpace(Model.Contato)
+                    ? Model.Contato
+                    : Model.Telefone;
+
+                string contatoLower = contatoExibido?.ToLower() ?? "";
+
+                string icone = "call";
+                string textoContato = contatoExibido;
+                string linkContato = contatoExibido;
+
+                // INSTAGRAM
+                if (contatoLower.Contains("instagram.com"))
+                {
+                    icone = "photo_camera";
+
+                    if (!contatoExibido.StartsWith("http"))
+                    {
+                        linkContato = "https://" + contatoExibido;
+                    }
+
+                    textoContato = contatoExibido
+                        .Replace("https://instagram.com/", "@")
+                        .Replace("https://www.instagram.com/", "@")
+                        .Replace("instagram.com/", "@")
+                        .TrimEnd('/');
+                }
+
+                // WHATSAPP
+                else if (
+                contatoLower.Contains("wa.me") ||
+                contatoLower.Contains("whatsapp"))
+                {
+                    icone = "chat";
+
+                    textoContato = "WhatsApp";
+
+                    if (!contatoExibido.StartsWith("http"))
+                    {
+                        linkContato = "https://" + contatoExibido;
+                    }
+                }
+                // TELEGRAM
+                else if (contatoLower.Contains("t.me"))
+                {
+                    icone = "send";
+
+                    textoContato = "Telegram";
+
+                    if (!contatoExibido.StartsWith("http"))
+                    {
+                        linkContato = "https://" + contatoExibido;
+                    }
+                }
+
+                // EMAIL
+                else if (contatoLower.Contains("@"))
+                {
+                    icone = "mail";
+
+                    linkContato = "mailto:" + contatoExibido;
+                }
+            }
+
+            @if (!string.IsNullOrWhiteSpace(contatoExibido))
+            {
+                <div class="scard-info-row">
+
+                    <div class="scard-info-icon">
+
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            @icone
+                        </span>
+
+                    </div>
+
+                    <div style="min-width:0;">
+
+                        <div class="scard-info-label">
+                            Contato
+                        </div>
+
+                        <div class="scard-info-val contato-publico">
+
+                            @if (
+                                contatoLower.Contains("instagram.com") ||
+                                contatoLower.Contains("wa.me") ||
+                                contatoLower.Contains("whatsapp") ||
+                                contatoLower.Contains("t.me") ||
+                                contatoLower.Contains("@"))
+                            {
+                                <a href="@linkContato" target="_blank" class="contato-link">
+
+                                    @textoContato
+
+                                </a>
+                            }
+                            else
+                            {
+                                @textoContato
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+            @if (totalAval > 0)
+            {
+                <div class="scard-info-row">
+                    <div class="scard-info-icon">⭐</div>
+                    <div>
+                        <div class="scard-info-label">Avaliação</div>
+                        <div class="scard-info-val">@mediaStr / 5.0 (@totalAval avaliações)</div>
+                    </div>
+                </div>
+            }
+
+            <div class="scard-info-row">
+                <div class="scard-info-icon"><img src="~/assets/imagens/Trampo-Logo.png" alt="Logo da empresa TRAMPO" class="logo-img-perfil"></div>
                     <div>
                         <div class="scard-info-label">Plataforma</div>
                         <div class="scard-info-val">Trampo — desde 2026</div>
@@ -447,6 +549,8 @@
                     📅 Ver meus agendamentos
                 </a>
             </div>
+
+             </div>
 
         </div>
 

@@ -53,7 +53,8 @@
                 <p class="dash-hero-sub">Acompanhe seus resultados e métricas de atendimento.</p>
             </div>
             <div class="dash-hero-right">
-                <span style="font-size:1.4rem; color:white"><span class="material-symbols-rounded dash-hero-icon">calendar_month</span>
+                <span style="font-size:1.4rem; color:white"><span aria-hidden="true"
+                                                                      class="material-symbols-rounded dash-hero-icon">calendar_month</span>
                 </span>
                 <div class="dash-hero-date">
                     <div class="dash-hero-date-val">
@@ -74,33 +75,59 @@
             <div class="dash-section-title">Resumo geral</div>
             <div class="kpi-grid">
 
-                <div class="kpi-card total">
+                <div class="kpi-card total" aria-label="Total de agendamentos: @total">
+
                     <div class="kpi-icon">
-                        <span class="material-symbols-rounded">event_note</span>
+
+                        <span aria-hidden="true" class="material-symbols-rounded">
+                            event_note
+                        </span>
+
                     </div>
-                    <div class="kpi-val">@total</div>
-                    <div class="kpi-lbl">Agendamentos totais</div>
+
+                    <div class="kpi-val">
+                        @total
+                    </div>
+
+                    <div class="kpi-lbl">
+                        Agendamentos totais
+                    </div>
+
                 </div>
 
-                <div class="kpi-card pendente">
-                    <div class="kpi-icon"><span class="material-symbols-rounded">pending_actions</span></div>
-                    <div class="kpi-val">@pendentes</div>
-                    <div class="kpi-lbl">Aguardando resposta</div>
+                <div class="kpi-card pendente" aria-label="Agendamentos pendentes: @pendentes">
+
+                    <div class="kpi-icon">
+
+                        <span aria-hidden="true" class="material-symbols-rounded">
+                            pending_actions
+                        </span>
+
+                    </div>
+
+                    <div class="kpi-val">
+                        @pendentes
+                    </div>
+
+                    <div class="kpi-lbl">
+                        Aguardando resposta
+                    </div>
+
                 </div>
 
-                <div class="kpi-card confirmado">
-                    <div class="kpi-icon"><span class="material-symbols-rounded">check_circle</span></div>
+                <div class="kpi-card confirmado" aria-label="Agendamentos Confirmados: @pendentes">
+                    <div class="kpi-icon"><span aria-hidden="true" class="material-symbols-rounded">check_circle</span></div>
                     <div class="kpi-val">@confirmados</div>
                     <div class="kpi-lbl">Confirmados</div>
                 </div>
 
-                <div class="kpi-card finalizado">
+                <div class="kpi-card finalizado" aria-label="Agendamentos Finalizados:@finalizados">
                     <div class="kpi-icon"><span class="material-symbols-rounded">flag</span></div>
                     <div class="kpi-val">@finalizados</div>
                     <div class="kpi-lbl">Finalizados</div>
                 </div>
 
-                <div class="kpi-card cancelado">
+                <div class="kpi-card cancelado" aria-label="Agendamentos cancelados:@cancelados">
                     <div class="kpi-icon"><span class="material-symbols-rounded">cancel</span></div>
                     <div class="kpi-val">@cancelados</div>
                     <div class="kpi-lbl">Cancelados</div>
@@ -176,26 +203,26 @@
                     <div class="legend-item">
                         <span class="legend-dot" style="background:#f59e0b;"></span>
                         <span class="legend-label">Pendentes</span>
-                        <span class="legend-val">@pendentes</span>
-                        <span class="legend-pct">@pPend%</span>
+                        <span aria-label="Pendentes:@pendentes" class="legend-val">@pendentes</span>
+                        <span aria-label="@pPend por cento" class="legend-pct">@pPend%</span>
                     </div>
                     <div class="legend-item">
                         <span class="legend-dot" style="background:#22c55e;"></span>
                         <span class="legend-label">Confirmados</span>
-                        <span class="legend-val">@confirmados</span>
-                        <span class="legend-pct">@pConf%</span>
+                        <span aria-label="confirmados:@confirmados" class="legend-val">@confirmados</span>
+                        <span aria-label="@pConf por cento" class="legend-pct">@pConf%</span>
                     </div>
                     <div class="legend-item">
                         <span class="legend-dot" style="background:#8b5cf6;"></span>
                         <span class="legend-label">Finalizados</span>
-                        <span class="legend-val">@finalizados</span>
-                        <span class="legend-pct">@pFin%</span>
+                        <span aria-label="finalizados:@finalizados"  class="legend-val">@finalizados</span>
+                        <span aria-label="@pFin por cento" class="legend-pct">@pFin%</span>
                     </div>
                     <div class="legend-item">
                         <span class="legend-dot" style="background:#ef4444;"></span>
                         <span class="legend-label">Cancelados</span>
-                        <span class="legend-val">@cancelados</span>
-                        <span class="legend-pct">@pCanc%</span>
+                        <span aria-label="cancelados:@cancelados"  class="legend-val">@cancelados</span>
+                        <span aria-label="@pCanc por cento" class="legend-pct">@pCanc%</span>
                     </div>
                 </div>
             </div>
@@ -214,7 +241,7 @@
                              style="width:@(pPend.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#f59e0b;">
                         </div>
                     </div>
-                    <div class="dist-bar-val">@pendentes</div>
+                    <div aria-label="pendentes:@pendentes" class="dist-bar-val">@pendentes</div>
                 </div>
 
                 <div class="dist-bar-row">
@@ -227,7 +254,7 @@
                              style="width:@(pConf.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#22c55e;">
                         </div>
                     </div>
-                    <div class="dist-bar-val">@confirmados</div>
+                    <div class="dist-bar-val" aria-label="confirmados:@confirmados">@confirmados</div>
                 </div>
 
                 <div class="dist-bar-row">
@@ -240,7 +267,7 @@
                              style="width:@(pFin.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#8b5cf6;">
                         </div>
                     </div>
-                    <div class="dist-bar-val">@finalizados</div>
+                    <div class="dist-bar-val" aria-label="finalizados:@finalizados">@finalizados</div>
                 </div>
 
                 <div class="dist-bar-row">
@@ -253,7 +280,7 @@
                              style="width:@(pCanc.ToString("F1", System.Globalization.CultureInfo.InvariantCulture))%; background:#ef4444;">
                         </div>
                     </div>
-                    <div class="dist-bar-val">@cancelados</div>
+                    <div class="dist-bar-val" aria-label="cancelados:@cancelados">@cancelados</div>
                 </div>
 
                 <!-- Indicadores rápidos -->
@@ -269,7 +296,7 @@
                                 Taxa de conclusão
                             </div>
                             <div
-                                style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; color:#5b21b6;">
+                                style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; color:#5b21b6;" aria-label="@taxaConcl por cento">
                                 @taxaConcl%
                             </div>
                             <div style="font-size:.75rem; color:var(--text-muted); margin-top:2px;">
@@ -284,7 +311,7 @@
                                 Taxa de cancelamento
                             </div>
                             <div
-                                style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; color:#991b1b;">
+                                style="font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; color:#991b1b;" aria-label="@taxaCancel por cento">
                                 @taxaCancel%
                             </div>
                             <div style="font-size:.75rem; color:var(--text-muted); margin-top:2px;">
@@ -299,7 +326,7 @@
         </div>
 
         <!-- ============================================
-             PAGAMENTOS — placeholder backend futuro
+             PAGAMENTOS — placeholder backend 
         ============================================= -->
         <div class="pagamentos-card" style="position:relative;">
 
@@ -311,7 +338,7 @@
 
                         <div class="premium-glow"></div>
 
-                        <span class="material-symbols-rounded premium-lock-icon">
+                        <span aria-hidden="true" class="material-symbols-rounded premium-lock-icon">
                             workspace_premium
                         </span>
 
@@ -332,17 +359,17 @@
                         <div class="premium-benefits">
 
                             <div class="premium-benefit">
-                                <span class="material-symbols-rounded">payments</span>
+                                <span aria-hidden="true" class="material-symbols-rounded">payments</span>
                                 Controle financeiro completo
                             </div>
 
                             <div class="premium-benefit">
-                                <span class="material-symbols-rounded">monitoring</span>
+                                <span aria-hidden="true" class="material-symbols-rounded">monitoring</span>
                                 Relatórios avançados
                             </div>
 
                             <div class="premium-benefit">
-                                <span class="material-symbols-rounded">trending_up</span>
+                                <span aria-hidden="true" class="material-symbols-rounded">trending_up</span>
                                 Métricas de crescimento
                             </div>
 
@@ -350,7 +377,7 @@
 
                         <a href="/Pagamento/CheckoutPremium" class="btn-premium-dashboard">
 
-                            <span class="material-symbols-rounded">
+                            <span aria-hidden="true" class="material-symbols-rounded">
                                 workspace_premium
                             </span>
 
@@ -365,24 +392,25 @@
 
             <div class="pag-inner @(premium ? "" : "pag-conteudo-bloqueado")">
 
-                <div class="pag-section-title"><span class="material-symbols-rounded">credit_card</span> Pagamentos</div>
+                <div class="pag-section-title"><span aria-hidden="true" class="material-symbols-rounded">credit_card</span> Pagamentos
+                </div>
 
                 <!-- Stats fictícios (serão reais quando o backend estiver pronto) -->
                 <div class="pag-stats-grid">
                     <div class="pag-stat">
-                        <span class="pag-stat-val">
+                        <span aria-hidden="true" class="pag-stat-val">
                             R$ @ViewBag.Faturamento
                         </span>
-                        <span class="pag-stat-lbl">Faturamento total</span>
+                        <span class="pag-stat-lbl" aria-label="Faturamento total:R$ @ViewBag.Faturamento">Faturamento total</span>
                     </div>
                     <div class="pag-stat">
-                        <span class="pag-stat-val">
+                        <span class="pag-stat-val" aria-label="Taxas cobradas:R$ @ViewBag.Taxas">
                             R$ @ViewBag.Taxas
                         </span>
                         <span class="pag-stat-lbl">Taxas da plataforma</span>
                     </div>
                     <div class="pag-stat">
-                        <span class="pag-stat-val">
+                        <span class="pag-stat-val" aria-label="Valor líquido:R$ @ViewBag.Liquido">
                             R$ @ViewBag.Liquido
                         </span>
                         <span class="pag-stat-lbl">Valor líquido</span>
@@ -393,10 +421,9 @@
                 <div class="pag-coming-soon">
                     <div class="pag-coming-icon"><span class="material-symbols-rounded" style="color:white"">rocket_launch</span></div>
                     <div>
-                        <div class="pag-coming-title">Módulo de pagamentos em breve</div>
+                        <div class=" pag-coming-title">Módulo de pagamentos</div>
                         <div class="pag-coming-sub">
-                            Histórico de transações, valores por serviço e relatórios financeiros estarão disponíveis em
-                            breve.
+                            Histórico de transações, valores por serviço e relatórios financeiros.
                         </div>
                     </div>
                 </div>
@@ -408,16 +435,16 @@
                         <div class="pag-item">
 
                             <div class="pag-item-icon">
-                                <span class="material-symbols-rounded" style="color:rgb(238, 223, 12)"">credit_card</span>
+                                <span aria-hidden="true" class="material-symbols-rounded" style="color:rgb(238, 223, 12)"">credit_card</span>
                             </div>
 
                             <div>
 
-                                <div class="pag-item-name">
+                                <div class=" pag-item-name" aria-label="serviço feito:@pag.Servico, para o cliente:@pag.NomeCliente" >
                                     @pag.Servico — @pag.NomeCliente
                                 </div>
 
-                                <div class="pag-item-date">
+                                <div class="pag-item-date" aria-label="na data:@pag.Data.ToString("dd/MM/yyyy") às @pag.Hora ">
                                     @pag.Data.ToString("dd/MM/yyyy")
                                     às
                                     @pag.Hora
@@ -425,7 +452,7 @@
 
                             </div>
 
-                            <div class="pag-item-val">
+                            <div class="pag-item-val" aria-label="valor pago : R$ @pag.ValorFinal">
                                 R$ @pag.ValorFinal.ToString("N2")
                             </div>
 

@@ -138,7 +138,7 @@
                         <div class="password-wrap">
                             <input class="form-input" type="password" name="senhaAtual" id="senhaAtual"
                                    placeholder="Digite sua senha atual" />
-                            <button type="button" class="btn-toggle-pass" onclick="toggleSenha('senhaAtual', this)">
+                            <button aria-label="Mostrar senha" type="button" class="btn-toggle-pass" onclick="toggleSenha('senhaAtual', this)">
                                 <span class="material-symbols-rounded">visibility</span>
                             </button>
                         </div>
@@ -149,7 +149,7 @@
                         <div class="password-wrap">
                             <input class="form-input" type="password" name="novaSenha" id="novaSenha"
                                    placeholder="Mínimo 8 caracteres" oninput="avaliarForca(this.value)" />
-                            <button type="button" class="btn-toggle-pass" onclick="toggleSenha('novaSenha', this)">
+                            <button aria-label="Nova Senha" type="button" class="btn-toggle-pass" onclick="toggleSenha('novaSenha', this)">
                                 <span class="material-symbols-rounded">visibility</span>
                             </button>
                         </div>

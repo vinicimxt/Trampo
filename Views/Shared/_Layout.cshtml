@@ -33,15 +33,15 @@
             <a href="/#home" class="a-logo">
                 <!-- LOGO -->
                 <div class="logo">
-                    <img src="~/assets/imagens/Trampo-Logo.png" alt="Trampo Logo" class="logo-img">
+                    <img src="~/assets/imagens/Trampo-Logo.png" alt="Logo da empresa TRAMPO" class="logo-img">
                     <span>Tram<span class="highlight">po</span></span>
                 </div>
             </a>
 
-              @{
-                    var nome = Context.Session.GetString("UsuarioNome");
-                    var tipo = Context.Session.GetString("UsuarioTipo");
-                }
+            @{
+                var nome = Context.Session.GetString("UsuarioNome");
+                var tipo = Context.Session.GetString("UsuarioTipo");
+            }
 
             <!-- MENU -->
             <nav class="nav-links" id="navLinks">
@@ -117,11 +117,11 @@
 
                     <div class="notif-wrapper">
                         <div class="notif-icon" id="notifToggle">
-                            <span class="material-symbols-rounded">notifications</span>
+                            <span aria-hidden="true" class="material-symbols-rounded">notifications</span>
 
                             @if (ViewBag.NotifCount != null && ViewBag.NotifCount > 0)
                             {
-                                <span class="notif-badge">@ViewBag.NotifCount</span>
+                                <span class="notif-badge" aria-label="@ViewBag.NotifCount notificações não lidas">@ViewBag.NotifCount</span>
                             }
                         </div>
 
@@ -235,14 +235,25 @@
         <div class="modal-drawer">
             <div class="drawer-header">
                 <h3>Detalhes</h3>
-                <button onclick="fecharModal('modalGlobal')">✕</button>
+                <button aria-label="Fechar" onclick="fecharModal('modalGlobal')">✕</button>
             </div>
 
             <div class="modal-body"></div>
         </div>
     </div>
 
-        
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
 
 </body>
 

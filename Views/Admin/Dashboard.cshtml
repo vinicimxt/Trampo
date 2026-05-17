@@ -6,188 +6,293 @@
     <link rel="stylesheet" href="~/css/Admin-Dashboard.css" />
 }
 
+@functions {
+    string GetIniciais(string nome) {
+        if (string.IsNullOrWhiteSpace(nome)) return "?";
+        var p = nome.Trim().Split(' ');
+        string r = "";
+        for (int i = 0; i < p.Length && i < 2; i++)
+            if (p[i].Length > 0) r += char.ToUpper(p[i][0]);
+        return r;
+    }
+}
+
 <div class="admin-page">
 
-    <div class="admin-hero">
-
-        <div>
-            <span class="admin-label">
-                Painel administrativo
-            </span>
-
-            <h1 class="admin-title">
-                Dashboard da Plataforma
-            </h1>
-
-            <p class="admin-sub">
-                Métricas gerais, faturamento e crescimento do sistema.
-            </p>
-        </div>
-
-    </div>
-
-    <div class="admin-grid">
-
-        <div class="admin-card">
-            <span class="admin-icon">👥</span>
-
-            <div class="admin-value">
-                @ViewBag.TotalUsuarios
-            </div>
-
-            <div class="admin-text">
-                Usuários cadastrados
-            </div>
-        </div>
-
-        <div class="admin-card">
-            <span class="admin-icon">🧰</span>
-
-            <div class="admin-value">
-                @ViewBag.TotalProfissionais
-            </div>
-
-            <div class="admin-text">
-                Profissionais
-            </div>
-        </div>
-
-        <div class="admin-card premium">
-            <span class="admin-icon">👑</span>
-
-            <div class="admin-value">
-                @ViewBag.TotalPremium
-            </div>
-
-            <div class="admin-text">
-                Assinantes premium
-            </div>
-        </div>
-
-        <div class="admin-card">
-            <span class="admin-icon">📅</span>
-
-            <div class="admin-value">
-                @ViewBag.TotalAgendamentos
-            </div>
-
-            <div class="admin-text">
-                Agendamentos
-            </div>
-        </div>
-
-        <div class="admin-card money">
-            <span class="admin-icon">💸</span>
-
-            <div class="admin-value">
-                R$ @ViewBag.TotalTaxas
-            </div>
-
-            <div class="admin-text">
-                Taxas arrecadadas
-            </div>
-        </div>
-
-        <div class="admin-card premium-money">
-            <span class="admin-icon">💎</span>
-
-            <div class="admin-value">
-                R$ @ViewBag.TotalPremiumReceita
-            </div>
-
-            <div class="admin-text">
-                Receita premium
-            </div>
-        </div>
-
-        <div class="admin-card total">
-            <span class="admin-icon">🏦</span>
-
-            <div class="admin-value">
-                R$ @ViewBag.TotalLiquido
-            </div>
-
-            <div class="admin-text">
-                Receita total da plataforma
-            </div>
-        </div>
-
-    </div>
-
-    <div class="admin-lists">
-
-    <div class="admin-table-card">
-
-        <div class="admin-table-title">
-            👑 Últimas assinaturas premium
-        </div>
-
-        @foreach (var item in ViewBag.UltimasAssinaturas)
-        {
-            <div class="admin-row">
-
-                <div>
-                    <div class="admin-row-title">
-                        @item.Nome
-                    </div>
-
-                    <div class="admin-row-sub">
-                        @item.Plano
-                    </div>
+    <!-- =============================================
+         HERO
+    ============================================= -->
+    <div class="admin-hero" role="banner">
+        <div class="admin-hero-dots" aria-hidden="true"></div>
+        <div class="admin-hero-inner">
+            <div>
+                <div class="admin-label">
+                    <span class="material-symbols-rounded" aria-hidden="true">admin_panel_settings</span>
+                    Painel administrativo
                 </div>
-
-                <div class="admin-row-right">
-                    <strong>
-                        R$ @item.Valor
-                    </strong>
-
-                    <span>
-                        @item.Data.ToString("dd/MM")
-                    </span>
-                </div>
-
+                <h1 class="admin-title">Dashboard da Plataforma</h1>
+                <p class="admin-sub">Métricas gerais, faturamento e crescimento do sistema.</p>
             </div>
-        }
 
-    </div>
-
-        <div class="admin-table-card">
-
-        <div class="admin-table-title">
-            💳 Últimos pagamentos
-        </div>
-
-        @foreach (var item in ViewBag.UltimosPagamentos)
-        {
-            <div class="admin-row">
-
-                <div>
-                    <div class="admin-row-title">
-                        @item.Servico
-                    </div>
-
-                    <div class="admin-row-sub">
-                        @item.NomeCliente
-                    </div>
-                </div>
-
-                <div class="admin-row-right">
-
-                    <strong>
-                        R$ @item.ValorFinal
-                    </strong>
-
-                    <span>
-                        Taxa: R$ @item.Taxa
+           <div class="admin-hero-date" aria-label="Período atual">
+                <div class="admin-hero-date-icon">
+                    <span 
+                        class="material-symbols-rounded"
+                        aria-hidden="true">
+                        calendar_month
                     </span>
 
                 </div>
-
+                <div>
+                    <span class="admin-hero-date-val">
+                        @DateTime.Now.ToString(
+                            "MMMM yyyy",
+                            new System.Globalization.CultureInfo("pt-BR"))
+                    </span>
+                    <div class="admin-hero-date-lbl">
+                        Período de referência
+                    </div>
+                </div>
             </div>
-        }
-
+        </div>
     </div>
 
-</div>
+    <main class="admin-main" id="main-content">
 
+        <!-- =============================================
+             KPIs — usuários e atividade
+        ============================================= -->
+        <section aria-labelledby="sec-usuarios">
+            <div class="admin-section-title" id="sec-usuarios">Usuários e atividade</div>
+
+            <div class="admin-kpi-grid" role="list">
+
+                <!-- Usuários -->
+                <article class="admin-card kpi-usuarios" role="listitem"
+                         aria-label="Usuários cadastrados: @ViewBag.TotalUsuarios">
+                    <div class="admin-card-icon icon-blue" aria-hidden="true">
+                        <span class="material-symbols-rounded icon-fill">group</span>
+                    </div>
+                    <div class="admin-value" aria-hidden="true">@ViewBag.TotalUsuarios</div>
+                    <div class="admin-text">Usuários cadastrados</div>
+                </article>
+
+                <!-- Profissionais -->
+                <article class="admin-card kpi-profis" role="listitem"
+                         aria-label="Profissionais cadastrados: @ViewBag.TotalProfissionais">
+                    <div class="admin-card-icon icon-accent" aria-hidden="true">
+                        <span class="material-symbols-rounded icon-fill">engineering</span>
+                    </div>
+                    <div class="admin-value" aria-hidden="true">@ViewBag.TotalProfissionais</div>
+                    <div class="admin-text">Profissionais</div>
+                </article>
+
+                <!-- Premium -->
+                <article class="admin-card kpi-premium" role="listitem"
+                         aria-label="Assinantes premium: @ViewBag.TotalPremium">
+                    <div class="admin-card-icon icon-amber" aria-hidden="true">
+                        <span class="material-symbols-rounded icon-fill">workspace_premium</span>
+                    </div>
+                    <div class="admin-value" aria-hidden="true">@ViewBag.TotalPremium</div>
+                    <div class="admin-text">Assinantes premium</div>
+                </article>
+
+                <!-- Agendamentos -->
+                <article class="admin-card kpi-agend" role="listitem"
+                         aria-label="Total de agendamentos: @ViewBag.TotalAgendamentos">
+                    <div class="admin-card-icon icon-purple" aria-hidden="true">
+                        <span class="material-symbols-rounded icon-fill">calendar_month</span>
+                    </div>
+                    <div class="admin-value" aria-hidden="true">@ViewBag.TotalAgendamentos</div>
+                    <div class="admin-text">Agendamentos</div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- =============================================
+             KPIs — financeiro
+        ============================================= -->
+        <section aria-labelledby="sec-financeiro">
+            <div class="admin-section-title" id="sec-financeiro">Financeiro</div>
+
+            <div class="admin-kpi-grid-money" role="list">
+
+                <!-- Taxas -->
+                <article class="admin-card kpi-taxas" role="listitem"
+                         aria-label="Taxas arrecadadas: R$ @ViewBag.TotalTaxas">
+                    <div class="admin-card-icon icon-green" aria-hidden="true">
+                        <span class="material-symbols-rounded icon-fill">percent</span>
+                    </div>
+                    <div class="admin-value" aria-hidden="true">R$ @ViewBag.TotalTaxas</div>
+                    <div class="admin-text">Taxas arrecadadas</div>
+                </article>
+
+                <!-- Receita premium -->
+                <article class="admin-card kpi-premrec" role="listitem"
+                         aria-label="Receita premium: R$ @ViewBag.TotalPremiumReceita">
+                    <div class="admin-card-icon icon-amber" aria-hidden="true">
+                        <span class="material-symbols-rounded icon-fill">diamond</span>
+                    </div>
+                    <div class="admin-value" aria-hidden="true">R$ @ViewBag.TotalPremiumReceita</div>
+                    <div class="admin-text">Receita premium</div>
+                </article>
+
+                <!-- Receita total -->
+                <article class="admin-card kpi-total" role="listitem"
+                         aria-label="Receita total da plataforma: R$ @ViewBag.TotalLiquido">
+                    <div class="admin-card-icon" style="background:rgba(0,212,170,.12);border:1.5px solid rgba(0,212,170,.25);color:var(--accent);" aria-hidden="true">
+                        <span class="material-symbols-rounded icon-fill">account_balance</span>
+                    </div>
+                    <div class="admin-value" aria-hidden="true">R$ @ViewBag.TotalLiquido</div>
+                    <div class="admin-text">Receita total da plataforma</div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- =============================================
+             LISTAS
+        ============================================= -->
+        <section aria-labelledby="sec-listas">
+            <div class="admin-section-title" id="sec-listas">Movimentações recentes</div>
+
+            <div class="admin-lists">
+
+                <!-- Últimas assinaturas premium -->
+                <div class="admin-table-card" role="region" aria-labelledby="title-assinaturas">
+
+                    <div class="admin-table-header">
+                        <div class="admin-table-header-icon icon-amber" aria-hidden="true">
+                            <span class="material-symbols-rounded icon-fill">workspace_premium</span>
+                        </div>
+                        <div class="admin-table-title" id="title-assinaturas">
+                            Últimas assinaturas premium
+                        </div>
+                        @if (ViewBag.UltimasAssinaturas != null)
+                        {
+                            <span class="admin-table-count"
+                                  aria-label="@((ViewBag.UltimasAssinaturas as IEnumerable<dynamic>)?.Count() ?? 0) registros">
+                                @((ViewBag.UltimasAssinaturas as IEnumerable<dynamic>)?.Count() ?? 0)
+                            </span>
+                        }
+                    </div>
+
+                    @if (ViewBag.UltimasAssinaturas == null || (ViewBag.UltimasAssinaturas as IEnumerable<dynamic>)?.Count() == 0)
+                    {
+                        <div class="admin-empty" role="status" aria-live="polite">
+                            <span class="material-symbols-rounded" aria-hidden="true">inbox</span>
+                            Nenhuma assinatura recente
+                        </div>
+                    }
+                    else
+                    {
+                        <ul role="list" style="list-style:none;margin:0;padding:0;">
+                            @foreach (var item in ViewBag.UltimasAssinaturas)
+                            {
+                                <li class="admin-row"
+                                    role="listitem"
+                                    aria-label="@item.Nome — @item.Plano — R$ @item.Valor em @item.Data.ToString("dd/MM/yyyy")">
+
+                                    <div class="admin-row-left">
+                                        <div class="admin-row-avatar" aria-hidden="true">
+                                            @GetIniciais((string)item.Nome)
+                                        </div>
+                                        <div>
+                                            <div class="admin-row-title">@item.Nome</div>
+                                            <div class="admin-row-sub">
+                                                <span class="plan-badge">
+                                                    <span class="material-symbols-rounded icon-fill" aria-hidden="true">workspace_premium</span>
+                                                    @item.Plano
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-row-right">
+                                        <span class="admin-row-value amber"
+                                              aria-label="Valor: R$ @item.Valor">
+                                            R$ @item.Valor
+                                        </span>
+                                        <time class="admin-row-meta"
+                                              datetime="@item.Data.ToString("yyyy-MM-dd")"
+                                              aria-label="Data: @item.Data.ToString("dd/MM/yyyy")">
+                                            @item.Data.ToString("dd/MM")
+                                        </time>
+                                    </div>
+
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                </div>
+
+                <!-- Últimos pagamentos -->
+                <div class="admin-table-card" role="region" aria-labelledby="title-pagamentos">
+
+                    <div class="admin-table-header">
+                        <div class="admin-table-header-icon icon-green" aria-hidden="true">
+                            <span class="material-symbols-rounded icon-fill">payments</span>
+                        </div>
+                        <div class="admin-table-title" id="title-pagamentos">
+                            Últimos pagamentos
+                        </div>
+                        @if (ViewBag.UltimosPagamentos != null)
+                        {
+                            <span class="admin-table-count"
+                                  aria-label="@((ViewBag.UltimosPagamentos as IEnumerable<dynamic>)?.Count() ?? 0) registros">
+                                @((ViewBag.UltimosPagamentos as IEnumerable<dynamic>)?.Count() ?? 0)
+                            </span>
+                        }
+                    </div>
+
+                    @if (ViewBag.UltimosPagamentos == null || (ViewBag.UltimosPagamentos as IEnumerable<dynamic>)?.Count() == 0)
+                    {
+                        <div class="admin-empty" role="status" aria-live="polite">
+                            <span class="material-symbols-rounded" aria-hidden="true">receipt_long</span>
+                            Nenhum pagamento recente
+                        </div>
+                    }
+                    else
+                    {
+                        <ul role="list" style="list-style:none;margin:0;padding:0;">
+                            @foreach (var item in ViewBag.UltimosPagamentos)
+                            {
+                                <li class="admin-row"
+                                    role="listitem"
+                                    aria-label="@item.Servico — cliente @item.NomeCliente — valor R$ @item.ValorFinal — taxa R$ @item.Taxa">
+
+                                    <div class="admin-row-left">
+                                        <div class="admin-row-avatar" aria-hidden="true">
+                                            @GetIniciais((string)item.NomeCliente)
+                                        </div>
+                                        <div>
+                                            <div class="admin-row-title">@item.Servico</div>
+                                            <div class="admin-row-sub">@item.NomeCliente</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-row-right">
+                                        <span class="admin-row-value verde"
+                                              aria-label="Valor final: R$ @item.ValorFinal">
+                                            R$ @item.ValorFinal
+                                        </span>
+                                        <span class="admin-row-meta"
+                                              aria-label="Taxa: R$ @item.Taxa">
+                                            Taxa: R$ @item.Taxa
+                                        </span>
+                                    </div>
+
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
 </div>

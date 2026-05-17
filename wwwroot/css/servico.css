@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded');
 /* ===================================================
    TOKENS
 =================================================== */
@@ -777,8 +777,27 @@
 }
 
 
+/* ===================================================
+   Icons material 
+=================================================== */
 
+.material-symbols-rounded {
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 500,
+        'GRAD' 0,
+        'opsz' 24;
+}
 
+.form-card-header,
+.tip-card-title,
+.tip-item,
+.alerta-local-text,
+.btn-criar-local {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
 /* ===================================================
    RESPONSIVO

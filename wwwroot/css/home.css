@@ -18,8 +18,8 @@
     --text-muted: #6B7A99;
     --border: #DDE5F5;
     --border-strong: #C2D0EC;
-    --bg-light: #F0F4FF;
-    --bg-white: #FFFFFF;
+    --bg-light: #c2cff5d2;
+    --bg-white: #e4d9f1;
     --radius-xl: 24px;
     --radius-lg: 18px;
     --radius-md: 12px;
@@ -579,7 +579,7 @@
 =================================================== */
 .services {
     padding: 40px 0 100px;
-    background: var(--bg-white);
+    background: var(--bg-light);
 }
 
 .services-grid {
@@ -938,7 +938,7 @@
 =================================================== */
 .how {
     padding: 100px 0;
-    background: var(--bg-white);
+    background: #bedfeee1;
     position: relative;
     overflow: hidden;
 }

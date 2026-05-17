@@ -1,61 +1,250 @@
 @using Microsoft.AspNetCore.Http
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/premium.css" />
+}
+
 @{
     ViewData["Title"] = "Plano Premium";
-
-    var usuarioId = Context.Session.GetString("UsuarioId");
+    var usuarioId   = Context.Session.GetString("UsuarioId");
     var tipoUsuario = Context.Session.GetString("UsuarioTipo");
 }
 
 <div class="premium-page">
+    <div class="premium-page-dots"></div>
 
-    <h1>Plano Premium</h1>
+    <div class="premium-inner">
 
-    <p>
-        Desbloqueie recursos avançados da plataforma Trampo.
-    </p>
+        <!-- HERO -->
+        <div class="premium-hero">
+            <div class="premium-hero-badge">
+                <span aria-hidden="true" class="material-symbols-rounded icon-fill">workspace_premium</span>
+                Plano Premium
+            </div>
+            <h1 class="premium-hero-title">
+                Eleve seu negócio<br>a outro <span>nível</span>
+            </h1>
+            <p class="premium-hero-sub">
+                Acesse recursos exclusivos, receba mais clientes e destaque-se na plataforma Trampo.
+            </p>
+        </div>
 
-    <div class="premium-card">
+        <!-- LAYOUT SPLIT -->
+        <div class="premium-layout">
 
-        <h2>Premium</h2>
+            <!-- CARD DO PLANO -->
+            <div class="premium-card">
 
-        <h3>R$ 29,90/mês</h3>
+                <div class="premium-popular-badge">
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">star</span>
+                    Mais popular
+                </div>
 
-        <ul>
-            <li>✔ Atendimentos ilimitados</li>
-            <li>✔ Acesso ao Dashboard</li>
-            <li>✔ Selo premium</li>
-            <li>✔ Prioridade para clientes</li>
-            <li>✔ Métricas avançadas</li>
-        </ul>
+                <div class="premium-card-header">
+                    <div class="plan-name">
+                        <span aria-hidden="true" class="material-symbols-rounded icon-fill">workspace_premium</span>
+                        Trampo Premium
+                    </div>
 
-        @if (usuarioId == null)
-        {
-            <a asp-controller="Usuario"
-               asp-action="Login"
-               class="btn-premium">
-                Fazer login para assinar
-            </a>
-        }
-        else if (tipoUsuario != "profissional")
-        {
-            <button class="btn-premium-disabled" disabled>
-                Apenas profissionais podem assinar
-            </button>
-        }
-        else
-        {
-            <form asp-controller="Pagamento"
-                asp-action="ConfirmarPremium"
-                method="post">
+                    <div class="plan-price">
+                        <span class="plan-price-currency">R$</span>
+                        <span class="plan-price-value">29</span>
+                        <span class="plan-price-currency">,90</span>
+                        <span class="plan-price-period">/mês</span>
+                    </div>
 
-                <button type="submit">
-                    Continuar assinatura
-                </button>
+                    
+                </div>
 
-            </form>
-        }
+                <div class="premium-card-body">
 
+                    <ul class="premium-features">
+                        <li class="premium-feature">
+                            <div class="feature-icon">
+                                <span aria-hidden="true" class="material-symbols-rounded icon-fill">all_inclusive</span>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Atendimentos ilimitados</strong>
+                                <span>Sem limite de agendamentos por mês</span>
+                            </div>
+                        </li>
+                        <li class="premium-feature">
+                            <div class="feature-icon">
+                                <span aria-hidden="true" class="material-symbols-rounded icon-fill">bar_chart</span>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Dashboard completo</strong>
+                                <span>Métricas, faturamento e histórico detalhado</span>
+                            </div>
+                        </li>
+                        <li class="premium-feature">
+                            <div class="feature-icon">
+                                <span aria-hidden="true" class="material-symbols-rounded icon-fill">verified</span>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Selo Premium verificado</strong>
+                                <span>Apareça em destaque nas buscas</span>
+                            </div>
+                        </li>
+                        <li class="premium-feature">
+                            <div class="feature-icon">
+                                <span aria-hidden="true" class="material-symbols-rounded icon-fill">rocket_launch</span>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Prioridade para clientes</strong>
+                                <span>Seu perfil aparece primeiro nos resultados</span>
+                            </div>
+                        </li>
+                        <li class="premium-feature">
+                            <div class="feature-icon">
+                                <span aria-hidden="true" class="material-symbols-rounded icon-fill">trending_up</span>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Métricas avançadas</strong>
+                                <span>Visualizações, conversão e avaliações</span>
+                            </div>
+                        </li>
+                        <li class="premium-feature">
+                            <div class="feature-icon">
+                                <span aria-hidden="true" class="material-symbols-rounded icon-fill">support_agent</span>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Suporte prioritário</strong>
+                                <span>Atendimento em menos de 2 horas</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- CTA CONTEXTUAL -->
+                    @if (usuarioId == null)
+                    {
+                        <a asp-controller="Usuario" asp-action="Login" class="btn-assinar-login">
+                            <span aria-hidden="true" class="material-symbols-rounded">login</span>
+                            Fazer login para assinar
+                        </a>
+                        <p class="btn-cta-note">
+                            <span aria-hidden="true" class="material-symbols-rounded">info</span>
+                            Crie sua conta gratuita primeiro
+                        </p>
+                    }
+                    else if (tipoUsuario != "profissional")
+                    {
+                        <div class="btn-assinar-disabled">
+                            <span aria-hidden="true" class="material-symbols-rounded">block</span>
+                            Exclusivo para profissionais
+                        </div>
+                        <p class="btn-cta-note">
+                            <span aria-hidden="true" class="material-symbols-rounded">info</span>
+                            Recadastre-se como profissional
+                        </p>
+                    }
+                    else
+                    {
+                        <form asp-controller="Pagamento" asp-action="ConfirmarPremium" method="post">
+                            <button aria-label="Assinar agora por R$29,90/Mês" type="submit" class="btn-assinar">
+                                <span aria-hidden="true" class="material-symbols-rounded icon-fill">workspace_premium</span>
+                                Assinar agora por R$29,90/mês
+                            </button>
+                        </form>
+                        <p class="btn-cta-note">
+                            <span aria-hidden="true" class="material-symbols-rounded">lock</span>
+                            Pagamento seguro ·
+                        </p>
+                    }
+
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA -->
+            <div class="premium-side">
+
+                <!-- Comparação Gratuito vs Premium -->
+                <div class="pside-card">
+                    <div class="pside-title">Gratuito vs Premium</div>
+
+                    <div class="compare-table">
+                        <div class="compare-row-header">
+                            <div></div>
+                            <div class="compare-cell-header">Grátis</div>
+                            <div class="compare-cell-header" style="color:var(--amber);">Premium</div>
+                        </div>
+
+                        @{
+                            var rows = new[] {
+                                "Agendamentos",
+                                "Dashboard",
+                                "Selo verificado",
+                                "Prioridade busca",
+                                "Métricas avançadas",
+                                "Suporte prioritário"
+                            };
+                            var gratis  = new[] { true,  false, false, false, false, false };
+                            var premium = new[] { true,  true,  true,  true,  true,  true  };
+                        }
+
+                        @for (int i = 0; i < rows.Length; i++)
+                        {
+                            <div class="compare-row">
+                                <span class="compare-row-label">@rows[i]</span>
+                                <div class="compare-cell @(gratis[i] ? "icon-yes" : "icon-no")">
+                                    <span class="material-symbols-rounded">
+                                        @(gratis[i] ? "check_circle" : "remove_circle")
+                                    </span>
+                                </div>
+                                <div class="compare-cell icon-yes">
+                                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">check_circle</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Depoimentos rápidos -->
+                <div class="pside-card">
+                    <div class="pside-title">O que dizem os Premium</div>
+
+                    <div class="testimonial">
+                        <div class="testimonial-avatar">JS</div>
+                        <div>
+                            <div class="testimonial-text">
+                                "Triplicou minha agenda em 30 dias. O selo premium faz toda a diferença."
+                            </div>
+                            <div class="testimonial-name">
+                                João Silva · Barbeiro
+                                <span class="testimonial-stars"> ★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial">
+                        <div class="testimonial-avatar">AC</div>
+                        <div>
+                            <div class="testimonial-text">
+                                "O dashboard me ajuda a entender exatamente o que está funcionando."
+                            </div>
+                            <div class="testimonial-name">
+                                Ana Costa · Manicure
+                                <span aria-label="avaliou 5 estrelas" class="testimonial-stars"> ★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial">
+                        <div class="testimonial-avatar">RM</div>
+                        <div>
+                            <div class="testimonial-text">
+                                "Aparece no topo da busca. Vale cada centavo do investimento."
+                            </div>
+                            <div class="testimonial-name">
+                                Rafael Melo · Personal Trainer
+                                <span aria-label="avaliou 5 estrelas" class="testimonial-stars"> ★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
     </div>
-
 </div>

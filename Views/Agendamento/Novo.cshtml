@@ -57,7 +57,11 @@
 
                 <!-- Seletor de data -->
                 <div class="agend-card" style="animation-delay:.05s">
-                    <div class="agend-card-title">📅 Escolha a data</div>
+                    <div class="agend-card-title">
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            calendar_month
+                        </span> Escolha a data
+                    </div>
 
                     <div class="date-input-wrap">
                         <div class="disponibilidade-info @(ViewBag.DiaInvalido == true ? "erro" : "")">
@@ -65,37 +69,40 @@
                             @if (ViewBag.DiaInvalido == true)
                             {
                                 <div class="disp-title">
-                                    ❌ Serviço indisponível nesta data
+                                    <span aria-hidden="true" class="material-symbols-rounded">cancel</span> Serviço
+                                    indisponível nesta data
                                 </div>
 
                                 <div class="disp-text">
                                     Este serviço atende somente:
 
-                                    <strong>@ViewBag.DiasTexto</strong>
+                                    <strong aria-label="de @ViewBag.DiasTexto  ">@ViewBag.DiasTexto</strong>
 
                                     das
 
-                                    <strong>@ViewBag.HoraInicio</strong>
+                                    <strong aria-label="do horario @ViewBag.HoraInicio">@ViewBag.HoraInicio</strong>
                                     às
-                                    <strong>@ViewBag.HoraFim</strong>
+                                    <strong aria-label="até @ViewBag.HoraFim">@ViewBag.HoraFim</strong>
                                 </div>
                             }
                             else
                             {
                                 <div class="disp-title">
-                                    📆 Disponibilidade deste serviço
+                                    <span class="material-symbols-rounded" aria-hidden="true">
+                                        calendar_month
+                                    </span> Disponibilidade deste serviço
                                 </div>
 
                                 <div class="disp-text">
                                     Atendimento de
 
-                                    <strong>@ViewBag.DiasTexto</strong>
+                                    <strong aria-label="de @ViewBag.DiasTexto  ">@ViewBag.DiasTexto</strong>
 
                                     das
 
-                                    <strong>@ViewBag.HoraInicio</strong>
+                                    <strong aria-label="do horario @ViewBag.HoraInicio">@ViewBag.HoraInicio</strong>
                                     às
-                                    <strong>@ViewBag.HoraFim</strong>
+                                    <strong aria-label="até @ViewBag.HoraFim">@ViewBag.HoraFim</strong>
                                 </div>
                             }
 
@@ -109,7 +116,11 @@
 
                 <!-- Grid de horários -->
                 <div class="agend-card" style="animation-delay:.10s">
-                    <div class="agend-card-title">🕐 Horários disponíveis</div>
+                    <div class="agend-card-title">
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            schedule
+                        </span> Horários disponíveis
+                    </div>
 
                     <!-- legenda -->
                     <div class="horario-legenda">
@@ -157,7 +168,11 @@
 
                 <!-- Descrição -->
                 <div class="agend-card" style="animation-delay:.15s">
-                    <div class="agend-card-title">💬 Observações</div>
+                    <div class="agend-card-title">
+                        <span class="material-symbols-rounded" aria-hidden="true">
+                            chat
+                        </span> Observações
+                    </div>
 
                     <label class="descricao-label" for="descricao">
                         Algum detalhe para o profissional? <span
@@ -214,39 +229,71 @@
                     </div>
 
                     <div class="resumo-linha">
-                        <span class="resumo-linha-label">📅 Data</span>
+                        <span class="resumo-linha-label"><span class="material-symbols-rounded" aria-hidden="true">
+                            calendar_month
+                        </span> Data</span>
                         <span class="resumo-linha-val" id="resumoData">
                             @ViewBag.Data.ToString("dd/MM/yyyy")
                         </span>
                     </div>
 
                     <div class="resumo-linha">
-                        <span class="resumo-linha-label">🕐 Horário</span>
+                        <span class="resumo-linha-label">
+                            <span class="material-symbols-rounded" aria-hidden="true">
+                                schedule
+                            </span> Horário
+                        </span>
                         <span class="resumo-linha-val empty" id="resumoHora">
                             Nenhum selecionado
                         </span>
                     </div>
 
                     <div class="resumo-linha">
-                        <span class="resumo-linha-label">📌 Atendimento</span>
+                        <span class="resumo-linha-label"><span class="material-symbols-rounded" aria-hidden="true">
+                            location_on
+                        </span> Atendimento</span>
                         <span class="resumo-linha-val">
                             @if (ViewBag.Atendimento == "Local")
                             {
-                                <span class="atend-badge atend-local">📍 Local</span>
+                                <span class="atend-badge atend-local">
+                                <span 
+                                    class="material-symbols-rounded"
+                                    aria-hidden="true">
+                                    location_on
+                                </span> Local
+                                </span>
                             }
                             else if (ViewBag.Atendimento == "Domicilio")
                             {
-                                <span class="atend-badge atend-domicilio">🏠 Domicílio</span>
-                            }
+                                <span class="atend-badge atend-domicilio">
+                                    <span 
+                                    class="material-symbols-rounded"
+                                    aria-hidden="true">
+                                    home
+                                    </span> Domicílio
+                                </span>
+                                                        }
                             else if (ViewBag.Atendimento == "Online")
                             {
-                                <span class="atend-badge atend-online">💻 Online</span>
-                            }
+                                <span class="atend-badge atend-online">
+                                    <span 
+                                    class="material-symbols-rounded"
+                                    aria-hidden="true">
+                                    laptop_mac
+                                    </span> Online
+                                </span>
+                                                            }
                         </span>
                     </div>
 
                     <div class="resumo-linha">
-                        <span class="resumo-linha-label">👤 Profissional</span>
+                        <span class="resumo-linha-label">
+                            <span 
+                                class="material-symbols-rounded"
+                                aria-hidden="true">
+                                person
+                            </span>Profissional
+                        </span>
                         <span class="resumo-linha-val">@ViewBag.NomeProfissional</span>
                     </div>
 
@@ -256,7 +303,13 @@
                 @if (ViewBag.Atendimento == "Local")
                 {
                     <div class="atend-aviso local">
-                        <span class="atend-aviso-icon">📍</span>
+                        <span class="atend-aviso-icon">
+                            <span 
+                            class="material-symbols-rounded"
+                            aria-hidden="true">
+                            location_on
+                            </span>
+                        </span>
                         <span>O atendimento será <strong>no local do profissional</strong>. Lembre-se de chegar no horário
                             marcado.</span>
                         </div>
@@ -264,7 +317,13 @@
                 else if (ViewBag.Atendimento == "Domicilio")
                     {
                         <div class="atend-aviso domicilio">
-                            <span class="atend-aviso-icon">🏠</span>
+                            <span class="atend-aviso-icon">
+                                <span 
+                                    class="material-symbols-rounded"
+                                    aria-hidden="true">
+                                    home
+                                </span>
+                            </span>
                             <span>O profissional irá até <strong>seu endereço</strong>. Preencha o endereço completo
                                 abaixo.</span>
                             </div>
@@ -272,14 +331,20 @@
                 else if (ViewBag.Atendimento == "Online")
                         {
                             <div class="atend-aviso online">
-                                <span class="atend-aviso-icon">💻</span>
+                                <span class="atend-aviso-icon">
+                                    <span 
+                                    class="material-symbols-rounded"
+                                    aria-hidden="true">
+                                    laptop_mac
+                                    </span>
+                                </span>
                                 <span>Atendimento <strong>online</strong>. Você receberá o link de acesso após a confirmação.</span>
                             </div>
                         }
 
                         <!-- Botão confirmar -->
                         <div class="agend-card" style="padding:20px; animation-delay:.12s">
-                            <button type="submit" class="btn-confirmar" id="btnConfirmar" disabled>
+                            <button aria-label="Confirmar agendamento" type="submit" class="btn-confirmar" id="btnConfirmar" disabled>
                                 Confirmar Agendamento →
                             </button>
                             <p class="btn-confirmar-hint" id="hintConfirmar">

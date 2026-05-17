@@ -63,11 +63,11 @@
 
             <!-- Pills de atendimento -->
             <div class="filter-pills" id="filtro-atendimento-pills">
-                <button class="filter-pill active" data-atendimento="">Todos</button>
-                <button class="filter-pill" data-atendimento="Domicilio"><span class="material-symbols-outlined">home</span> Domicílio</button>
-                <button class="filter-pill" data-atendimento="Local"><span class="material-symbols-outlined">location_on</span>
+                <button aria-label="Todos tipos de atendimento" class="filter-pill active" data-atendimento="">Todos</button>
+                <button aria-label="Atendimento a domicilio" class="filter-pill" data-atendimento="Domicilio"><span aria-hidden="true" class="material-symbols-outlined">home</span> Domicílio</button>
+                <button aria-label="Atendimento Local" class="filter-pill" data-atendimento="Local"><span aria-hidden="true" class="material-symbols-outlined">location_on</span>
                 Local </button>
-                <button class="filter-pill" data-atendimento="Online"><span class="material-symbols-outlined">laptop_mac</span>
+                <button aria-label="Atendimento online" class="filter-pill" data-atendimento="Online"><span aria-hidden="true" class="material-symbols-outlined">laptop_mac</span>
                 Online </button>
             </div>
 
@@ -122,47 +122,47 @@
 
                     <!-- Chips de info -->
                     <div class="info-chips">
-                        <span class="chip"><span class="material-symbols-outlined">folder</span> @item.Subcategoria</span>
+                        <span aria-hidden="true" class="chip"><span class="material-symbols-outlined">folder</span> @item.Subcategoria</span>
 
                         @if (item.Atendimento == "Domicilio")
                         {
-                            <span class="chip chip-domicilio"><span class="material-symbols-outlined">home</span> Domicílio</span>
+                            <span class="chip chip-domicilio"><span aria-hidden="true" class="material-symbols-outlined">home</span> Domicílio</span>
                         }
                         else if (item.Atendimento == "Local")
                         {
-                            <span class="chip chip-local"><span class="material-symbols-outlined">location_on</span>
+                            <span class="chip chip-local"><span aria-hidden="true" class="material-symbols-outlined">location_on</span>
                              Local</span>
                         }
                         else if (item.Atendimento == "Online")
                         {
-                            <span class="chip chip-online"><span class="material-symbols-outlined">laptop_mac</span>
+                            <span class="chip chip-online"><span aria-hidden="true" class="material-symbols-outlined">laptop_mac</span>
                             Online</span>
                         }
                         @if (!string.IsNullOrEmpty(item.DiasTexto))
                         {
                             <span class="chip">
-                                <span class="material-symbols-outlined">calendar_month</span> @item.DiasTexto
+                                <span aria-hidden="true" aria-label="atendimento nos dias @item.DiasTexto" class="material-symbols-outlined">calendar_month</span> @item.DiasTexto
                             </span>
                         }
                        @if (item.TipoPreco == "Combinar")
                         {
                             <span class="chip">
-                                <span class="material-symbols-outlined">payments</span>
+                                <span aria-hidden="true" class="material-symbols-outlined">payments</span>
                                 A combinar
                             </span>
                         }
                         else
                         {
                             <span class="chip">
-                                <span class="material-symbols-outlined">payments</span>
+                                <span aria-hidden="true" aria-label="vai custar @item.PrecoBase" class="material-symbols-outlined">payments</span>
                                 R$ @item.PrecoBase
                             </span>
                         }
 
                         @if (item.HoraInicio.HasValue && item.HoraFim.HasValue)
                         {
-                            <span class="chip">
-                                 <span class="material-symbols-outlined">schedule</span> @item.HoraInicio.Value.ToString(@"hh\:mm")
+                            <span class="chip" aria-label="Horario de início @item.HoraInicio.Value.ToString(@"hh\:mm") às @item.HoraFim.Value.ToString(@"hh\:mm")">
+                                 <span aria-hidden="true" class="material-symbols-outlined">schedule</span> @item.HoraInicio.Value.ToString(@"hh\:mm")
                                 às
                                 @item.HoraFim.Value.ToString(@"hh\:mm")
                             </span>
@@ -191,7 +191,7 @@
 
             <!-- Estado vazio (mostrado via JS quando filtros não acham nada) -->
             <div class="empty-state" id="emptyState">
-                <div class="empty-icon"><span class="filter-search-icon material-symbols-outlined">
+                <div class="empty-icon"><span aria-hidden="true" class="filter-search-icon material-symbols-outlined">
                     search
                 </span></div>
                 <h3>Nenhum serviço encontrado</h3>

@@ -46,7 +46,7 @@
             <div>
                 <span class="notif-hero-label">Central de avisos</span>
                 <h1 class="notif-hero-title">
-                    <span class="material-symbols-rounded icon-fill" style="font-size:2rem;color:var(--accent);">notifications</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill" style="font-size:2rem;color:var(--accent);">notifications</span>
                     Notificações
                 </h1>
                 <p class="notif-hero-sub">Acompanhe tudo que acontece com seus agendamentos e serviços.</p>
@@ -56,7 +56,7 @@
             {
                 <div class="notif-hero-badge">
                     @naoLidas
-                    <span>não lida@(naoLidas != 1 ? "s" : "")</span>
+                    <span aria-label="@naoLidas mensagens não lidas">não lida@(naoLidas != 1 ? "s" : "")</span>
                 </div>
             }
         </div>
@@ -67,13 +67,13 @@
     {
         <div class="notif-filters">
             <div class="notif-filters-inner">
-                <button class="filter-pill active" onclick="filtrarNotif('todas', this)">
-                    <span class="material-symbols-rounded" style="font-size:14px;">list</span>
+                <button aria-label="@total notificações" class="filter-pill active" onclick="filtrarNotif('todas', this)">
+                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">list</span>
                     Todas
-                    <span>(@total)</span>
+                    <span aria-label="@total notificações">(@total)</span>
                 </button>
-                <button class="filter-pill" onclick="filtrarNotif('nao-lida', this)">
-                    <span class="material-symbols-rounded" style="font-size:14px;">mark_email_unread</span>
+                <button aria-label="@naoLidas mensagens não lidas" class="filter-pill" onclick="filtrarNotif('nao-lida', this)">
+                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">mark_email_unread</span>
                     Não lidas
                     @if (naoLidas > 0) { <span>(@naoLidas)</span> }
                 </button>
@@ -100,7 +100,7 @@
         {
             <div class="notif-empty-state">
                 <div class="notif-empty-icon">
-                    <span class="material-symbols-rounded">notifications_off</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">notifications_off</span>
                 </div>
                 <h3>Nenhuma notificação ainda</h3>
                 <p>Quando houver novidades sobre seus agendamentos e serviços, elas aparecerão aqui.</p>
@@ -146,7 +146,7 @@
                 <!-- empty filtrado -->
                 <div class="notif-empty-state" id="notifEmptyFiltro" style="display:none;">
                     <div class="notif-empty-icon">
-                        <span class="material-symbols-rounded">filter_list_off</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">filter_list_off</span>
                     </div>
                     <h3>Nenhuma notificação aqui</h3>
                     <p>Não há notificações com esse filtro no momento.</p>

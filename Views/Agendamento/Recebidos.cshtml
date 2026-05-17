@@ -12,21 +12,21 @@
 @if (TempData["Sucesso"] != null)
 {
     <div class="alert-sucesso">
-        <span class="material-symbols-rounded">check_circle</span>
+        <span aria-hidden="true" class="material-symbols-rounded">check_circle</span>
         @TempData["Sucesso"]
     </div>
 }
 @if (TempData["Erro"] != null)
 {
     <div class="alert-erro">
-        <span class="material-symbols-rounded">error</span>
+        <span aria-hidden="true" class="material-symbols-rounded">error</span>
         @TempData["Erro"]
     </div>
 }
 @if (TempData["Info"] != null)
 {
     <div class="alert-info">
-        <span class="material-symbols-rounded">info</span>
+        <span aria-hidden="true" class="material-symbols-rounded">info</span>
         @TempData["Info"]
     </div>
 }
@@ -140,36 +140,36 @@
         <div class="recebidos-filters">
             <div class="recebidos-filters-inner">
 
-                <button class="filter-pill active" onclick="filtrar('todos', this)">
+                <button aria-label="filtrar todos" class="filter-pill active" onclick="filtrar('todos', this)">
                     <span class="filter-pill-dot dot-all"></span> Todos
                 </button>
                 <button class="filter-pill" onclick="filtrar('Pendente', this)">
-                    <span class="filter-pill-dot dot-pendente"></span>
+                    <span aria-label="@pendentes pedidos pedentes" class="filter-pill-dot dot-pendente"></span>
                     Pendentes @if (pendentes > 0) {
                     <span>(@pendentes)</span>
                 }
             </button>
-            <button class="filter-pill" onclick="filtrar('Confirmado', this)">
-                <span class="filter-pill-dot dot-confirmado"></span>
+            <button aria-label="filtrar confirmados"  class="filter-pill" onclick="filtrar('Confirmado', this)">
+                <span aria-label="@confirmados pedidos confirmados" class="filter-pill-dot dot-confirmado"></span>
                 Confirmados @if (confirmados > 0) {
                 <span>(@confirmados)</span>
             }
         </button>
-        <button class="filter-pill" onclick="filtrar('Finalizado', this)">
-            <span class="filter-pill-dot dot-finalizado"></span>
+        <button aria-label="filtrar finalizados" class="filter-pill" onclick="filtrar('Finalizado', this)">
+            <span aria-label="@finalizados pedidos finalizados" class="filter-pill-dot dot-finalizado"></span>
             Finalizados @if (finalizados > 0) {
             <span>(@finalizados)</span>
         }
     </button>
-    <button class="filter-pill" onclick="filtrar('cancelado', this)">
-        <span class="filter-pill-dot dot-cancelado"></span>
+    <button aria-label="filtrar cancelados" class="filter-pill" onclick="filtrar('cancelado', this)">
+        <span aria-label="@cancelados pedidos cancelados" class="filter-pill-dot dot-cancelado"></span>
         Cancelados @if (cancelados > 0) {
         <span>(@cancelados)</span>
     }
 </button>
 
 <span class="filter-count">
-    <strong id="contadorFiltro">@total</strong> pedido(s)
+    <strong aria-label="numero totais de pedidos é de @total" id="contadorFiltro">@total</strong> pedido(s)
 </span>
 
 </div>
@@ -183,7 +183,7 @@
     {
         <div class="empty-state">
             <div class="empty-icon">
-                <span class="material-symbols-rounded">inbox</span>
+                <span aria-hidden="true" class="material-symbols-rounded">inbox</span>
             </div>
             <h3>Nenhum pedido recebido ainda</h3>
             <p>Quando clientes agendarem seus serviços, os pedidos aparecerão aqui para você confirmar ou recusar.</p>
@@ -202,15 +202,15 @@
                         <div class="agend-avatar">@GetIniciais(ag.NomeCliente)</div>
 
                         <div>
-                            <div class="agend-cliente-name">@ag.NomeCliente</div>
+                            <div aria-label="nome do cliente : @ag.NomeCliente" class="agend-cliente-name">@ag.NomeCliente</div>
                             <div class="agend-servico destaque-servico">
-                                <span class="material-symbols-rounded" style="font-size:14px;">build</span>
+                                <span aria-hidden="true" aria-label="nome do serviço @ag.Servico" class="material-symbols-rounded" style="font-size:14px;">build</span>
                                 @ag.Servico
                             </div>
                             @if (!string.IsNullOrEmpty(ag.Subcategoria))
                             {
                                 <div class="agend-subcategoria">
-                                    <span class="material-symbols-rounded" style="font-size:13px;">label</span>
+                                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:13px;">label</span>
                                     @ag.Subcategoria
                                 </div>
                             }
@@ -227,10 +227,10 @@
 
                         <div class="agend-info-item">
                             <div class="agend-info-label">
-                                <span class="material-symbols-rounded">calendar_month</span>
+                                <span aria-hidden="true" class="material-symbols-rounded">calendar_month</span>
                                 Data
                             </div>
-                            <div class="agend-info-val">@ag.Data.ToString("dd/MM/yyyy")</div>
+                            <div aria-label="data de atendimento @ag.Data" class="agend-info-val">@ag.Data.ToString("dd/MM/yyyy")</div>
                             <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">
                                 @ag.Data.ToString("dddd", new System.Globalization.CultureInfo("pt-BR"))
                             </div>
@@ -238,21 +238,21 @@
 
                         <div class="agend-info-item">
                             <div class="agend-info-label">
-                                <span class="material-symbols-rounded">schedule</span>
+                                <span aria-hidden="true" class="material-symbols-rounded">schedule</span>
                                 Horário
                             </div>
-                            <div class="agend-info-val">@ag.Hora</div>
+                            <div class="agend-info-val" aria-label="agendado para @ag.Hora hora">@ag.Hora</div>
                         </div>
 
                         <div class="agend-info-item">
                             <div class="agend-info-label">
-                                <span class="material-symbols-rounded">payments</span>
+                                <span aria-hidden="true" class="material-symbols-rounded">payments</span>
                                 Preço
                             </div>
                             <div class="agend-info-val">
                                 @if (ag.TipoPreco == "Fixo")
                                 {
-                                    <span class="valor-fixo">
+                                    <span aria-label="preço do atendimento : R$@ag.PrecoBase" class="valor-fixo">
                                         R$ @ag.PrecoBase
                                     </span>
                                 }
@@ -267,28 +267,28 @@
 
                         <div class="agend-info-item">
                             <div class="agend-info-label">
-                                <span class="material-symbols-rounded">place</span>
+                                <span aria-hidden="true" class="material-symbols-rounded">place</span>
                                 Atendimento
                             </div>
                             <div class="agend-info-val">
                                 @if (ag.Atendimento == "Local")
                                 {
                                     <span class="agend-atend-chip chip-local">
-                                        <span class="material-symbols-rounded">location_on</span>
+                                        <span aria-hidden="true" class="material-symbols-rounded">location_on</span>
                                         Presencial
                                     </span>
                                 }
                                 else if (ag.Atendimento == "Domicilio")
                                 {
                                     <span class="agend-atend-chip chip-domicilio">
-                                        <span class="material-symbols-rounded">home</span>
+                                        <span aria-hidden="true" class="material-symbols-rounded">home</span>
                                         Domicílio
                                     </span>
                                 }
                                 else if (ag.Atendimento == "Online")
                                 {
                                     <span class="agend-atend-chip chip-online">
-                                        <span class="material-symbols-rounded">laptop</span>
+                                        <span aria-hidden="true" class="material-symbols-rounded">laptop</span>
                                         Online
                                     </span>
                                 }
@@ -300,15 +300,15 @@
                                 @if (ag.ConfirmadoProfissional)
                                 {
                                     <div class="ag-contato">
-                                        <span class="material-symbols-rounded"
+                                        <span aria-hidden="true" class="material-symbols-rounded"
                                               style="font-size:15px;color:var(--blue);">call</span>
-                                        <span>@ag.ContatoCliente</span>
+                                        <span aria-label="contato do cliente @ag.ContatoCliente">@ag.ContatoCliente</span>
                                     </div>
                                 }
                                 else
                                 {
                                     <span class="aguardando-chip">
-                                        <span class="material-symbols-rounded" style="font-size:14px;">lock</span>
+                                        <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">lock</span>
                                         Contato liberado após confirmação
                                     </span>
                                 }
@@ -326,28 +326,28 @@
                             {
                                 if (ag.ConfirmadoProfissional && !string.IsNullOrEmpty(ag.EnderecoCliente))
                                 {
-                                    <span class="material-symbols-rounded" style="font-size:16px;">home</span>
-                                    <span>@ag.EnderecoCliente</span>
+                                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:16px;">home</span>
+                                    <span aria-label="endereço do cliente : @ag.EnderecoCliente">@ag.EnderecoCliente</span>
                                 }
                                 else
                                 {
                                     <span class="aguardando-chip">
-                                        <span class="material-symbols-rounded" style="font-size:14px;">lock</span>
+                                        <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">lock</span>
                                         Endereço visível após confirmação
                                     </span>
                                 }
                             }
                             else if (ag.Atendimento == "Online" && !string.IsNullOrEmpty(ag.LinkOnline))
                             {
-                                <a href="@ag.LinkOnline" target="_blank" class="btn-link-online">
-                                    <span class="material-symbols-rounded" style="font-size:16px;">video_call</span>
+                                <a aria-label="link do atendimento online" href="@ag.LinkOnline" target="_blank" class="btn-link-online">
+                                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:16px;">video_call</span>
                                     Acessar reunião
                                 </a>
                             }
                             else if (ag.Atendimento == "Local" && !string.IsNullOrEmpty(ag.EnderecoLocal))
                             {
-                                <span class="material-symbols-rounded" style="font-size:16px;">location_on</span>
-                                <span>@ag.EnderecoLocal</span>
+                                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:16px;">location_on</span>
+                                <span aria-label="endereço que o cliente sera atendido">@ag.EnderecoLocal</span>
                             }
                         </div>
 
@@ -356,30 +356,30 @@
 
                             @if (ag.StatusAtual() == "Pendente")
                             {
-                                <button class="btn-confirmar"
+                                <button aria-label="confirmar agendamento" class="btn-confirmar"
                                         onclick="abrirModal('confirmar', '@ag.Id',
                                     '@ag.NomeCliente.Replace("'", "\\'")',
                                     '@ag.Data.ToString("dd/MM/yyyy")',
                                     '@ag.Hora',
                                     '@ag.TipoPreco',
                                     '@ag.PrecoBase')">
-                                    <span class="material-symbols-rounded">check_circle</span>
+                                    <span aria-hidden="true"class="material-symbols-rounded">check_circle</span>
                                     Confirmar
                                 </button>
-                                <button class="btn-recusar"
+                                <button aria-label="recusar agendamento" class="btn-recusar"
                                         onclick="abrirModal('recusar', '@ag.Id',
                                     '@ag.NomeCliente.Replace("'", "\\'")',
                                     '@ag.Data.ToString("dd/MM/yyyy")',
                                     '@ag.Hora',
                                     '@ag.TipoPreco',
                                     '@ag.PrecoBase')">
-                                    <span class="material-symbols-rounded">cancel</span>
+                                    <span aria-hidden="true" class="material-symbols-rounded">cancel</span>
                                     Recusar
                                 </button>
                             }
                             else if (ag.StatusAtual() == "Confirmado")
                             {
-                                <button class="btn-finalizar" onclick="abrirModal(
+                                <button aria-label="finalizar agendamento" class="btn-finalizar" onclick="abrirModal(
                                     'finalizar',
                                     '@ag.Id',
                                     '@ag.NomeCliente.Replace("'", "\\'")',
@@ -389,21 +389,21 @@
                                     '@ag.PrecoBase',
                                     '@(ag.PlanoProfissional == "Premium" ? 4 : 10)'
                                     )">
-                                    <span class="material-symbols-rounded">task_alt</span>
+                                    <span aria-hidden="true" class="material-symbols-rounded">task_alt</span>
                                     Finalizar
                                 </button>
                             }
                             else if (ag.StatusAtual() == "AguardandoCliente")
                             {
                                 <span class="status-info">
-                                    <span class="material-symbols-rounded" style="font-size:15px;">hourglass_top</span>
+                                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:15px;">hourglass_top</span>
                                     Aguardando confirmação do cliente
                                 </span>
                             }
                             else if (ag.StatusAtual() == "Finalizado")
                             {
                                 <span class="status-finalizado">
-                                    <span class="material-symbols-rounded">
+                                    <span aria-hidden="true" class="material-symbols-rounded">
                                         verified
                                     </span>
 
@@ -420,9 +420,9 @@
 
                             @if (ag.StatusAtual() == "Pendente" || ag.StatusAtual() == "Confirmado")
                             {
-                                <button class="btn-cancelar-pro"
+                                <button aria-label="cancelar agendamento" class="btn-cancelar-pro"
                                         onclick="abrirModal('cancelar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
-                                    <span class="material-symbols-rounded">close</span>
+                                    <span aria-hidden="true" class="material-symbols-rounded">close</span>
                                     Cancelar
                                 </button>
                             }
@@ -449,14 +449,14 @@
 <div class="modal-overlay" id="modalConfirmar">
     <div class="modal-box">
         <div class="modal-icon">
-            <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#22c55e;">check_circle</span>
+            <span aria-hidden="true" class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#22c55e;">check_circle</span>
         </div>
         <div class="modal-title">Confirmar agendamento?</div>
         <p class="modal-sub" id="descConfirmar"></p>
         <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
+            <button aria-label="voltar" class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
             <a class="btn-modal-green" id="linkConfirmar" href="#">
-                <span class="material-symbols-rounded">check</span>
+                <span aria-hidden="true" class="material-symbols-rounded">check</span>
                 Sim, confirmar
             </a>
         </div>
@@ -467,7 +467,7 @@
 <div class="modal-overlay" id="modalRecusar">
     <div class="modal-box">
         <div class="modal-icon">
-            <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#ef4444;">cancel</span>
+            <span aria-hidden="true" class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#ef4444;">cancel</span>
         </div>
         <div class="modal-title">Recusar pedido?</div>
         <p class="modal-sub" id="descRecusar"></p>
@@ -487,9 +487,9 @@
 
         </div>
         <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
+            <button  class="btn-modal-cancel" onclick="fecharModais()">Voltar</button>
             <a class="btn-modal-red" id="linkRecusar" href="#">
-                <span class="material-symbols-rounded">close</span>
+                <span aria-hidden="true" class="material-symbols-rounded">close</span>
                 Sim, recusar
             </a>
         </div>
@@ -502,7 +502,7 @@
     <div class="modal-box">
 
         <div class="modal-icon">
-            <span class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#22c55e;">
+            <span aria-hidden="true" class="material-symbols-rounded icon-fill" style="font-size:2.8rem;color:#22c55e;">
                 task_alt
             </span>
         </div>
@@ -527,7 +527,7 @@
 
                 <button type="submit" class="btn-modal-green">
 
-                    <span class="material-symbols-rounded">
+                    <span aria-hidden="true" class="material-symbols-rounded">
                         check
                     </span>
 
@@ -554,7 +554,7 @@
             <form id="formCancelar" asp-action="Cancelar" method="post" style="flex:1;">
                 <input type="hidden" name="id" id="cancelarId" />
                 <button type="submit" class="btn-modal-red" style="width:100%;">
-                    <span class="material-symbols-rounded">close</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">close</span>
                     Sim, cancelar
                 </button>
             </form>

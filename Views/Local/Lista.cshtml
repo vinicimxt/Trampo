@@ -22,7 +22,7 @@
             {
                 <div class="locais-hero-count">
                     <strong>@Model.Count</strong>
-                    <span>@(Model.Count == 1 ? "local cadastrado" : "locais cadastrados")</span>
+                    <span aria-label="Você tem @Model.Count locais cadastrados">@(Model.Count == 1 ? "local cadastrado" : "locais cadastrados")</span>
                 </div>
             }
         </div>
@@ -42,7 +42,7 @@
                     Cadastre todos os lugares onde você atende para facilitar na hora de criar seus serviços.
                 </p>
             </div>
-            <button class="tip-close" onclick="fecharTip()" aria-label="Fechar">✕</button>
+            <button aria-label="fechar tutorial de mensagem" class="tip-close" onclick="fecharTip()" aria-label="Fechar">✕</button>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
         {
             <!-- Empty state com botão que abre o drawer -->
             <div class="empty-state">
-                <div class="empty-icon">📍</div>
+                <div class="empty-icon"><span aria-hidden="true" class="material-symbols-rounded">location_on</span></div>
                 <h3>Nenhum local cadastrado</h3>
                 <p>Cadastre o endereço onde você atende seus clientes. Ele será usado nos seus serviços presenciais.</p>
                 <button class="btn-criar-local" onclick="abrirDrawer()">+ Cadastrar primeiro local</button>
@@ -67,7 +67,7 @@
         {
             <div class="locais-topbar">
                 <div class="locais-topbar-title">Seus endereços</div>
-                <button class="btn-novo-local" onclick="abrirModalLocal()">
+                <button aria-label="Adicionar" class="btn-novo-local" onclick="abrirModalLocal()">
                     + Novo local
                 </button>
             </div>
@@ -84,23 +84,35 @@
                         @foreach (var l in Model)
                         {
                             <div class="local-card">
-                                <div class="local-card-icon">📍</div>
+                                <div class="local-card-icon"><span aria-hidden="true" class="material-symbols-rounded">location_on</span></div>
 
                                 <div class="local-card-body">
-                                    <div class="local-card-nome">@l.Nome</div>
+                                    <div class="local-card-nome" aria-label="nome do local é: @l.Nome">@l.Nome</div>
                                     <div class="local-card-end">
-                                        <span>🗺️</span>
+                                        <span 
+                                            class="material-symbols-rounded"
+                                            aria-hidden="true">
+                                            map
+                                        </span>
                                         @l.Endereco
                                     </div>
                                 </div>
 
                                 <div class="local-card-actions">
-                                    <button class="btn-edit-local"
+                                    <button aria-label="Editar local" class="btn-edit-local"
                                             onclick="abrirDrawerEditar('@l.Id', '@l.Nome.Replace("'", "\\'")', '@l.Endereco.Replace("'", "\\'")')">
-                                        ✏️ Editar
+                                        <span 
+                                            class="material-symbols-rounded"
+                                            aria-hidden="true">
+                                            edit
+                                        </span> Editar
                                     </button>
-                                    <button class="btn-del-local" onclick="abrirModal('@l.Id', '@l.Nome.Replace("'", "\\'")')">
-                                        🗑 Excluir
+                                    <button aria-label="Excluir local" class="btn-del-local" onclick="abrirModal('@l.Id', '@l.Nome.Replace("'", "\\'")')">
+                                        <span 
+                                            class="material-symbols-rounded"
+                                            aria-hidden="true">
+                                            delete
+                                        </span> Excluir
                                     </button>
                                 </div>
                             </div>
@@ -115,13 +127,14 @@
 
                     <div class="drawer-header">
                         <div class="drawer-header-left">
-                            <div class="drawer-header-icon">📍</div>
+                            <div class="drawer-header-icon">
+                                <span aria-hidden="true" class="material-symbols-rounded">location_on</span></div>
                             <div>
                                 <div class="drawer-title" id="drawerTitle">Novo local</div>
                                 <div class="drawer-sub" id="drawerSub">Preencha os dados do endereço</div>
                             </div>
                         </div>
-                        <button class="drawer-close" onclick="fecharDrawer()">✕</button>
+                        <button aria-label="Fechar formulario de edição" class="drawer-close" onclick="fecharDrawer()">✕</button>
                     </div>
 
                     <form method="post" id="formLocal" action="/Local/Salvar">
@@ -148,9 +161,13 @@
                         </div>
 
                         <div class="drawer-footer">
-                            <button type="button" class="btn-cancelar" onclick="fecharDrawer()">Cancelar</button>
-                            <button type="submit" class="btn-salvar">
-                                💾 Salvar local
+                            <button aria-label="Cancelar" type="button" class="btn-cancelar" onclick="fecharDrawer()">Cancelar</button>
+                            <button aria-label="Salvar local" type="submit" class="btn-salvar">
+                                <span 
+                                    class="material-symbols-rounded"
+                                    aria-hidden="true">
+                                    save
+                                </span> Salvar local
                             </button>
                         </div>
 
@@ -170,7 +187,13 @@
 ============================================= -->
 <div class="modal-overlay" id="modalExcluir">
     <div class="modal-box">
-        <div class="modal-icon">🗑️</div>
+        <div class="modal-icon"><span 
+            class="material-symbols-rounded"
+            aria-hidden="true">
+            delete
+        </span>
+        </div>
+
         <div class="modal-title">Excluir local?</div>
         <p class="modal-sub">
             Tem certeza que deseja excluir
@@ -178,8 +201,8 @@
             Serviços vinculados a este endereço podem ser afetados.
         </p>
         <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
-            <a class="btn-modal-confirm" id="modalLinkExcluir" href="#">Sim, excluir</a>
+            <button aria-label="Cancelar exclusão" class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
+            <a aria-label="COnfirmar exclusão" class="btn-modal-confirm" id="modalLinkExcluir" href="#">Sim, excluir</a>
         </div>
     </div>
 </div>

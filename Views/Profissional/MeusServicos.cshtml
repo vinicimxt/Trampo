@@ -79,14 +79,14 @@
 
         <!-- substitua os 3 botões de filtro por: -->
         <div class="filtro-servicos">
-            <button class="filtro-btn ativo" data-filtro="todos" onclick="filtrarServicos('todos')">
-                <span class="material-symbols-rounded">list</span> Todos
+            <button aria-label="Todos meus serviços" class="filtro-btn ativo" data-filtro="todos" onclick="filtrarServicos('todos')">
+                <span aria-hidden="true" class="material-symbols-rounded">list</span> Todos
             </button>
-            <button class="filtro-btn" data-filtro="ativos" onclick="filtrarServicos('ativos')">
-                <span class="material-symbols-rounded">check_circle</span> Ativos
+            <button aria-label="serviços ativos" class="filtro-btn" data-filtro="ativos" onclick="filtrarServicos('ativos')">
+                <span aria-hidden="true" class="material-symbols-rounded">check_circle</span> Ativos
             </button>
-            <button class="filtro-btn" data-filtro="inativos" onclick="filtrarServicos('inativos')">
-                <span class="material-symbols-rounded">cancel</span> Inativos
+            <button aria-label="serviços inativos" class="filtro-btn" data-filtro="inativos" onclick="filtrarServicos('inativos')">
+                <span aria-hidden="true" class="material-symbols-rounded">cancel</span> Inativos
             </button>
         </div>
 
@@ -94,12 +94,12 @@
         {
             <div class="empty-state">
                 <div class="empty-icon">
-                    <span class="material-symbols-rounded">inventory_2</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">inventory_2</span>
                 </div>
                 <h3>Nenhum serviço cadastrado</h3>
                 <p>Crie seu primeiro serviço para aparecer para clientes e começar a receber agendamentos.</p>
                 <a href="/Servico/Criar" class="btn-criar-primeiro">
-                    <span class="material-symbols-rounded">add</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">add</span>
                     Criar meu primeiro serviço
                 </a>
             </div>
@@ -109,7 +109,7 @@
             <div class="servicos-topbar">
                 <div class="servicos-topbar-title">Todos os serviços</div>
                 <a href="/Servico/Criar" class="btn-novo">
-                    <span class="material-symbols-rounded">add</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">add</span>
                     Novo serviço
                 </a>
             </div>
@@ -132,14 +132,14 @@
                                     @if (s.Ativo)
                                     {
                                         <span class="badge-ativo">
-                                            <span class="material-symbols-rounded">check_circle</span>
+                                            <span aria-hidden="true" class="material-symbols-rounded">check_circle</span>
                                             Ativo
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="badge-inativo">
-                                            <span class="material-symbols-rounded">cancel</span>
+                                            <span aria-hidden="true" class="material-symbols-rounded">cancel</span>
                                             Inativo
                                         </span>
                                     }
@@ -154,7 +154,7 @@
 
                                     <div class="info-row">
                                         <div class="info-row-icon">
-                                            <span class="material-symbols-rounded">folder</span>
+                                            <span aria-hidden="true" class="material-symbols-rounded">folder</span>
                                         </div>
                                         <div>
                                             <span class="info-row-label">Categoria</span>
@@ -166,7 +166,7 @@
                                     {
                                         <div class="info-row">
                                             <div class="info-row-icon">
-                                                <span class="material-symbols-rounded">label</span>
+                                                <span aria-hidden="true" class="material-symbols-rounded">label</span>
                                             </div>
                                             <div>
                                                 <span class="info-row-label">Subcategoria</span>
@@ -179,7 +179,7 @@
                                     {
                                         <div class="info-row">
                                             <div class="info-row-icon">
-                                                <span class="material-symbols-rounded">location_on</span>
+                                                <span aria-hidden="true" class="material-symbols-rounded">location_on</span>
                                             </div>
                                             <div>
                                                 <span class="info-row-label">Endereço</span>
@@ -192,13 +192,13 @@
                                     {
                                         <div class="info-row">
                                             <div class="info-row-icon">
-                                                <span class="material-symbols-rounded">link</span>
+                                                <span aria-hidden="true" class="material-symbols-rounded">link</span>
                                             </div>
                                             <div>
                                                 <span class="info-row-label">Link</span>
                                                 <a href="@s.LinkOnline" target="_blank" class="servico-link">
                                                     Acessar
-                                                    <span class="material-symbols-rounded"
+                                                    <span aria-hidden="true" class="material-symbols-rounded"
                                                           style="font-size:14px;">open_in_new</span>
                                                 </a>
                                             </div>
@@ -213,18 +213,18 @@
                                 </div>
 
                                 <div class="servico-actions">
-                                    <button type="button" class="btn-edit" @(s.Ativo ? "" : "disabled") data-id="@s.Id"
+                                    <button aria-label="Editar serviço" type="button" class="btn-edit" @(s.Ativo ? "" : "disabled") data-id="@s.Id"
                                             data-nome="@s.Nome" data-local="@s.LocalId" data-desc="@s.Descricao"
                                             data-atendimento="@s.Atendimento" data-link="@s.LinkOnline" data-sub="@s.SubcategoriaId"
                                             data-hora-inicio="@s.HoraInicio" data-hora-fim="@s.HoraFim" data-dias="@s.DiasTexto"
                                             data-tipo-preco="@s.TipoPreco" data-preco="@s.PrecoBase">
-                                        <span class="material-symbols-rounded">edit</span>
+                                        <span aria-hidden="true" class="material-symbols-rounded">edit</span>
                                         Editar
                                     </button>
 
-                                    <button type="button" class="btn-delete" @(s.Ativo ? "" : "disabled")
+                                    <button aria-label="Remover serviço" type="button" class="btn-delete" @(s.Ativo ? "" : "disabled")
                                             onclick="abrirModalAcao(@s.Id, '@s.Nome.Replace("'", "\\'")')">
-                                        <span class="material-symbols-rounded">delete</span>
+                                        <span aria-hidden="true" class="material-symbols-rounded">delete</span>
                                         Remover
                                     </button>
                                 </div>
@@ -244,15 +244,15 @@
 <div class="modal-overlay" id="modalAcao">
     <div class="modal-box">
         <div class="modal-icon">
-            <span class="material-symbols-rounded" style="font-size:2.8rem;color:#ef4444;">warning</span>
+            <span aria-hidden="true" class="material-symbols-rounded" style="font-size:2.8rem;color:#ef4444;">warning</span>
         </div>
         <div class="modal-title">Remover serviço?</div>
         <p class="modal-sub" id="modalTextoAcao"></p>
         <div class="modal-actions">
-            <button onclick="fecharModal('modalAcao')" class="btn-cancelar">
+            <button aria-label="Cancelar" onclick="fecharModal('modalAcao')" class="btn-cancelar">
                 Cancelar
             </button>
-            <a id="modalConfirmarAcao" class="btn-modal-confirm">
+            <a aria-label="Confirmar" id="modalConfirmarAcao" class="btn-modal-confirm">
                 <span class="material-symbols-rounded">check</span>
                 Confirmar
             </a>
@@ -267,11 +267,11 @@
 
         <div class="drawer-header">
             <div style="display:flex;align-items:center;gap:10px;">
-                <span class="material-symbols-rounded" style="color:var(--accent);font-size:20px;">edit</span>
+                <span aria-hidden="true" class="material-symbols-rounded" style="color:var(--accent);font-size:20px;">edit</span>
                 <h3 id="modalServicoTitle">Editar serviço</h3>
             </div>
             <button onclick="fecharModal('modalServico')" aria-label="Fechar">
-                <span class="material-symbols-rounded">close</span>
+                <span aria-hidden="true" class="material-symbols-rounded">close</span>
             </button>
         </div>
 
@@ -353,13 +353,13 @@
                 <div class="form-group">
                     <label class="form-label">Dias de atendimento</label>
                     <div class="dias-pills" id="diasPillsEdit">
-                        <button type="button" class="dia-pill" data-val="1" onclick="toggleDiaEdit(this)">Seg</button>
-                        <button type="button" class="dia-pill" data-val="2" onclick="toggleDiaEdit(this)">Ter</button>
-                        <button type="button" class="dia-pill" data-val="3" onclick="toggleDiaEdit(this)">Qua</button>
-                        <button type="button" class="dia-pill" data-val="4" onclick="toggleDiaEdit(this)">Qui</button>
-                        <button type="button" class="dia-pill" data-val="5" onclick="toggleDiaEdit(this)">Sex</button>
-                        <button type="button" class="dia-pill" data-val="6" onclick="toggleDiaEdit(this)">Sáb</button>
-                        <button type="button" class="dia-pill" data-val="0" onclick="toggleDiaEdit(this)">Dom</button>
+                        <button aria-label="Segunda" type="button" class="dia-pill" data-val="1" onclick="toggleDiaEdit(this)">Seg</button>
+                        <button aria-label="Terça" type="button" class="dia-pill" data-val="2" onclick="toggleDiaEdit(this)">Ter</button>
+                        <button aria-label="Quarta" type="button" class="dia-pill" data-val="3" onclick="toggleDiaEdit(this)">Qua</button>
+                        <button aria-label="Quinta" type="button" class="dia-pill" data-val="4" onclick="toggleDiaEdit(this)">Qui</button>
+                        <button aria-label="Sexta" type="button" class="dia-pill" data-val="5" onclick="toggleDiaEdit(this)">Sex</button>
+                        <button aria-label="Sábado" type="button" class="dia-pill" data-val="6" onclick="toggleDiaEdit(this)">Sáb</button>
+                        <button aria-label="Domingo" type="button" class="dia-pill" data-val="0" onclick="toggleDiaEdit(this)">Dom</button>
                     </div>
                 </div>
 
@@ -384,7 +384,7 @@
                     Cancelar
                 </button>
                 <button type="submit" class="btn-salvar">
-                    <span class="material-symbols-rounded">save</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">save</span>
                     Salvar alterações
                 </button>
             </div>

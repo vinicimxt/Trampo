@@ -14,8 +14,8 @@
 <section id="home" class="hero">
     <div class="hero-container">
 
-        <div class="hero-left">
-            <span class="badge">
+        <div  class="hero-left">
+            <span  class="badge">
                 <span class="material-symbols-rounded icon-fill" style="font-size:14px;">verified</span>
                 Mais de 5.000 profissionais disponíveis
             </span>
@@ -32,19 +32,19 @@
 
             <form method="get" action="/Profissional/Lista" class="search-box">
                 <div class="search-field">
-                    <span class="material-symbols-rounded">search</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">search</span>
                     <input type="text" name="busca" placeholder="Qual serviço você precisa?" required />
                 </div>
 
                 <div class="divider"></div>
 
-                <div class="search-field">
+                <!-- <div class="search-field">
                     <span class="material-symbols-rounded">location_on</span>
                     <input type="text" name="localizacao" placeholder="Sua localização" />
-                </div>
+                </div> -->
 
-                <button type="submit" class="btn-search">
-                    <span class="material-symbols-rounded" style="font-size:16px;">search</span>
+                <button aria-label="Buscar profissionais" type="submit" class="btn-search">
+                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:16px;">search</span>
                     Buscar
                 </button>
             </form>
@@ -92,7 +92,7 @@
 
         <div class="section-header fade-up">
             <span class="section-label">
-                <span class="material-symbols-rounded" style="font-size:14px;">workspace_premium</span>
+                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">workspace_premium</span>
                 Por que o Trampo?
             </span>
             <h2>A plataforma feita para<br>simplificar o seu dia</h2>
@@ -103,13 +103,13 @@
 
             <div class="why-card fade-up">
                 <div class="why-icon">
-                    <span class="material-symbols-rounded icon-fill">verified_user</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">verified_user</span>
                 </div>
                 <div class="why-body">
                     <h3>Profissionais verificados</h3>
                     <p>Todo profissional passa por verificação de identidade e análise de reputação antes de aparecer na plataforma. Você contrata com confiança.</p>
                     <span class="why-tag">
-                        <span class="material-symbols-rounded" style="font-size:12px;">check_circle</span>
+                        <span aria-hidden="true" class="material-symbols-rounded" style="font-size:12px;">check_circle</span>
                         100% verificado
                     </span>
                 </div>
@@ -117,13 +117,13 @@
 
             <div class="why-card fade-up" style="transition-delay:.08s">
                 <div class="why-icon">
-                    <span class="material-symbols-rounded icon-fill">bolt</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">bolt</span>
                 </div>
                 <div class="why-body">
                     <h3>Agendamento em segundos</h3>
                     <p>Sem ligações, sem espera. Escolha o serviço, veja a disponibilidade em tempo real e confirme o agendamento com um clique.</p>
                     <span class="why-tag">
-                        <span class="material-symbols-rounded" style="font-size:12px;">timer</span>
+                        <span aria-hidden="true" class="material-symbols-rounded" style="font-size:12px;">timer</span>
                         Média de 45 segundos
                     </span>
                 </div>
@@ -131,13 +131,13 @@
 
             <div class="why-card fade-up" style="transition-delay:.12s">
                 <div class="why-icon">
-                    <span class="material-symbols-rounded icon-fill">star</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">star</span>
                 </div>
                 <div class="why-body">
                     <h3>Avaliações reais</h3>
                     <p>Todas as avaliações são de clientes reais que usaram o serviço. Nenhuma nota é fabricada — você sempre sabe o que esperar.</p>
                     <span class="why-tag">
-                        <span class="material-symbols-rounded" style="font-size:12px;">grade</span>
+                        <span aria-hidden="true" class="material-symbols-rounded" style="font-size:12px;">grade</span>
                         Avaliação 4.9 / 5.0
                     </span>
                 </div>
@@ -145,13 +145,13 @@
 
             <div class="why-card fade-up" style="transition-delay:.16s">
                 <div class="why-icon">
-                    <span class="material-symbols-rounded icon-fill">support_agent</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">support_agent</span>
                 </div>
                 <div class="why-body">
                     <h3>Suporte humano</h3>
                     <p>Tivemos algum problema? Nossa equipe está disponível para te ajudar via chat em menos de 5 minutos, todos os dias.</p>
                     <span class="why-tag">
-                        <span class="material-symbols-rounded" style="font-size:12px;">schedule</span>
+                        <span aria-hidden="true" class="material-symbols-rounded" style="font-size:12px;">schedule</span>
                         Suporte 7 dias por semana
                     </span>
                 </div>
@@ -194,15 +194,15 @@
 
                 <div class="about-features">
                     <span class="about-feature-chip">
-                        <span class="material-symbols-rounded">bolt</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">bolt</span>
                         Agendamento rápido
                     </span>
                     <span class="about-feature-chip">
-                        <span class="material-symbols-rounded">handshake</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">handshake</span>
                         Conexão direta
                     </span>
                     <span class="about-feature-chip">
-                        <span class="material-symbols-rounded">shield</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">shield</span>
                         Mais segurança
                     </span>
                 </div>
@@ -210,7 +210,7 @@
 
             <!-- IMAGEM -->
             <div class="about-image">
-                <img src="~/assets/imagens/servicos/barbeiro.jpg" alt="Profissional em atendimento" />
+                <img src="~/assets/imagens/servicos/barbeiro.jpg" alt="Barbeiro realizando atendimento em cliente" />
             </div>
 
         </div>
@@ -226,7 +226,7 @@
 
         <div class="section-header fade-up">
             <span class="section-label">
-                <span class="material-symbols-rounded" style="font-size:14px;">help_outline</span>
+                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">help_outline</span>
                 Simples e rápido
             </span>
             <h2>Como funciona</h2>
@@ -234,12 +234,12 @@
         </div>
 
         <div class="tab-switcher fade-up">
-            <button class="tab-btn active" onclick="switchTab('cliente', this)">
-                <span class="material-symbols-rounded" style="font-size:18px;">person</span>
+            <button aria-label="Sou Cliente" class="tab-btn active" onclick="switchTab('cliente', this)">
+                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:18px;">person</span>
                 Sou cliente
             </button>
-            <button class="tab-btn" onclick="switchTab('profissional', this)">
-                <span class="material-symbols-rounded" style="font-size:18px;">engineering</span>
+            <button aria-label="Sou profissional" class="tab-btn" onclick="switchTab('profissional', this)">
+                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:18px;">engineering</span>
                 Sou profissional
             </button>
         </div>
@@ -251,33 +251,33 @@
                 <div class="step fade-up">
                     <div class="step-num">1</div>
                     <div class="step-icon-wrap">
-                        <span class="material-symbols-rounded">search</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">search</span>
                     </div>
                     <h3>Busque o serviço</h3>
                     <p>Digite o que você precisa e sua cidade. Veja todos os profissionais disponíveis perto de você com avaliações e preços.</p>
                 </div>
 
                 <div class="step-arrow">
-                    <span class="material-symbols-rounded">arrow_forward</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">arrow_forward</span>
                 </div>
 
                 <div class="step fade-up" style="transition-delay:.10s">
                     <div class="step-num">2</div>
                     <div class="step-icon-wrap">
-                        <span class="material-symbols-rounded">calendar_month</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">calendar_month</span>
                     </div>
                     <h3>Escolha e agende</h3>
                     <p>Veja a disponibilidade em tempo real, compare profissionais e confirme o horário que encaixa melhor na sua rotina.</p>
                 </div>
 
                 <div class="step-arrow">
-                    <span class="material-symbols-rounded">arrow_forward</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">arrow_forward</span>
                 </div>
 
                 <div class="step fade-up" style="transition-delay:.20s">
                     <div class="step-num">3</div>
                     <div class="step-icon-wrap">
-                        <span class="material-symbols-rounded">check_circle</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">check_circle</span>
                     </div>
                     <h3>Pronto — aproveite!</h3>
                     <p>Receba a confirmação, acompanhe pelo app e, após o serviço, avalie o profissional. Simples assim.</p>
@@ -293,33 +293,33 @@
                 <div class="step fade-up">
                     <div class="step-num">1</div>
                     <div class="step-icon-wrap">
-                        <span class="material-symbols-rounded">edit_note</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">edit_note</span>
                     </div>
                     <h3>Crie seu perfil</h3>
                     <p>Cadastre-se gratuitamente, adicione seus serviços, defina preços e configure sua agenda em menos de 10 minutos.</p>
                 </div>
 
                 <div class="step-arrow">
-                    <span class="material-symbols-rounded">arrow_forward</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">arrow_forward</span>
                 </div>
 
                 <div class="step fade-up" style="transition-delay:.10s">
                     <div class="step-num">2</div>
                     <div class="step-icon-wrap">
-                        <span class="material-symbols-rounded">notifications_active</span>
+                        <span aria-hidden="true" class="material-symbols-rounded">notifications_active</span>
                     </div>
                     <h3>Receba pedidos</h3>
                     <p>Clientes encontram seu perfil, verificam sua agenda e solicitam serviços. Você recebe a notificação e confirma em segundos.</p>
                 </div>
 
                 <div class="step-arrow">
-                    <span class="material-symbols-rounded">arrow_forward</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">arrow_forward</span>
                 </div>
 
                 <div class="step fade-up" style="transition-delay:.20s">
                     <div class="step-num">3</div>
                     <div class="step-icon-wrap">
-                        <span class="material-symbols-rounded">payments</span>
+                        <span aria-hidden="true" class="material-symbols-rounded"-rounded">payments</span>
                     </div>
                     <h3>Ganhe mais</h3>
                     <p>Atenda, receba sua avaliação e construa reputação. Quanto mais estrelas, mais visibilidade — e mais clientes chegando até você.</p>
@@ -340,7 +340,7 @@
 
         <div class="section-header fade-up">
             <span class="section-label">
-                <span class="material-symbols-rounded" style="font-size:14px;">category</span>
+                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">category</span>
                 O que você precisa?
             </span>
             <h2>Explore por categoria</h2>
@@ -351,7 +351,7 @@
 
             <div class="service-card fade-up">
                 <div class="svc-icon ic-blue">
-                    <span class="material-symbols-rounded icon-fill">content_cut</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">content_cut</span>
                 </div>
                 <div class="svc-name">Corte de cabelo<br>& Barba</div>
                 <div class="svc-meta">
@@ -363,7 +363,7 @@
 
             <div class="service-card fade-up" style="transition-delay:.05s">
                 <div class="svc-icon ic-pink">
-                    <span class="material-symbols-rounded icon-fill">spa</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">spa</span>
                 </div>
                 <div class="svc-name">Manicure<br>& Pedicure</div>
                 <div class="svc-meta">
@@ -375,7 +375,7 @@
 
             <div class="service-card fade-up" style="transition-delay:.10s">
                 <div class="svc-icon ic-cyan">
-                    <span class="material-symbols-rounded icon-fill">local_car_wash</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">local_car_wash</span>
                 </div>
                 <div class="svc-name">Lava Rápido<br>& Higienização</div>
                 <div class="svc-meta">
@@ -387,7 +387,7 @@
 
             <div class="service-card fade-up" style="transition-delay:.15s">
                 <div class="svc-icon ic-purple">
-                    <span class="material-symbols-rounded icon-fill">cleaning_services</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">cleaning_services</span>
                 </div>
                 <div class="svc-name">Faxina<br>& Limpeza</div>
                 <div class="svc-meta">
@@ -399,7 +399,7 @@
 
             <div class="service-card fade-up" style="transition-delay:.20s">
                 <div class="svc-icon ic-orange">
-                    <span class="material-symbols-rounded icon-fill">build</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">build</span>
                 </div>
                 <div class="svc-name">Assistência<br>Técnica</div>
                 <div class="svc-meta">
@@ -411,7 +411,7 @@
 
             <div class="service-card fade-up" style="transition-delay:.25s">
                 <div class="svc-icon ic-green">
-                    <span class="material-symbols-rounded icon-fill">fitness_center</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">fitness_center</span>
                 </div>
                 <div class="svc-name">Personal<br>Trainer</div>
                 <div class="svc-meta">
@@ -423,7 +423,7 @@
 
             <div class="service-card fade-up" style="transition-delay:.30s">
                 <div class="svc-icon ic-amber">
-                    <span class="material-symbols-rounded icon-fill">pets</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">pets</span>
                 </div>
                 <div class="svc-name">Pet Shop<br>& Banho</div>
                 <div class="svc-meta">
@@ -435,7 +435,7 @@
 
             <div class="service-card fade-up" style="transition-delay:.35s">
                 <div class="svc-icon ic-red">
-                    <span class="material-symbols-rounded icon-fill">health_and_safety</span>
+                    <span aria-hidden="true" class="material-symbols-rounded icon-fill">health_and_safety</span>
                 </div>
                 <div class="svc-name">Saúde<br>& Bem-estar</div>
                 <div class="svc-meta">
@@ -450,7 +450,7 @@
         <div class="services-footer fade-up">
             <a href="/Profissional/Lista" class="link-ver-todos">
                 Ver todas as categorias
-                <span class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span>
+                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:18px;">arrow_forward</span>
             </a>
         </div>
 
@@ -467,7 +467,7 @@
 
             <div>
                 <span class="pros-label">
-                    <span class="material-symbols-rounded" style="font-size:14px;">engineering</span>
+                    <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">engineering</span>
                     Para profissionais
                 </span>
                 <h2 class="pros-title">Transforme sua agenda<br>em renda garantida</h2>
@@ -479,7 +479,7 @@
                 <div class="pros-features">
                     <div class="pros-feat">
                         <div class="pros-feat-icon">
-                            <span class="material-symbols-rounded icon-fill">calendar_month</span>
+                            <span aria-hidden="true" class="material-symbols-rounded icon-fill">calendar_month</span>
                         </div>
                         <div>
                             <div class="pros-feat-title">Agenda inteligente</div>
@@ -488,7 +488,7 @@
                     </div>
                     <div class="pros-feat">
                         <div class="pros-feat-icon">
-                            <span class="material-symbols-rounded icon-fill">notifications_active</span>
+                            <span aria-hidden="true" class="material-symbols-rounded icon-fill">notifications_active</span>
                         </div>
                         <div>
                             <div class="pros-feat-title">Notificações em tempo real</div>
@@ -506,7 +506,7 @@
                     </div>
                     <div class="pros-feat">
                         <div class="pros-feat-icon">
-                            <span class="material-symbols-rounded icon-fill">credit_card_off</span>
+                            <span aria-hidden="true" class="material-symbols-rounded icon-fill">credit_card_off</span>
                         </div>
                         <div>
                             <div class="pros-feat-title">Sem mensalidade fixa</div>
@@ -516,7 +516,7 @@
                 </div>
 
                 <a href="Usuario/Cadastro" class="btn-pros">
-                    <span class="material-symbols-rounded">person_add</span>
+                    <span aria-hidden="true" class="material-symbols-rounded">person_add</span>
                     Cadastrar minha conta grátis
                 </a>
                 <p class="pros-note">Teste grátis por 30 dias · Sem cartão de crédito</p>
@@ -571,7 +571,7 @@
 
         <div class="section-header fade-up">
             <span class="section-label">
-                <span class="material-symbols-rounded" style="font-size:14px;">thumb_up</span>
+                <span aria-hidden="true" class="material-symbols-rounded" style="font-size:14px;">thumb_up</span>
                 Quem usa, aprova
             </span>
             <h2>O que dizem sobre o Trampo</h2>
@@ -644,7 +644,7 @@
     <div class="container-ap">
 
         <span class="cta-label">
-            <span class="material-symbols-rounded" style="font-size:13px;">rocket_launch</span>
+            <span aria-hidden="true" class="material-symbols-rounded" style="font-size:13px;">rocket_launch</span>
             Comece agora
         </span>
 
@@ -657,11 +657,11 @@
 
         <div class="cta-actions">
             <a href="Profissional/Lista" class="btn-primary">
-                <span class="material-symbols-rounded">calendar_add_on</span>
+                <span aria-hidden="true" class="material-symbols-rounded">calendar_add_on</span>
                 Agendar um serviço grátis
             </a>
             <a href="Usuario/Cadastro" class="btn-outline-cta">
-                <span class="material-symbols-rounded">storefront</span>
+                <span aria-hidden="true" class="material-symbols-rounded">storefront</span>
                 Cadastrar minha empresa
             </a>
         </div>
