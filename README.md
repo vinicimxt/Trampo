@@ -76,7 +76,7 @@ O projeto foi desenvolvido utilizando o padrão MVC (Model-View-Controller), sep
 
 ---
 ## Folders
-
+```text
 BD_TRAMPO/
 │
 ├── Controllers/
@@ -91,6 +91,7 @@ BD_TRAMPO/
 ├── ScriptsSQL/
 ├── ViewModels/
 └── Program.cs
+```
 
 ---
 
