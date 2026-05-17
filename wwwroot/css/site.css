@@ -1874,9 +1874,127 @@ input:focus {
     gap: 5px;
 }
 
+/* ===================================================
+   ICONS
+=================================================== */
+
+.footer-social {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-social a {
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+
+    background: rgba(255,255,255,.04);
+
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+/* hover suave */
+.footer-social a:hover {
+    transform: translateY(-3px);
+}
+
+/* tamanho do svg */
+.social-icon {
+    width: 22px;
+    height: 22px;
+
+    object-fit: contain;
+}
+
+/* INSTAGRAM */
+.footer-social a:nth-child(1) {
+    background:
+        linear-gradient(
+            135deg,
+            #f58529,
+            #dd2a7b,
+            #8134af,
+            #515bd4
+        );
+}
+
+/* FACEBOOK */
+.footer-social a:nth-child(2) {
+    background: #1877f2;
+}
+
+/* LINKEDIN */
+.footer-social a:nth-child(3) {
+    background: #3b90e6;
+}
+
+/* GITHUB */
+.footer-social a:nth-child(4) {
+    background: #181717;
+}
+
+/* hover glow */
+.footer-social a:nth-child(1):hover {
+    box-shadow: 0 10px 22px rgba(221,42,123,.35);
+}
+
+.footer-social a:nth-child(2):hover {
+    box-shadow: 0 10px 22px rgba(24,119,242,.35);
+}
+
+.footer-social a:nth-child(3):hover {
+    box-shadow: 0 10px 22px rgba(10,102,194,.35);
+}
+
+.footer-social a:nth-child(4):hover {
+    box-shadow: 0 10px 22px rgba(0,0,0,.35);
+}
+
+
+
+.social-icon {
+    width: 22px;
+    height: 22px;
+
+    object-fit: contain;
+
+    display: block;
+}
+
 @media (max-width: 1100px) {
     .footer-top {
         grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+/* mobile */
+@media (max-width: 768px) {
+
+    .footer-social {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .footer-social a {
+        width: 42px;
+        height: 42px;
+    }
+
+    .social-icon {
+        width: 20px;
+        height: 20px;
     }
 }
 
