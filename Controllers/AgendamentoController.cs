@@ -224,21 +224,21 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Novo", new { servicoId });
             }
 
-            // // VALIDAÇÃO PREMIUM
-            // bool premium = profDAO.EhPremium(profissionalId);
+            // VALIDAÇÃO PREMIUM
+            bool premium = profDAO.EhPremium(profissionalId);
 
-            // if (!premium)
-            // {
-            //     int totalSemana = dao.ContarAgendamentosSemana(profissionalId);
+            if (!premium)
+            {
+                int totalSemana = dao.ContarAgendamentosSemana(profissionalId);
 
-            //     if (totalSemana >= 3)
-            //     {
-            //         TempData["Erro"] =
-            //             "Este profissional atingiu o limite semanal do plano gratuito.";
+                if (totalSemana >= 3)
+                {
+                    TempData["Erro"] =
+                        "Este profissional atingiu o limite semanal do plano gratuito.";
 
-            //         return RedirectToAction("Novo", new { servicoId, data });
-            //     }
-            // }
+                    return RedirectToAction("Novo", new { servicoId, data });
+                }
+            }
 
 
             if (dao.HorarioOcupado(servicoId, data, hora))
@@ -485,13 +485,13 @@ namespace BD_TRAMPO.Controllers
 
 
             //  4 REGRA DE TEMPO
-            // DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
+            DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
 
-            // if (dataHoraAgendamento > DateTime.Now)
-            // {
-            //     TempData["Erro"] = "Você só pode finalizar após o horário do atendimento.";
-            //     return Redirect(Request.Headers["Referer"].ToString());
-            // }
+            if (dataHoraAgendamento > DateTime.Now)
+            {
+                TempData["Erro"] = "Você só pode finalizar após o horário do atendimento.";
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
 
 
             if (valorFinal <= 0)

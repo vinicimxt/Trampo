@@ -30,26 +30,6 @@ namespace BD_TRAMPO.Controllers
 
             return View();
         }
-        // [HttpPost]
-        // public IActionResult AssinarPremium()
-        // {
-        //     string usuarioSession = HttpContext.Session.GetString("UsuarioId");
-
-        //     if (string.IsNullOrEmpty(usuarioSession))
-        //         return RedirectToAction("Login", "Usuario");
-
-        //     int usuarioId = int.Parse(usuarioSession);
-
-        //     ProfissionalDAO dao = new ProfissionalDAO();
-
-        //     int profissionalId = dao.BuscarPorUsuario(usuarioId);
-
-        //     dao.AtivarPremium(profissionalId);
-
-        //     TempData["Sucesso"] = "Plano Premium ativado com sucesso!";
-
-        //     return RedirectToAction("Dashboard");
-        // }
 
 
         [HttpPost]

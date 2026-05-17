@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.perfil-card').forEach(function (card) {
 
         card.addEventListener('mouseenter', function () {
-            /* gancho futuro: prefetch ou analytics */
+            /* gancho  prefetch ou analytics */
         });
 
         card.addEventListener('mouseleave', function () {
-            /* gancho futuro */
+            /* gancho  */
         });
     });
 

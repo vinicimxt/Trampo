@@ -2,13 +2,13 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔥 REGISTRAR SERVIÇOS
+//  REGISTRAR SERVIÇOS
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(); 
 
 var app = builder.Build();
 
-// 🔥 PIPELINE
+//  PIPELINE
 
 if (!app.Environment.IsDevelopment())
 {
@@ -18,11 +18,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles(); // 
+app.UseStaticFiles();  
 
 app.UseRouting();
 
-app.UseSession(); // 
+app.UseSession(); 
 
 app.UseAuthorization();
 

@@ -61,26 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var filtroAtivo = filtros.busca || filtros.categoria || filtros.subcategoria || filtros.atendimento;
         if (btnLimpar) btnLimpar.classList.toggle('visible', !!filtroAtivo);
 
-        /*
-        ================================================
-        GANCHO PARA BACKEND — substituir bloco acima por:
-
-        var params = new URLSearchParams();
-        if (filtros.busca)        params.set('q',            filtros.busca);
-        if (filtros.categoria)    params.set('categoria',    filtros.categoria);
-        if (filtros.subcategoria) params.set('subcategoria', filtros.subcategoria);
-        if (filtros.atendimento)  params.set('atendimento',  filtros.atendimento);
-
-        fetch('/Profissional/Filtrar?' + params.toString())
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                renderizarCards(data);  // função que reconstrói o grid com os dados
-            });
-
-        Atualizar também a URL sem recarregar:
-        history.replaceState(null, '', '?' + params.toString());
-        ================================================
-        */
     }
 
     /* -----------------------------------------------
@@ -163,10 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /* -----------------------------------------------
-       LEITURA DE QUERY PARAMS NA URL
-       (útil quando o backend redirecionar com filtros)
-
-       Exemplo: /Profissional?categoria=Beleza&atendimento=Online
+       LEITURA DE QUERY 
     ----------------------------------------------- */
     var urlParams = new URLSearchParams(window.location.search);
 

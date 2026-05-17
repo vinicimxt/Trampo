@@ -219,13 +219,11 @@ C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\rjimswa.dsw
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\scopedcss\bundle\BD-TRAMPO.styles.css
-C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\2bllw5hioh-{0}-0yeye9ksap-0yeye9ksap.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\71btq532bm-{0}-b2zre4fgfs-b2zre4fgfs.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\9k56h1gbcu-{0}-uiestyayt8-uiestyayt8.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\b3ias2624p-{0}-p6sovn6cok-p6sovn6cok.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\u1mqsesrmm-{0}-va19ldl321-va19ldl321.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\s1q9g73k1r-{0}-z4bv7adscg-z4bv7adscg.gz
-C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\2prmj3r691-{0}-ef5vuurcmr-ef5vuurcmr.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\11384dnufj-{0}-7fc238a6v8-7fc238a6v8.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\vwtbksma3s-{0}-i4hnksytmk-i4hnksytmk.gz
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\ojcjc2w1j1-{0}-xupvdn9fhw-xupvdn9fhw.gz
@@ -322,3 +320,5 @@ C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\refint\BD-T
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\BD-TRAMPO.pdb
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\BD-TRAMPO.genruntimeconfig.cache
 C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\ref\BD-TRAMPO.dll
+C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\2bllw5hioh-{0}-nvfyop8msb-nvfyop8msb.gz
+C:\Users\Vinicius\source\repos\BD-TRAMPO\BD-TRAMPO\obj\Debug\net10.0\compressed\2prmj3r691-{0}-wab1qa3hgr-wab1qa3hgr.gz
