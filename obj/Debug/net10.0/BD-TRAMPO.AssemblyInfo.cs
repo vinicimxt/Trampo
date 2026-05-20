@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BD-TRAMPO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55b6c01938dd3a6105e64e78a10247ba79dfc358")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fb8e99835b77d5d954f03c1b023714a984f19f52")]
 [assembly: System.Reflection.AssemblyProductAttribute("BD-TRAMPO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BD-TRAMPO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

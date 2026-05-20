@@ -11,12 +11,6 @@ BEGIN
 END
 GO
 
-CREATE DATABASE Xamou;
-GO
-
-USE Xamou;
-GO
-
 -- DROP TABLES 
 DROP TABLE IF EXISTS Avaliacoes; 
 DROP TABLE IF EXISTS Agendamentos; 
@@ -30,6 +24,13 @@ DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios; 
 DROP TABLE IF EXISTS Notificacoes;
 DROP TABLE IF EXISTS Assinaturas;
+
+CREATE DATABASE Xamou;
+GO
+
+USE Xamou;
+GO
+
 
 /* =========================================================
    USUÁRIOS
@@ -147,6 +148,8 @@ CREATE TABLE Servicos (
 
     Descricao NVARCHAR(255) NULL,
 
+    LocalId INT NULL,
+
     Atendimento NVARCHAR(50) NOT NULL
         CHECK (Atendimento IN ('Domicilio', 'Local', 'Online')),
 
@@ -169,6 +172,7 @@ CREATE TABLE Servicos (
         REFERENCES Subcategorias(Id)
 );
 
+/*
 CREATE TABLE ServicoLocais (
     Id INT PRIMARY KEY IDENTITY,
 
@@ -186,6 +190,7 @@ CREATE TABLE ServicoLocais (
         REFERENCES Locais(Id)
         ON DELETE NO ACTION
 );
+*/
 
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
@@ -206,7 +211,7 @@ CREATE TABLE Disponibilidade (
     CONSTRAINT FK_Disponibilidade_Profissionais
         FOREIGN KEY (ProfissionalId)
         REFERENCES Profissionais(Id)
-        ON DELETE CASCADE,
+        ON DELETE NO ACTION,
 
     CONSTRAINT FK_Disponibilidade_Servicos
         FOREIGN KEY (ServicoId)
@@ -253,13 +258,14 @@ CREATE TABLE Agendamentos (
 
     Hora TIME NOT NULL,
 
-       CHECK (Status IN (
-        'Pendente',
-        'Confirmado',
-        'Finalizado',
-        'Cancelado',
-        'AguardandoCliente'
-    )),
+    Status NVARCHAR(30) NOT NULL DEFAULT 'Pendente'
+        CHECK (Status IN (
+            'Pendente',
+            'Confirmado',
+            'Finalizado',
+            'Cancelado',
+            'AguardandoCliente'
+        )),
 
     Descricao NVARCHAR(255) NULL,
 
@@ -432,26 +438,116 @@ VALUES
 ('Beleza'),
 ('Tecnologia'),
 ('Aulas'),
-('Eventos');
+('Eventos'),
+('Saúde'),
+('Automotivo'),
+('Pets'),
+('Fitness'),
+('Limpeza'),
+('Consultoria'),
+('Design'),
+('Moda'),
+('Gastronomia'),
+('Marketing');
+
 
 INSERT INTO Subcategorias (Nome, CategoriaId)
 VALUES
+
+-- MANUTENÇÃO
 ('Elétrica', 1),
 ('Hidráulica', 1),
 ('Construção', 1),
 ('Jardinagem', 1),
+('Pintura', 1),
+('Marcenaria', 1),
 
+-- BELEZA
 ('Cabelo', 2),
 ('Estética', 2),
+('Barbearia', 2),
+('Manicure', 2),
+('Maquiagem', 2),
 
+-- TECNOLOGIA
 ('Informática', 3),
 ('Desenvolvimento', 3),
+('Suporte Técnico', 3),
+('Redes', 3),
+('Design de Sites', 3),
 
+-- AULAS
 ('Idiomas', 4),
 ('Música', 4),
+('Reforço Escolar', 4),
+('Programação', 4),
+('Dança', 4),
 
+-- EVENTOS
 ('Fotografia', 5),
-('Buffet', 5);
+('Buffet', 5),
+('Decoração', 5),
+('DJ', 5),
+('Filmagem', 5),
+
+-- SAÚDE
+('Psicologia', 6),
+('Fisioterapia', 6),
+('Nutrição', 6),
+('Massoterapia', 6),
+
+-- AUTOMOTIVO
+('Lava Rápido', 7),
+('Mecânica', 7),
+('Funilaria', 7),
+('Troca de Óleo', 7),
+
+-- PETS
+('Banho e Tosa', 8),
+('Adestramento', 8),
+('Pet Sitter', 8),
+('Veterinário', 8),
+
+-- FITNESS
+('Personal Trainer', 9),
+('Yoga', 9),
+('Pilates', 9),
+('Cross Training', 9),
+
+-- LIMPEZA
+('Faxina Residencial', 10),
+('Limpeza Pós-Obra', 10),
+('Limpeza Comercial', 10),
+('Passadeira', 10),
+
+-- CONSULTORIA
+('Financeira', 11),
+('Jurídica', 11),
+('RH', 11),
+('Empresarial', 11),
+
+-- DESIGN
+('Design Gráfico', 12),
+('UX/UI Design', 12),
+('Modelagem 3D', 12),
+('Edição de Vídeo', 12),
+
+-- MODA
+('Costura', 13),
+('Personal Stylist', 13),
+('Ajustes de Roupa', 13),
+
+-- GASTRONOMIA
+('Chef Particular', 14),
+('Confeitaria', 14),
+('Marmitas', 14),
+('Churrasqueiro', 14),
+
+-- MARKETING
+('Social Media', 15),
+('Tráfego Pago', 15),
+('Copywriting', 15),
+('SEO', 15);
 
 
 /* =========================================================
@@ -467,7 +563,6 @@ SELECT * FROM Subcategorias;
 
 SELECT * FROM Locais;
 SELECT * FROM Servicos;
-SELECT * FROM ServicoLocais;
 SELECT * FROM Disponibilidade;
 SELECT * FROM BloqueiosAgenda;
 
@@ -478,20 +573,7 @@ SELECT * FROM ContatoSuporte;
 SELECT * FROM Notificacoes;
 SELECT * FROM Assinaturas;
 
-
-ALTER TABLE Agendamentos
-DROP CONSTRAINT CKAgendamenStatu__123EB7A3;
-
-ALTER TABLE Agendamentos
-ADD CONSTRAINT CK_Agendamentos_Status
-CHECK (Status IN (
-    'Pendente',
-    'Confirmado',
-    'Finalizado',
-    'Cancelado',
-    'AguardandoCliente'
-));
-
+--CONTA ADMIN 
 INSERT INTO Usuarios (Nome,Email,Senha,Tipo) VALUES ('ADMIN' , 'admin@trampo.com','admin123', 'admin');
 
 UPDATE Usuarios

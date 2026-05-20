@@ -59,7 +59,7 @@ namespace BD_TRAMPO.Controllers
                         Endereco = endereco
                     });
 
-                    TempData["Sucesso"] = "Local criado com sucesso 📍";
+                    TempData["Sucesso"] = "Local criado com sucesso ✔";
                 }
             }
             catch (Exception)
@@ -78,7 +78,7 @@ namespace BD_TRAMPO.Controllers
             try
             {
                 new LocalDAO().Excluir(id);
-                TempData["Sucesso"] = "Local removido com sucesso 🗑️";
+                TempData["Sucesso"] = "Local removido com sucesso ✔";
             }
             catch (Exception)
             {

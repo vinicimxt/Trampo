@@ -156,6 +156,11 @@ namespace BD_TRAMPO.Controllers
                 TempData["Erro"] = "Erro ao criar serviço. Tente novamente.";
                 return RedirectToAction("Criar");
             }
+            // catch (Exception ex)  
+            // {
+            //     TempData["Erro"] = ex.Message;
+            //     return RedirectToAction("Criar");
+            // }
         }
 
 
