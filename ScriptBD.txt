@@ -46,7 +46,7 @@ CREATE TABLE Usuarios (
     Senha NVARCHAR(255) NOT NULL,
 
     Tipo NVARCHAR(20) NOT NULL
-        CHECK (Tipo IN ('Cliente', 'Profissional')),
+        CHECK (Tipo IN ('cliente', 'profissional', 'admin')),
 
     Telefone NVARCHAR(20) NULL
 );
@@ -573,9 +573,26 @@ SELECT * FROM ContatoSuporte;
 SELECT * FROM Notificacoes;
 SELECT * FROM Assinaturas;
 
+
+/*
 --CONTA ADMIN 
 INSERT INTO Usuarios (Nome,Email,Senha,Tipo) VALUES ('ADMIN' , 'admin@trampo.com','admin123', 'admin');
 
 UPDATE Usuarios
 SET Tipo = 'admin'
 WHERE Email = 'admin@trampo.com'
+
+DELETE FROM Usuarios
+WHERE Email = 'admin@trampo.com';
+
+EXEC sp_fkeys 'Locais'
+
+ALTER TABLE Usuarios
+DROP CONSTRAINT CK__Usuarios__Tipo__5DCAEF64;
+
+ALTER TABLE Usuarios
+ADD CONSTRAINT CK_Usuarios_Tipo
+CHECK (Tipo IN ('cliente', 'profissional', 'admin'));
+
+*/
+

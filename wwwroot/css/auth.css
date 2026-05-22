@@ -118,7 +118,6 @@ body {
     margin-bottom: 56px;
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
 .auth-logo .highlight {

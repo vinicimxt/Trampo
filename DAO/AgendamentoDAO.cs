@@ -701,9 +701,5 @@ namespace BD_TRAMPO
             return lista;
         }
 
-
-
-
-
     }
 }

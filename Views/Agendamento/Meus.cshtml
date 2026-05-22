@@ -368,10 +368,18 @@
                                         }
                                         else if (!ag.ConfirmadoCliente)
                                         {
-                                            <button aria-label="finalizar atendimento" type="button" class="btn-finalizar" onclick="confirmarConclusao('@ag.Id')">
-                                                <span aria-hidden="true" class="material-symbols-rounded icon-fill"
-                                                      style="font-size:2.8rem;color:#22c55e;">check_circle Confirmar conclusão</span>
-                                            </button>
+                                            <button aria-label="finalizar atendimento"
+                                            type="button"
+                                            class="btn-finalizar"
+                                            onclick="confirmarConclusao('@ag.Id')">
+
+                                        <span aria-hidden="true"
+                                            class="material-symbols-rounded icon-fill">
+                                            check_circle
+                                        </span>
+
+                                        Confirmar conclusão
+                                    </button>
                                         }
                                         else if (ag.PodeAvaliar())
                                         {

@@ -28,12 +28,34 @@
                 return RedirectToAction("Cadastro");
             }
 
+
             string senhaHash = Seguranca.GerarHash(senha);
+
+            // segurança
+            string tipoSeguro = tipo == "profissional"
+                ? "profissional"
+                : "cliente";
+
+            // admin (provisório)
+            if (
+                email.ToLower() == "admin@trampo.com" &&
+                senha == "admin123"
+            )
+            {
+                tipoSeguro = "admin";
+            }
+
             int usuarioId;
 
             try
             {
-                usuarioId = usuarioDAO.Inserir(nome, email, senhaHash, tipo, telefone);
+                usuarioId = usuarioDAO.Inserir(
+                    nome,
+                    email,
+                    senhaHash,
+                    tipoSeguro,
+                    telefone
+                );
             }
             catch (SqlException ex)
             {
@@ -47,56 +69,52 @@
                 return RedirectToAction("Cadastro");
             }
 
-            if (tipo == "profissional")
+            // profissional
+            if (tipoSeguro == "profissional")
             {
                 ProfissionalDAO profDAO = new ProfissionalDAO();
 
                 try
                 {
-                    profDAO.Inserir(usuarioId, tipoDocumento, documento, contato);
+                    profDAO.Inserir(
+                        usuarioId,
+                        tipoDocumento,
+                        documento,
+                        contato
+                    );
                 }
                 catch (SqlException ex)
                 {
-                    usuarioDAO.Remover(usuarioId); //rollback manual
+                    usuarioDAO.Remover(usuarioId);
 
                     if (ex.Number == 2627 || ex.Number == 2601)
                     {
-                        TempData["Erro"] = "Já existe um cadastro com esse CPF.";
+                        TempData["Erro"] = "Já existe um cadastro com esse documento.";
                         return RedirectToAction("Cadastro");
                     }
 
-                    TempData["Erro"] = "Erro ao cadastrar.";
+                    TempData["Erro"] = "Erro ao cadastrar profissional.";
                     return RedirectToAction("Cadastro");
                 }
             }
 
+            // cliente
             ClienteDAO clienteDAO = new ClienteDAO();
             clienteDAO.Inserir(usuarioId);
 
+            // sessão
             HttpContext.Session.SetString("UsuarioId", usuarioId.ToString());
             HttpContext.Session.SetString("UsuarioNome", nome);
             HttpContext.Session.SetString("UsuarioEmail", email);
-            HttpContext.Session.SetString("UsuarioTipo", tipo);
+            HttpContext.Session.SetString("UsuarioTipo", tipoSeguro);
 
             TempData["Sucesso"] = "Conta criada com sucesso!";
 
-            if (tipo == "profissional")
+            if (tipoSeguro == "profissional")
                 return RedirectToAction("Criar", "Servico");
 
             return RedirectToAction("Lista", "Profissional");
         }
-
-        public IActionResult RedirecionarPorTipo()
-        {
-            var tipo = Sessao.Tipo(HttpContext);
-
-            if (tipo == "profissional")
-                return RedirectToAction("Dashboard", "Profissional");
-
-            return RedirectToAction("Lista", "Profissional");
-        }
-
-
 
         [HttpPost]
         public IActionResult Logar(string email, string senha)
