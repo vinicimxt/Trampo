@@ -1,6 +1,7 @@
 USE master;
 GO
 
+/*
 IF DB_ID('Xamou') IS NOT NULL
 BEGIN
     ALTER DATABASE Xamou
@@ -24,6 +25,7 @@ DROP TABLE IF EXISTS Profissionais;
 DROP TABLE IF EXISTS Usuarios; 
 DROP TABLE IF EXISTS Notificacoes;
 DROP TABLE IF EXISTS Assinaturas;
+*/
 
 CREATE DATABASE Xamou;
 GO
