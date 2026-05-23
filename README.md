@@ -113,6 +113,7 @@ BD_TRAMPO/
 
 1. Clone o projeto
 2. Abra no Visual Studio / VSCode
-3. Configure a connection string
-4. Execute o script SQL
-5. Rode o projeto (dotnet watch run no terminal VSCODE)
+3. Baixe a extensão do C#
+4. Configure a connection string
+5. Copie o ScriptBD e Execute o script SQL SERVER 
+6. Rode o projeto ("dotnet watch run" no terminal)
