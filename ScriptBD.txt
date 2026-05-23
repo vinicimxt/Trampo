@@ -174,26 +174,6 @@ CREATE TABLE Servicos (
         REFERENCES Subcategorias(Id)
 );
 
-/*
-CREATE TABLE ServicoLocais (
-    Id INT PRIMARY KEY IDENTITY,
-
-    ServicoId INT NOT NULL,
-
-    LocalId INT NOT NULL,
-
-    CONSTRAINT FK_ServicoLocais_Servicos
-        FOREIGN KEY (ServicoId)
-        REFERENCES Servicos(Id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT FK_ServicoLocais_Locais
-        FOREIGN KEY (LocalId)
-        REFERENCES Locais(Id)
-        ON DELETE NO ACTION
-);
-*/
-
 CREATE TABLE Disponibilidade (
     Id INT PRIMARY KEY IDENTITY,
 
@@ -266,6 +246,8 @@ CREATE TABLE Agendamentos (
             'Confirmado',
             'Finalizado',
             'Cancelado',
+            'CanceladoCliente',
+            'CanceladoProfissional',
             'AguardandoCliente'
         )),
 
@@ -304,6 +286,7 @@ CREATE TABLE Agendamentos (
         FOREIGN KEY (LocalId)
         REFERENCES Locais(Id)
 );
+
 
 
 /* =========================================================
@@ -554,7 +537,7 @@ VALUES
 
 /* =========================================================
    DEBUG
-========================================================= */
+========================================================= 
 
 SELECT * FROM Usuarios;
 SELECT * FROM Clientes;
@@ -574,7 +557,7 @@ SELECT * FROM Avaliacoes;
 SELECT * FROM ContatoSuporte;
 SELECT * FROM Notificacoes;
 SELECT * FROM Assinaturas;
-
+*/
 
 /*
 --CONTA ADMIN 

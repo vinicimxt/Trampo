@@ -429,6 +429,7 @@ namespace BD_TRAMPO.Controllers
 
             return RedirectToAction("Recebidos");
         }
+        
         [HttpPost]
         public IActionResult Finalizar(int id, decimal valorFinal)
         {
@@ -485,13 +486,13 @@ namespace BD_TRAMPO.Controllers
 
 
             //  4 REGRA DE TEMPO
-            DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
+            // DateTime dataHoraAgendamento = ag.Data.Date + ag.Hora;
 
-            if (dataHoraAgendamento > DateTime.Now)
-            {
-                TempData["Erro"] = "Você só pode finalizar após o horário do atendimento.";
-                return Redirect(Request.Headers["Referer"].ToString());
-            }
+            // if (dataHoraAgendamento > DateTime.Now)
+            // {
+            //     TempData["Erro"] = "Você só pode finalizar após o horário do atendimento.";
+            //     return Redirect(Request.Headers["Referer"].ToString());
+            // }
 
 
             if (valorFinal <= 0)
@@ -656,7 +657,7 @@ namespace BD_TRAMPO.Controllers
             return PartialView("_DetalhesAgendamentoModal", ag);
         }
 
-
+    
     
 
 

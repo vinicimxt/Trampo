@@ -396,6 +396,26 @@
 
 @section Scripts {
     <script>
+
+         function abrirModal(id) {
+
+        const modal = document.getElementById(id);
+
+        modal.classList.add('open');
+
+        /* trava scroll da página */
+        document.body.style.overflow = 'hidden';
+    }
+
+    function fecharModal(id) {
+
+        const modal = document.getElementById(id);
+
+        modal.classList.remove('open');
+
+        /* libera scroll novamente */
+        document.body.style.overflow = '';
+    }
         /* abrir drawer de edição */
         document.querySelectorAll('.btn-edit').forEach(function (btn) {
             btn.addEventListener('click', function () {

@@ -92,5 +92,25 @@ namespace BD_TRAMPO
                 return (int)cmd.ExecuteScalar() > 0;
             }
         }
+
+
+        public decimal BuscarMedia(int profissionalId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT ISNULL(AVG(CAST(Nota AS DECIMAL(10,2))), 0)
+            FROM Avaliacoes
+            WHERE ProfissionalId = @ProfissionalId
+        ";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
+
+                return Convert.ToDecimal(cmd.ExecuteScalar());
+            }
+        }
+
     }
 }

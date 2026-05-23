@@ -175,10 +175,27 @@ namespace BD_TRAMPO.Controllers
 
             ViewBag.PedidosPendentes = 0;
 
+            AgendamentoDAO agDAO = new AgendamentoDAO();
+            AvaliacaoDAO avDAO = new AvaliacaoDAO();
+
+            ViewBag.TotalAgendamentos =
+                agDAO.ContarAgendamentos(profissionalId);
+
+            ViewBag.PedidosPendentes =
+                agDAO.ContarPendentesProfissional(profissionalId);
+
+            ViewBag.Avaliacao =
+                avDAO.BuscarMedia(profissionalId).ToString("0.0");
+
+            var media = avDAO.BuscarMedia(profissionalId);
+
+            ViewBag.Avaliacao =
+                media > 0 ? media.ToString("0.0") : "—";
+
             // ENVIA O MODEL
             return View(profissional);
         }
-        
+
         public IActionResult Contato()
         {
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));

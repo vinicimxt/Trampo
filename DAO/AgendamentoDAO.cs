@@ -701,5 +701,46 @@ namespace BD_TRAMPO
             return lista;
         }
 
+        public int ContarAgendamentos(int profissionalId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+            SELECT COUNT(*)
+            FROM Agendamentos
+            WHERE ProfissionalId = @ProfissionalId
+        ";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
+
+                return (int)cmd.ExecuteScalar();
+            }
+        }
+
+        //PARA EXIBIÇÃO  NO PAINEL
+        public int ContarPendentesProfissional(int profissionalId)
+        {
+            using (SqlConnection conn = conexao.Conectar())
+            {
+                string query = @"
+        SELECT COUNT(*) 
+        FROM Agendamentos 
+        WHERE ProfissionalId = @ProfissionalId 
+        AND Status = 'Pendente'";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
+
+                return (int)cmd.ExecuteScalar();
+            }
+        }
+
+
+
+
+
     }
 }

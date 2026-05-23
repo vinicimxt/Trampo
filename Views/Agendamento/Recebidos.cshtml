@@ -583,17 +583,7 @@
         function abrirModal(tipo, id, cliente, data, hora, tipoPreco, precoBase, percentualTaxa) {
             fecharModais();
             
-            precoBase = parseFloat(
-                precoBase.toString().replace(',', '.')
-            );
-
-            percentualTaxa = parseFloat(percentualTaxa);
-
-            let taxa =
-                precoBase * (percentualTaxa / 100);
-
-            let liquido =
-                precoBase - taxa;
+ 
 
             var desc = 'Agendamento de <strong>' + cliente + '</strong> para <strong>' + data + ' às ' + hora + '</strong>.';
 
@@ -608,6 +598,17 @@
                 document.getElementById('modalRecusar').classList.add('open');
             }
             else if (tipo === 'finalizar') {
+                           precoBase = parseFloat(
+                precoBase.toString().replace(',', '.')
+            );
+
+            percentualTaxa = parseFloat(percentualTaxa);
+
+            let taxa =
+                precoBase * (percentualTaxa / 100);
+
+            let liquido =
+                precoBase - taxa;
 
                 document.getElementById('descFinalizar').innerHTML =
                     desc + ' Confirme que o serviço foi realizado.';
@@ -664,7 +665,7 @@
                 else {
 
                     htmlPreco = `
-                                                <div style="margin-top:20px;text-align:left;">
+                                             <div style="margin-top:20px;text-align:left;">
 
                                                     <label style="font-weight:600;">
                                                         Valor cobrado

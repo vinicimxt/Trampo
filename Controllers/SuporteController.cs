@@ -11,7 +11,7 @@ namespace BD_TRAMPO.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("ContatoAjuda");
         }
         
         public IActionResult Enviar(string tipo, string assunto, string mensagem)
