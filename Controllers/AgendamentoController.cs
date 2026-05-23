@@ -108,21 +108,59 @@ namespace BD_TRAMPO.Controllers
 
             return View();
         }
-        private List<TimeSpan> GerarHorarios(TimeSpan inicio, TimeSpan fim, List<TimeSpan> ocupados)
+        private List<TimeSpan> GerarHorarios(
+            TimeSpan inicio,
+            TimeSpan fim,
+            List<TimeSpan> ocupados)
         {
             var horarios = new List<TimeSpan>();
 
-            while (inicio < fim)
-            {
-                if (!ocupados.Contains(inicio))
-                    horarios.Add(inicio);
+            var inicioOriginal = inicio;
 
-                inicio = inicio.Add(TimeSpan.FromHours(1));
+            // HORÁRIO NORMAL
+            if (fim > inicio)
+            {
+                while (inicio < fim)
+                {
+                    if (!ocupados.Contains(inicio))
+                        horarios.Add(inicio);
+
+                    inicio = inicio.Add(TimeSpan.FromHours(1));
+                }
             }
 
-            return horarios;
-        }
+            // ATRAVESSA MEIA-NOITE
+            else
+            {
+                while (inicio < TimeSpan.FromHours(24))
+                {
+                    if (!ocupados.Contains(inicio))
+                        horarios.Add(inicio);
 
+                    inicio = inicio.Add(TimeSpan.FromHours(1));
+                }
+
+                inicio = TimeSpan.Zero;
+
+                while (inicio < fim)
+                {
+                    if (!ocupados.Contains(inicio))
+                        horarios.Add(inicio);
+
+                    inicio = inicio.Add(TimeSpan.FromHours(1));
+                }
+            }
+
+            return horarios
+                .OrderBy(h =>
+                {
+                    if (h < inicioOriginal)
+                        return h.Add(TimeSpan.FromHours(24));
+
+                    return h;
+                })
+                .ToList();
+        }
 
         public IActionResult Salvar(int servicoId, DateTime data, TimeSpan hora, string descricao, string rua, string numero, string bairro, string cidade, int? localId)
         {
@@ -429,7 +467,7 @@ namespace BD_TRAMPO.Controllers
 
             return RedirectToAction("Recebidos");
         }
-        
+
         [HttpPost]
         public IActionResult Finalizar(int id, decimal valorFinal)
         {
@@ -657,8 +695,8 @@ namespace BD_TRAMPO.Controllers
             return PartialView("_DetalhesAgendamentoModal", ag);
         }
 
-    
-    
+
+
 
 
     }
