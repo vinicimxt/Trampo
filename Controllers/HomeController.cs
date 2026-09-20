@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace BD_TRAMPO.Controllers
 {
+    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
     public class HomeController : BaseController
     {
         public IActionResult Index()

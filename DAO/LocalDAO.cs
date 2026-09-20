@@ -74,6 +74,7 @@ namespace BD_TRAMPO.DAO
                     return new Local
                     {
                         Id = (int)reader["Id"],
+                        ProfissionalId = (int)reader["ProfissionalId"],
                         Nome = reader["Nome"].ToString(),
                         Endereco = reader["Endereco"].ToString()
                     };
@@ -103,6 +104,7 @@ namespace BD_TRAMPO.DAO
                     lista.Add(new Local
                     {
                         Id = (int)reader["Id"],
+                        ProfissionalId = (int)reader["ProfissionalId"],
                         Nome = reader["Nome"].ToString(),
                         Endereco = reader["Endereco"].ToString()
                     });

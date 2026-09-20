@@ -3,8 +3,30 @@ using BD_TRAMPO.DAO;
 namespace BD_TRAMPO.Controllers
 {
 
+    [Perfil("profissional")]
     public class ServicoController : BaseController
     {
+        private string? ValidarServico(string nome, string atendimento, int? localId, string link,
+            string tipoPreco, decimal? preco, string dias, TimeSpan inicio, TimeSpan fim)
+        {
+            if (string.IsNullOrWhiteSpace(nome) || nome.Length > 100 ||
+                !new[] { "Local", "Domicilio", "Online" }.Contains(atendimento) ||
+                !new[] { "Fixo", "Combinar" }.Contains(tipoPreco))
+                return "Dados do serviço inválidos.";
+            if (tipoPreco == "Fixo" && (!preco.HasValue || preco <= 0 || preco > 99999999.99m))
+                return "Preço inválido.";
+            if (atendimento == "Online" && (!Seguranca.UrlHttpValida(link) || link.Length > 255))
+                return "Informe um link HTTP ou HTTPS válido.";
+            if (atendimento == "Local" && (!localId.HasValue ||
+                new LocalDAO().BuscarPorId(localId.Value)?.ProfissionalId != ProfissionalAtualId))
+                return "O local deve pertencer ao profissional.";
+            if (inicio < TimeSpan.Zero || inicio >= TimeSpan.FromDays(1) ||
+                fim < TimeSpan.Zero || fim >= TimeSpan.FromDays(1) || inicio == fim ||
+                string.IsNullOrWhiteSpace(dias) ||
+                dias.Split(',').Any(d => !int.TryParse(d, out var dia) || dia < 0 || dia > 6))
+                return "Disponibilidade inválida.";
+            return null;
+        }
         public IActionResult Criar()
         {
             var auth = Proteger();
@@ -23,14 +45,15 @@ namespace BD_TRAMPO.Controllers
 
             ViewBag.Subcategorias = new List<Subcategoria>(); // começa vazio
             ServicoDAO servicoDAO = new ServicoDAO();
-            ViewBag.TotalServicos = servicoDAO.ContarPorProfissional(usuarioId);
+            ViewBag.TotalServicos = servicoDAO.ContarPorProfissional(profissionalId);
 
             AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
-            ViewBag.PedidosPendentes = agendamentoDAO.ContarPendentes(usuarioId);
+            ViewBag.PedidosPendentes = agendamentoDAO.ContarPendentesProfissional(profissionalId);
 
             return View();
         }
 
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public JsonResult GetSubcategorias(int categoriaId)
         {
             SubcategoriaDAO dao = new SubcategoriaDAO();
@@ -59,6 +82,12 @@ namespace BD_TRAMPO.Controllers
                 return RedirectToAction("Cadastro", "Usuario");
             }
 
+            var erro = ValidarServico(nome, atendimento, localId, linkOnline, tipoPreco, precoBase, diasSemana, horaInicio, horaFim);
+            if (erro != null) return BadRequest(erro);
+            if (!new SubcategoriaDAO().ListarTodas().Any(x => x.Id == subcategoriaId))
+                return BadRequest("Subcategoria inválida.");
+            if (atendimento != "Local") localId = null;
+            if (atendimento != "Online") linkOnline = null;
             //  VALIDAÇÕES
 
             if (tipoPreco == "Fixo" && (!precoBase.HasValue || precoBase <= 0))
@@ -166,6 +195,7 @@ namespace BD_TRAMPO.Controllers
 
         public IActionResult Editar(int id)
         {
+            var acesso = ProtegerServico(id); if (acesso != null) return acesso;
             ServicoDAO dao = new ServicoDAO();
             var servico = dao.BuscarPorId(id);
 
@@ -194,14 +224,17 @@ namespace BD_TRAMPO.Controllers
 
             ViewBag.Subcategorias = subDAO.ListarTodas();
 
-            return View(servico);
+            return RedirectToAction("MeusServicos", "Profissional");
         }
         [HttpPost]
         public IActionResult Editar(Servico s, string diasSemana, TimeSpan horaInicio, TimeSpan horaFim)
         {
+            var acesso = ProtegerServico(s.Id); if (acesso != null) return acesso;
+            var erro = ValidarServico(s.Nome, s.Atendimento, s.LocalId, s.LinkOnline, s.TipoPreco, s.PrecoBase, diasSemana, horaInicio, horaFim);
+            if (erro != null) return BadRequest(erro);
             try
             {
-                //  VALIDAÇÕES
+                // VALIDAÇÕES
                 if (string.IsNullOrWhiteSpace(s.Nome))
                 {
                     TempData["Erro"] = "Informe o nome do serviço.";
@@ -283,12 +316,14 @@ namespace BD_TRAMPO.Controllers
             return RedirectToAction("MeusServicos", "Profissional");
         }
 
+        [HttpPost]
         public IActionResult Excluir(int id)
         {
+            var acesso = ProtegerServico(id); if (acesso != null) return acesso;
             try
             {
                 ServicoDAO dao = new ServicoDAO();
-                dao.Excluir(id);
+                if (dao.TemAgendamentos(id)) dao.Desativar(id); else dao.Excluir(id);
 
                 TempData["Sucesso"] = "Serviço excluído com sucesso 🗑️";
             }
@@ -307,8 +342,10 @@ namespace BD_TRAMPO.Controllers
             return RedirectToAction("MeusServicos", "Profissional");
         }
 
+        [HttpPost]
         public IActionResult Desativar(int id)
         {
+            var acesso = ProtegerServico(id); if (acesso != null) return acesso;
             try
             {
                 ServicoDAO dao = new ServicoDAO();
@@ -322,9 +359,9 @@ namespace BD_TRAMPO.Controllers
                 {
                     DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
 
-                    dispDAO.RemoverPorServico(id);
+                    // A exclusão das regras acontece atomicamente no DAO.
 
-                    dao.Excluir(id);
+                    if (dao.TemAgendamentos(id)) dao.Desativar(id); else dao.Excluir(id);
 
                     TempData["Sucesso"] =
                         "Serviço excluído com sucesso 🗑️";
@@ -339,6 +376,7 @@ namespace BD_TRAMPO.Controllers
         }
 
 
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public JsonResult Subcategorias(int categoriaId)
         {
             SubcategoriaDAO dao = new SubcategoriaDAO();

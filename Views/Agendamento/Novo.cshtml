@@ -43,7 +43,7 @@
     <!-- =============================================
          LAYOUT PRINCIPAL
     ============================================= -->
-    <form method="post" action="/Agendamento/Salvar" id="formAgendamento">
+    <form asp-antiforgery="true" method="post" action="/Agendamento/Salvar" id="formAgendamento">
 
         <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
         <input type="hidden" name="hora" id="horaSelecionada" />

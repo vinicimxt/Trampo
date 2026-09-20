@@ -1,4 +1,4 @@
-﻿using BD_TRAMPO.Models;
+using BD_TRAMPO.Models;
 
 namespace BD_TRAMPO
 {
@@ -48,27 +48,31 @@ namespace BD_TRAMPO
             }
         }
 
-        public Usuario BuscarLogin(string email, string senhaHash)
+        public Usuario BuscarLogin(string email, string senha)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "SELECT * FROM Usuarios WHERE Email = @Email AND Senha = @Senha";
+                string query = "SELECT * FROM Usuarios WHERE Email = @Email";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Email", email);
-                cmd.Parameters.AddWithValue("@Senha", senhaHash);
+
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 if (reader.Read())
                 {
-                    return new Usuario
+                    int id = (int)reader["Id"];
+                    string hash = reader["Senha"].ToString()!;
+                    if (!Seguranca.Verificar(hash, senha, out bool atualizar)) return null;
+                    var usuario = new Usuario
                     {
-                        Id = (int)reader["Id"],
-                        Nome = reader["Nome"].ToString(),
-                        Email = reader["Email"].ToString(),
-                        Tipo = reader["Tipo"].ToString()
+                        Id = id, Nome = reader["Nome"].ToString()!,
+                        Email = reader["Email"].ToString()!, Tipo = reader["Tipo"].ToString()!
                     };
+                    reader.Close();
+                    if (atualizar) AtualizarHashLegado(id, hash, Seguranca.GerarHash(senha));
+                    return usuario;
                 }
             }
 
@@ -161,30 +165,23 @@ namespace BD_TRAMPO
 
 
         // ALTERAR SENHA DO USUARIO
-        public bool VerificarSenha(
-    int usuarioId,
-    string senhaHash)
+        private void AtualizarHashLegado(int id, string anterior, string novo)
         {
-            using (SqlConnection conn = conexao.Conectar())
-            {
-                string query = @"
-            SELECT COUNT(*)
-            FROM Usuarios
-            WHERE Id = @Id
-            AND Senha = @Senha";
-
-                SqlCommand cmd =
-                    new SqlCommand(query, conn);
-
-                cmd.Parameters.AddWithValue("@Id", usuarioId);
-                cmd.Parameters.AddWithValue("@Senha", senhaHash);
-
-                int count = (int)cmd.ExecuteScalar();
-
-                return count > 0;
-            }
+            using var conn = conexao.Conectar();
+            using var cmd = new SqlCommand("UPDATE Usuarios SET Senha=@Nova WHERE Id=@Id AND Senha=@Anterior", conn);
+            cmd.Parameters.AddWithValue("@Id", id);
+            cmd.Parameters.AddWithValue("@Anterior", anterior);
+            cmd.Parameters.AddWithValue("@Nova", novo);
+            cmd.ExecuteNonQuery();
         }
 
+        public bool VerificarSenha(int usuarioId, string senha)
+        {
+            using var conn = conexao.Conectar();
+            using var cmd = new SqlCommand("SELECT Senha FROM Usuarios WHERE Id=@Id", conn);
+            cmd.Parameters.AddWithValue("@Id", usuarioId);
+            return Seguranca.Verificar(cmd.ExecuteScalar()?.ToString() ?? "", senha, out _);
+        }
         public void AtualizarSenha(
     int usuarioId,
     string novaSenhaHash)

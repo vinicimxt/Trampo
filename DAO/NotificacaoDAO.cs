@@ -80,20 +80,28 @@ namespace BD_TRAMPO.DAO
             }
         }
 
-        public void MarcarComoLida(int id)
+        public bool MarcarComoLida(int id, int usuarioId)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "UPDATE Notificacoes SET Lida = 1 WHERE Id = @Id";
+                string query = "UPDATE Notificacoes SET Lida = 1 WHERE Id = @Id AND UsuarioId=@Usuario";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
 
-                cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue("@Usuario", usuarioId);
+                return cmd.ExecuteNonQuery() == 1;
             }
         }
 
 
+        public void MarcarTodasLidas(int usuarioId)
+        {
+            using var conn = conexao.Conectar();
+            using var cmd = new SqlCommand("UPDATE Notificacoes SET Lida=1 WHERE UsuarioId=@Usuario", conn);
+            cmd.Parameters.AddWithValue("@Usuario", usuarioId);
+            cmd.ExecuteNonQuery();
+        }
         public List<Notificacao> BuscarUltimas(int usuarioId, int quantidade)
         {
             List<Notificacao> lista = new List<Notificacao>();

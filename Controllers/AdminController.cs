@@ -3,23 +3,11 @@ using BD_TRAMPO.DAO;
 
 namespace BD_TRAMPO.Controllers
 {
-    public class AdminController : Controller
+    [Perfil("admin")]
+    public class AdminController : BaseController
     {
-        private bool UsuarioEhAdmin()
-        {
-            string email =
-                HttpContext.Session.GetString("UsuarioEmail");
-
-            return email == "admin@trampo.com";
-        }
-
         public IActionResult Dashboard()
         {
-            if (!UsuarioEhAdmin())
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
             AdminDAO dao = new AdminDAO();
 
             ViewBag.TotalUsuarios =

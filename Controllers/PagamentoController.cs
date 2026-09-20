@@ -4,7 +4,8 @@ using BD_TRAMPO.DAO;
 namespace BD_TRAMPO.Controllers
 {
 
-    public class PagamentoController : Controller
+    [Perfil("profissional")]
+    public class PagamentoController : BaseController
     {
 
         public IActionResult CheckoutPremium()
@@ -80,10 +81,10 @@ namespace BD_TRAMPO.Controllers
 
             notifDAO.Inserir(new Notificacao
             {
-                UsuarioId = 1,
+                UsuarioId = usuarioId,
                 Titulo = "💎 Novo Premium",
                 Mensagem = $"{nomeUsuario} assinou o plano Premium.",
-                Tipo = "admin",
+                Tipo = "Assinatura",
                 ReferenciaId = profissionalId
             });
 

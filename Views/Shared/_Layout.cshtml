@@ -1,8 +1,10 @@
-﻿<!DOCTYPE html>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
     <title>Trampo</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +22,7 @@
 
 </head>
 
-<body>
+<body data-toast-sucesso="@TempData["Sucesso"]" data-toast-erro="@TempData["Erro"]">
 
     
     <div id="toast-container"></div>
@@ -162,7 +164,7 @@
                         </a>
 
                     }
-                    @if (Context.Session.GetString("UsuarioEmail") == "admin@trampo.com")
+                    @if (Context.Session.GetString("UsuarioTipo") == "admin")
                     {
                         <a href="/Admin/Dashboard" class="btn-outline">
                             Admin
@@ -208,26 +210,6 @@
 
     <script src="~/js/site.js"></script>
 
-
-    @if (TempData["Sucesso"] != null)
-    {
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            showToast("@TempData["Sucesso"]", "success");
-            });
-        </script>
-    }
-
-    @if (TempData["Erro"] != null)
-    {
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            showToast("@TempData["Erro"]", "error");
-            });
-        </script>
-    }
-
-        
 
     @RenderSection("Scripts", required: false)
 

@@ -20,6 +20,7 @@ namespace BD_TRAMPO.Controllers
                 default: return "";
             }
         }
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Lista(string busca, string localizacao, string categoria)
         {
             ServicoDAO dao = new ServicoDAO();
@@ -51,6 +52,7 @@ namespace BD_TRAMPO.Controllers
             return View(lista);
         }
 
+        [Perfil("profissional")]
         public IActionResult Dashboard()
         {
             string usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -89,6 +91,7 @@ namespace BD_TRAMPO.Controllers
             return View(dados);
         }
 
+        [Perfil("profissional")]
         public IActionResult MeusServicos()
         {
             string usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -118,7 +121,7 @@ namespace BD_TRAMPO.Controllers
             ViewBag.Subcategorias = subDao.ListarTodas();
 
             LocalDAO localDao = new LocalDAO();
-            ViewBag.Locais = localDao.ListarPorProfissional(usuarioId);
+            ViewBag.Locais = localDao.ListarPorProfissional(profissionalId);
 
             return View(lista);
         }
@@ -149,6 +152,7 @@ namespace BD_TRAMPO.Controllers
             return View(profissional);
         }
 
+        [Perfil("profissional")]
         public IActionResult MeuPerfil()
         {
             var auth = Proteger();
@@ -196,6 +200,7 @@ namespace BD_TRAMPO.Controllers
             return View(profissional);
         }
 
+        [Perfil("profissional")]
         public IActionResult Contato()
         {
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
@@ -210,6 +215,7 @@ namespace BD_TRAMPO.Controllers
         }
 
         [HttpPost]
+        [Perfil("profissional")]
         public IActionResult SalvarContato(string contato)
         {
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
@@ -225,6 +231,7 @@ namespace BD_TRAMPO.Controllers
             return RedirectToAction("Contato");
         }
 
+        [Perfil("profissional")]
         public IActionResult Premium()
         {
             return View();

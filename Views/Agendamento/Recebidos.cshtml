@@ -339,7 +339,7 @@
                             }
                             else if (ag.Atendimento == "Online" && !string.IsNullOrEmpty(ag.LinkOnline))
                             {
-                                <a aria-label="link do atendimento online" href="@ag.LinkOnline" target="_blank" class="btn-link-online">
+                                <a aria-label="link do atendimento online" href="@(Seguranca.UrlHttpValida(ag.LinkOnline) ? ag.LinkOnline : "#")" target="_blank" class="btn-link-online">
                                     <span aria-hidden="true" class="material-symbols-rounded" style="font-size:16px;">video_call</span>
                                     Acessar reunião
                                 </a>
@@ -358,7 +358,7 @@
                             {
                                 <button aria-label="confirmar agendamento" class="btn-confirmar"
                                         onclick="abrirModal('confirmar', '@ag.Id',
-                                    '@ag.NomeCliente.Replace("'", "\\'")',
+                                    @(System.Text.Json.JsonSerializer.Serialize(ag.NomeCliente)),
                                     '@ag.Data.ToString("dd/MM/yyyy")',
                                     '@ag.Hora',
                                     '@ag.TipoPreco',
@@ -368,7 +368,7 @@
                                 </button>
                                 <button aria-label="recusar agendamento" class="btn-recusar"
                                         onclick="abrirModal('recusar', '@ag.Id',
-                                    '@ag.NomeCliente.Replace("'", "\\'")',
+                                    @(System.Text.Json.JsonSerializer.Serialize(ag.NomeCliente)),
                                     '@ag.Data.ToString("dd/MM/yyyy")',
                                     '@ag.Hora',
                                     '@ag.TipoPreco',
@@ -382,7 +382,7 @@
                                 <button aria-label="finalizar agendamento" class="btn-finalizar" onclick="abrirModal(
                                     'finalizar',
                                     '@ag.Id',
-                                    '@ag.NomeCliente.Replace("'", "\\'")',
+                                    @(System.Text.Json.JsonSerializer.Serialize(ag.NomeCliente)),
                                     '@ag.Data.ToString("dd/MM/yyyy")',
                                     '@ag.Hora',
                                     '@ag.TipoPreco',
@@ -421,7 +421,7 @@
                             @if (ag.StatusAtual() == "Pendente" || ag.StatusAtual() == "Confirmado")
                             {
                                 <button aria-label="cancelar agendamento" class="btn-cancelar-pro"
-                                        onclick="abrirModal('cancelar', '@ag.Id', '@ag.NomeCliente.Replace("'", "\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                        onclick="abrirModal('cancelar', '@ag.Id', @(System.Text.Json.JsonSerializer.Serialize(ag.NomeCliente)), '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
                                     <span aria-hidden="true" class="material-symbols-rounded">close</span>
                                     Cancelar
                                 </button>
@@ -513,7 +513,7 @@
 
         <p class="modal-sub" id="descFinalizar"></p>
 
-        <form method="post" action="/Agendamento/Finalizar">
+        <form asp-antiforgery="true" method="post" action="/Agendamento/Finalizar">
 
             <input type="hidden" name="id" id="finalizarId">
 
@@ -585,15 +585,15 @@
             
  
 
-            var desc = 'Agendamento de <strong>' + cliente + '</strong> para <strong>' + data + ' às ' + hora + '</strong>.';
+            var desc = 'Agendamento de ' + cliente + ' para ' + data + ' às ' + hora + '.';
 
             if (tipo === 'confirmar') {
-                document.getElementById('descConfirmar').innerHTML = desc;
+                document.getElementById('descConfirmar').textContent = desc;
                 document.getElementById('linkConfirmar').href = '/Agendamento/Confirmar/' + id;
                 document.getElementById('modalConfirmar').classList.add('open');
             }
             else if (tipo === 'recusar') {
-                document.getElementById('descRecusar').innerHTML = desc + ' O cliente será notificado.';
+                document.getElementById('descRecusar').textContent = desc + ' O cliente será notificado.';
                 document.getElementById('linkRecusar').href = '/Agendamento/Recusar/' + id;
                 document.getElementById('modalRecusar').classList.add('open');
             }
@@ -610,7 +610,7 @@
             let liquido =
                 precoBase - taxa;
 
-                document.getElementById('descFinalizar').innerHTML =
+                document.getElementById('descFinalizar').textContent =
                     desc + ' Confirme que o serviço foi realizado.';
 
                 document.getElementById('finalizarId').value = id;
@@ -699,7 +699,7 @@
                     .classList.add('open');
             }
             else if (tipo === 'cancelar') {
-                document.getElementById('descCancelar').innerHTML = desc + ' Esta ação não pode ser desfeita.';
+                document.getElementById('descCancelar').textContent = desc + ' Esta ação não pode ser desfeita.';
                 document.getElementById('cancelarId').value = id;
                 document.getElementById('modalCancelar').classList.add('open');
             }

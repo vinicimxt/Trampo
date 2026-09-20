@@ -102,7 +102,7 @@ namespace BD_TRAMPO
                         NomeProfissional = reader["NomeProfissional"].ToString(),
                         Categoria = reader["Categoria"].ToString(),
                         Subcategoria = reader["Subcategoria"].ToString(),
-                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
                             ? reader["LinkOnline"].ToString()
                             : null,
                         Endereco = reader["Endereco"] != DBNull.Value
@@ -130,7 +130,7 @@ namespace BD_TRAMPO
                     s.Descricao,
                     s.Atendimento,
                     s.LinkOnline,
-                    s.Ativo,
+                    s.Ativo, s.LocalId, s.SubcategoriaId, s.TipoPreco, s.PrecoBase,
                     sc.Nome AS Subcategoria,
                     c.Nome AS Categoria
                 FROM Servicos s
@@ -162,11 +162,15 @@ namespace BD_TRAMPO
                             ? reader["Subcategoria"].ToString()
                             : "",
 
-                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
                             ? reader["LinkOnline"].ToString()
                             : null,
 
-                        Ativo = (bool)reader["Ativo"]
+                        Ativo = (bool)reader["Ativo"],
+                        LocalId = reader["LocalId"] == DBNull.Value ? null : (int)reader["LocalId"],
+                        SubcategoriaId = (int)reader["SubcategoriaId"],
+                        TipoPreco = reader["TipoPreco"].ToString(),
+                        PrecoBase = reader["PrecoBase"] == DBNull.Value ? null : (decimal)reader["PrecoBase"]
                     };
 
                     // =========================
@@ -241,7 +245,7 @@ namespace BD_TRAMPO
                         LocalId,
                         SubcategoriaId,
                         TipoPreco,
-                        PrecoBase
+                        PrecoBase, Ativo, LinkOnline
                     FROM Servicos
                     WHERE Id = @Id";
 
@@ -254,6 +258,7 @@ namespace BD_TRAMPO
                 {
                     servico = new Servico
                     {
+                        Ativo = (bool)reader["Ativo"], LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString()) ? reader["LinkOnline"].ToString() : null,
                         Id = (int)reader["Id"],
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Nome = reader["Nome"].ToString(),
@@ -419,7 +424,7 @@ namespace BD_TRAMPO
 
                         Subcategoria = reader["Subcategoria"].ToString(),
 
-                        LinkOnline = reader["LinkOnline"] != DBNull.Value
+                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
                             ? reader["LinkOnline"].ToString()
                             : null,
 
@@ -486,34 +491,25 @@ namespace BD_TRAMPO
 
         public void Excluir(int id)
         {
-            using (SqlConnection conn = conexao.Conectar())
-            {
-                // remove disponibilidade primeiro
-                string queryDisp = @"
-                    DELETE FROM Disponibilidade
-                    WHERE ServicoId = @ServicoId
-                ";
-
-                SqlCommand cmdDisp = new SqlCommand(queryDisp, conn);
-
-                cmdDisp.Parameters.AddWithValue("@ServicoId", id);
-
-                cmdDisp.ExecuteNonQuery();
-
-                // remove serviço
-                string queryServico = @"
-                    DELETE FROM Servicos
-                    WHERE Id = @Id
-                ";
-
-                SqlCommand cmdServico = new SqlCommand(queryServico, conn);
-
-                cmdServico.Parameters.AddWithValue("@Id", id);
-
-                cmdServico.ExecuteNonQuery();
-            }
+            int profissionalId = BuscarProfissionalId(id);
+            using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction(System.Data.IsolationLevel.Serializable);
+            using var cmd = new SqlCommand(@"
+                DECLARE @r int;
+                EXEC @r=sys.sp_getapplock @Resource=@Recurso, @LockMode='Exclusive',
+                    @LockOwner='Transaction', @LockTimeout=10000;
+                IF @r<0 THROW 50001, 'Agenda em atualização.', 1;
+                IF EXISTS(SELECT 1 FROM Agendamentos WHERE ServicoId=@Id)
+                    UPDATE Servicos SET Ativo=0 WHERE Id=@Id;
+                ELSE BEGIN
+                    DELETE FROM Disponibilidade WHERE ServicoId=@Id;
+                    DELETE FROM Servicos WHERE Id=@Id;
+                END", conn, tx);
+            cmd.Parameters.AddWithValue("@Id", id);
+            cmd.Parameters.AddWithValue("@Recurso", "TRAMPO:Profissional:" + profissionalId);
+            cmd.ExecuteNonQuery();
+            tx.Commit();
         }
-
         // PUXAR DO BANCO CARDS DINAMICOS
         public Dictionary<string, int> ContarServicosPorCategoria()
         {

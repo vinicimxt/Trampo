@@ -8,6 +8,12 @@ namespace BD_TRAMPO.Controllers
     {
 
 
+        [HttpPost]
+        public IActionResult MarcarTodasLidas()
+        {
+            new NotificacaoDAO().MarcarTodasLidas(UsuarioAtualId);
+            return Ok();
+        }
         public IActionResult Index()
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -35,21 +41,24 @@ namespace BD_TRAMPO.Controllers
         }
 
 
+        [HttpPost]
         public IActionResult MarcarComoLida(int id)
         {
             NotificacaoDAO dao = new NotificacaoDAO();
-            dao.MarcarComoLida(id);
+            if (!dao.MarcarComoLida(id, UsuarioAtualId)) return NotFound();
 
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public IActionResult MarcarComoLidaAjax([FromBody] dynamic data)
+        public IActionResult MarcarComoLidaAjax([FromBody] System.Text.Json.JsonElement data)
         {
-            int id = (int)data.id;
+            if (data.ValueKind != System.Text.Json.JsonValueKind.Object ||
+                !data.TryGetProperty("id", out var valor) || !valor.TryGetInt32(out int id))
+                return BadRequest("ID inválido.");
 
             NotificacaoDAO dao = new NotificacaoDAO();
-            dao.MarcarComoLida(id);
+            if (!dao.MarcarComoLida(id, UsuarioAtualId)) return NotFound();
 
             return Ok();
         }
@@ -70,20 +79,22 @@ namespace BD_TRAMPO.Controllers
             return PartialView("_NotificacoesDropdown", lista);
         }
 
+        [HttpPost]
         public IActionResult Abrir(int id)
         {
             NotificacaoDAO dao = new NotificacaoDAO();
 
             var notif = dao.BuscarPorId(id);
 
-            if (notif == null)
+            if (notif == null || notif.UsuarioId != UsuarioAtualId)
                 return RedirectToAction("Index");
 
-            dao.MarcarComoLida(id);
+            if (!dao.MarcarComoLida(id, UsuarioAtualId)) return NotFound();
 
             if (notif.Tipo == "Agendamento")
             {
-                return RedirectToAction("Recebidos", "Agendamento");
+                var ag = notif.ReferenciaId.HasValue ? new AgendamentoDAO().BuscarPorId(notif.ReferenciaId.Value) : null;
+                return RedirectToAction(ag?.UsuarioId == UsuarioAtualId ? "Meus" : "Recebidos", "Agendamento");
             }
 
             if (notif.Tipo == "Cancelamento")

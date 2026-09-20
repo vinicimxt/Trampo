@@ -196,7 +196,7 @@
                                             </div>
                                             <div>
                                                 <span class="info-row-label">Link</span>
-                                                <a href="@s.LinkOnline" target="_blank" class="servico-link">
+                                                <a href="@(Seguranca.UrlHttpValida(s.LinkOnline) ? s.LinkOnline : "#")" target="_blank" class="servico-link">
                                                     Acessar
                                                     <span aria-hidden="true" class="material-symbols-rounded"
                                                           style="font-size:14px;">open_in_new</span>
@@ -223,7 +223,7 @@
                                     </button>
 
                                     <button aria-label="Remover serviço" type="button" class="btn-delete" @(s.Ativo ? "" : "disabled")
-                                            onclick="abrirModalAcao(@s.Id, '@s.Nome.Replace("'", "\\'")')">
+                                            onclick="abrirModalAcao(@s.Id, @(System.Text.Json.JsonSerializer.Serialize(s.Nome)))">
                                         <span aria-hidden="true" class="material-symbols-rounded">delete</span>
                                         Remover
                                     </button>
@@ -275,7 +275,7 @@
             </button>
         </div>
 
-        <form method="post" action="/Servico/Editar" id="formServicoModal">
+        <form asp-antiforgery="true" method="post" action="/Servico/Editar" id="formServicoModal">
             <input type="hidden" name="id" id="servicoId" />
 
             <div class="drawer-body">

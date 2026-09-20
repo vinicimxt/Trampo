@@ -5,7 +5,7 @@ namespace BD_TRAMPO
     public class Conexao
     {
         private string stringConexao =
-            "Server=(localdb)\\MSSQLLocalDB;Database=Xamou;Trusted_Connection=True;";
+            "Server=localhost\\SQLEXPRESS;Database=Xamou;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public SqlConnection Conectar()
         {

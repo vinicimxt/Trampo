@@ -5,15 +5,17 @@ using BD_TRAMPO.Models;
 namespace BD_TRAMPO.Controllers
 {
 
-    public class SuporteController : Controller
+    public class SuporteController : BaseController
     {
 
 
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Index()
         {
             return View("ContatoAjuda");
         }
         
+        [HttpPost]
         public IActionResult Enviar(string tipo, string assunto, string mensagem)
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -26,6 +28,10 @@ namespace BD_TRAMPO.Controllers
 
             int usuarioId = int.Parse(usuarioIdStr);
 
+            if (string.IsNullOrWhiteSpace(tipo) || tipo.Length > 50 ||
+                string.IsNullOrWhiteSpace(assunto) || assunto.Length > 150 ||
+                string.IsNullOrWhiteSpace(mensagem) || mensagem.Length > 10000)
+                return BadRequest("Confira os dados do chamado.");
             SuporteDAO dao = new SuporteDAO();
 
             dao.Inserir(new Suporte
@@ -42,6 +48,7 @@ namespace BD_TRAMPO.Controllers
             return RedirectToAction("Index");
         }
 
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult ContatoAjuda()
         {
             return View();

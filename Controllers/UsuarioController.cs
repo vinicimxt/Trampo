@@ -1,4 +1,4 @@
-﻿namespace BD_TRAMPO.Controllers
+namespace BD_TRAMPO.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
     using BD_TRAMPO;
@@ -8,18 +8,27 @@
 
     public class UsuarioController : BaseController
     {
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Cadastro()
         {
             return View("~/Views/Usuario/Cadastro.cshtml");
         }
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Login()
         {
             return View("~/Views/Usuario/Login.cshtml");
         }
 
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Cadastrar(string nome, string email, string senha, string tipo, string tipoDocumento, string documento, string telefone, string contato)
         {
+            if (string.IsNullOrWhiteSpace(nome) || nome.Length > 100 ||
+                string.IsNullOrWhiteSpace(email) || email.Length > 100 || senha?.Length > 1024 ||
+                string.IsNullOrWhiteSpace(senha) || senha.Length < 8 ||
+                (telefone?.Length ?? 0) > 20 || (documento?.Length ?? 0) > 20 ||
+                (contato?.Length ?? 0) > 255)
+                return BadRequest("Confira os dados. A senha deve ter ao menos 8 caracteres.");
             UsuarioDAO usuarioDAO = new UsuarioDAO();
 
             if (usuarioDAO.EmailExiste(email))
@@ -29,21 +38,15 @@
             }
 
 
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha) ||
+                email.Length > 100 || senha.Length > 1024)
+                return BadRequest("Email ou senha inválidos.");
             string senhaHash = Seguranca.GerarHash(senha);
 
             // segurança
             string tipoSeguro = tipo == "profissional"
                 ? "profissional"
                 : "cliente";
-
-            // admin (provisório)
-            if (
-                email.ToLower() == "admin@trampo.com" &&
-                senha == "admin123"
-            )
-            {
-                tipoSeguro = "admin";
-            }
 
             int usuarioId;
 
@@ -117,16 +120,21 @@
         }
 
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Logar(string email, string senha)
         {
-            string senhaHash = Seguranca.GerarHash(senha);
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha) ||
+                email.Length > 100 || senha.Length > 1024)
+                return BadRequest("Email ou senha inválidos.");
+
 
             UsuarioDAO dao = new UsuarioDAO();
 
-            var usuario = dao.BuscarLogin(email, senhaHash);
+            var usuario = dao.BuscarLogin(email, senha);
 
             if (usuario != null)
             {
+                HttpContext.Session.Clear();
                 HttpContext.Session.SetString("UsuarioId", usuario.Id.ToString());
                 HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
                 HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
@@ -147,6 +155,7 @@
             return RedirectToAction("Login");
         }
 
+        [HttpPost]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -265,7 +274,17 @@
             string tipo =
                 HttpContext.Session.GetString("UsuarioTipo");
 
-            // PROFISSIONAL
+            if (string.IsNullOrWhiteSpace(nome) || nome.Length > 100 ||
+ (telefone?.Length ?? 0) > 20 ||
+                (contatoPublico?.Length ?? 0) > 255)
+                return BadRequest("Dados de perfil inválidos.");
+            if (!string.IsNullOrWhiteSpace(novaSenha) &&
+                (novaSenha.Length < 8 || novaSenha.Length > 1024 ||
+                 novaSenha != confirmarSenha || !dao.VerificarSenha(usuarioId, senhaAtual)))
+            {
+                TempData["Erro"] = "Confira a senha atual e a confirmação. A nova senha deve ter ao menos 8 caracteres.";
+                return RedirectToAction("Perfil");
+            }            // PROFISSIONAL
             if (!string.IsNullOrWhiteSpace(tipo) &&
                 tipo.ToLower() == "profissional")
             {
@@ -294,13 +313,12 @@
                     return RedirectToAction("Perfil");
                 }
 
-                string senhaAtualHash =
-                    Seguranca.GerarHash(senhaAtual);
+
 
                 bool senhaCorreta =
                     dao.VerificarSenha(
                         usuarioId,
-                        senhaAtualHash
+                        senhaAtual
                     );
 
                 if (!senhaCorreta)

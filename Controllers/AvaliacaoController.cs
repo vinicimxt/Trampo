@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BD_TRAMPO.Controllers
 {
+    [Perfil("cliente", "profissional")]
     public class AvaliacaoController : BaseController
     {
         public IActionResult Avaliar(int agendamentoId)
@@ -11,7 +12,7 @@ namespace BD_TRAMPO.Controllers
             if (HttpContext.Session.GetString("UsuarioId") == null)
             {
                 ViewBag.Mensagem = "Você precisa estar logado para avaliar.";
-                return View();
+                return RedirectToAction("Meus", "Agendamento");
             }
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
@@ -23,7 +24,7 @@ namespace BD_TRAMPO.Controllers
             {
                 ViewBag.Mensagem = "Esse atendimento não foi encontrado.";
             }
-            else if (ag.ClienteId != usuarioId)
+            else if (ag.UsuarioId != usuarioId)
             {
                 ViewBag.Mensagem = "Você não tem permissão para avaliar este atendimento.";
             }
@@ -47,7 +48,7 @@ namespace BD_TRAMPO.Controllers
                 }
             }
 
-            return View();
+            return RedirectToAction("Meus", "Agendamento");
         }
 
 
@@ -63,10 +64,23 @@ namespace BD_TRAMPO.Controllers
 
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
+            var ag = new AgendamentoDAO().BuscarPorId(a.AgendamentoId);
+            if (ag == null) return NotFound();
+            if (ag.UsuarioId != usuarioId) return StatusCode(403);
+            if (ag.StatusAtual() != "Finalizado" || !ag.PodeAvaliar())
+                return BadRequest("O atendimento ainda não foi concluído.");
+            if (a.ProfissionalId != ag.ProfissionalId) return BadRequest("Profissional inválido.");
+            if (a.Nota < 1 || a.Nota > 5 || (a.Comentario?.Length ?? 0) > 500)
+                return BadRequest("Avaliação inválida.");
+            if (new AvaliacaoDAO().JaAvaliou(a.AgendamentoId, usuarioId))
+                return Conflict("Este atendimento já foi avaliado.");
             a.UsuarioId = usuarioId;
+            a.ProfissionalId = ag.ProfissionalId;
 
             AvaliacaoDAO dao = new AvaliacaoDAO();
-            dao.Inserir(a);
+            try { dao.Inserir(a); }
+            catch (Microsoft.Data.SqlClient.SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
+            { return Conflict("Este atendimento já foi avaliado."); }
 
             TempData["Sucesso"] = "Obrigado pela avaliação.⭐";
 

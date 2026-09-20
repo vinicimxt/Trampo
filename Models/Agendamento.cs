@@ -1,4 +1,4 @@
-﻿namespace BD_TRAMPO
+namespace BD_TRAMPO
 {
     public class Agendamento
     {
@@ -41,7 +41,7 @@
 
         public bool PodeAvaliar()
         {
-            return FinalizadoProfissional && ConfirmadoCliente;
+            return FinalizadoProfissional && ConfirmadoCliente && StatusAtual() == "Finalizado";
         }
 
         public string StatusAtual()

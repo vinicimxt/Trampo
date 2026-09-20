@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
     "net10.0": {
       "Microsoft.Bcl.Cryptography/9.0.13": {
@@ -933,35 +933,29 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Vinicius\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Vinicius\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\BD-TRAMPO.csproj",
+      "projectUniqueName": "C:\\Users\\Vinicius\\Desktop\\Trampo\\BD-TRAMPO.csproj",
       "projectName": "BD-TRAMPO",
-      "projectPath": "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\BD-TRAMPO.csproj",
+      "projectPath": "C:\\Users\\Vinicius\\Desktop\\Trampo\\BD-TRAMPO.csproj",
       "packagesPath": "C:\\Users\\Vinicius\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Vinicius\\source\\repos\\BD-TRAMPO\\BD-TRAMPO\\obj\\",
+      "outputPath": "C:\\Users\\Vinicius\\Desktop\\Trampo\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Vinicius\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Vinicius\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {}
         }
@@ -976,10 +970,11 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.200"
+      "SdkAnalysisLevel": "10.0.400"
     },
     "frameworks": {
       "net10.0": {
+        "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
           "Microsoft.Data.SqlClient": {
@@ -1010,7 +1005,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

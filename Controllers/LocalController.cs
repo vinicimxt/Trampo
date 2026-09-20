@@ -3,6 +3,7 @@ using BD_TRAMPO.DAO;
 
 namespace BD_TRAMPO.Controllers
 {
+    [Perfil("profissional")]
     public class LocalController : BaseController
     {
         /* -----------------------------------------------
@@ -33,6 +34,9 @@ namespace BD_TRAMPO.Controllers
         [HttpPost]
         public IActionResult Salvar(int id, string nome, string endereco)
         {
+            if (id < 0 || string.IsNullOrWhiteSpace(endereco) || endereco.Length > 255 || (nome?.Length ?? 0) > 100)
+                return BadRequest("Local inválido.");
+            if (id > 0) { var acesso = ProtegerLocal(id); if (acesso != null) return acesso; }
             try
             {
                 LocalDAO dao = new LocalDAO();
@@ -73,8 +77,10 @@ namespace BD_TRAMPO.Controllers
         /* -----------------------------------------------
            GET /Local/Excluir/{id}
         ----------------------------------------------- */
+        [HttpPost]
         public IActionResult Excluir(int id)
         {
+            var acesso = ProtegerLocal(id); if (acesso != null) return acesso;
             try
             {
                 new LocalDAO().Excluir(id);

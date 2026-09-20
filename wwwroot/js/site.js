@@ -1,4 +1,4 @@
-﻿
+
 // =============================
 // BOTAO HOME
 // ============================
@@ -138,12 +138,15 @@ function showToast(message, type = "success") {
     const toast = document.createElement("div");
     toast.className = `toast toast-${type}`;
 
-    toast.innerHTML = `
-        <span class="toast-icon">${icons[type] || "ℹ️"}</span>
-        <span class="toast-text">${message}</span>
-        <span class="toast-close">&times;</span>
-    `;
-
+    for (const [classe, texto] of [
+        ["toast-icon", icons[type] || "ℹ️"],
+        ["toast-text", message],
+        ["toast-close", "×"]]) {
+        const span = document.createElement("span");
+        span.className = classe;
+        span.textContent = texto;
+        toast.appendChild(span);
+    }
     container.appendChild(toast);
 
     // fechar manual
@@ -215,6 +218,7 @@ document.addEventListener("click", function (e) {
 });
 
 function atualizarContador() {
+    if (!document.getElementById("notifToggle")) return;
     fetch('/Notificacao/Contador')
         .then(res => res.text())
         .then(qtd => {
@@ -275,3 +279,32 @@ document.addEventListener("keydown", function (e) {
 });
 
 sections.forEach(section => observer.observe(section));
+
+// Operações MVC que antes eram links GET agora enviam formulário POST com token.
+function enviarPost(url) {
+    const destino = new URL(url, window.location.origin);
+    if (destino.origin !== window.location.origin) return;
+    const token = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!token) { showToast("Recarregue a página para continuar.", "error"); return; }
+    const form = document.createElement("form");
+    form.method = "post";
+    form.action = destino.pathname + destino.search;
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "__RequestVerificationToken";
+    input.value = token;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+document.addEventListener("click", function (event) {
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+    const url = new URL(link.href, window.location.origin);
+    if (url.origin !== window.location.origin) return;
+    if (/^\/(Usuario\/Logout|Local\/Excluir|Servico\/(Excluir|Desativar)|Agendamento\/(Confirmar|Recusar|ConfirmarCliente)|Notificacao\/(Abrir|MarcarComoLida))(\/\d+)?\/?$/i.test(url.pathname)) {
+        event.preventDefault();
+        enviarPost(url.href);
+    }
+});

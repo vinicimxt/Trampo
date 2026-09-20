@@ -3,7 +3,13 @@
 var builder = WebApplication.CreateBuilder(args);
 
 //  REGISTRAR SERVIÇOS
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+});
+builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(); 
 
 var app = builder.Build();

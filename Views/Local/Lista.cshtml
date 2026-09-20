@@ -100,14 +100,14 @@
 
                                 <div class="local-card-actions">
                                     <button aria-label="Editar local" class="btn-edit-local"
-                                            onclick="abrirDrawerEditar('@l.Id', '@l.Nome.Replace("'", "\\'")', '@l.Endereco.Replace("'", "\\'")')">
+                                            onclick="abrirDrawerEditar('@l.Id', @(System.Text.Json.JsonSerializer.Serialize(l.Nome)), @(System.Text.Json.JsonSerializer.Serialize(l.Endereco)))">
                                         <span 
                                             class="material-symbols-rounded"
                                             aria-hidden="true">
                                             edit
                                         </span> Editar
                                     </button>
-                                    <button aria-label="Excluir local" class="btn-del-local" onclick="abrirModal('@l.Id', '@l.Nome.Replace("'", "\\'")')">
+                                    <button aria-label="Excluir local" class="btn-del-local" onclick="abrirModal('@l.Id', @(System.Text.Json.JsonSerializer.Serialize(l.Nome)))">
                                         <span 
                                             class="material-symbols-rounded"
                                             aria-hidden="true">
@@ -137,7 +137,7 @@
                         <button aria-label="Fechar formulario de edição" class="drawer-close" onclick="fecharDrawer()">✕</button>
                     </div>
 
-                    <form method="post" id="formLocal" action="/Local/Salvar">
+                    <form asp-antiforgery="true" method="post" id="formLocal" action="/Local/Salvar">
                         <input type="hidden" name="id" id="localId" value="" />
 
                         <div class="drawer-body">

@@ -94,16 +94,17 @@ namespace BD_TRAMPO.DAO
             }
         }
 
-        public void Desativar(int id)
+        public bool Desativar(int id, int profissionalId)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
-                string query = "UPDATE Disponibilidade SET Ativo = 0 WHERE Id = @Id";
+                string query = "UPDATE Disponibilidade SET Ativo = 0 WHERE Id = @Id AND ProfissionalId=@Profissional";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Id", id);
 
-                cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue("@Profissional", profissionalId);
+                return cmd.ExecuteNonQuery() == 1;
             }
         }
 

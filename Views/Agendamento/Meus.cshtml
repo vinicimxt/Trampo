@@ -326,7 +326,7 @@
                             {
                                 if (!string.IsNullOrEmpty(ag.LinkOnline) && ag.ConfirmadoProfissional)
                                 {
-                                    <a href="@ag.LinkOnline" target="_blank" class="btn-link-online">
+                                    <a href="@(Seguranca.UrlHttpValida(ag.LinkOnline) ? ag.LinkOnline : "#")" target="_blank" class="btn-link-online">
                                         <span aria-hidden="true" class="material-symbols-rounded"
                                               style="font-size:16px;">video_call</span> 
                                         Entrar na reunião
@@ -393,7 +393,7 @@
                                                     </div>
 
                                                     <button aria-label="Avaliar profissional" class="btn-avaliar"
-                                                            onclick="abrirModalAvaliar('@ag.Id', '@ag.ProfissionalId', '@ag.NomeProfissional.Replace("'","\\'")', '@ag.Servico.Replace("'","\\'")')">
+                                                            onclick="abrirModalAvaliar('@ag.Id', '@ag.ProfissionalId', @(System.Text.Json.JsonSerializer.Serialize(ag.NomeProfissional)), @(System.Text.Json.JsonSerializer.Serialize(ag.Servico)))">
                                                         ⭐ Avaliar experiência
                                                     </button>
 
@@ -410,7 +410,7 @@
                                         @if (ag.StatusCalculado() == "Pendente" || ag.StatusCalculado() == "Confirmado")
                                         {
                                             <button aria-label="cancelar" type="button" class="btn-cancelar"
-                                                    onclick="abrirModalCancelar('@ag.Id', '@ag.Servico.Replace("'","\\'")', '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
+                                                    onclick="abrirModalCancelar('@ag.Id', @(System.Text.Json.JsonSerializer.Serialize(ag.Servico)), '@ag.Data.ToString("dd/MM/yyyy")', '@ag.Hora')">
                                                 <span aria-hidden="true" class="material-symbols-rounded">close</span> Cancelar
                                             </button>
                                         }
@@ -474,7 +474,7 @@
                     <button class="aval-close" onclick="fecharModais()">✕</button>
                 </div>
 
-                <form id="formAvaliar" method="post" action="/Avaliacao/Salvar">
+                <form asp-antiforgery="true" id="formAvaliar" method="post" action="/Avaliacao/Salvar">
                     <input type="hidden" name="agendamentoId" id="avalAgendId" />
                     <input type="hidden" name="profissionalId" id="avalProfId" />
                     <input type="hidden" name="nota" id="avalNota" />
@@ -538,7 +538,7 @@
                         ----------------------------------------------- */
                         function confirmarConclusao(id) {
                             if (confirm('Confirmar que o serviço foi concluído?')) {
-                                window.location.href = '/Agendamento/ConfirmarCliente/' + id;
+                                enviarPost('/Agendamento/ConfirmarCliente/' + id);
                             }
                         }
 
@@ -565,9 +565,9 @@
                         ----------------------------------------------- */
                         function abrirModalCancelar(id, servico, data, hora) {
                             document.getElementById('modalCancelarId').value = id;
-                            document.getElementById('modalCancelarDesc').innerHTML =
-                                'Tem certeza que deseja cancelar <strong>' + servico + '</strong>' +
-                                ' agendado para <strong>' + data + ' às ' + hora + '</strong>?';
+                            document.getElementById('modalCancelarDesc').textContent =
+                                'Tem certeza que deseja cancelar ' + servico + '' +
+                                ' agendado para ' + data + ' às ' + hora + '?';
                             document.getElementById('modalCancelar').classList.add('open');
                         }
 

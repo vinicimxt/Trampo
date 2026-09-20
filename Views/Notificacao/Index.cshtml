@@ -183,9 +183,9 @@
 
     /* marcar todas como lidas */
     function marcarTodasLidas() {
-        fetch('/Notificacao/MarcarTodasLidas', { method: 'POST' })
-            .then(function() { window.location.reload(); })
-            .catch(function() { window.location.reload(); });
+        fetch('/Notificacao/MarcarTodasLidas', { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' } })
+            .then(function(res) { if (!res.ok) throw new Error(); window.location.reload(); })
+            .catch(function() { showToast('Não foi possível atualizar as notificações.', 'error'); });
     }
 </script>
 }
