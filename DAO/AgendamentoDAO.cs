@@ -1,3 +1,4 @@
+using BD_TRAMPO.Contracts;
 using Microsoft.Data.SqlClient;
 
 
@@ -29,7 +30,7 @@ namespace BD_TRAMPO
                     SELECT @r;", conn, tx);
                 c.Parameters.AddWithValue("@Recurso", recurso);
                 if (Convert.ToInt32(c.ExecuteScalar()) < 0)
-                    throw new InvalidOperationException("Agenda em atualização. Tente novamente.");
+                    throw new FalhaOperacao(TipoFalha.Conflito, "Agenda em atualização. Tente novamente.");
             }
             // Ordem estável: serializa também o limite de pendentes do cliente.
             Bloquear("TRAMPO:Cliente:" + ag.ClienteId);
@@ -37,7 +38,7 @@ namespace BD_TRAMPO
             var inicio = ag.Data.Date + ag.Hora;
             if (ag.Hora < TimeSpan.Zero || ag.Hora >= TimeSpan.FromDays(1) ||
                 inicio <= DateTime.Now || ag.Data.Date > DateTime.Today.AddMonths(3))
-                throw new InvalidOperationException("Data ou horário inválido.");
+                throw new FalhaOperacao(TipoFalha.Validacao, "Data ou horário inválido.");
 
             string modalidade, plano;
             int usuarioProfissional, usuarioCliente;
@@ -47,7 +48,7 @@ namespace BD_TRAMPO
                 WHERE s.Id=@ServicoId AND s.ProfissionalId=@ProfissionalId AND s.Ativo=1"))
             using (var r = c.ExecuteReader())
             {
-                if (!r.Read()) throw new InvalidOperationException("Serviço indisponível.");
+                if (!r.Read()) throw new FalhaOperacao(TipoFalha.Validacao, "Serviço indisponível.");
                 modalidade = r.GetString(0);
                 local = r.IsDBNull(1) ? null : r.GetInt32(1);
                 plano = r.GetString(2);
@@ -56,24 +57,24 @@ namespace BD_TRAMPO
             using (var c = Comando("SELECT UsuarioId, BloqueadoAte FROM Clientes WHERE Id=@ClienteId"))
             using (var r = c.ExecuteReader())
             {
-                if (!r.Read()) throw new InvalidOperationException("Cliente não encontrado.");
+                if (!r.Read()) throw new FalhaOperacao(TipoFalha.Validacao, "Cliente não encontrado.");
                 usuarioCliente = r.GetInt32(0);
                 if (usuarioCliente == usuarioProfissional)
-                    throw new InvalidOperationException("Você não pode agendar seu próprio serviço.");
+                    throw new FalhaOperacao(TipoFalha.Validacao, "Você não pode agendar seu próprio serviço.");
                 if (!r.IsDBNull(1) && r.GetDateTime(1) > DateTime.Now)
-                    throw new InvalidOperationException("Você está bloqueado temporariamente.");
+                    throw new FalhaOperacao(TipoFalha.Validacao, "Você está bloqueado temporariamente.");
             }
             if ((ag.Descricao?.Length ?? 0) > 255 || (ag.EnderecoCliente?.Length ?? 0) > 255)
-                throw new InvalidOperationException("Descrição ou endereço muito longo.");
+                throw new FalhaOperacao(TipoFalha.Validacao, "Descrição ou endereço muito longo.");
             ag.LocalId = modalidade == "Local" ? local : null;
             if (modalidade == "Local")
             {
                 using var c = Comando("SELECT COUNT(*) FROM Locais WHERE Id=@LocalId AND ProfissionalId=@ProfissionalId");
                 c.Parameters.AddWithValue("@LocalId", (object?)local ?? DBNull.Value);
-                if ((int)c.ExecuteScalar() != 1) throw new InvalidOperationException("Local inválido.");
+                if ((int)c.ExecuteScalar() != 1) throw new FalhaOperacao(TipoFalha.Validacao, "Local inválido.");
             }
             if (modalidade == "Domicilio" && string.IsNullOrWhiteSpace(ag.EnderecoCliente))
-                throw new InvalidOperationException("Informe o endereço de atendimento.");
+                throw new FalhaOperacao(TipoFalha.Validacao, "Informe o endereço de atendimento.");
             if (modalidade != "Domicilio") ag.EnderecoCliente = null;
 
             var regras = new List<Disponibilidade>();
@@ -83,7 +84,7 @@ namespace BD_TRAMPO
                 while (r.Read()) regras.Add(new Disponibilidade {
                     DiaSemana=r.GetInt32(0), HoraInicio=r.GetTimeSpan(1), HoraFim=r.GetTimeSpan(2), Ativo=true });
             if (!RegrasAgenda.Horarios(regras, ag.Data).Contains(inicio))
-                throw new InvalidOperationException("Horário fora da disponibilidade.");
+                throw new FalhaOperacao(TipoFalha.Validacao, "Horário fora da disponibilidade.");
 
             using (var c = Comando(@"SELECT Data, HoraInicio, HoraFim FROM BloqueiosAgenda
                 WHERE ProfissionalId=@ProfissionalId AND Data BETWEEN DATEADD(day,-1,@Data) AND DATEADD(day,1,@Data)"))
@@ -94,7 +95,7 @@ namespace BD_TRAMPO
                     var bFim = r.GetDateTime(0).Date + r.GetTimeSpan(2);
                     if (bFim <= bInicio) bFim = bFim.AddDays(1);
                     if (RegrasAgenda.Sobrepoe(inicio, inicio.AddHours(1), bInicio, bFim))
-                        throw new InvalidOperationException("Horário bloqueado pelo profissional.");
+                        throw new FalhaOperacao(TipoFalha.Conflito, "Horário bloqueado pelo profissional.");
                 }
 
             using (var c = Comando(@"SELECT Data, Hora FROM Agendamentos
@@ -106,11 +107,11 @@ namespace BD_TRAMPO
                 {
                     var outro = r.GetDateTime(0).Date + r.GetTimeSpan(1);
                     if (RegrasAgenda.Sobrepoe(inicio, inicio.AddHours(1), outro, outro.AddHours(1)))
-                        throw new InvalidOperationException("O profissional já possui atendimento neste horário.");
+                        throw new FalhaOperacao(TipoFalha.Conflito, "O profissional já possui atendimento neste horário.");
                 }
 
             using (var c = Comando("SELECT COUNT(*) FROM Agendamentos WHERE ClienteId=@ClienteId AND Status='Pendente'"))
-                if ((int)c.ExecuteScalar() >= 5) throw new InvalidOperationException("Você já possui cinco pedidos pendentes.");
+                if ((int)c.ExecuteScalar() >= 5) throw new FalhaOperacao(TipoFalha.Conflito, "Você já possui cinco pedidos pendentes.");
             if (plano != "Premium")
             {
                 using var c = Comando(@"SELECT COUNT(*) FROM Agendamentos WHERE ProfissionalId=@ProfissionalId
@@ -118,7 +119,7 @@ namespace BD_TRAMPO
                     AND Status NOT IN ('Cancelado','CanceladoCliente','CanceladoProfissional')");
                 c.Parameters.AddWithValue("@InicioSemana", ag.Data.Date.AddDays(-(int)ag.Data.DayOfWeek));
                 if ((int)c.ExecuteScalar() >= 3)
-                    throw new InvalidOperationException("Limite semanal do plano gratuito atingido.");
+                    throw new FalhaOperacao(TipoFalha.Conflito, "Limite semanal do plano gratuito atingido.");
             }
             using var inserir = Comando(@"INSERT INTO Agendamentos
                 (ClienteId,ServicoId,ProfissionalId,Data,Hora,Status,Descricao,EnderecoCliente,LocalId)
@@ -232,6 +233,8 @@ namespace BD_TRAMPO
             SELECT 
                 A.Id,
                 A.ClienteId,
+                A.ServicoId,
+                A.ValorFinal,
                 A.ProfissionalId,
                 A.Data,
                 A.Hora,
@@ -285,39 +288,41 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         ClienteId = (int)reader["ClienteId"],
+                        ServicoId = (int)reader["ServicoId"],
                         ProfissionalId = (int)reader["ProfissionalId"],
-                        NomeProfissional = reader["ProfissionalNome"].ToString(),
-                        Servico = reader["Servico"].ToString(),
+                        NomeProfissional = reader.IsDBNull(reader.GetOrdinal("ProfissionalNome")) ? "" : reader.GetString(reader.GetOrdinal("ProfissionalNome")),
+                        Servico = (reader.IsDBNull(reader.GetOrdinal("Servico")) ? "" : reader.GetString(reader.GetOrdinal("Servico"))),
                         Subcategoria = reader["Subcategoria"] != DBNull.Value
-                        ? reader["Subcategoria"].ToString()
+                        ? (reader.IsDBNull(reader.GetOrdinal("Subcategoria")) ? "" : reader.GetString(reader.GetOrdinal("Subcategoria")))
                         : "",
-                        Atendimento = reader["Atendimento"].ToString(),
-                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
-                            ? reader["LinkOnline"].ToString() : null,
+                        Atendimento = reader.GetString(reader.GetOrdinal("Atendimento")),
+                        LinkOnline = Seguranca.UrlHttpValida((reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))))
+                            ? (reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))) : null,
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
-                        Status = reader["Status"].ToString(),
+                        Status = reader.GetString(reader.GetOrdinal("Status")),
+                        ValorFinal = reader.IsDBNull(reader.GetOrdinal("ValorFinal")) ? null : reader.GetDecimal(reader.GetOrdinal("ValorFinal")),
 
                         ConfirmadoProfissional = reader["ConfirmadoProfissional"] != DBNull.Value && (bool)reader["ConfirmadoProfissional"],
                         FinalizadoProfissional = reader["FinalizadoProfissional"] != DBNull.Value && (bool)reader["FinalizadoProfissional"],
                         ConfirmadoCliente = reader["ConfirmadoCliente"] != DBNull.Value && (bool)reader["ConfirmadoCliente"],
 
                         Descricao = reader["Descricao"] != DBNull.Value
-                            ? reader["Descricao"].ToString() : "",
+                            ? (reader.IsDBNull(reader.GetOrdinal("Descricao")) ? "" : reader.GetString(reader.GetOrdinal("Descricao"))) : "",
 
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                             ? reader["EnderecoCliente"].ToString() : "",
 
                         EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
-                            ? reader["EnderecoLocal"].ToString() : "",
+                            ? (reader.IsDBNull(reader.GetOrdinal("EnderecoLocal")) ? "" : reader.GetString(reader.GetOrdinal("EnderecoLocal"))) : "",
 
                         ContatoProfissional =
                             reader["ContatoProfissional"] != DBNull.Value
-                            ? reader["ContatoProfissional"].ToString()
-                            : reader["TelefoneProfissional"]?.ToString(),
+                            ? (reader.IsDBNull(reader.GetOrdinal("ContatoProfissional")) ? "" : reader.GetString(reader.GetOrdinal("ContatoProfissional")))
+                            : (reader.IsDBNull(reader.GetOrdinal("TelefoneProfissional")) ? "" : reader.GetString(reader.GetOrdinal("TelefoneProfissional"))),
 
                         JaAvaliado = reader["JaAvaliado"] != DBNull.Value && (int)reader["JaAvaliado"] == 1,
-                        TipoPreco = reader["TipoPreco"].ToString(),
+                        TipoPreco = reader.GetString(reader.GetOrdinal("TipoPreco")),
 
                         PrecoBase = reader["PrecoBase"] != DBNull.Value
                         ? Convert.ToDecimal(reader["PrecoBase"])
@@ -384,11 +389,13 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         ClienteId = (int)reader["ClienteId"],
-                        NomeCliente = reader["NomeCliente"].ToString(),
+                        ServicoId = (int)reader["ServicoId"],
+                        NomeCliente = (reader.IsDBNull(reader.GetOrdinal("NomeCliente")) ? "" : reader.GetString(reader.GetOrdinal("NomeCliente"))),
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
-                        Status = reader["Status"].ToString(),
+                        Status = reader.GetString(reader.GetOrdinal("Status")),
+                        ValorFinal = reader.IsDBNull(reader.GetOrdinal("ValorFinal")) ? null : reader.GetDecimal(reader.GetOrdinal("ValorFinal")),
 
 
                         ConfirmadoProfissional = reader["ConfirmadoProfissional"] != DBNull.Value && (bool)reader["ConfirmadoProfissional"],
@@ -396,11 +403,11 @@ namespace BD_TRAMPO
                         ConfirmadoCliente = reader["ConfirmadoCliente"] != DBNull.Value && (bool)reader["ConfirmadoCliente"],
 
                         Descricao = reader["Descricao"] != DBNull.Value
-                            ? reader["Descricao"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("Descricao")) ? "" : reader.GetString(reader.GetOrdinal("Descricao")))
                             : "",
-                        Servico = reader["Servico"].ToString(),
+                        Servico = (reader.IsDBNull(reader.GetOrdinal("Servico")) ? "" : reader.GetString(reader.GetOrdinal("Servico"))),
                         Subcategoria = reader["Subcategoria"] != DBNull.Value
-                            ? reader["Subcategoria"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("Subcategoria")) ? "" : reader.GetString(reader.GetOrdinal("Subcategoria")))
                             : "",
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                             ? reader["EnderecoCliente"].ToString()
@@ -408,26 +415,26 @@ namespace BD_TRAMPO
 
                         ContatoCliente =
                             reader["ContatoCliente"] != DBNull.Value
-                            ? reader["ContatoCliente"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("ContatoCliente")) ? "" : reader.GetString(reader.GetOrdinal("ContatoCliente")))
                             : "",
 
-                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
-                            ? reader["LinkOnline"].ToString()
+                        LinkOnline = Seguranca.UrlHttpValida((reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))))
+                            ? (reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline")))
                             : null,
 
-                        Atendimento = reader["Atendimento"].ToString(),
+                        Atendimento = reader.GetString(reader.GetOrdinal("Atendimento")),
 
                         EnderecoLocal = reader["EnderecoLocal"] != DBNull.Value
-                        ? reader["EnderecoLocal"].ToString()
+                        ? (reader.IsDBNull(reader.GetOrdinal("EnderecoLocal")) ? "" : reader.GetString(reader.GetOrdinal("EnderecoLocal")))
                         : "",
 
-                        TipoPreco = reader["TipoPreco"].ToString(),
+                        TipoPreco = reader.GetString(reader.GetOrdinal("TipoPreco")),
 
                         PrecoBase = reader["PrecoBase"] != DBNull.Value
                         ? Convert.ToDecimal(reader["PrecoBase"])
                         : null,
 
-                        PlanoProfissional = reader["PlanoProfissional"].ToString(),
+                        PlanoProfissional = reader.GetString(reader.GetOrdinal("PlanoProfissional")),
                     });
                 }
             }
@@ -437,7 +444,7 @@ namespace BD_TRAMPO
 
 
 
-        public Agendamento BuscarPorId(int id)
+        public Agendamento? BuscarPorId(int id)
         {
             using (SqlConnection conn = conexao.Conectar())
             {
@@ -491,16 +498,17 @@ namespace BD_TRAMPO
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
-                        Status = reader["Status"].ToString(),
+                        Status = reader.GetString(reader.GetOrdinal("Status")),
+                        ValorFinal = reader.IsDBNull(reader.GetOrdinal("ValorFinal")) ? null : reader.GetDecimal(reader.GetOrdinal("ValorFinal")),
 
                         ContatoProfissional =
                             reader["ContatoProfissional"] != DBNull.Value
-                            ? reader["ContatoProfissional"].ToString()
-                            : reader["TelefoneProfissional"]?.ToString(),
+                            ? (reader.IsDBNull(reader.GetOrdinal("ContatoProfissional")) ? "" : reader.GetString(reader.GetOrdinal("ContatoProfissional")))
+                            : (reader.IsDBNull(reader.GetOrdinal("TelefoneProfissional")) ? "" : reader.GetString(reader.GetOrdinal("TelefoneProfissional"))),
 
                         ContatoCliente =
                             reader["ContatoCliente"] != DBNull.Value
-                            ? reader["ContatoCliente"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("ContatoCliente")) ? "" : reader.GetString(reader.GetOrdinal("ContatoCliente")))
                             : "",
 
                         ConfirmadoProfissional = (bool)reader["ConfirmadoProfissional"],
@@ -508,14 +516,14 @@ namespace BD_TRAMPO
                         ConfirmadoCliente = (bool)reader["ConfirmadoCliente"],
 
                         Descricao = reader["Descricao"] != DBNull.Value
-                        ? reader["Descricao"].ToString()
+                        ? (reader.IsDBNull(reader.GetOrdinal("Descricao")) ? "" : reader.GetString(reader.GetOrdinal("Descricao")))
                         : "",
 
                         EnderecoCliente = reader["EnderecoCliente"] != DBNull.Value
                         ? reader["EnderecoCliente"].ToString()
                         : "",
 
-                        TipoPreco = reader["TipoPreco"].ToString(),
+                        TipoPreco = reader.GetString(reader.GetOrdinal("TipoPreco")),
 
                         PrecoBase = reader["PrecoBase"] != DBNull.Value
                         ? Convert.ToDecimal(reader["PrecoBase"])
@@ -527,28 +535,49 @@ namespace BD_TRAMPO
             return null;
         }
 
-        public bool Confirmar(int id, int profissionalId)
+        private static bool ConcluirTransicao(SqlCommand atualizar, SqlTransaction tx, IReadOnlyList<Notificacao>? notificacoes)
+        {
+            if (atualizar.ExecuteNonQuery() != 1) return false;
+            foreach (var n in notificacoes ?? [])
+            {
+                using var cmd = new SqlCommand(@"INSERT INTO Notificacoes
+                    (UsuarioId,Titulo,Mensagem,Tipo,ReferenciaId) VALUES(@U,@T,@M,@Tipo,@R)",
+                    atualizar.Connection, tx);
+                cmd.Parameters.AddWithValue("@U", n.UsuarioId);
+                cmd.Parameters.AddWithValue("@T", n.Titulo);
+                cmd.Parameters.AddWithValue("@M", n.Mensagem);
+                cmd.Parameters.AddWithValue("@Tipo", n.Tipo);
+                cmd.Parameters.AddWithValue("@R", n.ReferenciaId);
+                cmd.ExecuteNonQuery();
+            }
+            tx.Commit();
+            return true;
+        }
+        public bool Confirmar(int id, int profissionalId, IReadOnlyList<Notificacao>? notificacoes = null)
         {
             using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction();
             using var cmd = new SqlCommand(@"UPDATE Agendamentos SET Status='Confirmado', ConfirmadoProfissional=1
-                WHERE Id=@Id AND ProfissionalId=@ProfissionalId AND Status='Pendente' AND FinalizadoProfissional=0", conn);
+                WHERE Id=@Id AND ProfissionalId=@ProfissionalId AND Status='Pendente' AND FinalizadoProfissional=0", conn, tx);
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@ProfissionalId", profissionalId);
-            return cmd.ExecuteNonQuery() == 1;
+            return ConcluirTransicao(cmd, tx, notificacoes);
         }
 
-        public bool Cancelar(int id, string status, int usuarioId)
+        public bool Cancelar(int id, string status, int usuarioId, IReadOnlyList<Notificacao>? notificacoes = null, bool somentePendente = false)
         {
             using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction();
             using var cmd = new SqlCommand(@"UPDATE a SET Status=@Status, DataCancelamento=SYSDATETIME()
                 FROM Agendamentos a
-                WHERE a.Id=@Id AND a.Status IN ('Pendente','Confirmado') AND a.FinalizadoProfissional=0
+                WHERE a.Id=@Id AND a.Status IN ('Pendente','Confirmado') AND a.FinalizadoProfissional=0 AND (@SomentePendente=0 OR a.Status='Pendente')
                 AND ((@Status='CanceladoCliente' AND EXISTS(SELECT 1 FROM Clientes c WHERE c.Id=a.ClienteId AND c.UsuarioId=@Usuario))
-                  OR (@Status='CanceladoProfissional' AND EXISTS(SELECT 1 FROM Profissionais p WHERE p.Id=a.ProfissionalId AND p.UsuarioId=@Usuario)))", conn);
+                  OR (@Status='CanceladoProfissional' AND EXISTS(SELECT 1 FROM Profissionais p WHERE p.Id=a.ProfissionalId AND p.UsuarioId=@Usuario)))", conn, tx);
+            cmd.Parameters.AddWithValue("@SomentePendente", somentePendente);
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Status", status);
             cmd.Parameters.AddWithValue("@Usuario", usuarioId);
-            return cmd.ExecuteNonQuery() == 1;
+            return ConcluirTransicao(cmd, tx, notificacoes);
         }
         public int ContarPendentes(int clienteId)
         {
@@ -626,32 +655,34 @@ namespace BD_TRAMPO
 
 
 
-        public bool Finalizar(int id, int profissionalId, decimal valorFinal, decimal taxa, decimal valorLiquido)
+        public bool Finalizar(int id, int profissionalId, decimal valorFinal, decimal taxa, decimal valorLiquido, IReadOnlyList<Notificacao>? notificacoes = null)
         {
             using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction();
             using var cmd = new SqlCommand(@"UPDATE Agendamentos SET Status='AguardandoCliente',
                 FinalizadoProfissional=1, ValorFinal=@Valor, Taxa=@Taxa, ValorLiquido=@Liquido
                 WHERE Id=@Id AND ProfissionalId=@Profissional AND Status='Confirmado'
-                    AND ConfirmadoProfissional=1 AND FinalizadoProfissional=0", conn);
+                    AND ConfirmadoProfissional=1 AND FinalizadoProfissional=0", conn, tx);
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Profissional", profissionalId);
             cmd.Parameters.AddWithValue("@Valor", valorFinal);
             cmd.Parameters.AddWithValue("@Taxa", taxa);
             cmd.Parameters.AddWithValue("@Liquido", valorLiquido);
-            return cmd.ExecuteNonQuery() == 1;
+            return ConcluirTransicao(cmd, tx, notificacoes);
         }
 
-        public bool ConfirmarCliente(int id, int usuarioId)
+        public bool ConfirmarCliente(int id, int usuarioId, IReadOnlyList<Notificacao>? notificacoes = null)
         {
             using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction();
             using var cmd = new SqlCommand(@"UPDATE a SET ConfirmadoCliente=1, Status='Finalizado'
                 FROM Agendamentos a JOIN Clientes c ON c.Id=a.ClienteId
                 WHERE a.Id=@Id AND c.UsuarioId=@Usuario AND a.FinalizadoProfissional=1
                   AND a.ConfirmadoProfissional=1 AND a.ConfirmadoCliente=0
-                  AND a.Status IN ('AguardandoCliente','Finalizado')", conn);
+                  AND a.Status IN ('AguardandoCliente','Finalizado')", conn, tx);
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Usuario", usuarioId);
-            return cmd.ExecuteNonQuery() == 1;
+            return ConcluirTransicao(cmd, tx, notificacoes);
         }
         // METODO CONTA PREMIUIM
 
@@ -766,9 +797,9 @@ namespace BD_TRAMPO
                 {
                     lista.Add(new Agendamento
                     {
-                        Servico = reader["Servico"].ToString(),
+                        Servico = (reader.IsDBNull(reader.GetOrdinal("Servico")) ? "" : reader.GetString(reader.GetOrdinal("Servico"))),
 
-                        NomeCliente = reader["NomeCliente"].ToString(),
+                        NomeCliente = (reader.IsDBNull(reader.GetOrdinal("NomeCliente")) ? "" : reader.GetString(reader.GetOrdinal("NomeCliente"))),
 
                         Data = Convert.ToDateTime(reader["Data"]),
 

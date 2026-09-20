@@ -117,3 +117,29 @@ BD_TRAMPO/
 4. Configure a connection string
 5. Copie o ScriptBD e Execute o script SQL SERVER 
 6. Rode o projeto ("dotnet watch run" no terminal)
+
+## REST API V1 (Sprint 4)
+
+MVC continua com sessão; a API em `/api/v1` usa JWT Bearer e compartilha os Services. Não é necessário mudar o banco para executar esta Sprint.
+
+A chave JWT não está no repositório. Para habilitar o login API no desenvolvimento, gerar uma chave aleatória apenas na sessão PowerShell:
+
+```powershell
+$bytesJwt = New-Object byte[] 32
+$geradorJwt = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$geradorJwt.GetBytes($bytesJwt)
+$geradorJwt.Dispose()
+$env:Jwt__SigningKey = [Convert]::ToBase64String($bytesJwt)
+dotnet run --launch-profile https
+```
+
+Não imprimir, compartilhar ou salvar essa chave no Git. Sem a variável, MVC continua funcionando e login API retorna 503. `Jwt:Issuer`, `Jwt:Audience` e `Jwt:ExpirationMinutes` ficam em appsettings.json; também podem ser configurados por variáveis com `__`.
+
+Em Development, acessar `/swagger/index.html` na URL da aplicação. Executar `POST /api/v1/auth/login` com uma conta existente e informar o accessToken no botão Authorize. Usar HTTPS. OpenAPI: `/openapi/v1.json`; documentação desligada em Production.
+
+- [Endpoints, contratos e histórico](docs/Sprint4/API.md)
+- [Autenticação, configuração e limitações](docs/Sprint4/AUTENTICACAO.md)
+- [Testes e reprodução](docs/Sprint4/TESTES.md)
+- [Relatório da Sprint 4](docs/Sprint4/RELATORIO.md)
+
+Regressão completa: `powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint1/Run.ps1 -Sprint4`. O runner gera sua própria chave efêmera para o processo de teste e limpa seus registros temporários no SQL Server configurado.

@@ -381,3 +381,8 @@ C:\Users\Vinicius\Desktop\Trampo\Tests\Sprint1\app\runtimes\win\lib\net8.0\Syste
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\iiqoxo9ana-{0}-dim6sbs8e3-dim6sbs8e3.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\k42hh3k6wi-{0}-u7gleh4emt-u7gleh4emt.gz
 C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\compressed\1xvcrroa07-{0}-lnpq9oehtp-lnpq9oehtp.gz
+C:\Users\Vinicius\Desktop\Trampo\Tests\Sprint1\app\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Vinicius\Desktop\Trampo\Tests\Sprint1\app\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\Vinicius\Desktop\Trampo\Tests\Sprint1\app\Microsoft.OpenApi.dll
+C:\Users\Vinicius\Desktop\Trampo\Tests\Sprint1\app\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Vinicius\Desktop\Trampo\obj\Debug\net10.0\BD-TRAMPO.MvcApplicationPartsAssemblyInfo.cs

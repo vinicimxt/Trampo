@@ -403,9 +403,9 @@
                 var contatoExibido =
                     !string.IsNullOrWhiteSpace(Model.Contato)
                     ? Model.Contato
-                    : Model.Telefone;
+                    : Model.Telefone ?? "";
 
-                string contatoLower = contatoExibido?.ToLower() ?? "";
+                string contatoLower = contatoExibido.ToLowerInvariant();
 
                 string icone = "call";
                 string textoContato = contatoExibido;

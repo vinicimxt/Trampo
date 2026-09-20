@@ -1,3 +1,4 @@
+using BD_TRAMPO.Contracts;
 using Microsoft.Data.SqlClient;
 using BD_TRAMPO.DAO;
 
@@ -100,17 +101,17 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         ProfissionalId = (int)reader["ProfissionalId"],
-                        Nome = reader["Nome"].ToString(),
-                        Descricao = reader["Descricao"] != DBNull.Value ? reader["Descricao"].ToString() : "",
-                        Atendimento = reader["Atendimento"].ToString(),
-                        NomeProfissional = reader["NomeProfissional"].ToString(),
-                        Categoria = reader["Categoria"].ToString(),
-                        Subcategoria = reader["Subcategoria"].ToString(),
-                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
-                            ? reader["LinkOnline"].ToString()
+                        Nome = reader.GetString(reader.GetOrdinal("Nome")),
+                        Descricao = reader["Descricao"] != DBNull.Value ? (reader.IsDBNull(reader.GetOrdinal("Descricao")) ? "" : reader.GetString(reader.GetOrdinal("Descricao"))) : "",
+                        Atendimento = reader.GetString(reader.GetOrdinal("Atendimento")),
+                        NomeProfissional = (reader.IsDBNull(reader.GetOrdinal("NomeProfissional")) ? "" : reader.GetString(reader.GetOrdinal("NomeProfissional"))),
+                        Categoria = (reader.IsDBNull(reader.GetOrdinal("Categoria")) ? "" : reader.GetString(reader.GetOrdinal("Categoria"))),
+                        Subcategoria = (reader.IsDBNull(reader.GetOrdinal("Subcategoria")) ? "" : reader.GetString(reader.GetOrdinal("Subcategoria"))),
+                        LinkOnline = Seguranca.UrlHttpValida((reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))))
+                            ? (reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline")))
                             : null,
                         Endereco = reader["Endereco"] != DBNull.Value
-                            ? reader["Endereco"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("Endereco")) ? "" : reader.GetString(reader.GetOrdinal("Endereco")))
                             : "",
                         Ativo = (bool)reader["Ativo"]
                     });
@@ -153,27 +154,27 @@ namespace BD_TRAMPO
                     Servico s = new Servico
                     {
                         Id = (int)reader["Id"],
-                        Nome = reader["Nome"].ToString(),
+                        Nome = reader.GetString(reader.GetOrdinal("Nome")),
                         ProfissionalId = (int)reader["ProfissionalId"],
-                        Descricao = reader["Descricao"].ToString(),
-                        Atendimento = reader["Atendimento"].ToString(),
+                        Descricao = (reader.IsDBNull(reader.GetOrdinal("Descricao")) ? "" : reader.GetString(reader.GetOrdinal("Descricao"))),
+                        Atendimento = reader.GetString(reader.GetOrdinal("Atendimento")),
 
                         Categoria = reader["Categoria"] != DBNull.Value
-                            ? reader["Categoria"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("Categoria")) ? "" : reader.GetString(reader.GetOrdinal("Categoria")))
                             : "",
 
                         Subcategoria = reader["Subcategoria"] != DBNull.Value
-                            ? reader["Subcategoria"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("Subcategoria")) ? "" : reader.GetString(reader.GetOrdinal("Subcategoria")))
                             : "",
 
-                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
-                            ? reader["LinkOnline"].ToString()
+                        LinkOnline = Seguranca.UrlHttpValida((reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))))
+                            ? (reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline")))
                             : null,
 
                         Ativo = (bool)reader["Ativo"],
                         LocalId = reader["LocalId"] == DBNull.Value ? null : (int)reader["LocalId"],
                         SubcategoriaId = (int)reader["SubcategoriaId"],
-                        TipoPreco = reader["TipoPreco"].ToString(),
+                        TipoPreco = reader.GetString(reader.GetOrdinal("TipoPreco")),
                         PrecoBase = reader["PrecoBase"] == DBNull.Value ? null : (decimal)reader["PrecoBase"]
                     };
 
@@ -233,9 +234,9 @@ namespace BD_TRAMPO
             }
         }
 
-        public Servico BuscarPorId(int id)
+        public Servico? BuscarPorId(int id)
         {
-            Servico servico = null;
+            Servico? servico = null;
 
             using (SqlConnection conn = conexao.Conectar())
             {
@@ -262,17 +263,17 @@ namespace BD_TRAMPO
                 {
                     servico = new Servico
                     {
-                        Ativo = (bool)reader["Ativo"], LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString()) ? reader["LinkOnline"].ToString() : null,
+                        Ativo = (bool)reader["Ativo"], LinkOnline = Seguranca.UrlHttpValida((reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline")))) ? (reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))) : null,
                         Id = (int)reader["Id"],
                         ProfissionalId = (int)reader["ProfissionalId"],
-                        Nome = reader["Nome"].ToString(),
-                        Descricao = reader["Descricao"].ToString(),
-                        Atendimento = reader["Atendimento"].ToString(),
+                        Nome = reader.GetString(reader.GetOrdinal("Nome")),
+                        Descricao = (reader.IsDBNull(reader.GetOrdinal("Descricao")) ? "" : reader.GetString(reader.GetOrdinal("Descricao"))),
+                        Atendimento = reader.GetString(reader.GetOrdinal("Atendimento")),
                         LocalId = reader["LocalId"] != DBNull.Value
                             ? (int)reader["LocalId"]
                             : (int?)null,
                         SubcategoriaId = (int)reader["SubcategoriaId"],
-                        TipoPreco = reader["TipoPreco"].ToString(),
+                        TipoPreco = reader.GetString(reader.GetOrdinal("TipoPreco")),
 
                         PrecoBase = reader["PrecoBase"] != DBNull.Value
                             ? Convert.ToDecimal(reader["PrecoBase"])
@@ -300,7 +301,7 @@ namespace BD_TRAMPO
                     lista.Add(new Categoria
                     {
                         Id = (int)reader["Id"],
-                        Nome = reader["Nome"].ToString()
+                        Nome = reader.GetString(reader.GetOrdinal("Nome"))
                     });
                 }
             }
@@ -326,7 +327,7 @@ namespace BD_TRAMPO
                     lista.Add(new Subcategoria
                     {
                         Id = (int)reader["Id"],
-                        Nome = reader["Nome"].ToString()
+                        Nome = reader.GetString(reader.GetOrdinal("Nome"))
                     });
                 }
             }
@@ -408,32 +409,32 @@ namespace BD_TRAMPO
                     {
                         Id = (int)reader["Id"],
                         ProfissionalId = (int)reader["ProfissionalId"],
-                        Nome = reader["Nome"].ToString(),
+                        Nome = reader.GetString(reader.GetOrdinal("Nome")),
 
                         Descricao = reader["Descricao"] != DBNull.Value
-                            ? reader["Descricao"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("Descricao")) ? "" : reader.GetString(reader.GetOrdinal("Descricao")))
                             : "",
 
-                        Atendimento = reader["Atendimento"].ToString(),
+                        Atendimento = reader.GetString(reader.GetOrdinal("Atendimento")),
 
-                        TipoPreco = reader["TipoPreco"].ToString(),
+                        TipoPreco = reader.GetString(reader.GetOrdinal("TipoPreco")),
 
                         PrecoBase = reader["PrecoBase"] != DBNull.Value
                             ? Convert.ToDecimal(reader["PrecoBase"])
                             : null,
 
-                        NomeProfissional = reader["NomeProfissional"].ToString(),
+                        NomeProfissional = (reader.IsDBNull(reader.GetOrdinal("NomeProfissional")) ? "" : reader.GetString(reader.GetOrdinal("NomeProfissional"))),
 
-                        Categoria = reader["Categoria"].ToString(),
+                        Categoria = (reader.IsDBNull(reader.GetOrdinal("Categoria")) ? "" : reader.GetString(reader.GetOrdinal("Categoria"))),
 
-                        Subcategoria = reader["Subcategoria"].ToString(),
+                        Subcategoria = (reader.IsDBNull(reader.GetOrdinal("Subcategoria")) ? "" : reader.GetString(reader.GetOrdinal("Subcategoria"))),
 
-                        LinkOnline = Seguranca.UrlHttpValida(reader["LinkOnline"].ToString())
-                            ? reader["LinkOnline"].ToString()
+                        LinkOnline = Seguranca.UrlHttpValida((reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))))
+                            ? (reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline")))
                             : null,
 
                         Endereco = reader["Endereco"] != DBNull.Value
-                            ? reader["Endereco"].ToString()
+                            ? (reader.IsDBNull(reader.GetOrdinal("Endereco")) ? "" : reader.GetString(reader.GetOrdinal("Endereco")))
                             : ""
 
                     });
@@ -504,24 +505,24 @@ namespace BD_TRAMPO
             if (diasUnicos.Length == 0 || diasUnicos.Any(d => d < 0 || d > 6) ||
                 inicio < TimeSpan.Zero || inicio >= TimeSpan.FromDays(1) ||
                 fim < TimeSpan.Zero || fim >= TimeSpan.FromDays(1) || inicio == fim)
-                throw new InvalidOperationException("Disponibilidade inválida.");
+                throw new FalhaOperacao(TipoFalha.Validacao, "Disponibilidade inválida.");
             using var conn = conexao.Conectar();
             using var tx = conn.BeginTransaction(System.Data.IsolationLevel.Serializable);
             using (var validar = new SqlCommand(@"
                 DECLARE @r int;
                 EXEC @r=sys.sp_getapplock @Resource=@Recurso, @LockMode='Exclusive',
                     @LockOwner='Transaction', @LockTimeout=10000;
-                IF @r<0 THROW 50001, 'Agenda em atualização.', 1;
+                IF @r<0 THROW 51001, 'Agenda em atualização.', 1;
                 IF @Id<>0 AND NOT EXISTS(SELECT 1 FROM Servicos WHERE Id=@Id AND ProfissionalId=@P)
-                    THROW 50001, 'Serviço não encontrado.', 1;
+                    THROW 51002, 'Serviço não encontrado.', 1;
                 IF @Local IS NOT NULL AND NOT EXISTS(SELECT 1 FROM Locais WHERE Id=@Local AND ProfissionalId=@P)
-                    THROW 50001, 'Local inválido.', 1;", conn, tx))
+                    THROW 51003, 'Local inválido.', 1;", conn, tx))
             {
                 validar.Parameters.AddWithValue("@Recurso", "TRAMPO:Profissional:" + s.ProfissionalId);
                 validar.Parameters.AddWithValue("@P", s.ProfissionalId);
                 validar.Parameters.AddWithValue("@Id", s.Id);
                 validar.Parameters.AddWithValue("@Local", (object?)s.LocalId ?? DBNull.Value);
-                validar.ExecuteNonQuery();
+                FalhasSql.Executar(() => validar.ExecuteNonQuery());
             }
             int id = s.Id;
             if (id == 0) id = Inserir(s, conn, tx); else Atualizar(s, conn, tx);
@@ -545,7 +546,7 @@ namespace BD_TRAMPO
             tx.Commit();
             return id;
         }
-        public void Excluir(int id)
+        public bool Excluir(int id)
         {
             int profissionalId = BuscarProfissionalId(id);
             using var conn = conexao.Conectar();
@@ -554,17 +555,41 @@ namespace BD_TRAMPO
                 DECLARE @r int;
                 EXEC @r=sys.sp_getapplock @Resource=@Recurso, @LockMode='Exclusive',
                     @LockOwner='Transaction', @LockTimeout=10000;
-                IF @r<0 THROW 50001, 'Agenda em atualização.', 1;
-                IF EXISTS(SELECT 1 FROM Agendamentos WHERE ServicoId=@Id)
+                IF @r<0 THROW 51001, 'Agenda em atualização.', 1;
+                IF NOT EXISTS(SELECT 1 FROM Servicos WHERE Id=@Id)
+                    THROW 51002, 'Serviço não encontrado.', 1;
+                IF EXISTS(SELECT 1 FROM Agendamentos WHERE ServicoId=@Id) BEGIN
                     UPDATE Servicos SET Ativo=0 WHERE Id=@Id;
-                ELSE BEGIN
+                    SELECT CAST(1 AS bit);
+                END ELSE BEGIN
                     DELETE FROM Disponibilidade WHERE ServicoId=@Id;
                     DELETE FROM Servicos WHERE Id=@Id;
+                    SELECT CAST(0 AS bit);
                 END", conn, tx);
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Recurso", "TRAMPO:Profissional:" + profissionalId);
-            cmd.ExecuteNonQuery();
+            bool desativado = Convert.ToBoolean(FalhasSql.Executar(() => cmd.ExecuteScalar()));
             tx.Commit();
+            return desativado;
+        }
+
+        public List<Servico> ListarPublicos(int pagina, int tamanho)
+        {
+            using var conn = conexao.Conectar();
+            using var cmd = new SqlCommand(@"SELECT Id,ProfissionalId,SubcategoriaId,Nome,Descricao,
+                Atendimento,TipoPreco,PrecoBase,Ativo FROM Servicos WHERE Ativo=1
+                ORDER BY Id OFFSET @Inicio ROWS FETCH NEXT @Tamanho ROWS ONLY", conn);
+            cmd.Parameters.AddWithValue("@Inicio", (pagina - 1) * tamanho);
+            cmd.Parameters.AddWithValue("@Tamanho", tamanho);
+            using var r = cmd.ExecuteReader();
+            var lista = new List<Servico>();
+            while (r.Read()) lista.Add(new Servico {
+                Id=r.GetInt32(0), ProfissionalId=r.GetInt32(1), SubcategoriaId=r.GetInt32(2),
+                Nome=r.GetString(3), Descricao=r.IsDBNull(4) ? "" : r.GetString(4),
+                Atendimento=r.GetString(5), TipoPreco=r.GetString(6),
+                PrecoBase=r.IsDBNull(7) ? null : r.GetDecimal(7), Ativo=r.GetBoolean(8)
+            });
+            return lista;
         }
         // PUXAR DO BANCO CARDS DINAMICOS
         public Dictionary<string, int> ContarServicosPorCategoria()
@@ -585,7 +610,7 @@ namespace BD_TRAMPO
 
                 while (reader.Read())
                 {
-                    dict.Add(reader["Nome"].ToString(), (int)reader["Total"]);
+                    dict.Add(reader.GetString(reader.GetOrdinal("Nome")), (int)reader["Total"]);
                 }
             }
 

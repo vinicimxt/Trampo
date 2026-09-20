@@ -1,3 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
+using BD_TRAMPO.Contracts;
+using BD_TRAMPO.Services;
+using BD_TRAMPO.DAO;
 using BD_TRAMPO;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
@@ -104,6 +108,7 @@ try
     var start = new ProcessStartInfo("dotnet", "\""+(Environment.GetEnvironmentVariable("TRAMPO_TEST_DLL") ?? Path.Combine(root,"bin/Debug/net10.0/BD-TRAMPO.dll"))+"\" --urls http://127.0.0.1:5177") {
         WorkingDirectory=root, UseShellExecute=false, CreateNoWindow=true, RedirectStandardOutput=true, RedirectStandardError=true };
     start.Environment["ASPNETCORE_ENVIRONMENT"]="Development";
+    start.Environment["Jwt__SigningKey"] = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     app=Process.Start(start)!;
     app.OutputDataReceived += (_,e)=> { if(e.Data!=null) lock(logs) logs.AppendLine(e.Data); };
     app.ErrorDataReceived += (_,e)=> { if(e.Data!=null) lock(logs) logs.AppendLine(e.Data); };
@@ -225,29 +230,29 @@ try
     Verificar((await Post(ca,"/Pagamento/ConfirmarPremium")).StatusCode==HttpStatusCode.Forbidden,"cliente não ativa plano profissional");
     Verificar((await Post(ca,"/Usuario/Logout")).StatusCode==HttpStatusCode.Redirect &&
         (await ca.GetAsync("/Usuario/Perfil")).StatusCode==HttpStatusCode.Redirect,"logout limpa sessão");
-    if (args.Contains("--sprint2"))
+    if (args.Contains("--sprint2") || (args.Contains("--sprint3") || args.Contains("--sprint4")))
     {
         Console.WriteLine("SPRINT 1: " + passou + " verificações preservadas.");
         Verificar(Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",criadoId))==7,
             "Sprint 2: serviço criado/editado conserva todas as regras");
         var daoServico = new ServicoDAO();
-        var edicao = daoServico.BuscarPorId(criadoId);
+        var edicao = daoServico.BuscarPorId(criadoId) ?? throw new Exception("Serviço de teste não encontrado.");
         var nomeAntes = edicao.Nome;
         edicao.SubcategoriaId = -1;
         bool falhou = false;
         try { daoServico.SalvarComDisponibilidade(edicao, new[]{1,2}, TimeSpan.FromHours(9), TimeSpan.FromHours(12)); }
         catch (SqlException) { falhou = true; }
-        Verificar(falhou && daoServico.BuscarPorId(criadoId).Nome == nomeAntes &&
+        Verificar(falhou && daoServico.BuscarPorId(criadoId)?.Nome == nomeAntes &&
             Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",criadoId))==7,
             "Sprint 2: falha SQL preserva serviço e regras anteriores");
-        var novoInvalido = daoServico.BuscarPorId(criadoId);
+        var novoInvalido = daoServico.BuscarPorId(criadoId) ?? throw new Exception("Serviço de teste não encontrado.");
         novoInvalido.Id = 0; novoInvalido.SubcategoriaId = -1; novoInvalido.Nome = tag+"invalido";
         falhou=false;
         try { daoServico.SalvarComDisponibilidade(novoInvalido,new[]{1},TimeSpan.FromHours(9),TimeSpan.FromHours(12)); }
         catch(SqlException) { falhou=true; }
         Verificar(falhou && Id("SELECT COUNT(*) FROM Servicos WHERE Nome=@N",("@N",novoInvalido.Nome))==0,
             "Sprint 2: criação inválida não deixa serviço parcial");
-        edicao = daoServico.BuscarPorId(criadoId);
+        edicao = daoServico.BuscarPorId(criadoId) ?? throw new Exception("Serviço de teste não encontrado.");
         daoServico.SalvarComDisponibilidade(edicao,new[]{1,1,2},TimeSpan.FromHours(9),TimeSpan.FromHours(12));
         Verificar(Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",criadoId))==2,
             "Sprint 2: edição substitui regras e elimina dias duplicados");
@@ -278,7 +283,7 @@ try
             "Sprint 2: tela omite sobreposições parciais de bloqueios");
         int historicoAntes=TotalReservas();
         await Post(cp,"/Servico/Excluir/"+s);
-        Verificar(!daoServico.BuscarPorId(s).Ativo && TotalReservas()==historicoAntes &&
+        Verificar(daoServico.BuscarPorId(s)?.Ativo == false && TotalReservas()==historicoAntes &&
             Id("SELECT COUNT(*) FROM Avaliacoes WHERE AgendamentoId=@A",("@A",concluivel))==1,
             "Sprint 2: remoção de serviço mantém reservas e avaliação");
         await RejeitarReserva(cb,s,dia,"15:00","Sprint 2: serviço desativado não recebe nova reserva");
@@ -291,6 +296,344 @@ try
             "/Suporte/ContatoAjuda","/Agendamento/Recebidos","/Home/Index"})
             Verificar((await cp.GetAsync(pagina)).IsSuccessStatusCode,"Sprint 2: rota atual "+pagina);
     }
+    if ((args.Contains("--sprint3") || args.Contains("--sprint4")))
+    {
+        Console.WriteLine("BASELINE: " + passou + " verificações anteriores preservadas.");
+        var booking = new AgendamentoService(new(),new(),new(),new(),new(),new(),new());
+        var catalogo = new ServicoService(new(),new(),new(),new(),new(),new(),new());
+        var ctxP = new UsuarioContexto(p,"profissional");
+        var ctxQ = new UsuarioContexto(q,"profissional");
+        int u3 = Usuario("sprint3","cliente");
+        var ctxC = new UsuarioContexto(u3,"cliente");
+        var ctxB = new UsuarioContexto(b,"cliente");
+        void Falha(Action executar, TipoFalha esperada, string nome) {
+            try { executar(); throw new Exception("Operação deveria falhar: "+nome); }
+            catch(FalhaOperacao e) { Verificar(e.Tipo==esperada,"Sprint 3: "+nome); }
+        }
+        SalvarServicoRequest DadosServico() => new() {
+            Nome=tag+"app", SubcategoriaId=sub, Atendimento="Online", LinkOnline="https://example.invalid",
+            TipoPreco="Fixo", PrecoBase=100, DiasSemana="0,1,2,3,4,5,6",
+            HoraInicio=TimeSpan.FromHours(8), HoraFim=TimeSpan.FromHours(18)
+        };
+        Falha(()=>catalogo.Criar(ctxC,DadosServico()),TipoFalha.SemPermissao,"criação exige profissional");
+        Falha(()=>catalogo.Criar(new(p,"cliente"),DadosServico()),TipoFalha.SemPermissao,"contexto adulterado recusado");
+        var d3=DadosServico();
+        int s3=catalogo.Criar(ctxP,d3); servicos.Add(s3);
+        Verificar(s3>0 && Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",s3))==7,
+            "Sprint 3: Service cria serviço com regras");
+        d3.Id=s3; d3.Nome=tag+"app-edit";
+        catalogo.Editar(ctxP,d3);
+        Verificar(new ServicoDAO().BuscarPorId(s3)?.Nome==d3.Nome,"Sprint 3: Service edita serviço");
+        Falha(()=>catalogo.Editar(ctxQ,d3),TipoFalha.SemPermissao,"edição exige propriedade");
+        Falha(()=>catalogo.Remover(ctxQ,s3),TipoFalha.SemPermissao,"remoção exige propriedade");
+        d3.Atendimento="Local";d3.LocalId=-1;
+        Falha(()=>catalogo.Editar(ctxP,d3),TipoFalha.Validacao,"local inválido");
+        d3.Atendimento="Online";d3.DiasSemana="9";
+        Falha(()=>catalogo.Editar(ctxP,d3),TipoFalha.Validacao,"disponibilidade inválida");
+        var dReserva=DateTime.Today.AddDays(9);
+        CriarAgendamentoRequest Pedido(int servico, int hora) => new() {
+            ServicoId=servico, Data=dReserva, Hora=TimeSpan.FromHours(hora), Descricao="Service Sprint 3"
+        };
+        Falha(()=>booking.Criar(new(0,"cliente"),Pedido(s3,10)),TipoFalha.NaoAutenticado,"usuário não autenticado");
+        Falha(()=>booking.Criar(ctxC,Pedido(-1,10)),TipoFalha.NaoEncontrado,"serviço inexistente");
+        Falha(()=>booking.Criar(ctxC,Pedido(inativo,10)),TipoFalha.Validacao,"serviço inativo");
+        Falha(()=>booking.Criar(ctxC,Pedido(s3,23)),TipoFalha.Validacao,"fora da disponibilidade");
+        Falha(()=>booking.Criar(ctxP,Pedido(s3,10)),TipoFalha.Validacao,"autoagendamento recusado");
+        Sql("INSERT INTO BloqueiosAgenda(ProfissionalId,Data,HoraInicio,HoraFim) VALUES(@P,@D,'12:00','13:00')",("@P",prof),("@D",dReserva));
+        Falha(()=>booking.Criar(ctxC,Pedido(s3,12)),TipoFalha.Conflito,"bloqueio tipado");
+        int ag3=booking.Criar(ctxC,Pedido(s3,10));
+        Verificar(ag3>0,"Sprint 3: Service cria reserva válida");
+        Falha(()=>booking.Criar(ctxB,Pedido(s3,10)),TipoFalha.Conflito,"conflito tipado");
+        Falha(()=>booking.Confirmar(ctxQ,ag3),TipoFalha.SemPermissao,"confirmação exige propriedade");
+        Falha(()=>booking.Cancelar(ctxB,ag3),TipoFalha.SemPermissao,"cancelamento exige propriedade");
+        var dao3=new AgendamentoDAO();
+        string Estado() => Convert.ToString(Sql("SELECT Status FROM Agendamentos WHERE Id=@A",("@A",ag3))) ?? "";
+        int Nots() => Id("SELECT COUNT(*) FROM Notificacoes WHERE ReferenciaId=@A AND UsuarioId IN (@C,@P)",
+            ("@A",ag3),("@C",u3),("@P",p));
+        Notificacao[] FalharNotificacao() => [
+            new(){UsuarioId=u3,Titulo="Teste",Mensagem="Rollback",Tipo="Agendamento",ReferenciaId=ag3},
+            new(){UsuarioId=-1,Titulo="Teste",Mensagem="FK inválida",Tipo="Agendamento",ReferenciaId=ag3}
+        ];
+        void Rollback(Func<bool> executar,string estado,string nome) {
+            int antesN=Nots(); bool falhou=false;
+            try { executar(); } catch(SqlException){falhou=true;}
+            Verificar(falhou && Estado()==estado && Nots()==antesN,"Sprint 3: rollback "+nome+" e notificações");
+        }
+        Rollback(()=>dao3.Confirmar(ag3,prof,FalharNotificacao()),"Pendente","confirmação");
+        Rollback(()=>dao3.Cancelar(ag3,"CanceladoProfissional",p,FalharNotificacao(),true),"Pendente","recusa");
+        booking.Confirmar(ctxP,ag3);
+        Verificar(Estado()=="Confirmado" && Nots()==3,"Sprint 3: confirmação e aviso persistidos juntos");
+        Falha(()=>booking.Recusar(ctxP,ag3),TipoFalha.Conflito,"recusa não cancela confirmado");
+        Rollback(()=>dao3.Cancelar(ag3,"CanceladoCliente",u3,FalharNotificacao()),"Confirmado","cancelamento");
+        Verificar(Sql("SELECT DataCancelamento FROM Agendamentos WHERE Id=@A",("@A",ag3)) is DBNull,
+            "Sprint 3: rollback restaura data de cancelamento");
+        Sql("UPDATE Agendamentos SET Data=@D WHERE Id=@A",("@D",DateTime.Today.AddDays(-1)),("@A",ag3));
+        Rollback(()=>dao3.Finalizar(ag3,prof,100,4,96,FalharNotificacao()),"Confirmado","finalização");
+        Verificar(Sql("SELECT ValorFinal FROM Agendamentos WHERE Id=@A",("@A",ag3)) is DBNull,
+            "Sprint 3: rollback restaura valores financeiros");
+        booking.Finalizar(ctxP,ag3,1);
+        Verificar(Estado()=="AguardandoCliente" && Convert.ToDecimal(Sql("SELECT ValorFinal FROM Agendamentos WHERE Id=@A",("@A",ag3)))==100,
+            "Sprint 3: finalização usa preço fixo do banco");
+        Rollback(()=>dao3.ConfirmarCliente(ag3,u3,FalharNotificacao()),"AguardandoCliente","conclusão");
+        Falha(()=>booking.ConfirmarConclusao(ctxB,ag3),TipoFalha.SemPermissao,"conclusão exige contratante");
+        booking.ConfirmarConclusao(ctxC,ag3);
+        booking.PermitirAvaliacao(ctxC,ag3);
+        Verificar(Estado()=="Finalizado","Sprint 3: conclusão permite avaliação");
+        booking.Avaliar(ctxC,new(){AgendamentoId=ag3,ProfissionalId=prof,Nota=5});
+        Falha(()=>booking.PermitirAvaliacao(ctxC,ag3),TipoFalha.Conflito,"avaliação duplicada tipada");
+        int cancelar3=booking.Criar(ctxC,Pedido(s3,11));
+        booking.Cancelar(ctxC,cancelar3);
+        Verificar(new AgendamentoDAO().BuscarPorId(cancelar3)?.Status=="CanceladoCliente",
+            "Sprint 3: Service cancela reserva");
+        int recusar3=booking.Criar(ctxC,Pedido(s3,11));
+        booking.Recusar(ctxP,recusar3);
+        Verificar(new AgendamentoDAO().BuscarPorId(recusar3)?.Status=="CanceladoProfissional",
+            "Sprint 3: Service recusa solicitação");
+        catalogo.Desativar(ctxP,s3);
+        Verificar(new ServicoDAO().BuscarPorId(s3)?.Ativo==false && new AgendamentoDAO().BuscarPorId(ag3)!=null,
+            "Sprint 3: Service preserva histórico ao remover oferta");
+    }
+    if (args.Contains("--sprint4"))
+    {
+        Console.WriteLine("BASELINE SPRINT 4: " + passou + " verificações anteriores preservadas.");
+        int inicioSprint4 = passou;
+        int apiUsuario = Usuario("api4", "cliente", true);
+        using var apiC = Cliente(); using var apiB = Cliente(); using var apiP = Cliente();
+        using var apiQ = Cliente(); using var apiAdmin = Cliente();
+        async Task<System.Text.Json.JsonElement> Api(HttpClient client, HttpMethod method, string path,
+            object? body, int expected, string nome)
+        {
+            using var request = new HttpRequestMessage(method, path);
+            if (body != null) request.Content = System.Net.Http.Json.JsonContent.Create(body);
+            using var response = await client.SendAsync(request);
+            string json = await response.Content.ReadAsStringAsync();
+            Verificar((int)response.StatusCode == expected, "Sprint 4: " + nome + " (HTTP " + (int)response.StatusCode + ")");
+            if (expected >= 400) {
+                using var error = System.Text.Json.JsonDocument.Parse(json);
+                if (!error.RootElement.TryGetProperty("erro", out var detalhe) ||
+                    !detalhe.TryGetProperty("codigo", out _) || json.Contains("SqlException") ||
+                    json.Contains("StackTrace", StringComparison.OrdinalIgnoreCase) || json.Contains("SQLEXPRESS"))
+                    throw new Exception("Contrato de erro inválido: " + nome);
+            }
+            if (string.IsNullOrEmpty(json)) return default;
+            using var document = System.Text.Json.JsonDocument.Parse(json);
+            return document.RootElement.Clone();
+        }
+        async Task<string> ApiLogin(HttpClient client, string sufixo)
+        {
+            var result = await Api(client, HttpMethod.Post, "/api/v1/auth/login",
+                new { email=tag+sufixo+"@example.invalid", senha }, 200, "login " + sufixo);
+            string token = result.GetProperty("accessToken").GetString() ?? throw new Exception("Token ausente.");
+            client.DefaultRequestHeaders.Authorization = new("Bearer", token);
+            return token;
+        }
+        await Api(anon,HttpMethod.Get,"/api/v1/auth/me",null,401,"me exige token");
+        await Api(cp,HttpMethod.Get,"/api/v1/auth/me",null,401,"sessão MVC não autentica API");
+        await Api(anon,HttpMethod.Post,"/api/v1/auth/login",new {email=tag+"api4@example.invalid",senha="errada"},401,"senha incorreta");
+        await Api(anon,HttpMethod.Post,"/api/v1/auth/login",new {email=tag+"ausente@example.invalid",senha},401,"usuário inexistente");
+        string accessToken = await ApiLogin(apiC,"api4");
+        await ApiLogin(apiB,"b"); await ApiLogin(apiP,"p"); await ApiLogin(apiQ,"q"); await ApiLogin(apiAdmin,"admin");
+        Verificar(Convert.ToString(Sql("SELECT Senha FROM Usuarios WHERE Id=@U",("@U",apiUsuario)))?.Length>64,
+            "Sprint 4: API reutiliza migração de hash legado");
+        var jwtLido = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+        Verificar(jwtLido.Claims.All(c => new[]{"sub","role","jti","nbf","exp","iss","aud"}.Contains(c.Type)) &&
+            jwtLido.ValidTo>DateTime.UtcNow && jwtLido.ValidTo<DateTime.UtcNow.AddMinutes(16),
+            "Sprint 4: claims mínimas e expiração curta");
+        var me = await Api(apiC,HttpMethod.Get,"/api/v1/auth/me",null,200,"usuário atual");
+        Verificar(me.GetProperty("id").GetInt32()==apiUsuario && me.EnumerateObject().Count()==4 &&
+            !me.TryGetProperty("senha",out _) && !me.TryGetProperty("telefone",out _),"Sprint 4: me usa DTO sem dados internos");
+        Verificar((await apiC.GetAsync("/Agendamento/Meus")).StatusCode==HttpStatusCode.Redirect,
+            "Sprint 4: JWT não cria sessão MVC");
+        using var tokenRuim = Cliente(); tokenRuim.DefaultRequestHeaders.Authorization=new("Bearer","invalido");
+        await Api(tokenRuim,HttpMethod.Get,"/api/v1/auth/me",null,401,"token inválido");
+        string TokenTeste(string issuer, string audience, DateTime expires, byte[] key) {
+            var jwt = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(issuer,audience,
+                new[]{new System.Security.Claims.Claim("sub",apiUsuario.ToString()),new System.Security.Claims.Claim("role","cliente")},
+                expires.AddMinutes(-15),expires,new Microsoft.IdentityModel.Tokens.SigningCredentials(
+                    new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key),Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256));
+            return new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(jwt);
+        }
+        foreach(var invalid in new[]{
+            TokenTeste("Trampo","Trampo.Api",DateTime.UtcNow.AddMinutes(-2),Convert.FromBase64String(start.Environment["Jwt__SigningKey"]!)),
+            TokenTeste("Outro","Trampo.Api",DateTime.UtcNow.AddMinutes(5),Convert.FromBase64String(start.Environment["Jwt__SigningKey"]!)),
+            TokenTeste("Trampo","Outra",DateTime.UtcNow.AddMinutes(5),Convert.FromBase64String(start.Environment["Jwt__SigningKey"]!)),
+            TokenTeste("Trampo","Trampo.Api",DateTime.UtcNow.AddMinutes(5),RandomNumberGenerator.GetBytes(32))}) {
+            tokenRuim.DefaultRequestHeaders.Authorization=new("Bearer",invalid);
+            await Api(tokenRuim,HttpMethod.Get,"/api/v1/auth/me",null,401,"rejeita expiração/issuer/audience/assinatura inválidos");
+        }
+        Sql("UPDATE Usuarios SET Tipo='admin' WHERE Id=@U",("@U",apiUsuario));
+        try { await Api(apiC,HttpMethod.Get,"/api/v1/auth/me",null,401,"token rejeitado após alteração de perfil"); }
+        finally { Sql("UPDATE Usuarios SET Tipo='cliente' WHERE Id=@U",("@U",apiUsuario)); }
+        await Api(apiAdmin,HttpMethod.Get,"/api/v1/agendamentos",null,403,"admin não assume papel de participante");
+        await Api(anon,HttpMethod.Get,"/api/v1/servicos?tamanho=2",null,200,"catálogo público");
+        await Api(anon,HttpMethod.Get,"/api/v1/servicos?tamanho=101",null,400,"limite de paginação");
+        await Api(anon,HttpMethod.Get,"/api/v1/servicos/"+inativo,null,404,"catálogo não expõe inativo");
+        await Api(anon,HttpMethod.Get,"/api/v1/servicos/-1",null,404,"serviço inexistente");
+        var oferta = new BD_TRAMPO.Api.Contracts.ServicoRequest {
+            SubcategoriaId=sub, Nome=tag+"api-oferta", Atendimento="Online", LinkOnline="https://example.invalid/reuniao",
+            TipoPreco="Fixo",PrecoBase=100,DiasSemana="0,1,2,3,4,5,6",HoraInicio=TimeSpan.FromHours(8),HoraFim=TimeSpan.FromHours(18)
+        };
+        await Api(anon,HttpMethod.Post,"/api/v1/servicos",oferta,401,"criação exige JWT");
+        await Api(apiC,HttpMethod.Post,"/api/v1/servicos",oferta,403,"cliente não cria serviço");
+        var criadoApi = await Api(apiP,HttpMethod.Post,"/api/v1/servicos",oferta,201,"profissional cria serviço");
+        int apiServico = criadoApi.GetProperty("id").GetInt32(); servicos.Add(apiServico);
+        var consulta = await Api(anon,HttpMethod.Get,"/api/v1/servicos/"+apiServico,null,200,"consulta serviço criado");
+        Verificar(consulta.GetProperty("profissionalId").GetInt32()==prof && !consulta.TryGetProperty("linkOnline",out _),
+            "Sprint 4: proprietário derivado e link privado fora do catálogo");
+        oferta.Nome=tag+"api-editado";
+        await Api(apiP,HttpMethod.Put,"/api/v1/servicos/"+apiServico,oferta,204,"editar próprio serviço");
+        await Api(apiQ,HttpMethod.Put,"/api/v1/servicos/"+apiServico,oferta,403,"não editar serviço alheio");
+        await Api(apiQ,HttpMethod.Delete,"/api/v1/servicos/"+apiServico,null,403,"não remover serviço alheio");
+        var adulterarServico = System.Text.Json.JsonSerializer.SerializeToNode(oferta)!;
+        adulterarServico["profissionalId"]=outroProf;
+        await Api(apiP,HttpMethod.Post,"/api/v1/servicos",adulterarServico,400,"ID de proprietário no JSON é recusado");
+        var diaApi=DateTime.Today.AddDays(12);
+        object PedidoApi(int hora, int? servicoId=null) => new {servicoId=servicoId??apiServico,data=diaApi.ToString("yyyy-MM-dd"),hora=$"{hora:00}:00:00",descricao="Reserva API"};
+        await Api(apiC,HttpMethod.Post,"/api/v1/agendamentos",PedidoApi(23),400,"horário fora da disponibilidade");
+        await Api(apiC,HttpMethod.Post,"/api/v1/agendamentos",PedidoApi(10,inativo),400,"não reserva inativo");
+        var adulterarReserva = System.Text.Json.JsonSerializer.SerializeToNode(PedidoApi(10))!;
+        adulterarReserva["clienteId"]=b; adulterarReserva["status"]="Finalizado"; adulterarReserva["preco"]=1;
+        await Api(apiC,HttpMethod.Post,"/api/v1/agendamentos",adulterarReserva,400,"IDs status e preço não aceitos no payload");
+        var agendaApi=await Api(apiC,HttpMethod.Get,$"/api/v1/servicos/{apiServico}/agenda?data={diaApi:yyyy-MM-dd}",null,200,"consulta agenda");
+        Verificar(agendaApi.GetProperty("horarios").EnumerateArray().Any(h=>h.GetString()=="10:00:00"),"Sprint 4: agenda serializa horas disponíveis");
+        using var reqA=new HttpRequestMessage(HttpMethod.Post,"/api/v1/agendamentos"){Content=System.Net.Http.Json.JsonContent.Create(PedidoApi(10))};
+        using var reqB=new HttpRequestMessage(HttpMethod.Post,"/api/v1/agendamentos"){Content=System.Net.Http.Json.JsonContent.Create(PedidoApi(10))};
+        var concorrentes=await Task.WhenAll(apiC.SendAsync(reqA),apiB.SendAsync(reqB));
+        Verificar(concorrentes.Count(r=>r.StatusCode==HttpStatusCode.Created)==1 && concorrentes.Count(r=>r.StatusCode==HttpStatusCode.Conflict)==1 &&
+            Id("SELECT COUNT(*) FROM Agendamentos WHERE ServicoId=@S AND Data=@D AND Hora='10:00'",("@S",apiServico),("@D",diaApi))==1,
+            "Sprint 4: concorrência HTTP cria somente uma reserva");
+        int vencedor=Array.FindIndex(concorrentes,r=>r.StatusCode==HttpStatusCode.Created);
+        using var corpoConcorrente=System.Text.Json.JsonDocument.Parse(await concorrentes[vencedor].Content.ReadAsStringAsync());
+        int agApi=corpoConcorrente.RootElement.GetProperty("id").GetInt32();
+        HttpClient dono = vencedor==0?apiC:apiB, estranho=vencedor==0?apiB:apiC;
+        Verificar(concorrentes[vencedor].Headers.Location?.AbsolutePath==$"/api/v1/agendamentos/{agApi}","Sprint 4: criação retorna Location");
+        foreach(var r in concorrentes)r.Dispose();
+        var meusApi=await Api(dono,HttpMethod.Get,"/api/v1/agendamentos",null,200,"lista próprios");
+        Verificar(meusApi.EnumerateArray().Any(x=>x.GetProperty("id").GetInt32()==agApi && x.GetProperty("servicoId").GetInt32()==apiServico),
+            "Sprint 4: lista contém IDs corretos");
+        await Api(apiP,HttpMethod.Get,"/api/v1/agendamentos?visao=recebidos",null,200,"profissional lista recebidos");
+        await Api(apiC,HttpMethod.Get,"/api/v1/agendamentos?visao=recebidos",null,403,"recebidos exige profissional");
+        await Api(dono,HttpMethod.Get,"/api/v1/agendamentos/"+agApi,null,200,"consulta participante");
+        await Api(estranho,HttpMethod.Get,"/api/v1/agendamentos/"+agApi,null,403,"não acessa reserva alheia");
+        await Api(apiC,HttpMethod.Get,"/api/v1/agendamentos/-1",null,404,"reserva inexistente");
+        await Api(estranho,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/cancelar",null,403,"não cancela reserva alheia");
+        await Api(dono,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/avaliacao",new {nota=5},400,"avaliação exige conclusão");
+        await Api(apiQ,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/confirmar",null,403,"confirmação exige propriedade");
+        await Api(apiC,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/confirmar",null,403,"confirmação exige perfil");
+        await Api(apiP,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/confirmar",null,204,"confirmar");
+        await Api(apiP,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/recusar",null,409,"não recusa já confirmado");
+        await Api(apiP,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/finalizar",new {valorFinal=1},400,"não finaliza no futuro");
+        Sql("UPDATE Agendamentos SET Data=@D WHERE Id=@A",("@D",DateTime.Today.AddDays(-1)),("@A",agApi));
+        await Api(apiP,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/finalizar",new {valorFinal=1},204,"finalizar");
+        await Api(estranho,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/confirmar-conclusao",null,403,"outro cliente não conclui");
+        await Api(dono,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/confirmar-conclusao",null,204,"confirmar conclusão");
+        var finalizado=await Api(dono,HttpMethod.Get,$"/api/v1/agendamentos/{agApi}",null,200,"consulta valor gravado");
+        Verificar(finalizado.GetProperty("valorFinal").GetDecimal()==100 && !finalizado.TryGetProperty("precoBase",out _) &&
+            finalizado.GetProperty("origemValorFinal").GetString()=="finalizacao_sem_snapshot_da_oferta",
+            "Sprint 4: valor persistido e limitação histórica explícita");
+        await Api(estranho,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/avaliacao",new {nota=5},403,"outro cliente não avalia");
+        await Api(dono,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/avaliacao",new {nota=5,profissionalId=outroProf},400,"avaliação não aceita profissional arbitrário");
+        await Api(dono,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/avaliacao",new {nota=5,comentario="Teste API"},204,"avaliação válida");
+        await Api(dono,HttpMethod.Post,$"/api/v1/agendamentos/{agApi}/avaliacao",new {nota=5},409,"avaliação duplicada");
+        int cancelarApi=(await Api(apiC,HttpMethod.Post,"/api/v1/agendamentos",PedidoApi(11),201,"criar para cancelar")).GetProperty("id").GetInt32();
+        await Api(apiC,HttpMethod.Post,$"/api/v1/agendamentos/{cancelarApi}/cancelar",null,204,"cancelar");
+        int recusarApi=(await Api(apiC,HttpMethod.Post,"/api/v1/agendamentos",PedidoApi(11),201,"criar para recusar")).GetProperty("id").GetInt32();
+        await Api(apiP,HttpMethod.Post,$"/api/v1/agendamentos/{recusarApi}/recusar",null,204,"recusar");
+        var removido=await Api(apiP,HttpMethod.Delete,$"/api/v1/servicos/{apiServico}",null,200,"remover com histórico");
+        Verificar(removido.GetProperty("resultado").GetString()=="desativado" && Id("SELECT COUNT(*) FROM Agendamentos WHERE Id=@A",("@A",agApi))==1,
+            "Sprint 4: DELETE desativa e preserva histórico");
+        int livreApi=(await Api(apiP,HttpMethod.Post,"/api/v1/servicos",oferta,201,"criar sem histórico")).GetProperty("id").GetInt32(); servicos.Add(livreApi);
+        var excluido=await Api(apiP,HttpMethod.Delete,$"/api/v1/servicos/{livreApi}",null,200,"remover sem histórico");
+        Verificar(excluido.GetProperty("resultado").GetString()=="excluido" && new ServicoDAO().BuscarPorId(livreApi)==null,
+            "Sprint 4: DELETE informa exclusão física");
+        await Api(anon,HttpMethod.Get,"/api/v1/inexistente",null,404,"erro padronizado em rota inexistente");
+        using(var malformed = await apiC.PostAsync("/api/v1/agendamentos",new StringContent("{",Encoding.UTF8,"application/json")))
+            Verificar(malformed.StatusCode==HttpStatusCode.BadRequest && (await malformed.Content.ReadAsStringAsync()).Contains("VALIDACAO"),
+                "Sprint 4: JSON malformado tem erro seguro");
+        foreach(var (codigo,tipo) in new[]{(51001,TipoFalha.Conflito),(51002,TipoFalha.NaoEncontrado),(51003,TipoFalha.Validacao)}) {
+            bool mapeado=false;
+            try { BD_TRAMPO.DAO.FalhasSql.Executar(()=>Sql($"THROW {codigo}, 'Mensagem independente do mapeamento', 1;")); }
+            catch(FalhaOperacao e) {mapeado=e.Tipo==tipo;}
+            Verificar(mapeado,"Sprint 4: SQL "+codigo+" mapeado pelo número");
+        }
+        bool tecnico=false;
+        try { BD_TRAMPO.DAO.FalhasSql.Executar(()=>Sql("THROW 51999, 'Falha técnica de teste', 1;")); }
+        catch(SqlException) {tecnico=true;}
+        Verificar(tecnico,"Sprint 4: SQL desconhecido permanece falha técnica");
+        var erroContext = new Microsoft.AspNetCore.Http.DefaultHttpContext();
+        erroContext.Request.Path="/api/v1/teste"; erroContext.Response.Body=new MemoryStream();
+        erroContext.RequestServices=new Microsoft.Extensions.DependencyInjection.ServiceCollection().AddLogging().BuildServiceProvider();
+        var middleware = new BD_TRAMPO.Api.ErrosApiMiddleware(_=>throw new Exception("SEGREDO-SQL-CONNECTION"),
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<BD_TRAMPO.Api.ErrosApiMiddleware>.Instance);
+        await middleware.InvokeAsync(erroContext); erroContext.Response.Body.Position=0;
+        string erroSeguro=await new StreamReader(erroContext.Response.Body).ReadToEndAsync();
+        Verificar(erroContext.Response.StatusCode==500 && !erroSeguro.Contains("SEGREDO") && erroSeguro.Contains("ERRO_INTERNO"),
+            "Sprint 4: falha técnica não expõe detalhes internos");
+        using var openApi = System.Text.Json.JsonDocument.Parse(await anon.GetStringAsync("/openapi/v1.json"));
+        var paths=openApi.RootElement.GetProperty("paths");
+        Verificar(paths.EnumerateObject().All(x=>x.Name.StartsWith("/api/v1/")) &&
+            paths.GetProperty("/api/v1/agendamentos").GetProperty("post").GetProperty("responses").TryGetProperty("201",out _) &&
+            paths.GetProperty("/api/v1/auth/me").GetProperty("get").GetProperty("security").GetArrayLength()>0 &&
+            openApi.RootElement.GetProperty("components").GetProperty("securitySchemes").TryGetProperty("Bearer",out _),
+            "Sprint 4: OpenAPI documenta rotas schemas respostas e Bearer");
+        Verificar((await anon.GetAsync("/swagger/index.html")).IsSuccessStatusCode,"Sprint 4: Swagger UI disponível em Development");
+        using var corsRequest=new HttpRequestMessage(HttpMethod.Options,"/api/v1/servicos");
+        corsRequest.Headers.Add("Origin","https://outro.example.invalid");
+        using var corsResponse=await anon.SendAsync(corsRequest);
+        Verificar(!corsResponse.Headers.Contains("Access-Control-Allow-Origin"),"Sprint 4: CORS não liberado indiscriminadamente");
+        bool limitado=false;
+        for(int tentativa=0;tentativa<11;tentativa++) {
+            using var r=await anon.PostAsync("/api/v1/auth/login",System.Net.Http.Json.JsonContent.Create(new {email="inexistente@example.invalid",senha="errada"}));
+            if ((int)r.StatusCode==429) {limitado=r.Headers.RetryAfter!=null && (await r.Content.ReadAsStringAsync()).Contains("LIMITE_REQUISICOES");break;}
+        }
+        Verificar(limitado,"Sprint 4: login limitado com 429 e Retry-After");
+        Verificar((await Post(cp,"/Usuario/Logar",new(){["email"]=tag+"p@example.invalid",["senha"]=senha})).StatusCode==HttpStatusCode.Redirect,
+            "Sprint 4: rate limit da API não interfere no login MVC");
+        void FalhaSqlReal(Action executar, TipoFalha tipo, string nome) {
+            bool falhou=false;
+            try { executar(); } catch(FalhaOperacao e) {falhou=e.Tipo==tipo;}
+            Verificar(falhou,"Sprint 4: "+nome);
+        }
+        var daoApi = new ServicoDAO();
+        FalhaSqlReal(()=>daoApi.SalvarComDisponibilidade(new Servico {Id=-1,ProfissionalId=prof},
+            new[]{1},TimeSpan.FromHours(8),TimeSpan.FromHours(18)),TipoFalha.NaoEncontrado,"revalidação SQL de serviço ausente");
+        FalhaSqlReal(()=>daoApi.SalvarComDisponibilidade(new Servico {Id=apiServico,ProfissionalId=prof,LocalId=-1},
+            new[]{1},TimeSpan.FromHours(8),TimeSpan.FromHours(18)),TipoFalha.Validacao,"revalidação SQL de local inválido");
+        using (var bloqueioConn=new Conexao().Conectar())
+        using (var bloqueioTx=bloqueioConn.BeginTransaction()) {
+            using var bloqueioCmd=new SqlCommand("DECLARE @r int; EXEC @r=sys.sp_getapplock @Resource=@Recurso,@LockMode='Exclusive',@LockOwner='Transaction',@LockTimeout=1000; SELECT @r",bloqueioConn,bloqueioTx);
+            bloqueioCmd.Parameters.AddWithValue("@Recurso","TRAMPO:Profissional:"+prof);
+            if(Convert.ToInt32(bloqueioCmd.ExecuteScalar())<0) throw new Exception("Não adquiriu bloqueio de teste.");
+            FalhaSqlReal(()=>daoApi.Excluir(apiServico),TipoFalha.Conflito,"timeout SQL real mapeado como conflito");
+            bloqueioTx.Rollback();
+        }
+        using(var textoInvalido=await apiC.PostAsync("/api/v1/agendamentos",new StringContent("texto")))
+            Verificar((int)textoInvalido.StatusCode==415 && (await textoInvalido.Content.ReadAsStringAsync()).Contains("FORMATO_INVALIDO"),
+                "Sprint 4: formato não JSON recusado consistentemente");
+        // Mesmo binário em produção, sem chave: MVC disponível e nenhum emissor com segredo padrão.
+        app.Kill(true); app.WaitForExit();
+        start.Environment.Remove("Jwt__SigningKey");
+        start.Environment["ASPNETCORE_ENVIRONMENT"]="Production";
+        app=Process.Start(start) ?? throw new Exception("Não iniciou processo de produção de teste.");
+        app.OutputDataReceived += (_,e)=> { if(e.Data!=null) lock(logs) logs.AppendLine(e.Data); };
+        app.ErrorDataReceived += (_,e)=> { if(e.Data!=null) lock(logs) logs.AppendLine(e.Data); };
+        app.BeginOutputReadLine(); app.BeginErrorReadLine();
+        bool producaoPronta=false;
+        for(int tentativa=0;tentativa<40;tentativa++) {
+            if(app.HasExited) throw new Exception("Processo de produção não iniciou.");
+            try { if((await anon.GetAsync("/Usuario/Login")).IsSuccessStatusCode) {producaoPronta=true;break;} }
+            catch(HttpRequestException) { }
+            await Task.Delay(250);
+        }
+        Verificar(producaoPronta,"Sprint 4: MVC funciona sem chave JWT");
+        await Api(anon,HttpMethod.Post,"/api/v1/auth/login",new {email=tag+"api4@example.invalid",senha},503,"sem chave não emite token");
+        await Api(apiC,HttpMethod.Get,"/api/v1/auth/me",null,401,"sem chave não aceita token anterior");
+        Verificar((await anon.GetAsync("/openapi/v1.json")).StatusCode==HttpStatusCode.NotFound &&
+            (await anon.GetAsync("/swagger/index.html")).StatusCode==HttpStatusCode.NotFound,
+            "Sprint 4: documentação desabilitada em Production");
+        Console.WriteLine("SPRINT 4: "+(passou-inicioSprint4)+" verificações novas.");
+    }
+
     Console.WriteLine("TOTAL: "+passou+" verificações passaram.");
 }
 finally

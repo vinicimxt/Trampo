@@ -56,6 +56,21 @@ namespace BD_TRAMPO.Controllers
             return null;
         }
 
+        protected IActionResult ExecutarAplicacao(Func<IActionResult> operacao)
+        {
+            try { return operacao(); }
+            catch (BD_TRAMPO.Contracts.FalhaOperacao ex)
+            {
+                int status = ex.Tipo switch {
+                    BD_TRAMPO.Contracts.TipoFalha.Validacao => 400,
+                    BD_TRAMPO.Contracts.TipoFalha.NaoAutenticado => 401,
+                    BD_TRAMPO.Contracts.TipoFalha.SemPermissao => 403,
+                    BD_TRAMPO.Contracts.TipoFalha.NaoEncontrado => 404,
+                    _ => 409
+                };
+                return StatusCode(status, ex.Message);
+            }
+        }
         public override void OnActionExecuting(
                    Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
         {

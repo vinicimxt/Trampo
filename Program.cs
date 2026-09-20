@@ -1,3 +1,7 @@
+using BD_TRAMPO.Api;
+using BD_TRAMPO;
+using BD_TRAMPO.DAO;
+using BD_TRAMPO.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,13 +16,27 @@ builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(); 
 
+builder.Services.AddScoped<AgendamentoService>();
+builder.Services.AddScoped<ServicoService>();
+builder.Services.AddScoped<AgendamentoDAO>();
+builder.Services.AddScoped<ServicoDAO>();
+builder.Services.AddScoped<ClienteDAO>();
+builder.Services.AddScoped<ProfissionalDAO>();
+builder.Services.AddScoped<DisponibilidadeDAO>();
+builder.Services.AddScoped<LocalDAO>();
+builder.Services.AddScoped<SubcategoriaDAO>();
+builder.Services.AddScoped<CategoriaDAO>();
+builder.Services.AddScoped<AvaliacaoDAO>();
+builder.Services.AddScoped<UsuarioDAO>();
+builder.AdicionarApi();
 var app = builder.Build();
+app.UseMiddleware<ErrosApiMiddleware>();
 
 //  PIPELINE
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api"), branch => branch.UseExceptionHandler("/Home/Error"));
     app.UseHsts();
 }
 
@@ -30,7 +48,16 @@ app.UseRouting();
 
 app.UseSession(); 
 
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "TRAMPO API v1"));
+}
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

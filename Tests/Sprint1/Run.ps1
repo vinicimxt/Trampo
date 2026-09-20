@@ -1,4 +1,4 @@
-param([switch]$Sprint2)
+param([switch]$Sprint2, [switch]$Sprint3, [switch]$Sprint4)
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $previousDll = $env:TRAMPO_TEST_DLL
@@ -11,7 +11,11 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Falha na compilação dos testes.' }
     Copy-Item -LiteralPath Tests/Sprint1/app/BD-TRAMPO.dll -Destination Tests/Sprint1/bin/Debug/net10.0/BD-TRAMPO.dll -Force
     $env:TRAMPO_TEST_DLL = Join-Path $projectRoot 'Tests/Sprint1/app/BD-TRAMPO.dll'
-    if ($Sprint2) {
+    if ($Sprint4) {
+        dotnet run --project Tests/Sprint1/Sprint1.csproj --no-build --no-launch-profile -- --sprint4
+    } elseif ($Sprint3) {
+        dotnet run --project Tests/Sprint1/Sprint1.csproj --no-build --no-launch-profile -- --sprint3
+    } elseif ($Sprint2) {
         dotnet run --project Tests/Sprint1/Sprint1.csproj --no-build --no-launch-profile -- --sprint2
     } else {
         dotnet run --project Tests/Sprint1/Sprint1.csproj --no-build --no-launch-profile

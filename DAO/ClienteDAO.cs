@@ -6,6 +6,23 @@ namespace BD_TRAMPO
     {
         Conexao conexao = new Conexao();
 
+        public int ObterOuCriar(int usuarioId)
+        {
+            using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction(System.Data.IsolationLevel.Serializable);
+            using var cmd = new SqlCommand(@"
+                DECLARE @Id int;
+                SELECT @Id=Id FROM Clientes WITH (UPDLOCK,HOLDLOCK) WHERE UsuarioId=@U;
+                IF @Id IS NULL BEGIN
+                    INSERT INTO Clientes(UsuarioId) VALUES(@U);
+                    SET @Id=CONVERT(int,SCOPE_IDENTITY());
+                END;
+                SELECT @Id;", conn, tx);
+            cmd.Parameters.AddWithValue("@U", usuarioId);
+            int id = Convert.ToInt32(cmd.ExecuteScalar());
+            tx.Commit();
+            return id;
+        }
         public void Inserir(int usuarioId)
         {
             using (SqlConnection conn = conexao.Conectar())
