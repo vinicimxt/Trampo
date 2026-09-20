@@ -152,29 +152,7 @@ namespace BD_TRAMPO.Controllers
                     PrecoBase = precoBase
                 };
 
-                int servicoIdCriado = dao.Inserir(s);
-
-                // converte "1,2,5" → List<int>
-                var dias = diasSemana
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(int.Parse)
-                    .ToList();
-
-                DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
-
-                foreach (var dia in dias)
-                {
-                    dispDAO.Inserir(new Disponibilidade
-                    {
-                        ProfissionalId = profissionalId,
-                        ServicoId = servicoIdCriado,
-                        DiaSemana = dia,
-                        HoraInicio = horaInicio,
-                        HoraFim = horaFim,
-                        Ativo = true
-                    });
-                }
-
+                dao.SalvarComDisponibilidade(s, diasSemana.Split(',').Select(int.Parse), horaInicio, horaFim);
 
                 TempData["Sucesso"] = "Serviço criado com sucesso ✔";
 
@@ -273,31 +251,8 @@ namespace BD_TRAMPO.Controllers
                 var original = dao.BuscarPorId(s.Id);
                 s.SubcategoriaId = original.SubcategoriaId;
 
-                dao.Atualizar(s);
-
-                DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
-
-                // remove regras antigas
-                dispDAO.RemoverPorServico(s.Id);
-
-                var dias = (diasSemana ?? "")
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(int.Parse)
-                    .ToList();
-
-
-                foreach (var dia in dias)
-                {
-                    dispDAO.Inserir(new Disponibilidade
-                    {
-                        ProfissionalId = original.ProfissionalId,
-                        ServicoId = s.Id,
-                        DiaSemana = dia,
-                        HoraInicio = horaInicio,
-                        HoraFim = horaFim,
-                        Ativo = true
-                    });
-                }
+                s.ProfissionalId = original.ProfissionalId;
+                dao.SalvarComDisponibilidade(s, diasSemana.Split(',').Select(int.Parse), horaInicio, horaFim);
 
                 TempData["Sucesso"] = "Serviço atualizado com sucesso ✏️";
             }
@@ -323,9 +278,9 @@ namespace BD_TRAMPO.Controllers
             try
             {
                 ServicoDAO dao = new ServicoDAO();
-                if (dao.TemAgendamentos(id)) dao.Desativar(id); else dao.Excluir(id);
+                dao.Excluir(id);
 
-                TempData["Sucesso"] = "Serviço excluído com sucesso 🗑️";
+                TempData["Sucesso"] = "Serviço removido da oferta. O histórico existente foi preservado.";
             }
             catch (Exception ex)
             {
@@ -350,22 +305,8 @@ namespace BD_TRAMPO.Controllers
             {
                 ServicoDAO dao = new ServicoDAO();
 
-                if (dao.TemAgendamentos(id))
-                {
-                    dao.Desativar(id);
-                    TempData["Sucesso"] = "Serviço desativado. Ele não aparecerá mais para novos clientes.";
-                }
-                else
-                {
-                    DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
-
-                    // A exclusão das regras acontece atomicamente no DAO.
-
-                    if (dao.TemAgendamentos(id)) dao.Desativar(id); else dao.Excluir(id);
-
-                    TempData["Sucesso"] =
-                        "Serviço excluído com sucesso 🗑️";
-                }
+                dao.Excluir(id);
+                TempData["Sucesso"] = "Serviço removido da oferta. O histórico existente foi preservado.";
             }
             catch
             {

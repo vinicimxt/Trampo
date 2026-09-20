@@ -141,6 +141,31 @@ namespace BD_TRAMPO
             tx.Commit();
             return id;
         }
+        // Projeção para a tela; Inserir continua revalidando tudo sob transação.
+        public List<(DateTime Inicio, DateTime Fim)> IntervalosIndisponiveis(int profissionalId, DateTime dia)
+        {
+            using var conn = conexao.Conectar();
+            using var cmd = new SqlCommand(@"
+                SELECT Data, Hora AS Inicio, CAST(NULL AS time) AS Fim FROM Agendamentos
+                WHERE ProfissionalId=@P AND Data BETWEEN @Anterior AND @Seguinte
+                AND Status NOT IN ('Cancelado','CanceladoCliente','CanceladoProfissional')
+                UNION ALL
+                SELECT Data, HoraInicio, HoraFim FROM BloqueiosAgenda
+                WHERE ProfissionalId=@P AND Data BETWEEN @Anterior AND @Seguinte", conn);
+            cmd.Parameters.AddWithValue("@P", profissionalId);
+            cmd.Parameters.AddWithValue("@Anterior", dia.Date.AddDays(-1));
+            cmd.Parameters.AddWithValue("@Seguinte", dia.Date.AddDays(1));
+            using var r = cmd.ExecuteReader();
+            var intervalos = new List<(DateTime Inicio, DateTime Fim)>();
+            while (r.Read())
+            {
+                var inicio = r.GetDateTime(0).Date + r.GetTimeSpan(1);
+                var fim = r.IsDBNull(2) ? inicio.AddHours(1) : r.GetDateTime(0).Date + r.GetTimeSpan(2);
+                if (fim <= inicio) fim = fim.AddDays(1);
+                intervalos.Add((inicio, fim));
+            }
+            return intervalos;
+        }
         public bool HorarioOcupado(int servicoId, DateTime data, TimeSpan hora)
         {
             using (SqlConnection conn = conexao.Conectar())

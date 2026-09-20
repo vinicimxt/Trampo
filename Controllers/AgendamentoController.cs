@@ -27,7 +27,7 @@ namespace BD_TRAMPO.Controllers
 
             // horários ocupados do dia
             AgendamentoDAO agDAO = new AgendamentoDAO();
-            var ocupados = agDAO.BuscarHorariosOcupados(servicoId, dia);
+            var intervalos = agDAO.IntervalosIndisponiveis(servico.ProfissionalId, dia);
 
             // disponibilidade do serviço
             DisponibilidadeDAO dispDAO = new DisponibilidadeDAO();
@@ -68,7 +68,7 @@ namespace BD_TRAMPO.Controllers
             ViewBag.DiasTexto = string.Join(", ", nomesDias);
 
             var horarios = RegrasAgenda.Horarios(regras, dia)
-                .Where(h => h > DateTime.Now && !ocupados.Contains(h.TimeOfDay))
+                .Where(h => h > DateTime.Now && !intervalos.Any(i => RegrasAgenda.Sobrepoe(h, h.AddHours(1), i.Inicio, i.Fim)))
                 .Select(h => h.TimeOfDay).Distinct().OrderBy(h => h).ToList();
             ViewBag.DiaInvalido = !RegrasAgenda.Horarios(regras, dia).Any();
             ViewBag.HoraInicio = regras.Min(r => r.HoraInicio).ToString(@"hh\:mm");
@@ -79,7 +79,7 @@ namespace BD_TRAMPO.Controllers
             ViewBag.ServicoId = servicoId;
             ViewBag.Data = dia;
             ViewBag.Horarios = horarios.Distinct().OrderBy(x => x).ToList();
-            ViewBag.Ocupados = ocupados;
+            ViewBag.Ocupados = new List<TimeSpan>();
             ViewBag.Atendimento = servico.Atendimento ?? "Local";
 
             return View();

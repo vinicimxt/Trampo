@@ -21,9 +21,10 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleBtn.addEventListener('click', function () {
             var isPass = senhaInput.type === 'password';
             senhaInput.type = isPass ? 'text' : 'password';
+            toggleBtn.setAttribute('aria-label', isPass ? 'Ocultar senha' : 'Mostrar senha');
             var icon = document.getElementById('toggleIconCad');
             if (icon) {
-                icon.textContent = (input.type === 'text') ? 'visibility_off' : 'visibility';
+                icon.textContent = (senhaInput.type === 'text') ? 'visibility_off' : 'visibility';
             }
         });
     }
@@ -139,9 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (senhaInput) {
         senhaInput.addEventListener('input', function () {
             if (senhaInput.value.length === 0) { resetInput(senhaInput, senhaMsg); return; }
-            senhaInput.value.length >= 6
+            senhaInput.value.length >= 8
                 ? setSuccess(senhaInput, senhaMsg, '')
-                : setError(senhaInput, senhaMsg, 'Mínimo 6 caracteres');
+                : setError(senhaInput, senhaMsg, 'Mínimo 8 caracteres');
         });
     }
 
@@ -164,8 +165,8 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', function (e) {
             var ok = true;
 
-            if (senhaInput && senhaInput.value.length < 6) {
-                setError(senhaInput, senhaMsg, 'Senha muito curta (mín. 6 caracteres)');
+            if (senhaInput && senhaInput.value.length < 8) {
+                setError(senhaInput, senhaMsg, 'Senha muito curta (mín. 8 caracteres)');
                 ok = false;
             }
 

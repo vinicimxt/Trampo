@@ -13,9 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleBtn.addEventListener('click', function () {
             var isPass = senhaInput.type === 'password';
             senhaInput.type = isPass ? 'text' : 'password';
+            toggleBtn.setAttribute('aria-label', isPass ? 'Ocultar senha' : 'Mostrar senha');
             var icon = document.getElementById('toggleIcon');
             if (icon) {
-                icon.textContent = (input.type === 'text') ? 'visibility_off' : 'visibility';
+                icon.textContent = (senhaInput.type === 'text') ? 'visibility_off' : 'visibility';
             }
         });
     }

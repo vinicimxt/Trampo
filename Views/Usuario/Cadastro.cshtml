@@ -1,4 +1,4 @@
-﻿@section Styles {
+@section Styles {
     <link rel="stylesheet" href="~/css/auth.css" />
 }
 
@@ -58,7 +58,7 @@
                 <p class="auth-card-sub">Preencha os dados abaixo para começar.</p>
             </div>
 
-            <form method="post" asp-controller="Usuario" asp-action="Cadastrar">
+            <form id="formCadastro" method="post" asp-controller="Usuario" asp-action="Cadastrar">
 
                 <!-- Nome -->
                 <div class="form-group">
@@ -129,7 +129,7 @@
                         </span>
                         <input class="form-input has-icon" type="password"
                                name="senha" id="senha"
-                               placeholder="Mínimo 6 caracteres"
+                               placeholder="Mínimo 8 caracteres"
                                required autocomplete="new-password" />
                         <button type="button" class="toggle-pass" id="toggleSenha"
                                 aria-label="Mostrar senha">

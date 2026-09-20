@@ -10,8 +10,13 @@ namespace BD_TRAMPO
 
         public int Inserir(Servico s)
         {
-            using (SqlConnection conn = conexao.Conectar())
-            {
+            using var conn = conexao.Conectar();
+            return Inserir(s, conn, null);
+        }
+
+        private int Inserir(Servico s, SqlConnection conn, SqlTransaction? tx)
+        {
+
                 string query = @"
         INSERT INTO Servicos
         (ProfissionalId, SubcategoriaId, Nome, Descricao,
@@ -24,7 +29,7 @@ namespace BD_TRAMPO
         SELECT SCOPE_IDENTITY();
         ";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand(query, conn, tx);
 
                 cmd.Parameters.AddWithValue("@ProfissionalId", s.ProfissionalId);
                 cmd.Parameters.AddWithValue("@SubcategoriaId", s.SubcategoriaId);
@@ -57,9 +62,8 @@ namespace BD_TRAMPO
                 int idGerado = Convert.ToInt32(cmd.ExecuteScalar());
 
                 return idGerado;
-            }
-        }
 
+        }
         public List<Servico> ListarServicos()
         {
             List<Servico> lista = new List<Servico>();
@@ -443,8 +447,13 @@ namespace BD_TRAMPO
 
         public void Atualizar(Servico s)
         {
-            using (SqlConnection conn = conexao.Conectar())
-            {
+            using var conn = conexao.Conectar();
+            Atualizar(s, conn, null);
+        }
+
+        private void Atualizar(Servico s, SqlConnection conn, SqlTransaction? tx)
+        {
+
                 string query = @"
                 UPDATE Servicos SET
                     Nome = @Nome,
@@ -457,7 +466,7 @@ namespace BD_TRAMPO
                     PrecoBase = @PrecoBase
                 WHERE Id = @Id";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand(query, conn, tx);
 
                 cmd.Parameters.AddWithValue("@Id", s.Id);
                 cmd.Parameters.AddWithValue("@Nome", s.Nome);
@@ -486,9 +495,56 @@ namespace BD_TRAMPO
                     : DBNull.Value);
 
                 cmd.ExecuteNonQuery();
-            }
-        }
 
+        }
+        // Serviço e regras são publicados juntos, sob o mesmo bloqueio das reservas.
+        public int SalvarComDisponibilidade(Servico s, IEnumerable<int> dias, TimeSpan inicio, TimeSpan fim)
+        {
+            var diasUnicos = dias.Distinct().ToArray();
+            if (diasUnicos.Length == 0 || diasUnicos.Any(d => d < 0 || d > 6) ||
+                inicio < TimeSpan.Zero || inicio >= TimeSpan.FromDays(1) ||
+                fim < TimeSpan.Zero || fim >= TimeSpan.FromDays(1) || inicio == fim)
+                throw new InvalidOperationException("Disponibilidade inválida.");
+            using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction(System.Data.IsolationLevel.Serializable);
+            using (var validar = new SqlCommand(@"
+                DECLARE @r int;
+                EXEC @r=sys.sp_getapplock @Resource=@Recurso, @LockMode='Exclusive',
+                    @LockOwner='Transaction', @LockTimeout=10000;
+                IF @r<0 THROW 50001, 'Agenda em atualização.', 1;
+                IF @Id<>0 AND NOT EXISTS(SELECT 1 FROM Servicos WHERE Id=@Id AND ProfissionalId=@P)
+                    THROW 50001, 'Serviço não encontrado.', 1;
+                IF @Local IS NOT NULL AND NOT EXISTS(SELECT 1 FROM Locais WHERE Id=@Local AND ProfissionalId=@P)
+                    THROW 50001, 'Local inválido.', 1;", conn, tx))
+            {
+                validar.Parameters.AddWithValue("@Recurso", "TRAMPO:Profissional:" + s.ProfissionalId);
+                validar.Parameters.AddWithValue("@P", s.ProfissionalId);
+                validar.Parameters.AddWithValue("@Id", s.Id);
+                validar.Parameters.AddWithValue("@Local", (object?)s.LocalId ?? DBNull.Value);
+                validar.ExecuteNonQuery();
+            }
+            int id = s.Id;
+            if (id == 0) id = Inserir(s, conn, tx); else Atualizar(s, conn, tx);
+            using (var remover = new SqlCommand("DELETE FROM Disponibilidade WHERE ServicoId=@Id", conn, tx))
+            {
+                remover.Parameters.AddWithValue("@Id", id);
+                remover.ExecuteNonQuery();
+            }
+            foreach (int dia in diasUnicos)
+            {
+                using var inserir = new SqlCommand(@"INSERT INTO Disponibilidade
+                    (ProfissionalId,ServicoId,DiaSemana,HoraInicio,HoraFim,Ativo)
+                    VALUES(@P,@S,@D,@Inicio,@Fim,1)", conn, tx);
+                inserir.Parameters.AddWithValue("@P", s.ProfissionalId);
+                inserir.Parameters.AddWithValue("@S", id);
+                inserir.Parameters.AddWithValue("@D", dia);
+                inserir.Parameters.AddWithValue("@Inicio", inicio);
+                inserir.Parameters.AddWithValue("@Fim", fim);
+                inserir.ExecuteNonQuery();
+            }
+            tx.Commit();
+            return id;
+        }
         public void Excluir(int id)
         {
             int profissionalId = BuscarProfissionalId(id);

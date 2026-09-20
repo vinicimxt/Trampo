@@ -136,6 +136,7 @@ function showToast(message, type = "success") {
     };
 
     const toast = document.createElement("div");
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
     toast.className = `toast toast-${type}`;
 
     for (const [classe, texto] of [
@@ -193,20 +194,25 @@ const list = document.getElementById("notifList");
 let carregado = false;
 
 if (toggle && dropdown && list) {
+    toggle.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle.click(); }
+        if (e.key === "Escape") { dropdown.classList.remove("open"); toggle.setAttribute("aria-expanded", "false"); }
+    });
     toggle.addEventListener("click", () => {
         dropdown.classList.toggle("open");
-        // limpa badge ao abrir
-        const badge = toggle.querySelector(".notif-badge");
-        if (badge) badge.remove();
+        toggle.setAttribute("aria-expanded", dropdown.classList.contains("open"));
 
-        if (!carregado) {
+        if (dropdown.classList.contains("open")) {
             fetch('/Notificacao/Ultimas')
-                .then(res => res.text())
+                .then(res => {
+                    if (!res.ok || res.redirected) throw new Error("Sessão expirada ou falha ao carregar notificações.");
+                    return res.text();
+                })
                 .then(html => {
                     list.innerHTML = html;
                     carregado = true;
                 })
-                .catch(err => console.error("Erro ao carregar notificações:", err));
+                .catch(() => { list.textContent = "Não foi possível carregar as notificações. Tente abrir novamente."; });
         }
     });
 }
@@ -214,13 +220,17 @@ document.addEventListener("click", function (e) {
     if (!e.target.closest(".notif-wrapper")) {
         const dropdown = document.getElementById("notifDropdown");
         if (dropdown) dropdown.classList.remove("open");
+        toggle?.setAttribute("aria-expanded", "false");
     }
 });
 
 function atualizarContador() {
     if (!document.getElementById("notifToggle")) return;
     fetch('/Notificacao/Contador')
-        .then(res => res.text())
+        .then(res => {
+                    if (!res.ok || res.redirected) throw new Error("Sessão expirada ou falha ao carregar notificações.");
+                    return res.text();
+                })
         .then(qtd => {
 
             const toggle = document.getElementById("notifToggle");
@@ -239,7 +249,7 @@ function atualizarContador() {
                 // remove se zerou
                 if (badge) badge.remove();
             }
-        });
+        }).catch(() => { /* Mantém o último contador em falhas temporárias. */ });
 }
 
 setInterval(atualizarContador, 10000);
@@ -267,6 +277,7 @@ function fecharModal(id) {
 document.addEventListener("click", function (e) {
     if (e.target.classList.contains("modal-overlay")) {
         e.target.classList.remove("open");
+        document.body.style.overflow = "";
     }
 });
 
@@ -275,6 +286,7 @@ document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
         document.querySelectorAll(".modal-overlay.open")
             .forEach(m => m.classList.remove("open"));
+        document.body.style.overflow = "";
     }
 });
 
@@ -307,4 +319,46 @@ document.addEventListener("click", function (event) {
         event.preventDefault();
         enviarPost(url.href);
     }
+});
+// Os modais atuais compartilham a classe open; mantém foco e navegação por teclado.
+document.addEventListener("DOMContentLoaded", () => {
+    const modais = Array.from(document.querySelectorAll(".modal-overlay"));
+    const acionadores = new WeakMap();
+    const abertos = new WeakSet();
+    const focaveis = modal => Array.from(modal.querySelectorAll(
+        'button:not(:disabled), a[href], input:not(:disabled):not([type="hidden"]), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]'
+    )).filter(el => el.getClientRects().length > 0);
+    modais.forEach(modal => {
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+        modal.setAttribute("tabindex", "-1");
+        const titulo = modal.querySelector(".modal-title, h3, .drawer-title");
+        modal.setAttribute("aria-label", titulo?.textContent.trim() || "Confirmação");
+        new MutationObserver(() => {
+            const aberto = modal.classList.contains("open");
+            if (aberto && !abertos.has(modal)) {
+                acionadores.set(modal, document.activeElement);
+                abertos.add(modal);
+                (focaveis(modal)[0] || modal).focus();
+            } else if (!aberto && abertos.has(modal)) {
+                abertos.delete(modal);
+                if (!modais.some(m => m.classList.contains("open"))) {
+                    document.body.style.overflow = "";
+                    acionadores.get(modal)?.focus();
+                }
+            }
+        }).observe(modal, { attributes: true, attributeFilter: ["class"] });
+    });
+    document.addEventListener("keydown", e => {
+        const modal = modais.find(m => m.classList.contains("open"));
+        if (!modal || e.key !== "Tab") return;
+        const elementos = focaveis(modal);
+        const primeiro = elementos[0], ultimo = elementos[elementos.length - 1];
+        if (!primeiro) { e.preventDefault(); modal.focus(); return; }
+        if (e.shiftKey && (document.activeElement === primeiro || !modal.contains(document.activeElement))) {
+            e.preventDefault(); ultimo.focus();
+        } else if (!e.shiftKey && (document.activeElement === ultimo || !modal.contains(document.activeElement))) {
+            e.preventDefault(); primeiro.focus();
+        }
+    });
 });

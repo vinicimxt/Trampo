@@ -42,7 +42,7 @@
                     Cadastre todos os lugares onde você atende para facilitar na hora de criar seus serviços.
                 </p>
             </div>
-            <button aria-label="fechar tutorial de mensagem" class="tip-close" onclick="fecharTip()" aria-label="Fechar">✕</button>
+            <button aria-label="fechar tutorial de mensagem" class="tip-close" onclick="fecharTip()">✕</button>
         </div>
     </div>
 
@@ -321,7 +321,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            const abrir = '@TempData["AbrirDrawer"]';
+            const abrir = '@ViewBag.AbrirDrawer';
 
             if (abrir === 'True') {
                 abrirDrawer();

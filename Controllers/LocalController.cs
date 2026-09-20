@@ -19,8 +19,9 @@ namespace BD_TRAMPO.Controllers
            GET /Local/Lista
            Única view da página — lista + drawer inline
         ----------------------------------------------- */
-        public IActionResult Lista()
+        public IActionResult Lista(bool abrir = false)
         {
+            ViewBag.AbrirDrawer = abrir;
             var lista = new LocalDAO().ListarPorProfissional(GetProfissionalId());
             return View(lista);
         }
@@ -44,14 +45,15 @@ namespace BD_TRAMPO.Controllers
                 if (id > 0)
                 {
                     // EDITAR
-                    dao.Atualizar(new Local
+                    bool atualizado = dao.Atualizar(new Local
                     {
                         Id = id,
                         Nome = nome,
                         Endereco = endereco
                     });
 
-                    TempData["Sucesso"] = "Local atualizado com sucesso ✏️";
+                    if (atualizado) TempData["Sucesso"] = "Local atualizado com sucesso ✏️";
+                    else TempData["Erro"] = "Este endereço faz parte do histórico de agendamentos. Cadastre outro local para novos atendimentos.";
                 }
                 else
                 {
@@ -83,8 +85,9 @@ namespace BD_TRAMPO.Controllers
             var acesso = ProtegerLocal(id); if (acesso != null) return acesso;
             try
             {
-                new LocalDAO().Excluir(id);
-                TempData["Sucesso"] = "Local removido com sucesso ✔";
+                if (new LocalDAO().Excluir(id))
+                    TempData["Sucesso"] = "Local removido com sucesso ✔";
+                else TempData["Erro"] = "Local vinculado a serviço ou agendamento. O endereço foi preservado; cadastre outro local para novos atendimentos.";
             }
             catch (Exception)
             {

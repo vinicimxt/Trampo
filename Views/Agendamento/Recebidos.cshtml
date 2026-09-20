@@ -44,7 +44,7 @@
     }
     string GetDataFiltro(string status)
     {
-        if (status == "CanceladoCliente" || status == "CanceladoProfissional") return "cancelado";
+        if (status == "Cancelado" || status == "CanceladoCliente" || status == "CanceladoProfissional") return "cancelado";
         if (status == "AguardandoCliente") return "Finalizado";
         return status;
     }

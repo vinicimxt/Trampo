@@ -101,7 +101,7 @@ try
     int prof=Profissional(p), outroProf=Profissional(q);
     int s=Servico(prof,"servico"), s2=Servico(prof,"outro"), inativo=Servico(prof,"inativo",false), outro=Servico(outroProf,"terceiro");
     int sub=Id("SELECT TOP 1 Id FROM Subcategorias");
-    var start = new ProcessStartInfo("dotnet", "\""+Path.Combine(root,"bin/Debug/net10.0/BD-TRAMPO.dll")+"\" --urls http://127.0.0.1:5177") {
+    var start = new ProcessStartInfo("dotnet", "\""+(Environment.GetEnvironmentVariable("TRAMPO_TEST_DLL") ?? Path.Combine(root,"bin/Debug/net10.0/BD-TRAMPO.dll"))+"\" --urls http://127.0.0.1:5177") {
         WorkingDirectory=root, UseShellExecute=false, CreateNoWindow=true, RedirectStandardOutput=true, RedirectStandardError=true };
     start.Environment["ASPNETCORE_ENVIRONMENT"]="Development";
     app=Process.Start(start)!;
@@ -225,6 +225,72 @@ try
     Verificar((await Post(ca,"/Pagamento/ConfirmarPremium")).StatusCode==HttpStatusCode.Forbidden,"cliente não ativa plano profissional");
     Verificar((await Post(ca,"/Usuario/Logout")).StatusCode==HttpStatusCode.Redirect &&
         (await ca.GetAsync("/Usuario/Perfil")).StatusCode==HttpStatusCode.Redirect,"logout limpa sessão");
+    if (args.Contains("--sprint2"))
+    {
+        Console.WriteLine("SPRINT 1: " + passou + " verificações preservadas.");
+        Verificar(Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",criadoId))==7,
+            "Sprint 2: serviço criado/editado conserva todas as regras");
+        var daoServico = new ServicoDAO();
+        var edicao = daoServico.BuscarPorId(criadoId);
+        var nomeAntes = edicao.Nome;
+        edicao.SubcategoriaId = -1;
+        bool falhou = false;
+        try { daoServico.SalvarComDisponibilidade(edicao, new[]{1,2}, TimeSpan.FromHours(9), TimeSpan.FromHours(12)); }
+        catch (SqlException) { falhou = true; }
+        Verificar(falhou && daoServico.BuscarPorId(criadoId).Nome == nomeAntes &&
+            Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",criadoId))==7,
+            "Sprint 2: falha SQL preserva serviço e regras anteriores");
+        var novoInvalido = daoServico.BuscarPorId(criadoId);
+        novoInvalido.Id = 0; novoInvalido.SubcategoriaId = -1; novoInvalido.Nome = tag+"invalido";
+        falhou=false;
+        try { daoServico.SalvarComDisponibilidade(novoInvalido,new[]{1},TimeSpan.FromHours(9),TimeSpan.FromHours(12)); }
+        catch(SqlException) { falhou=true; }
+        Verificar(falhou && Id("SELECT COUNT(*) FROM Servicos WHERE Nome=@N",("@N",novoInvalido.Nome))==0,
+            "Sprint 2: criação inválida não deixa serviço parcial");
+        edicao = daoServico.BuscarPorId(criadoId);
+        daoServico.SalvarComDisponibilidade(edicao,new[]{1,1,2},TimeSpan.FromHours(9),TimeSpan.FromHours(12));
+        Verificar(Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",criadoId))==2,
+            "Sprint 2: edição substitui regras e elimina dias duplicados");
+        Sql("UPDATE Servicos SET LocalId=@L WHERE Id=@S",("@L",local),("@S",criadoId));
+        await Post(cp,"/Local/Excluir/"+local);
+        Verificar(Id("SELECT COUNT(*) FROM Locais WHERE Id=@L",("@L",local))==1,
+            "Sprint 2: local de serviço não pode ser excluído");
+        Sql("UPDATE Servicos SET LocalId=NULL WHERE Id=@S",("@S",criadoId));
+        Sql("UPDATE Agendamentos SET LocalId=@L WHERE Id=@A",("@L",local),("@A",concluivel));
+        await Post(cp,"/Local/Excluir/"+local);
+        Verificar(Id("SELECT COUNT(*) FROM Locais WHERE Id=@L",("@L",local))==1,
+            "Sprint 2: local somente no histórico não pode ser excluído");
+        await Post(cp,"/Local/Salvar",new(){["id"]=local.ToString(),["nome"]="Mudança",["endereco"]="Outro endereço"});
+        Verificar(Convert.ToString(Sql("SELECT Endereco FROM Locais WHERE Id=@L",("@L",local)))=="Rua teste",
+            "Sprint 2: edição não altera endereço histórico");
+        int localLivre=Id("INSERT INTO Locais(ProfissionalId,Endereco) OUTPUT INSERTED.Id VALUES(@P,'Livre')",("@P",prof));
+        await Post(cp,"/Local/Excluir/"+localLivre);
+        Verificar(Id("SELECT COUNT(*) FROM Locais WHERE Id=@L",("@L",localLivre))==0,
+            "Sprint 2: local sem vínculo pode ser excluído");
+        var tela = await cb.GetStringAsync("/Agendamento/Novo?servicoId="+s+"&data="+dia.ToString("yyyy-MM-dd"));
+        Verificar(!tela.Contains("selecionarHora('12:00:00'") && !tela.Contains("selecionarHora('10:00:00'"),
+            "Sprint 2: tela omite bloqueio e reserva ocupada");
+        Verificar(tela.Contains("<button type=\"button\" class=\"slot livre\""),
+            "Sprint 2: seleção de horário usa botão acessível");
+        Sql("INSERT INTO BloqueiosAgenda(ProfissionalId,Data,HoraInicio,HoraFim) VALUES(@P,@D,'13:30','14:30')",("@P",prof),("@D",dia));
+        tela=await cb.GetStringAsync("/Agendamento/Novo?servicoId="+s+"&data="+dia.ToString("yyyy-MM-dd"));
+        Verificar(!tela.Contains("selecionarHora('13:00:00'") && !tela.Contains("selecionarHora('14:00:00'"),
+            "Sprint 2: tela omite sobreposições parciais de bloqueios");
+        int historicoAntes=TotalReservas();
+        await Post(cp,"/Servico/Excluir/"+s);
+        Verificar(!daoServico.BuscarPorId(s).Ativo && TotalReservas()==historicoAntes &&
+            Id("SELECT COUNT(*) FROM Avaliacoes WHERE AgendamentoId=@A",("@A",concluivel))==1,
+            "Sprint 2: remoção de serviço mantém reservas e avaliação");
+        await RejeitarReserva(cb,s,dia,"15:00","Sprint 2: serviço desativado não recebe nova reserva");
+        var cadastroHtml=await anon.GetStringAsync("/Usuario/Cadastro");
+        Verificar(cadastroHtml.Contains("id=\"formCadastro\""),"Sprint 2: formulário ligado à validação JavaScript");
+        var locaisHtml=await cp.GetStringAsync("/Local/Lista?abrir=true");
+        Verificar(locaisHtml.Contains("const abrir = 'True'"),"Sprint 2: link de criação de local abre formulário");
+        foreach(var pagina in new[]{"/Usuario/Perfil","/Profissional/MeusServicos","/Profissional/MeuPerfil",
+            "/Profissional/Dashboard","/Notificacao","/Notificacao/Ultimas","/Pagamento/CheckoutPremium",
+            "/Suporte/ContatoAjuda","/Agendamento/Recebidos","/Home/Index"})
+            Verificar((await cp.GetAsync(pagina)).IsSuccessStatusCode,"Sprint 2: rota atual "+pagina);
+    }
     Console.WriteLine("TOTAL: "+passou+" verificações passaram.");
 }
 finally
