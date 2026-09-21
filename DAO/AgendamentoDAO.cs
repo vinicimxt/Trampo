@@ -1,3 +1,4 @@
+using BD_TRAMPO.DAO;
 using BD_TRAMPO.Contracts;
 using Microsoft.Data.SqlClient;
 
@@ -130,6 +131,23 @@ namespace BD_TRAMPO
             inserir.Parameters.AddWithValue("@Endereco", (object?)ag.EnderecoCliente ?? DBNull.Value);
             inserir.Parameters.AddWithValue("@Local", (object?)ag.LocalId ?? DBNull.Value);
             int id = (int)inserir.ExecuteScalar();
+            if (modalidade == "Domicilio")
+            {
+                using var snap = new SqlCommand(@"INSERT INTO AgendamentoEnderecos
+                    (AgendamentoId,CEP,Logradouro,Numero,Complemento,Bairro,Cidade,UF,Latitude,Longitude,EnderecoFormatado,EnderecoEstruturado,Modalidade)
+                    VALUES(@Id,@CEP,@Logradouro,@Numero,@Complemento,@Bairro,@Cidade,@UF,@Latitude,@Longitude,@Texto,@Estruturado,'Domicilio')",conn,tx);
+                snap.Parameters.AddWithValue("@Id",id);snap.Parameters.AddWithValue("@Texto",ag.EnderecoCliente ?? "");
+                EnderecoSql.Parametros(snap,ag.EnderecoAtendimento);snap.ExecuteNonQuery();
+            }
+            else if (modalidade == "Local")
+            {
+                using var snap=new SqlCommand(@"INSERT INTO AgendamentoEnderecos
+                    (AgendamentoId,CEP,Logradouro,Numero,Complemento,Bairro,Cidade,UF,Latitude,Longitude,EnderecoFormatado,EnderecoEstruturado,Modalidade)
+                    SELECT @Id,CEP,Logradouro,Numero,Complemento,Bairro,Cidade,UF,Latitude,Longitude,Endereco,EnderecoEstruturado,'Local'
+                    FROM Locais WHERE Id=@Local",conn,tx);
+                snap.Parameters.AddWithValue("@Id",id);snap.Parameters.AddWithValue("@Local",(object?)ag.LocalId??DBNull.Value);
+                if(snap.ExecuteNonQuery()!=1)throw new FalhaOperacao(TipoFalha.Conflito,"Local alterado durante a reserva.");
+            }
             foreach (var usuario in new[] { usuarioCliente, usuarioProfissional })
             {
                 using var n = new SqlCommand(@"INSERT INTO Notificacoes
@@ -253,10 +271,11 @@ namespace BD_TRAMPO
                 S.Nome AS Servico,
                 SC.Nome AS Subcategoria,
                 S.LinkOnline,
-                S.Atendimento,
+                COALESCE(AE.Modalidade,S.Atendimento) AS Atendimento,
                 S.TipoPreco,
                 S.PrecoBase,
-                L.Endereco AS EnderecoLocal,
+                COALESCE(AE.EnderecoFormatado,L.Endereco) AS EnderecoLocal,
+                    AE.CEP,AE.Logradouro,AE.Numero,AE.Complemento,AE.Bairro,AE.Cidade,AE.UF,AE.Latitude,AE.Longitude,AE.EnderecoFormatado,AE.EnderecoEstruturado,
 
                 CASE 
                     WHEN av.Id IS NOT NULL THEN 1 
@@ -264,6 +283,7 @@ namespace BD_TRAMPO
                 END AS JaAvaliado
 
             FROM Agendamentos a
+            LEFT JOIN AgendamentoEnderecos AE ON AE.AgendamentoId=a.Id
             INNER JOIN Servicos s ON a.ServicoId = s.Id
             INNER JOIN Profissionais p ON s.ProfissionalId = p.Id
             INNER JOIN Usuarios u ON p.UsuarioId = u.Id
@@ -300,6 +320,7 @@ namespace BD_TRAMPO
                             ? (reader.IsDBNull(reader.GetOrdinal("LinkOnline")) ? "" : reader.GetString(reader.GetOrdinal("LinkOnline"))) : null,
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
+                        EnderecoAtendimento = reader.IsDBNull(reader.GetOrdinal("EnderecoFormatado")) ? null : EnderecoSql.Ler(reader,reader.GetString(reader.GetOrdinal("EnderecoFormatado"))),
                         Status = reader.GetString(reader.GetOrdinal("Status")),
                         ValorFinal = reader.IsDBNull(reader.GetOrdinal("ValorFinal")) ? null : reader.GetDecimal(reader.GetOrdinal("ValorFinal")),
 
@@ -350,13 +371,15 @@ namespace BD_TRAMPO
                     U.Telefone AS ContatoCliente,
                     S.Nome AS Servico, 
                     S.LinkOnline,
-                    S.Atendimento,
+                    COALESCE(AE.Modalidade,S.Atendimento) AS Atendimento,
                     S.TipoPreco,
                     S.PrecoBase,
-                    L.Endereco AS EnderecoLocal,
+                    COALESCE(AE.EnderecoFormatado,L.Endereco) AS EnderecoLocal,
+                    AE.CEP,AE.Logradouro,AE.Numero,AE.Complemento,AE.Bairro,AE.Cidade,AE.UF,AE.Latitude,AE.Longitude,AE.EnderecoFormatado,AE.EnderecoEstruturado,
                     SC.Nome AS Subcategoria
 
                 FROM Agendamentos A
+                LEFT JOIN AgendamentoEnderecos AE ON AE.AgendamentoId=A.Id
 
                 INNER JOIN Clientes C 
                     ON A.ClienteId = C.Id
@@ -394,6 +417,7 @@ namespace BD_TRAMPO
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
+                        EnderecoAtendimento = reader.IsDBNull(reader.GetOrdinal("EnderecoFormatado")) ? null : EnderecoSql.Ler(reader,reader.GetString(reader.GetOrdinal("EnderecoFormatado"))),
                         Status = reader.GetString(reader.GetOrdinal("Status")),
                         ValorFinal = reader.IsDBNull(reader.GetOrdinal("ValorFinal")) ? null : reader.GetDecimal(reader.GetOrdinal("ValorFinal")),
 
@@ -451,15 +475,17 @@ namespace BD_TRAMPO
                 string query = @"SELECT 
                     A.*,
                     C.UsuarioId,
-                    S.Atendimento,
+                    COALESCE(AE.Modalidade,S.Atendimento) AS Atendimento,
                     S.TipoPreco,
                     S.PrecoBase,
                     P.Contato AS ContatoProfissional,
                     UProf.Telefone AS TelefoneProfissional,
                     UCli.Telefone AS ContatoCliente,
                     S.LinkOnline,
-                    L.Endereco AS EnderecoLocal
+                    COALESCE(AE.EnderecoFormatado,L.Endereco) AS EnderecoLocal,
+                    AE.CEP,AE.Logradouro,AE.Numero,AE.Complemento,AE.Bairro,AE.Cidade,AE.UF,AE.Latitude,AE.Longitude,AE.EnderecoFormatado,AE.EnderecoEstruturado
                 FROM Agendamentos A
+                LEFT JOIN AgendamentoEnderecos AE ON AE.AgendamentoId=A.Id
               
                     LEFT JOIN Clientes C 
                         ON A.ClienteId = C.Id
@@ -498,6 +524,7 @@ namespace BD_TRAMPO
                         ProfissionalId = (int)reader["ProfissionalId"],
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
+                        EnderecoAtendimento = reader.IsDBNull(reader.GetOrdinal("EnderecoFormatado")) ? null : EnderecoSql.Ler(reader,reader.GetString(reader.GetOrdinal("EnderecoFormatado"))),
                         Status = reader.GetString(reader.GetOrdinal("Status")),
                         ValorFinal = reader.IsDBNull(reader.GetOrdinal("ValorFinal")) ? null : reader.GetDecimal(reader.GetOrdinal("ValorFinal")),
 

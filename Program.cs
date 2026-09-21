@@ -29,6 +29,7 @@ builder.Services.AddScoped<CategoriaDAO>();
 builder.Services.AddScoped<AvaliacaoDAO>();
 builder.Services.AddScoped<UsuarioDAO>();
 builder.AdicionarApi();
+builder.AdicionarEnderecos();
 var app = builder.Build();
 app.UseMiddleware<ErrosApiMiddleware>();
 

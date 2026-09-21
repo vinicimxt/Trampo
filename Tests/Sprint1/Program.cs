@@ -230,7 +230,7 @@ try
     Verificar((await Post(ca,"/Pagamento/ConfirmarPremium")).StatusCode==HttpStatusCode.Forbidden,"cliente não ativa plano profissional");
     Verificar((await Post(ca,"/Usuario/Logout")).StatusCode==HttpStatusCode.Redirect &&
         (await ca.GetAsync("/Usuario/Perfil")).StatusCode==HttpStatusCode.Redirect,"logout limpa sessão");
-    if (args.Contains("--sprint2") || (args.Contains("--sprint3") || args.Contains("--sprint4")))
+    if (args.Contains("--sprint2") || (args.Contains("--sprint3") || (args.Contains("--sprint4") || args.Contains("--sprint5"))))
     {
         Console.WriteLine("SPRINT 1: " + passou + " verificações preservadas.");
         Verificar(Id("SELECT COUNT(*) FROM Disponibilidade WHERE ServicoId=@S",("@S",criadoId))==7,
@@ -296,7 +296,7 @@ try
             "/Suporte/ContatoAjuda","/Agendamento/Recebidos","/Home/Index"})
             Verificar((await cp.GetAsync(pagina)).IsSuccessStatusCode,"Sprint 2: rota atual "+pagina);
     }
-    if ((args.Contains("--sprint3") || args.Contains("--sprint4")))
+    if ((args.Contains("--sprint3") || (args.Contains("--sprint4") || args.Contains("--sprint5"))))
     {
         Console.WriteLine("BASELINE: " + passou + " verificações anteriores preservadas.");
         var booking = new AgendamentoService(new(),new(),new(),new(),new(),new(),new());
@@ -393,7 +393,7 @@ try
         Verificar(new ServicoDAO().BuscarPorId(s3)?.Ativo==false && new AgendamentoDAO().BuscarPorId(ag3)!=null,
             "Sprint 3: Service preserva histórico ao remover oferta");
     }
-    if (args.Contains("--sprint4"))
+    if ((args.Contains("--sprint4") || args.Contains("--sprint5")))
     {
         Console.WriteLine("BASELINE SPRINT 4: " + passou + " verificações anteriores preservadas.");
         int inicioSprint4 = passou;
@@ -632,6 +632,159 @@ try
             (await anon.GetAsync("/swagger/index.html")).StatusCode==HttpStatusCode.NotFound,
             "Sprint 4: documentação desabilitada em Production");
         Console.WriteLine("SPRINT 4: "+(passou-inicioSprint4)+" verificações novas.");
+    }
+
+    if(args.Contains("--sprint5"))
+    {
+        Console.WriteLine("BASELINE SPRINT 5: "+passou+" verificações anteriores preservadas.");
+        int inicioSprint5=passou;
+        using var fornecedor=new EnderecoFakeServer();
+        using var httpEndereco=new HttpClient {BaseAddress=new Uri("http://127.0.0.1:5178/ws/"),Timeout=TimeSpan.FromMilliseconds(150)};
+        var provider=new BD_TRAMPO.Integrations.Enderecos.ViaCepClient(httpEndereco,Microsoft.Extensions.Logging.Abstractions.NullLogger<BD_TRAMPO.Integrations.Enderecos.ViaCepClient>.Instance);
+        using var cacheEndereco=new BD_TRAMPO.Integrations.Enderecos.CacheEnderecos();
+        var enderecoService=new EnderecoService(provider,new BD_TRAMPO.Integrations.Enderecos.GeocodificacaoNaoConfigurada(),cacheEndereco,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<EnderecoService>.Instance);
+        EnderecoRequest DadosEndereco()=>new(){CEP="01001-000",Logradouro="Praça da Sé",Numero="10",Complemento="Sala 2",Bairro="Sé",Cidade="São Paulo",UF="sp"};
+        void Validacao5(Action executar,string nome) {
+            bool falhou=false;try{executar();}catch(FalhaOperacao e){falhou=e.Tipo==TipoFalha.Validacao;}
+            Verificar(falhou,"Sprint 5: "+nome);
+        }
+        Verificar(EnderecoService.NormalizarCEP(" 01001-000 ")=="01001000" && EnderecoService.NormalizarUF(" sp ")=="SP","Sprint 5: normaliza CEP e UF");
+        foreach(var invalido in new[]{"","0100100","010010000","0100A000","01001 000",new string('1',200)})
+            Validacao5(()=>EnderecoService.NormalizarCEP(invalido),"CEP inválido não chega ao fornecedor");
+        Validacao5(()=>EnderecoService.NormalizarUF("XX"),"UF inexistente");
+        var consultaCep=await enderecoService.ConsultarCEP("01001-000");int chamadasCep=fornecedor.Chamadas;
+        await enderecoService.ConsultarCEP("01001000");
+        Verificar(consultaCep.Cidade=="São Paulo" && fornecedor.Chamadas==chamadasCep,"Sprint 5: CEP válido e cache normalizado");
+        var pesquisa=await enderecoService.Pesquisar("sp","São Paulo","Praça da Sé");int chamadasPesquisa=fornecedor.Chamadas;
+        await enderecoService.Pesquisar("SP","São Paulo","Praça da Sé");
+        Verificar(pesquisa.Count==1 && fornecedor.Chamadas==chamadasPesquisa,"Sprint 5: pesquisa por endereço e cache");
+        bool curta=false;try{await enderecoService.Pesquisar("SP","SP","a");}catch(FalhaOperacao){curta=true;}
+        Verificar(curta && fornecedor.Chamadas==chamadasPesquisa,"Sprint 5: pesquisa ampla recusada antes da integração");
+        foreach(var (cep,tipo) in new[]{("99999999",TipoFalhaEndereco.NaoEncontrado),("22222222",TipoFalhaEndereco.Indisponivel),
+            ("33333333",TipoFalhaEndereco.Timeout),("44444444",TipoFalhaEndereco.RespostaInvalida),("55555555",TipoFalhaEndereco.RespostaInvalida)}) {
+            bool falhou=false;try{await enderecoService.ConsultarCEP(cep);}catch(FalhaEndereco e){falhou=e.Tipo==tipo;}
+            Verificar(falhou,"Sprint 5: integração diferencia "+tipo);
+        }
+        int antesFalhaCache=fornecedor.Chamadas;
+        try{await enderecoService.ConsultarCEP("22222222");}catch(FalhaEndereco){ }
+        Verificar(fornecedor.Chamadas==antesFalhaCache+1,"Sprint 5: erro externo não fica em cache");
+        var manual=await enderecoService.PrepararLocal(DadosEndereco());
+        Verificar(manual.Estruturado && manual.Latitude==null && manual.Longitude==null && manual.EnderecoFormatado.Contains("Sala 2"),
+            "Sprint 5: endereço manual funciona sem geocoder");
+        var geocoderInvalido=new EnderecoService(provider,new GeocoderTeste(new(91,0)),cacheEndereco,Microsoft.Extensions.Logging.Abstractions.NullLogger<EnderecoService>.Instance);
+        Verificar((await geocoderInvalido.PrepararLocal(DadosEndereco())).Latitude==null,"Sprint 5: coordenadas inválidas do provider são descartadas");
+        var geocoderValido=new EnderecoService(provider,new GeocoderTeste(new(-23.550520m,-46.633308m)),cacheEndereco,Microsoft.Extensions.Logging.Abstractions.NullLogger<EnderecoService>.Instance);
+        Verificar((await geocoderValido.PrepararLocal(DadosEndereco())).Longitude==-46.633308m,"Sprint 5: interface aceita coordenadas de provider substituível");
+        var dadosInvalidos=DadosEndereco();dadosInvalidos.Numero="";Validacao5(()=>EnderecoService.Validar(dadosInvalidos),"número obrigatório no backend");
+        dadosInvalidos=DadosEndereco();dadosInvalidos.Complemento=new string('a',61);Validacao5(()=>EnderecoService.Validar(dadosInvalidos),"limite de complemento");
+        // Retorna a Development com fornecedor local controlado; nenhuma consulta externa real.
+        app.Kill(true);app.WaitForExit();start.Environment["ASPNETCORE_ENVIRONMENT"]="Development";
+        start.Environment["Jwt__SigningKey"]=Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        start.Environment["Enderecos__ViaCepBaseUrl"]="http://127.0.0.1:5178/ws/";
+        app=Process.Start(start)??throw new Exception("Servidor de testes não iniciou.");
+        app.OutputDataReceived+=(_,e)=>{if(e.Data!=null)lock(logs)logs.AppendLine(e.Data);};
+        app.ErrorDataReceived+=(_,e)=>{if(e.Data!=null)lock(logs)logs.AppendLine(e.Data);};app.BeginOutputReadLine();app.BeginErrorReadLine();
+        bool pronto5=false;for(int i=0;i<40;i++) {
+            if(app.HasExited)throw new Exception("Aplicação Sprint 5 não iniciou.");
+            try{if((await anon.GetAsync("/Usuario/Login")).IsSuccessStatusCode){pronto5=true;break;}}catch(HttpRequestException){}await Task.Delay(250);
+        }
+        Verificar(pronto5,"Sprint 5: aplicação inicia com integração substituível");
+        int cliente5=Usuario("api5","cliente");
+        using var c5=Cliente();using var p5=Cliente();using var q5=Cliente();
+        async Task<System.Text.Json.JsonElement> Req5(HttpClient client,HttpMethod method,string path,object? body,int status,string nome) {
+            using var request=new HttpRequestMessage(method,path);
+            if(body!=null)request.Content=System.Net.Http.Json.JsonContent.Create(body);
+            using var response=await client.SendAsync(request);string texto=await response.Content.ReadAsStringAsync();
+            Verificar((int)response.StatusCode==status,"Sprint 5: "+nome+" (HTTP "+(int)response.StatusCode+")");
+            if(texto.Length==0)return default;
+            using var doc=System.Text.Json.JsonDocument.Parse(texto);
+            if(status>=400 && (!doc.RootElement.TryGetProperty("erro",out _) || texto.Contains("Exception") || texto.Contains("SQLEXPRESS")))throw new Exception("Detalhe interno no erro.");
+            return doc.RootElement.Clone();
+        }
+        foreach(var (client,sufixo) in new[]{(c5,"api5"),(p5,"p"),(q5,"q")}) {
+            var login=await Req5(client,HttpMethod.Post,"/api/v1/auth/login",new{email=tag+sufixo+"@example.invalid",senha},200,"login para endereços");
+            client.DefaultRequestHeaders.Authorization=new("Bearer",login.GetProperty("accessToken").GetString());
+        }
+        await Req5(anon,HttpMethod.Get,"/api/v1/enderecos/cep/01001000",null,401,"consulta exige autenticação");
+        var cep5=await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/cep/01001-000",null,200,"consulta CEP API");
+        Verificar(cep5.EnumerateObject().Count()==5 && !cep5.TryGetProperty("ibge",out _) && !cep5.TryGetProperty("latitude",out _),"Sprint 5: resposta própria mínima e sem coordenadas privadas");
+        int chamadas5=fornecedor.Chamadas;await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/cep/01001000",null,200,"cache da API");
+        Verificar(fornecedor.Chamadas==chamadas5,"Sprint 5: API não repete fornecedor para mesmo CEP");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/cep/abc",null,400,"CEP inválido API");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/cep/99999999",null,404,"CEP inexistente API");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/cep/22222222",null,503,"fornecedor indisponível API");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/cep/33333333",null,504,"timeout API");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/cep/44444444",null,502,"resposta inválida API");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/pesquisar?uf=SP&cidade=Sao%20Paulo&logradouro=Paulista",null,200,"pesquisa API");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/pesquisar?uf=XX&cidade=Sao&logradouro=Rua",null,400,"UF inválida API");
+        await Req5(c5,HttpMethod.Get,"/api/v1/enderecos/pesquisar?uf=SP&cidade=Sao&logradouro="+new string('a',101),null,400,"pesquisa com tamanho abusivo");
+        var localBody=new {nome=tag+"local5",dadosEndereco=DadosEndereco()};
+        await Req5(c5,HttpMethod.Post,"/api/v1/locais",localBody,403,"cliente não cadastra local profissional");
+        int local5=(await Req5(p5,HttpMethod.Post,"/api/v1/locais",localBody,201,"criar local estruturado")).GetProperty("id").GetInt32();
+        var localConsulta=await Req5(p5,HttpMethod.Get,"/api/v1/locais/"+local5,null,200,"consultar local próprio");
+        Verificar(localConsulta.GetProperty("dadosEndereco").GetProperty("cep").GetString()=="01001000" &&
+            localConsulta.GetProperty("dadosEndereco").GetProperty("latitude").ValueKind==System.Text.Json.JsonValueKind.Null,"Sprint 5: banco guarda endereço sem coordenadas inventadas");
+        await Req5(q5,HttpMethod.Get,"/api/v1/locais/"+local5,null,403,"outro profissional não acessa endereço privado");
+        await Req5(q5,HttpMethod.Put,"/api/v1/locais/"+local5,localBody,403,"outro profissional não edita local");
+        var edicao5=DadosEndereco();edicao5.Numero="20";
+        await Req5(p5,HttpMethod.Put,"/api/v1/locais/"+local5,new{nome=tag+"local5",dadosEndereco=edicao5},204,"editar local estruturado");
+        var payloadCoords=System.Text.Json.JsonSerializer.SerializeToNode(localBody)!;payloadCoords["dadosEndereco"]!["latitude"]=30;
+        await Req5(p5,HttpMethod.Post,"/api/v1/locais",payloadCoords,400,"coordenada enviada pelo cliente recusada");
+        int legado5=Id("INSERT INTO Locais(ProfissionalId,Nome,Endereco) OUTPUT INSERTED.Id VALUES(@P,'Legado','Texto original impossível de decompor')",("@P",prof));
+        var legadoLido=new LocalDAO().BuscarPorId(legado5);
+        Verificar(legadoLido?.DadosEndereco?.Estruturado==false && legadoLido.DadosEndereco.CEP==null && legadoLido.Endereco=="Texto original impossível de decompor","Sprint 5: local legado preserva texto e NULLs");
+        await Req5(p5,HttpMethod.Put,"/api/v1/locais/"+legado5,localBody,204,"confirmação manual converte local legado livre");
+        int domicilio5=Servico(prof,"dom5");Sql("UPDATE Servicos SET Atendimento='Domicilio' WHERE Id=@S",("@S",domicilio5));
+        int presencial5=Servico(prof,"presencial5");Sql("UPDATE Servicos SET Atendimento='Local',LocalId=@L WHERE Id=@S",("@S",presencial5),("@L",local5));
+        int online5=Servico(prof,"online5");var dia5=DateTime.Today.AddDays(16);
+        object Reserva5(int servico,int hora,EnderecoRequest? endereco=null)=>new{servicoId=servico,data=dia5.ToString("yyyy-MM-dd"),hora=$"{hora:00}:00:00",endereco};
+        await Req5(c5,HttpMethod.Post,"/api/v1/agendamentos",Reserva5(domicilio5,8),400,"domicílio exige endereço");
+        int agDom5=(await Req5(c5,HttpMethod.Post,"/api/v1/agendamentos",Reserva5(domicilio5,8,DadosEndereco()),201,"reserva domiciliar estruturada")).GetProperty("id").GetInt32();
+        int agLocal5=(await Req5(c5,HttpMethod.Post,"/api/v1/agendamentos",Reserva5(presencial5,9),201,"reserva presencial copia local")).GetProperty("id").GetInt32();
+        int agOnline5=(await Req5(c5,HttpMethod.Post,"/api/v1/agendamentos",Reserva5(online5,10),201,"Online dispensa endereço")).GetProperty("id").GetInt32();
+        Verificar(Id("SELECT COUNT(*) FROM AgendamentoEnderecos WHERE AgendamentoId IN(@D,@L)",("@D",agDom5),("@L",agLocal5))==2 &&
+            Id("SELECT COUNT(*) FROM AgendamentoEnderecos WHERE AgendamentoId=@A",("@A",agOnline5))==0,"Sprint 5: snapshots somente nas modalidades físicas");
+        await Req5(p5,HttpMethod.Put,"/api/v1/locais/"+local5,localBody,409,"histórico impede alteração do local");
+        await Req5(p5,HttpMethod.Delete,"/api/v1/locais/"+local5,null,409,"histórico impede exclusão do local");
+        await Req5(p5,HttpMethod.Delete,"/api/v1/locais/"+legado5,null,204,"remove local sem vínculo");
+        var domResposta=await Req5(c5,HttpMethod.Get,"/api/v1/agendamentos/"+agDom5,null,200,"snapshot acessível ao contratante");
+        Verificar(domResposta.GetProperty("enderecoAtendimento").GetProperty("numero").GetString()=="10" &&
+            !domResposta.GetProperty("enderecoAtendimento").TryGetProperty("latitude",out _),"Sprint 5: DTO de participante omite coordenadas");
+        await Req5(q5,HttpMethod.Get,"/api/v1/agendamentos/"+agDom5,null,403,"terceiro não acessa domicílio futuro");
+        var enderecoAlterado=DadosEndereco();enderecoAlterado.Numero="999";
+        int agOutroDom=(await Req5(c5,HttpMethod.Post,"/api/v1/agendamentos",Reserva5(domicilio5,11,enderecoAlterado),201,"outro domicílio em nova contratação")).GetProperty("id").GetInt32();
+        Verificar(Convert.ToString(Sql("SELECT Numero FROM AgendamentoEnderecos WHERE AgendamentoId=@A",("@A",agDom5)))=="10" &&
+            Convert.ToString(Sql("SELECT Numero FROM AgendamentoEnderecos WHERE AgendamentoId=@A",("@A",agOutroDom)))=="999","Sprint 5: novo endereço não altera snapshot antigo");
+        int antesReserva5=TotalReservas(),antesSnap5=Id("SELECT COUNT(*) FROM AgendamentoEnderecos"),antesNotif5=Id("SELECT COUNT(*) FROM Notificacoes WHERE UsuarioId=@U",("@U",cliente5));
+        bool rollback5=false;
+        try { new AgendamentoDAO().Inserir(new(){ClienteId=new ClienteDAO().BuscarClienteIdPorUsuario(cliente5),ServicoId=domicilio5,ProfissionalId=prof,
+            Data=dia5,Hora=TimeSpan.FromHours(12),EnderecoCliente=manual.EnderecoFormatado,Descricao="Rollback",
+            EnderecoAtendimento=manual with{Latitude=91,Longitude=0}}); }
+        catch(SqlException){rollback5=true;}
+        Verificar(rollback5 && TotalReservas()==antesReserva5 && Id("SELECT COUNT(*) FROM AgendamentoEnderecos")==antesSnap5 &&
+            Id("SELECT COUNT(*) FROM Notificacoes WHERE UsuarioId=@U",("@U",cliente5))==antesNotif5,"Sprint 5: falha no snapshot reverte reserva e notificações");
+        bool limiteBanco5=false;
+        try{Sql("UPDATE Locais SET Latitude=0,Longitude=181 WHERE Id=@L",("@L",local5));}catch(SqlException){limiteBanco5=true;}
+        Verificar(limiteBanco5 && new LocalDAO().BuscarPorId(local5)?.DadosEndereco?.Longitude==null,"Sprint 5: constraint SQL protege coordenadas");
+        using var web5=Cliente();await Post(web5,"/Usuario/Logar",new(){["email"]=tag+"p@example.invalid",["senha"]=senha});
+        Verificar((await web5.GetStringAsync("/Local/Lista")).Contains("data-consultar"),"Sprint 5: formulário de local possui consulta acessível");
+        Verificar((await web5.GetAsync("/Endereco/Cep?cep=01001000")).IsSuccessStatusCode,"Sprint 5: MVC consulta pelo mesmo Service com sessão");
+        var form5=new Dictionary<string,string>{{"nome",tag+"web5"},{"DadosEndereco.CEP","01001000"},{"DadosEndereco.Logradouro","Praça da Sé"},{"DadosEndereco.Numero","30"},
+            {"DadosEndereco.Bairro","Sé"},{"DadosEndereco.Cidade","São Paulo"},{"DadosEndereco.UF","SP"}};
+        Verificar((await Post(web5,"/Local/Salvar",form5)).StatusCode==HttpStatusCode.Redirect &&
+            Id("SELECT COUNT(*) FROM Locais WHERE Nome=@N AND EnderecoEstruturado=1",("@N",tag+"web5"))==1,"Sprint 5: MVC salva endereço estruturado");
+        Verificar((await web5.GetStringAsync($"/Agendamento/Novo?servicoId={domicilio5}")).Contains("Endereco.CEP") &&
+            !(await web5.GetStringAsync($"/Agendamento/Novo?servicoId={online5}")).Contains("Endereco.CEP"),"Sprint 5: formulário físico só aparece em Domicilio");
+        using var open5=System.Text.Json.JsonDocument.Parse(await anon.GetStringAsync("/openapi/v1.json"));
+        Verificar(open5.RootElement.GetProperty("paths").TryGetProperty("/api/v1/enderecos/cep/{cep}",out _) &&
+            open5.RootElement.GetProperty("paths").TryGetProperty("/api/v1/locais",out _),"Sprint 5: OpenAPI inclui endereços e locais");
+        bool limite5=false;for(int i=0;i<31;i++) {
+            using var resp=await c5.GetAsync("/api/v1/enderecos/cep/01001000");
+            if((int)resp.StatusCode==429){limite5=resp.Headers.RetryAfter!=null;break;}
+        }
+        Verificar(limite5,"Sprint 5: rate limiting protege consulta externa mesmo com cache");
+        Console.WriteLine("SPRINT 5: "+(passou-inicioSprint5)+" verificações novas.");
     }
 
     Console.WriteLine("TOTAL: "+passou+" verificações passaram.");

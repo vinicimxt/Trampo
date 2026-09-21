@@ -1,0 +1,6 @@
+Tabela Total                Verificacao
+------ -------------------- -----------
+Locais                    0        NULL
+Tabela       Total                Verificacao
+------------ -------------------- -----------
+Agendamentos                    0        NULL

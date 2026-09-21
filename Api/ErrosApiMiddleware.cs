@@ -1,4 +1,4 @@
-﻿using BD_TRAMPO.Contracts;
+using BD_TRAMPO.Contracts;
 using BD_TRAMPO.Api.Contracts;
 
 namespace BD_TRAMPO.Api;
@@ -22,6 +22,11 @@ public sealed class ErrosApiMiddleware(RequestDelegate proximo, ILogger<ErrosApi
                 TipoFalha.Validacao => 400, TipoFalha.NaoAutenticado => 401,
                 TipoFalha.SemPermissao => 403, TipoFalha.NaoEncontrado => 404, _ => 409 };
             await Escrever(contexto, status, ex.Message);
+        }
+        catch (FalhaEndereco ex) when (!contexto.Response.HasStarted)
+        {
+            var (status,resposta)=FalhasEnderecoHttp.Resposta(ex);
+            contexto.Response.StatusCode=status;await contexto.Response.WriteAsJsonAsync(resposta);
         }
         catch (ApiIndisponivelException) when (!contexto.Response.HasStarted)
         { await Escrever(contexto, 503); }

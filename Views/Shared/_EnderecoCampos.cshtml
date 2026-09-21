@@ -1,0 +1,19 @@
+﻿@model string
+<fieldset class="endereco-campos" data-endereco>
+    <legend>Endereço completo</legend>
+    <p>Consulte o CEP ou preencha manualmente. Confirme os dados antes de salvar.</p>
+    <div class="endereco-grid">
+        <div><label for="@(Model)-cep">CEP</label><input id="@(Model)-cep" name="@(Model).CEP" data-campo="cep" maxlength="9" inputmode="numeric" autocomplete="postal-code" required /></div>
+        <div class="endereco-acoes"><button type="button" data-consultar>Consultar CEP</button></div>
+        <div><label for="@(Model)-logradouro">Logradouro</label><input id="@(Model)-logradouro" name="@(Model).Logradouro" data-campo="logradouro" maxlength="100" autocomplete="address-line1" required /></div>
+        <div><label for="@(Model)-numero">Número (ou S/N)</label><input id="@(Model)-numero" name="@(Model).Numero" data-campo="numero" maxlength="20" required /></div>
+        <div><label for="@(Model)-complemento">Complemento (opcional)</label><input id="@(Model)-complemento" name="@(Model).Complemento" data-campo="complemento" maxlength="60" autocomplete="address-line2" /></div>
+        <div><label for="@(Model)-bairro">Bairro</label><input id="@(Model)-bairro" name="@(Model).Bairro" data-campo="bairro" maxlength="80" required /></div>
+        <div><label for="@(Model)-cidade">Cidade</label><input id="@(Model)-cidade" name="@(Model).Cidade" data-campo="cidade" maxlength="80" autocomplete="address-level2" required /></div>
+        <div><label for="@(Model)-uf">UF</label><input id="@(Model)-uf" name="@(Model).UF" data-campo="uf" maxlength="2" autocomplete="address-level1" required /></div>
+    </div>
+    <button type="button" data-pesquisar>Pesquisar CEP por UF, cidade e logradouro</button>
+    <p data-status role="status" aria-live="polite"></p>
+    <ul data-resultados aria-label="Endereços encontrados"></ul>
+    <p><strong>Confira o endereço:</strong> <span data-resumo>Preencha os campos acima.</span></p>
+</fieldset>

@@ -90,9 +90,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             /* endereço obrigatório para domicílio */
             if (atendimento.includes('domicilio')) {
-                var rua    = document.getElementById('rua');
-                var numero = document.getElementById('numero');
-                var cidade = document.getElementById('cidade');
+                var rua    = document.getElementById('Endereco-logradouro');
+                var numero = document.getElementById('Endereco-numero');
+                var cidade = document.getElementById('Endereco-cidade');
 
                 if (!rua?.value.trim() || !numero?.value.trim() || !cidade?.value.trim()) {
                     e.preventDefault();

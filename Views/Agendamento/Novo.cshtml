@@ -1,4 +1,5 @@
 @section Styles {
+    <link rel="stylesheet" href="~/css/enderecos.css" />
     <link rel="stylesheet" href="~/css/agendamento.css" />
 }
 
@@ -182,35 +183,14 @@
                               placeholder="Ex: preciso de atendimento rápido, tenho alergia a X..."></textarea>
                 </div>
 
-                <!-- Endereço (só domicílio) -->
-                <div class="agend-card campo-dinamico" id="enderecoDiv" style="animation-delay:.18s">
-                    <div class="agend-card-title">📍 Endereço de atendimento</div>
-
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
-                        <div>
-                            <label class="agend-label" for="rua">Rua / Avenida</label>
-                            <input class="agend-input" type="text" name="rua" id="rua" placeholder="Rua das Flores" />
-                        </div>
-                        <div>
-                            <label class="agend-label" for="numero">Número</label>
-                            <input class="agend-input" type="text" name="numero" id="numero" placeholder="123" />
-                        </div>
+                @if (ViewBag.Atendimento == "Domicilio")
+                {
+                    <div class="agend-card campo-dinamico visivel" id="enderecoDiv">
+                        <div class="agend-card-title">Endereço de atendimento</div>
+                        <partial name="_EnderecoCampos" model='@("Endereco")' />
                     </div>
-
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-                        <div>
-                            <label class="agend-label" for="bairro">Bairro</label>
-                            <input class="agend-input" type="text" name="bairro" id="bairro" placeholder="Centro" />
-                        </div>
-                        <div>
-                            <label class="agend-label" for="cidade">Cidade</label>
-                            <input class="agend-input" type="text" name="cidade" id="cidade" placeholder="São Paulo" />
-                        </div>
-                    </div>
-                </div>
-
+                }
             </div>
-
             <!-- ----------------------------------------
                  PAINEL DIREITO — resumo
             ---------------------------------------- -->
@@ -361,5 +341,6 @@
         </div>
 
         @section Scripts {
+            <script src="~/js/enderecos.js"></script>
             <script src="~/js/agendamento.js"></script>
         }

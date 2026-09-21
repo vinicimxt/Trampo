@@ -1,13 +1,10 @@
-namespace BD_TRAMPO
-{
-    
+﻿using BD_TRAMPO.Contracts;
+namespace BD_TRAMPO;
 public class Local
 {
-    public int Id { get; set; }
-    public int ProfissionalId { get; set; }
-    public string Nome { get; set; }
-    public string Endereco { get; set; }
-}
-
-    
+    public int Id {get;set;}
+    public int ProfissionalId {get;set;}
+    public string Nome {get;set;} = "";
+    public string Endereco {get;set;} = "";
+    public EnderecoDados? DadosEndereco {get;set;}
 }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using BD_TRAMPO.Contracts;
 
@@ -24,12 +24,12 @@ public sealed record ServicoResponse(int Id, int ProfissionalId, int Subcategori
 
 public sealed record AgendamentoResponse(int Id, int ServicoId, int ProfissionalId,
     DateOnly Data, TimeSpan Hora, string Status, string Descricao, string? EnderecoCliente,
-    decimal? ValorFinal, string OrigemValorFinal)
+    decimal? ValorFinal, string OrigemValorFinal, EnderecoAtendimentoResponse? EnderecoAtendimento)
 {
     // Somente valor efetivamente persistido. Não expõe preço atual como preço contratado.
     public static AgendamentoResponse De(Agendamento a) => new(a.Id, a.ServicoId, a.ProfissionalId,
         DateOnly.FromDateTime(a.Data), a.Hora, a.StatusAtual(), a.Descricao, a.EnderecoCliente,
-        a.ValorFinal, "finalizacao_sem_snapshot_da_oferta");
+        a.ValorFinal, "finalizacao_sem_snapshot_da_oferta", EnderecoAtendimentoResponse.De(a.EnderecoAtendimento));
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -57,4 +57,11 @@ public sealed class ServicoRequest
         Atendimento=Atendimento, LocalId=LocalId, LinkOnline=LinkOnline, TipoPreco=TipoPreco,
         PrecoBase=PrecoBase, DiasSemana=DiasSemana, HoraInicio=HoraInicio, HoraFim=HoraFim
     };
+}
+
+public sealed record EnderecoAtendimentoResponse(string? CEP,string? Logradouro,string? Numero,string? Complemento,
+    string? Bairro,string? Cidade,string? UF,string EnderecoFormatado,bool Estruturado)
+{
+    public static EnderecoAtendimentoResponse? De(EnderecoDados? d)=>d==null?null:
+        new(d.CEP,d.Logradouro,d.Numero,d.Complemento,d.Bairro,d.Cidade,d.UF,d.EnderecoFormatado,d.Estruturado);
 }

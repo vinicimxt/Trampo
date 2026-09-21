@@ -82,11 +82,15 @@ public sealed class AgendamentoService(AgendamentoDAO agendamentos, ServicoDAO s
             dados.Data.Date + dados.Hora.Value <= DateTime.Now || dados.Data.Date > DateTime.Today.AddMonths(3))
             throw new FalhaOperacao(TipoFalha.Validacao, "Data ou horário inválido.");
         string? endereco = null;
+        EnderecoDados? snapshot = null;
         if (servico.Atendimento == "Domicilio")
         {
+            if(dados.Endereco!=null) { snapshot=EnderecoService.Validar(dados.Endereco); endereco=snapshot.EnderecoFormatado; }
+            else {
             if (new[] { dados.Rua, dados.Numero, dados.Bairro, dados.Cidade }.Any(string.IsNullOrWhiteSpace))
                 throw new FalhaOperacao(TipoFalha.Validacao, "Preencha o endereço completo.");
             endereco = $"{dados.Rua}, {dados.Numero} - {dados.Bairro}, {dados.Cidade}";
+            }
         }
         if ((dados.Descricao?.Length ?? 0) > 255 || (endereco?.Length ?? 0) > 255)
             throw new FalhaOperacao(TipoFalha.Validacao, "Descrição ou endereço muito longo.");
@@ -95,7 +99,7 @@ public sealed class AgendamentoService(AgendamentoDAO agendamentos, ServicoDAO s
         return agendamentos.Inserir(new Agendamento {
             ClienteId = cliente, ServicoId = servico.Id, ProfissionalId = servico.ProfissionalId,
             Data = dados.Data.Date, Hora = dados.Hora.Value, Descricao = dados.Descricao ?? "",
-            EnderecoCliente = endereco, LocalId = servico.LocalId, Status = "Pendente"
+            EnderecoAtendimento = snapshot, EnderecoCliente = endereco, LocalId = servico.LocalId, Status = "Pendente"
         });
     }
 

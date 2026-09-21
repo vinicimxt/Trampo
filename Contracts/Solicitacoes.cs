@@ -3,6 +3,7 @@ namespace BD_TRAMPO.Contracts;
 [System.Text.Json.Serialization.JsonUnmappedMemberHandling(System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow)]
 public sealed class CriarAgendamentoRequest
 {
+    public EnderecoRequest? Endereco { get; set; }
     public int ServicoId { get; set; }
     public DateTime Data { get; set; }
     public TimeSpan? Hora { get; set; }

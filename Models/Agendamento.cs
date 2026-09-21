@@ -2,6 +2,7 @@ namespace BD_TRAMPO
 {
     public class Agendamento
     {
+        public BD_TRAMPO.Contracts.EnderecoDados? EnderecoAtendimento { get; set; }
         public int Id { get; set; }
         public int ClienteId { get; set; }
         public int UsuarioId { get; set; }

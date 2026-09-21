@@ -1,6 +1,7 @@
 @model List<Local>
 
 @section Styles {
+    <link rel="stylesheet" href="~/css/enderecos.css" />
     <link rel="stylesheet" href="~/css/Locais.css" />
 }
 
@@ -100,7 +101,7 @@
 
                                 <div class="local-card-actions">
                                     <button aria-label="Editar local" class="btn-edit-local"
-                                            onclick="abrirDrawerEditar('@l.Id', @(System.Text.Json.JsonSerializer.Serialize(l.Nome)), @(System.Text.Json.JsonSerializer.Serialize(l.Endereco)))">
+                                            onclick="abrirDrawerEditar('@l.Id', @(System.Text.Json.JsonSerializer.Serialize(l.Nome)), @(System.Text.Json.JsonSerializer.Serialize(l.Endereco)), @(System.Text.Json.JsonSerializer.Serialize(l.DadosEndereco, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web))))">
                                         <span 
                                             class="material-symbols-rounded"
                                             aria-hidden="true">
@@ -143,19 +144,19 @@
                         <div class="drawer-body">
 
                             <div class="form-group">
-                                <label class="form-label" for="nome">
+                                <label class="form-label" for="inputNome">
                                     Nome do local <span class="required">*</span>
                                 </label>
                                 <input class="form-input" type="text" name="nome" id="inputNome"
                                        placeholder="Ex: Estúdio Centro, Salão Principal..." required />
                             </div>
 
-                            <div class="form-group">
-                                <label class="form-label" for="endereco">
-                                    Endereço completo <span class="required">*</span>
-                                </label>
-                                <input class="form-input" type="text" name="endereco" id="inputEndereco"
-                                       placeholder="Ex: Rua das Flores, 123 — Centro, SP" required />
+                            <label><input type="checkbox" id="localEstruturado" checked /> Usar endereço estruturado</label>
+                            <p>Endereços antigos podem manter o texto original. Confirme os componentes para convertê-los.</p>
+                            <partial name="_EnderecoCampos" model='@("DadosEndereco")' />
+                            <div class="form-group endereco-legado">
+                                <label class="form-label" for="inputEndereco">Endereço original (legado)</label>
+                                <input class="form-input" name="endereco" id="inputEndereco" maxlength="255" />
                             </div>
 
                         </div>
@@ -208,6 +209,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/enderecos.js"></script>
     <script>
         var drawerAberto = false;
 
@@ -221,6 +223,9 @@
             document.getElementById('localId').value = '';
             document.getElementById('inputNome').value = '';
             document.getElementById('inputEndereco').value = '';
+            document.querySelector('#formLocal [data-endereco]').preencherEndereco(null);
+            document.getElementById('localEstruturado').checked = true;
+            modoEnderecoLocal();
 
             document.getElementById('drawerTitle').textContent = 'Novo local';
             document.getElementById('drawerSub').textContent = 'Preencha os dados do endereço';
@@ -233,12 +238,15 @@
             modal.classList.remove('open');
         }
 
-        function abrirDrawerEditar(id, nome, endereco) {
+        function abrirDrawerEditar(id, nome, endereco, dados) {
             abrirDrawer();
 
             document.getElementById('localId').value = id;
             document.getElementById('inputNome').value = nome;
             document.getElementById('inputEndereco').value = endereco;
+            document.getElementById('localEstruturado').checked = dados?.estruturado === true;
+            document.querySelector('#formLocal [data-endereco]').preencherEndereco(dados);
+            modoEnderecoLocal();
 
             document.getElementById('drawerTitle').textContent = 'Editar local';
             document.getElementById('drawerSub').textContent = 'Atualize os dados do endereço';
@@ -262,6 +270,9 @@
             document.getElementById('localId').value = '';
             document.getElementById('inputNome').value = '';
             document.getElementById('inputEndereco').value = '';
+            document.querySelector('#formLocal [data-endereco]').preencherEndereco(null);
+            document.getElementById('localEstruturado').checked = true;
+            modoEnderecoLocal();
 
             document.getElementById('drawerTitle').textContent = 'Novo local';
             document.getElementById('drawerSub').textContent = 'Preencha os dados do endereço';

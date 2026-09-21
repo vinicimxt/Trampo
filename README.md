@@ -143,3 +143,21 @@ Em Development, acessar `/swagger/index.html` na URL da aplicação. Executar `P
 - [Relatório da Sprint 4](docs/Sprint4/RELATORIO.md)
 
 Regressão completa: `powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint1/Run.ps1 -Sprint4`. O runner gera sua própria chave efêmera para o processo de teste e limpa seus registros temporários no SQL Server configurado.
+
+## Endereços estruturados (Sprint 5)
+
+Antes de executar esta versão sobre banco anterior, aplicar **somente** a migração incremental `ScriptsSQL/001_enderecos_geolocalizacao.sql`; não recriar o banco com ScriptBD.txt. Ela preserva textos antigos e adiciona componentes de local e snapshots de endereço das reservas.
+
+```powershell
+sqlcmd -S 'localhost\SQLEXPRESS' -d Xamou -E -C -b -i ScriptsSQL/001_enderecos_geolocalizacao.sql
+powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint1/Run.ps1 -Sprint5
+```
+
+ViaCEP usa HTTPS sem chave, timeout de quatro segundos e cache em memória. Consulta e pesquisa são autenticadas e limitadas; preencher manualmente continua possível. Geocoder real não está configurado: latitude/longitude permanecem NULL e não há busca por proximidade.
+
+- [Relatório e endpoints](docs/Sprint5/RELATORIO.md)
+- [Modelo e integração](docs/Sprint5/ENDERECOS.md)
+- [Migração e modelo físico](docs/Sprint5/MIGRACAO-BANCO.md)
+- [Privacidade](docs/Sprint5/PRIVACIDADE.md)
+- [Testes](docs/Sprint5/TESTES.md)
+- [Checklist visual pendente](docs/Sprint5/CHECKLIST-MANUAL.md)
