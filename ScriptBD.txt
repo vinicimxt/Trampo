@@ -1,6 +1,8 @@
 USE master;
 GO
 
+--dotnet run --urls "http://0.0.0.0:5165"
+
 /*
 IF DB_ID('Xamou') IS NOT NULL
 BEGIN

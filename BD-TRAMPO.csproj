@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>BD_TRAMPO</RootNamespace>
+    <UserSecretsId>cb43acd1-400f-4f6e-ae41-014919b961db</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,0 +1,63 @@
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:7: Warning: A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.8.0 [GradleDependency]
+appcompat = "1.6.1"
+            ~~~~~~~
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:8: Warning: A newer version of com.google.android.material:material than 1.10.0 is available: 1.14.0 [GradleDependency]
+material = "1.10.0"
+           ~~~~~~~~
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:10: Warning: A newer version of androidx.constraintlayout:constraintlayout than 2.1.4 is available: 2.2.2 [GradleDependency]
+constraintlayout = "2.1.4"
+                   ~~~~~~~
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:13: Warning: A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.9.4 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.9.4"
+            ~~~~~~~
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:13: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.9.4 is available: 2.11.0 [GradleDependency]
+lifecycle = "2.9.4"
+            ~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:15: Warning: A newer version of com.squareup.okhttp3:mockwebserver than 4.12.0 is available: 5.5.0 [NewerVersionAvailable]
+okhttp = "4.12.0"
+         ~~~~~~~~
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:15: Warning: A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.5.0 [NewerVersionAvailable]
+okhttp = "4.12.0"
+         ~~~~~~~~
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:16: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+coroutines = "1.10.2"
+             ~~~~~~~~
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\gradle\libs.versions.toml:16: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+coroutines = "1.10.2"
+             ~~~~~~~~
+
+   Explanation for issues of type "NewerVersionAvailable":
+   This detector checks with a central repository to see if there are newer
+   versions available for the dependencies used by this project. This is
+   similar to the GradleDependency check, which checks for newer versions
+   available in the Android SDK tools and libraries, but this works with any
+   MavenCentral dependency, and connects to the library every time, which
+   makes it more flexible but also much slower.
+
+C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\app\src\main\res\layout\include_endereco.xml:12: Warning: The view name (@+id/house_number) suggests this is a number, but it does not include a numeric inputType (such as 'numberSigned') [TextFields]
+  <EditText android:id="@+id/house_number" style="@style/Field" android:importantForAutofill="no" android:inputType="text" />
+                                                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~
+    C:\Users\Vinicius\AndroidStudioProjects\TRAMPO\app\src\main\res\layout\include_endereco.xml:12: id defined here
+
+   Explanation for issues of type "TextFields":
+   Providing an inputType attribute on a text field improves usability because
+   depending on the data to be input, optimized keyboards can be shown to the
+   user (such as just digits and parentheses for a phone number). 
+
+   The lint detector also looks at the id of the view, and if the id offers a
+   hint of the purpose of the field (for example, the id contains the phrase
+   phone or email), then lint will also ensure that the inputType contains the
+   corresponding type attributes.
+
+   If you really want to keep the text field generic, you can suppress this
+   warning by setting inputType="text".
+
+0 errors, 10 warnings

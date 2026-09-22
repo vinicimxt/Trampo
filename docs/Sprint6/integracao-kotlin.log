@@ -35,37 +35,36 @@ C:\Users\Vinicius\AndroidStudioProjects\TRAMPO>"C:\Program Files\Android\Android
 > Task :app:javaPreCompileDebug
 > Task :app:mapDebugSourceSetPaths
 > Task :app:checkDebugAarMetadata
-> Task :app:parseDebugLocalResources
 > Task :app:compileDebugNavigationResources
+> Task :app:parseDebugLocalResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:generateDebugRFile
-> Task :app:mergeDebugResources
 > Task :app:processDebugMainManifest
+> Task :app:generateDebugRFile
 > Task :app:processDebugManifest
+> Task :app:mergeDebugResources
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:javaPreCompileDebugUnitTest
 > Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugAssets
+> Task :app:mergeDebugUnitTestManifest
+> Task :app:processDebugUnitTestManifest
 > Task :app:processDebugResources
+> Task :app:packageDebugUnitTestForUnitTest
+> Task :app:generateDebugUnitTestConfig
 > Task :app:compileDebugKotlin
 > Task :app:compileDebugJavaWithJavac
-> Task :app:processDebugJavaRes
 > Task :app:bundleDebugClassesToCompileJar
 > Task :app:bundleDebugClassesToRuntimeJar
-
+> Task :app:processDebugJavaRes
 > Task :app:compileDebugUnitTestKotlin
-w: file:///C:/Users/Vinicius/AndroidStudioProjects/TRAMPO/app/src/test/java/com/example/trampo/LiveApiTest.kt:27:29 Java type mismatch: inferred type is 'String?', but 'String' was expected.
-w: file:///C:/Users/Vinicius/AndroidStudioProjects/TRAMPO/app/src/test/java/com/example/trampo/LiveApiTest.kt:27:65 Java type mismatch: inferred type is 'String?', but 'String' was expected.
-w: file:///C:/Users/Vinicius/AndroidStudioProjects/TRAMPO/app/src/test/java/com/example/trampo/LiveApiTest.kt:29:19 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'String?'.
-w: file:///C:/Users/Vinicius/AndroidStudioProjects/TRAMPO/app/src/test/java/com/example/trampo/LiveApiTest.kt:34:40 Java type mismatch: inferred type is 'String?', but 'String' was expected.
-w: file:///C:/Users/Vinicius/AndroidStudioProjects/TRAMPO/app/src/test/java/com/example/trampo/LiveApiTest.kt:39:60 Java type mismatch: inferred type is 'String?', but 'String' was expected.
-
 > Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes
 > Task :app:testDebugUnitTest
 
-BUILD SUCCESSFUL in 7s
-26 actionable tasks: 26 executed
+BUILD SUCCESSFUL in 22s
+31 actionable tasks: 31 executed
 
 C:\Users\Vinicius\AndroidStudioProjects\TRAMPO>if 0 EQU 0 goto mainEnd 
 

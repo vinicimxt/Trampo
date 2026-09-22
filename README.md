@@ -161,3 +161,20 @@ ViaCEP usa HTTPS sem chave, timeout de quatro segundos e cache em memória. Cons
 - [Privacidade](docs/Sprint5/PRIVACIDADE.md)
 - [Testes](docs/Sprint5/TESTES.md)
 - [Checklist visual pendente](docs/Sprint5/CHECKLIST-MANUAL.md)
+
+
+## Sprint 6 — Android
+
+O aplicativo Android nativo está no projeto existente `C:\Users\Vinicius\AndroidStudioProjects\TRAMPO`. Ele usa Kotlin e Views/XML e consome a API por Retrofit. A documentação, os testes e o roteiro de demonstração estão em [docs/Sprint6/RELATORIO.md](docs/Sprint6/RELATORIO.md).
+
+Para iniciar a API local na porta usada pelo emulador:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File docs/Sprint6/Iniciar-Api.ps1
+```
+
+Para executar a integração Kotlin → API → SQL Server com fixtures temporárias:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint6/Run.ps1
+```
