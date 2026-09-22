@@ -1,9 +1,15 @@
+using Microsoft.Extensions.Configuration;
 using BD_TRAMPO;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
 var root = Directory.GetCurrentDirectory();
+var configBancoTeste = new ConfigurationBuilder()
+    .AddJsonFile(Path.Combine(root, "appsettings.Development.json"), optional: false)
+    .AddEnvironmentVariables()
+    .Build();
+Conexao.Configurar(configBancoTeste);
 var android = args.Length > 0 ? Path.GetFullPath(args[0]) :
     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AndroidStudioProjects", "TRAMPO");
 if (!File.Exists(Path.Combine(android, "gradlew.bat")))
@@ -57,6 +63,7 @@ try {
     start.ArgumentList.Add("--urls");
     start.ArgumentList.Add("http://127.0.0.1:5179");
     start.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";
+    start.Environment["ConnectionStrings__Xamou"] = configBancoTeste.GetConnectionString("Xamou")!;
     start.Environment["Jwt__SigningKey"] = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     // Não registrar corpos, credenciais nem dados privados da execução.
     start.Environment["Logging__LogLevel__Default"] = "None";

@@ -5,6 +5,8 @@ using BD_TRAMPO.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
+Conexao.Configurar(builder.Configuration);
+builder.Services.AddHealthChecks();
 
 //  REGISTRAR SERVIÇOS
 builder.Services.AddControllersWithViews(options =>
@@ -58,6 +60,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "TRAMPO API v1"));
 }
+app.MapHealthChecks("/health").AllowAnonymous();
 app.MapControllers();
 
 app.MapControllerRoute(

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BD_TRAMPO.Contracts;
 using BD_TRAMPO.Services;
@@ -101,6 +102,16 @@ try
     Verificar(RegrasAgenda.Horarios(regras,segunda).Count()==2 &&
         RegrasAgenda.Horarios(regras,segunda.AddDays(1)).Select(x=>x.Hour).SequenceEqual(new[]{0,1}),
         "virada de meia-noite no dia correto");
+    if (args.Contains("--unit"))
+    {
+        Console.WriteLine("TOTAL: " + passou + " verificações sem banco passaram. Integração SQL não executada neste modo.");
+        return;
+    }
+    var configBancoTeste = new ConfigurationBuilder()
+        .AddJsonFile(Path.Combine(root, "appsettings.Development.json"), optional: false)
+        .AddEnvironmentVariables()
+        .Build();
+    Conexao.Configurar(configBancoTeste);
     int a=Usuario("a","cliente",true), b=Usuario("b","cliente"), p=Usuario("p","profissional"), q=Usuario("q","profissional"), admin=Usuario("admin","admin");
     int prof=Profissional(p), outroProf=Profissional(q);
     int s=Servico(prof,"servico"), s2=Servico(prof,"outro"), inativo=Servico(prof,"inativo",false), outro=Servico(outroProf,"terceiro");
@@ -108,6 +119,7 @@ try
     var start = new ProcessStartInfo("dotnet", "\""+(Environment.GetEnvironmentVariable("TRAMPO_TEST_DLL") ?? Path.Combine(root,"bin/Debug/net10.0/BD-TRAMPO.dll"))+"\" --urls http://127.0.0.1:5177") {
         WorkingDirectory=root, UseShellExecute=false, CreateNoWindow=true, RedirectStandardOutput=true, RedirectStandardError=true };
     start.Environment["ASPNETCORE_ENVIRONMENT"]="Development";
+    start.Environment["ConnectionStrings__Xamou"] = configBancoTeste.GetConnectionString("Xamou")!;
     start.Environment["Jwt__SigningKey"] = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     app=Process.Start(start)!;
     app.OutputDataReceived += (_,e)=> { if(e.Data!=null) lock(logs) logs.AppendLine(e.Data); };

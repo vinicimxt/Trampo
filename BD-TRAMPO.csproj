@@ -11,8 +11,9 @@
   <ItemGroup>
     <Compile Remove="Usuario.cs" />
     <Compile Remove="Tests/**/*.cs" />
-    <Content Remove="Tests/**" />
+    <Content Remove="Tests/**;artifacts/**;docs/**;Scripts/**;.github/**" />
     <None Remove="Tests/**" />
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup>

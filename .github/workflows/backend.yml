@@ -1,0 +1,28 @@
+name: Backend CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Restore, Release, analyzers, tests without SQL and publish
+        shell: pwsh
+        run: ./Scripts/Test-CI.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backend-release
+          path: artifacts/backend/
+          if-no-files-found: error
+          retention-days: 7
