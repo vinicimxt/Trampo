@@ -178,3 +178,7 @@ Para executar a integração Kotlin → API → SQL Server com fixtures temporá
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint6/Run.ps1
 ```
+
+## Sprint 9 — cliente Android
+
+Cadastro, perfil, senha, descoberta, conclusão, avaliação, notificações e suporte no aplicativo Kotlin/XML. [Relatório, matriz de paridade e testes](docs/SPRINT-9-MOBILE-FUNCIONALIDADES.md).

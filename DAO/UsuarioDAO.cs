@@ -32,6 +32,23 @@ namespace BD_TRAMPO
             }
         }
 
+        public int InserirCliente(string nome, string email, string hash, string? telefone)
+        {
+            using var conn = conexao.Conectar();
+            using var tx = conn.BeginTransaction();
+            using var cmd = new SqlCommand(@"INSERT INTO Usuarios(Nome,Email,Senha,Tipo,Telefone)
+                VALUES(@Nome,@Email,@Hash,'cliente',@Telefone);
+                DECLARE @Id int=CONVERT(int,SCOPE_IDENTITY());
+                INSERT INTO Clientes(UsuarioId) VALUES(@Id); SELECT @Id;", conn, tx);
+            cmd.Parameters.AddWithValue("@Nome", nome);
+            cmd.Parameters.AddWithValue("@Email", email);
+            cmd.Parameters.AddWithValue("@Hash", hash);
+            cmd.Parameters.AddWithValue("@Telefone", (object?)telefone ?? DBNull.Value);
+            int id = Convert.ToInt32(cmd.ExecuteScalar());
+            tx.Commit();
+            return id;
+        }
+
         public bool EmailExiste(string email)
         {
             using (SqlConnection conn = conexao.Conectar())

@@ -18,6 +18,10 @@ builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(); 
 
+builder.Services.AddScoped<ContaService>();
+builder.Services.AddScoped<ClienteAtendimentoService>();
+builder.Services.AddScoped<NotificacaoDAO>();
+builder.Services.AddScoped<SuporteDAO>();
 builder.Services.AddScoped<AgendamentoService>();
 builder.Services.AddScoped<ServicoService>();
 builder.Services.AddScoped<AgendamentoDAO>();

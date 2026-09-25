@@ -1,4 +1,4 @@
-﻿using BD_TRAMPO.Api.Contracts;
+using BD_TRAMPO.Api.Contracts;
 using BD_TRAMPO.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +10,8 @@ public sealed class ServicosApiController(ServicoService service, AgendamentoSer
 {
     [HttpGet, AllowAnonymous]
     [ProducesResponseType(typeof(List<ServicoResponse>), 200)]
-    public ActionResult<List<ServicoResponse>> Listar([FromQuery] int pagina = 1, [FromQuery] int tamanho = 20) =>
-        Ok(service.ListarPublicos(pagina, tamanho).Select(ServicoResponse.De).ToList());
+    public ActionResult<List<ServicoResponse>> Listar([FromQuery] int pagina = 1, [FromQuery] int tamanho = 20, [FromQuery] string? busca = null, [FromQuery] string? atendimento = null) =>
+        Ok(service.ListarPublicos(pagina, tamanho, busca, atendimento).Select(ServicoResponse.De).ToList());
 
     [HttpGet("{id:int}"), AllowAnonymous]
     [ProducesResponseType(typeof(ServicoResponse), 200)]

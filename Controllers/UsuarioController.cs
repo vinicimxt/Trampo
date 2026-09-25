@@ -6,7 +6,7 @@ namespace BD_TRAMPO.Controllers
     using BD_TRAMPO.Models.ViewModels;
 
 
-    public class UsuarioController : BaseController
+    public class UsuarioController(BD_TRAMPO.Services.ContaService contas) : BaseController
     {
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Cadastro()
@@ -23,6 +23,22 @@ namespace BD_TRAMPO.Controllers
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         public IActionResult Cadastrar(string nome, string email, string senha, string tipo, string tipoDocumento, string documento, string telefone, string contato)
         {
+            if (tipo != "profissional")
+            {
+                try {
+                    var cliente = contas.CadastrarCliente(nome, email, senha, telefone);
+                    HttpContext.Session.Clear();
+                    HttpContext.Session.SetString("UsuarioId", cliente.Id.ToString());
+                    HttpContext.Session.SetString("UsuarioNome", cliente.Nome);
+                    HttpContext.Session.SetString("UsuarioEmail", cliente.Email);
+                    HttpContext.Session.SetString("UsuarioTipo", cliente.Tipo);
+                    TempData["Sucesso"] = "Conta criada com sucesso!";
+                    return RedirectToAction("Lista", "Profissional");
+                } catch (BD_TRAMPO.Contracts.FalhaOperacao ex) {
+                    TempData["Erro"] = ex.Message;
+                    return RedirectToAction("Cadastro");
+                }
+            }
             if (string.IsNullOrWhiteSpace(nome) || nome.Length > 100 ||
                 string.IsNullOrWhiteSpace(email) || email.Length > 100 || senha?.Length > 1024 ||
                 string.IsNullOrWhiteSpace(senha) || senha.Length < 8 ||
@@ -274,68 +290,22 @@ namespace BD_TRAMPO.Controllers
             string tipo =
                 HttpContext.Session.GetString("UsuarioTipo");
 
-            if (string.IsNullOrWhiteSpace(nome) || nome.Length > 100 ||
- (telefone?.Length ?? 0) > 20 ||
-                (contatoPublico?.Length ?? 0) > 255)
-                return BadRequest("Dados de perfil inválidos.");
-            if (!string.IsNullOrWhiteSpace(novaSenha) &&
-                (novaSenha.Length < 8 || novaSenha.Length > 1024 ||
-                 novaSenha != confirmarSenha || !dao.VerificarSenha(usuarioId, senhaAtual)))
-            {
-                TempData["Erro"] = "Confira a senha atual e a confirmação. A nova senha deve ter ao menos 8 caracteres.";
+            try {
+                BD_TRAMPO.Services.ContaService.ValidarPerfil(nome, telefone);
+                if ((contatoPublico?.Length ?? 0) > 255) return BadRequest("Contato muito longo.");
+                var contexto = new BD_TRAMPO.Contracts.UsuarioContexto(usuarioId, tipo);
+                if (!string.IsNullOrWhiteSpace(novaSenha))
+                    contas.ValidarSenha(usuarioId, senhaAtual, novaSenha, confirmarSenha);
+                if (tipo == "profissional") {
+                    var profDAO = new ProfissionalDAO();
+                    profDAO.AtualizarContato(profDAO.BuscarPorUsuario(usuarioId), contatoPublico);
+                }
+                contas.Atualizar(contexto, nome, telefone);
+                if (!string.IsNullOrWhiteSpace(novaSenha))
+                    contas.AlterarSenha(contexto, senhaAtual, novaSenha, confirmarSenha);
+            } catch (BD_TRAMPO.Contracts.FalhaOperacao ex) {
+                TempData["Erro"] = ex.Message;
                 return RedirectToAction("Perfil");
-            }            // PROFISSIONAL
-            if (!string.IsNullOrWhiteSpace(tipo) &&
-                tipo.ToLower() == "profissional")
-            {
-                ProfissionalDAO profDAO = new ProfissionalDAO();
-
-                int profissionalId =
-                    profDAO.BuscarPorUsuario(usuarioId);
-
-                profDAO.AtualizarContato(
-                    profissionalId,
-                    contatoPublico
-                );
-            }
-
-            // CONTA DO USUÁRIO
-            dao.AtualizarConta(usuarioId, nome, telefone);
-
-            // ALTERAÇÃO DE SENHA
-            if (!string.IsNullOrWhiteSpace(novaSenha))
-            {
-                if (novaSenha != confirmarSenha)
-                {
-                    TempData["Erro"] =
-                        "A confirmação da senha não confere.";
-
-                    return RedirectToAction("Perfil");
-                }
-
-
-
-                bool senhaCorreta =
-                    dao.VerificarSenha(
-                        usuarioId,
-                        senhaAtual
-                    );
-
-                if (!senhaCorreta)
-                {
-                    TempData["Erro"] =
-                        "Senha atual incorreta.";
-
-                    return RedirectToAction("Perfil");
-                }
-
-                string novaSenhaHash =
-                    Seguranca.GerarHash(novaSenha);
-
-                dao.AtualizarSenha(
-                    usuarioId,
-                    novaSenhaHash
-                );
             }
 
             HttpContext.Session.SetString("UsuarioNome", nome);

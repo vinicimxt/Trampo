@@ -30,7 +30,7 @@ namespace BD_TRAMPO.DAO
             }
         }
 
-        public List<Notificacao> ListarPorUsuario(int usuarioId)
+        public List<Notificacao> ListarPorUsuario(int usuarioId, int? pagina = null, int tamanho = 20)
         {
             List<Notificacao> lista = new List<Notificacao>();
 
@@ -40,10 +40,14 @@ namespace BD_TRAMPO.DAO
         SELECT Id, Titulo, Mensagem, Tipo, ReferenciaId, Lida, DataCriacao
         FROM Notificacoes
         WHERE UsuarioId = @UsuarioId
-        ORDER BY DataCriacao DESC";
+        ORDER BY DataCriacao DESC, Id DESC";
+                if (pagina.HasValue) query += " OFFSET @Inicio ROWS FETCH NEXT @Tamanho ROWS ONLY";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);
+
+                cmd.Parameters.AddWithValue("@Inicio", ((pagina ?? 1)-1)*tamanho);
+                cmd.Parameters.AddWithValue("@Tamanho", tamanho);
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -112,7 +116,8 @@ namespace BD_TRAMPO.DAO
             SELECT TOP (@Qtd) *
             FROM Notificacoes
             WHERE UsuarioId = @UsuarioId
-            ORDER BY DataCriacao DESC";
+            ORDER BY DataCriacao DESC, Id DESC";
+
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@UsuarioId", usuarioId);

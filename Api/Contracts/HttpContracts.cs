@@ -15,11 +15,11 @@ public sealed record RecursoCriadoResponse(int Id);
 public sealed record RemocaoResponse(int Id, string Resultado);
 public sealed record AgendaResponse(int ServicoId, DateOnly Data, IReadOnlyList<TimeSpan> Horarios);
 public sealed record ServicoResponse(int Id, int ProfissionalId, int SubcategoriaId,
-    string Nome, string Descricao, string Atendimento, string TipoPreco, decimal? PrecoBase, bool Ativo)
+    string Nome, string Descricao, string Atendimento, string TipoPreco, decimal? PrecoBase, bool Ativo, string? NomeProfissional, string? Categoria, string? Subcategoria)
 {
     // Link de reunião e endereço não fazem parte do catálogo público.
     public static ServicoResponse De(Servico s) => new(s.Id, s.ProfissionalId, s.SubcategoriaId,
-        s.Nome, s.Descricao, s.Atendimento, s.TipoPreco, s.PrecoBase, s.Ativo);
+        s.Nome, s.Descricao, s.Atendimento, s.TipoPreco, s.PrecoBase, s.Ativo, s.NomeProfissional, s.Categoria, s.Subcategoria);
 }
 
 public sealed record AgendamentoResponse(int Id, int ServicoId, int ProfissionalId,

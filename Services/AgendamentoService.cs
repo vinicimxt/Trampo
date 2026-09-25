@@ -173,6 +173,13 @@ public sealed class AgendamentoService(AgendamentoDAO agendamentos, ServicoDAO s
                 "O cliente confirmou a conclusão do atendimento.", "Finalizacao")]));
     }
 
+    public (bool PodeAvaliar, bool JaAvaliado) EstadoAvaliacao(UsuarioContexto usuario, int id)
+    {
+        var ag = BuscarParticipante(usuario,id,false);
+        bool avaliado = avaliacoes.JaAvaliou(id,usuario.UsuarioId);
+        return (ag.PodeAvaliar() && !avaliado, avaliado);
+    }
+
     public void PermitirAvaliacao(UsuarioContexto usuario, int id)
     {
         var ag = BuscarParticipante(usuario, id, false);

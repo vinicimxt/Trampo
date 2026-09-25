@@ -5,7 +5,7 @@ using BD_TRAMPO.Models;
 namespace BD_TRAMPO.Controllers
 {
 
-    public class SuporteController : BaseController
+    public class SuporteController(BD_TRAMPO.Services.ClienteAtendimentoService service) : BaseController
     {
 
 
@@ -22,28 +22,18 @@ namespace BD_TRAMPO.Controllers
 
             if (string.IsNullOrEmpty(usuarioIdStr))
             {
-                TempData["Erro"] = "Você precisa estar logado para enviar uma mensagem de suporte.";
+                TempData["Erro"] = "VocÃª precisa estar logado para enviar uma mensagem de suporte.";
                 return RedirectToAction("Login", "Usuario");
             }
 
             int usuarioId = int.Parse(usuarioIdStr);
 
-            if (string.IsNullOrWhiteSpace(tipo) || tipo.Length > 50 ||
-                string.IsNullOrWhiteSpace(assunto) || assunto.Length > 150 ||
-                string.IsNullOrWhiteSpace(mensagem) || mensagem.Length > 10000)
-                return BadRequest("Confira os dados do chamado.");
-            SuporteDAO dao = new SuporteDAO();
+            try {
+                service.Enviar(new BD_TRAMPO.Contracts.UsuarioContexto(usuarioId,
+                    HttpContext.Session.GetString("UsuarioTipo") ?? ""), tipo, assunto, mensagem);
+            } catch (BD_TRAMPO.Contracts.FalhaOperacao ex) { return BadRequest(ex.Message); }
 
-            dao.Inserir(new Suporte
-            {
-                UsuarioId = usuarioId,
-                Tipo = tipo,
-                Assunto = assunto,
-                Mensagem = mensagem,
-                Status = "Aberto"
-            });
-
-            TempData["Sucesso"] = "Mensagem enviada com sucesso! Nossa equipe já recebeu seu chamado.";
+            TempData["Sucesso"] = "Mensagem enviada com sucesso! Nossa equipe jÃ¡ recebeu seu chamado.";
 
             return RedirectToAction("Index");
         }

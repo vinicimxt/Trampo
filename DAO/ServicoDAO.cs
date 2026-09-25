@@ -498,25 +498,25 @@ namespace BD_TRAMPO
                 cmd.ExecuteNonQuery();
 
         }
-        // Serviço e regras são publicados juntos, sob o mesmo bloqueio das reservas.
+        // ServiÃ§o e regras sÃ£o publicados juntos, sob o mesmo bloqueio das reservas.
         public int SalvarComDisponibilidade(Servico s, IEnumerable<int> dias, TimeSpan inicio, TimeSpan fim)
         {
             var diasUnicos = dias.Distinct().ToArray();
             if (diasUnicos.Length == 0 || diasUnicos.Any(d => d < 0 || d > 6) ||
                 inicio < TimeSpan.Zero || inicio >= TimeSpan.FromDays(1) ||
                 fim < TimeSpan.Zero || fim >= TimeSpan.FromDays(1) || inicio == fim)
-                throw new FalhaOperacao(TipoFalha.Validacao, "Disponibilidade inválida.");
+                throw new FalhaOperacao(TipoFalha.Validacao, "Disponibilidade invÃ¡lida.");
             using var conn = conexao.Conectar();
             using var tx = conn.BeginTransaction(System.Data.IsolationLevel.Serializable);
             using (var validar = new SqlCommand(@"
                 DECLARE @r int;
                 EXEC @r=sys.sp_getapplock @Resource=@Recurso, @LockMode='Exclusive',
                     @LockOwner='Transaction', @LockTimeout=10000;
-                IF @r<0 THROW 51001, 'Agenda em atualização.', 1;
+                IF @r<0 THROW 51001, 'Agenda em atualizaÃ§Ã£o.', 1;
                 IF @Id<>0 AND NOT EXISTS(SELECT 1 FROM Servicos WHERE Id=@Id AND ProfissionalId=@P)
-                    THROW 51002, 'Serviço não encontrado.', 1;
+                    THROW 51002, 'ServiÃ§o nÃ£o encontrado.', 1;
                 IF @Local IS NOT NULL AND NOT EXISTS(SELECT 1 FROM Locais WHERE Id=@Local AND ProfissionalId=@P)
-                    THROW 51003, 'Local inválido.', 1;", conn, tx))
+                    THROW 51003, 'Local invÃ¡lido.', 1;", conn, tx))
             {
                 validar.Parameters.AddWithValue("@Recurso", "TRAMPO:Profissional:" + s.ProfissionalId);
                 validar.Parameters.AddWithValue("@P", s.ProfissionalId);
@@ -555,9 +555,9 @@ namespace BD_TRAMPO
                 DECLARE @r int;
                 EXEC @r=sys.sp_getapplock @Resource=@Recurso, @LockMode='Exclusive',
                     @LockOwner='Transaction', @LockTimeout=10000;
-                IF @r<0 THROW 51001, 'Agenda em atualização.', 1;
+                IF @r<0 THROW 51001, 'Agenda em atualizaÃ§Ã£o.', 1;
                 IF NOT EXISTS(SELECT 1 FROM Servicos WHERE Id=@Id)
-                    THROW 51002, 'Serviço não encontrado.', 1;
+                    THROW 51002, 'ServiÃ§o nÃ£o encontrado.', 1;
                 IF EXISTS(SELECT 1 FROM Agendamentos WHERE ServicoId=@Id) BEGIN
                     UPDATE Servicos SET Ativo=0 WHERE Id=@Id;
                     SELECT CAST(1 AS bit);
@@ -573,21 +573,32 @@ namespace BD_TRAMPO
             return desativado;
         }
 
-        public List<Servico> ListarPublicos(int pagina, int tamanho)
+        public List<Servico> ListarPublicos(int pagina, int tamanho, string? busca = null, string? atendimento = null, int? id = null)
         {
             using var conn = conexao.Conectar();
-            using var cmd = new SqlCommand(@"SELECT Id,ProfissionalId,SubcategoriaId,Nome,Descricao,
-                Atendimento,TipoPreco,PrecoBase,Ativo FROM Servicos WHERE Ativo=1
-                ORDER BY Id OFFSET @Inicio ROWS FETCH NEXT @Tamanho ROWS ONLY", conn);
+            using var cmd = new SqlCommand(@"SELECT s.Id,s.ProfissionalId,s.SubcategoriaId,s.Nome,s.Descricao,
+                s.Atendimento,s.TipoPreco,s.PrecoBase,s.Ativo,u.Nome,c.Nome,sc.Nome
+                FROM Servicos s JOIN Profissionais p ON p.Id=s.ProfissionalId
+                JOIN Usuarios u ON u.Id=p.UsuarioId JOIN Subcategorias sc ON sc.Id=s.SubcategoriaId
+                JOIN Categorias c ON c.Id=sc.CategoriaId
+                WHERE s.Ativo=1 AND (@Id IS NULL OR s.Id=@Id)
+                AND (@Modalidade IS NULL OR s.Atendimento=@Modalidade)
+                AND (@Busca IS NULL OR CHARINDEX(@Busca,s.Nome)>0 OR CHARINDEX(@Busca,u.Nome)>0
+                    OR CHARINDEX(@Busca,c.Nome)>0 OR CHARINDEX(@Busca,sc.Nome)>0)
+                ORDER BY s.Id OFFSET @Inicio ROWS FETCH NEXT @Tamanho ROWS ONLY", conn);
+            cmd.Parameters.AddWithValue("@Id", (object?)id ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Busca", (object?)busca ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Modalidade", (object?)atendimento ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Inicio", (pagina - 1) * tamanho);
             cmd.Parameters.AddWithValue("@Tamanho", tamanho);
-            using var r = cmd.ExecuteReader();
+            using var reader = cmd.ExecuteReader();
             var lista = new List<Servico>();
-            while (r.Read()) lista.Add(new Servico {
-                Id=r.GetInt32(0), ProfissionalId=r.GetInt32(1), SubcategoriaId=r.GetInt32(2),
-                Nome=r.GetString(3), Descricao=r.IsDBNull(4) ? "" : r.GetString(4),
-                Atendimento=r.GetString(5), TipoPreco=r.GetString(6),
-                PrecoBase=r.IsDBNull(7) ? null : r.GetDecimal(7), Ativo=r.GetBoolean(8)
+            while (reader.Read()) lista.Add(new Servico {
+                Id=reader.GetInt32(0), ProfissionalId=reader.GetInt32(1), SubcategoriaId=reader.GetInt32(2),
+                Nome=reader.GetString(3), Descricao=reader.IsDBNull(4) ? "" : reader.GetString(4),
+                Atendimento=reader.GetString(5), TipoPreco=reader.GetString(6),
+                PrecoBase=reader.IsDBNull(7) ? null : reader.GetDecimal(7), Ativo=reader.GetBoolean(8),
+                NomeProfissional=reader.GetString(9), Categoria=reader.GetString(10), Subcategoria=reader.GetString(11)
             });
             return lista;
         }
