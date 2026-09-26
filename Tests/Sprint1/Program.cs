@@ -102,6 +102,7 @@ try
     Verificar(RegrasAgenda.Horarios(regras,segunda).Count()==2 &&
         RegrasAgenda.Horarios(regras,segunda.AddDays(1)).Select(x=>x.Hour).SequenceEqual(new[]{0,1}),
         "virada de meia-noite no dia correto");
+    await LocalFormRegression.Executar(root, Verificar);
     if (args.Contains("--unit"))
     {
         Console.WriteLine("TOTAL: " + passou + " verificações sem banco passaram. Integração SQL não executada neste modo.");

@@ -139,7 +139,7 @@
                     </div>
 
                     <form asp-antiforgery="true" method="post" id="formLocal" action="/Local/Salvar">
-                        <input type="hidden" name="id" id="localId" value="" />
+                        <input type="hidden" name="id" id="localId" value="0" />
 
                         <div class="drawer-body">
 
@@ -220,7 +220,7 @@
             const modal = document.getElementById('modalLocal');
 
             // reset
-            document.getElementById('localId').value = '';
+            document.getElementById('localId').value = '0';
             document.getElementById('inputNome').value = '';
             document.getElementById('inputEndereco').value = '';
             document.querySelector('#formLocal [data-endereco]').preencherEndereco(null);
@@ -267,7 +267,7 @@
             const modal = document.getElementById('modalLocal');
 
             // reset form
-            document.getElementById('localId').value = '';
+            document.getElementById('localId').value = '0';
             document.getElementById('inputNome').value = '';
             document.getElementById('inputEndereco').value = '';
             document.querySelector('#formLocal [data-endereco]').preencherEndereco(null);
