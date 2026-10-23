@@ -2098,4 +2098,6 @@ input:focus {
     to {
         width: 0%;
     }
-}
+}/* Link de acessibilidade compartilhado, independente do tema da página. */
+.skip-link { position: fixed; top: -100px; left: 16px; z-index: 10001; padding: 14px 20px; background: #0D1B3E; color: white; border-radius: 8px; }
+.skip-link:focus { top: 10px; }

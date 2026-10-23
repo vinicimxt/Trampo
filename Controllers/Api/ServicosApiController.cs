@@ -1,4 +1,5 @@
 using BD_TRAMPO.Api.Contracts;
+using BD_TRAMPO.Contracts;
 using BD_TRAMPO.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,15 @@ public sealed class ServicosApiController(ServicoService service, AgendamentoSer
     [ProducesResponseType(typeof(List<ServicoResponse>), 200)]
     public ActionResult<List<ServicoResponse>> Listar([FromQuery] int pagina = 1, [FromQuery] int tamanho = 20, [FromQuery] string? busca = null, [FromQuery] string? atendimento = null) =>
         Ok(service.ListarPublicos(pagina, tamanho, busca, atendimento).Select(ServicoResponse.De).ToList());
+
+    [HttpGet("me"), Authorize(Roles = "profissional")]
+    [ProducesResponseType(typeof(List<ServicoProprioResponse>), 200)]
+    public ActionResult<List<ServicoProprioResponse>> ListarProprios()
+    {
+        if (Request.Query.Count != 0)
+            throw new FalhaOperacao(TipoFalha.Validacao, "Esta consulta não aceita parâmetros.");
+        return Ok(service.ListarProprios(Usuario).Select(ServicoProprioResponse.De).ToList());
+    }
 
     [HttpGet("{id:int}"), AllowAnonymous]
     [ProducesResponseType(typeof(ServicoResponse), 200)]

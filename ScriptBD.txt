@@ -563,14 +563,14 @@ SELECT * FROM Assinaturas;
 
 /*
 --CONTA ADMIN 
-INSERT INTO Usuarios (Nome,Email,Senha,Tipo) VALUES ('ADMIN' , 'admin@trampo.com','admin123', 'admin');
+-- Exemplo histórico: crie a conta pelo fluxo de cadastro com hash de senha; nunca insira senha literal.
 
 UPDATE Usuarios
 SET Tipo = 'admin'
-WHERE Email = 'admin@trampo.com'
+WHERE Email = 'admin@example.invalid'
 
 DELETE FROM Usuarios
-WHERE Email = 'admin@trampo.com';
+WHERE Email = 'admin@example.invalid';
 
 EXEC sp_fkeys 'Locais'
 

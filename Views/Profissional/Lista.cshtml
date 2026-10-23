@@ -1,6 +1,8 @@
 @model List<BD_TRAMPO.Servico>
 
-<link rel="stylesheet" href="~/css/profissionais.css" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/profissionais.css" asp-append-version="true" />
+}
 
 <div class="profissionais-page">
 
@@ -12,7 +14,7 @@
             <div>
                 <span class="prof-hero-label">Encontre agora</span>
                 <h1 class="prof-hero-title">Serviços disponíveis</h1>
-                <p class="prof-hero-sub">Profissionais verificados prontos para atender você hoje.</p>
+                <p class="prof-hero-sub">Explore os serviços e consulte os horários de cada profissional.</p>
             </div>
             <div class="prof-hero-count">
                 <div>
@@ -35,13 +37,13 @@
                 <span class="filter-search-icon"><span class="filter-search-icon material-symbols-outlined">
                     search
                 </span></span>
-                <input type="text" id="filtro-busca" placeholder="Buscar serviço ou profissional..."
+                <input type="text" id="filtro-busca" aria-label="Buscar serviço ou profissional" placeholder="Buscar serviço ou profissional..."
                        data-filtro="busca" />
             </div>
 
             <!-- Categoria -->
             <div class="filter-select-wrap">
-                <select class="filter-select" id="filtro-categoria" data-filtro="categoria">
+                <select class="filter-select" id="filtro-categoria" aria-label="Categoria" data-filtro="categoria">
                     <option value="">Todas as categorias</option>
                     @foreach (var cat in Model.Select(s => s.Categoria).Distinct().OrderBy(c => c))
                     {
@@ -52,7 +54,7 @@
 
             <!-- Subcategoria -->
             <div class="filter-select-wrap">
-                <select class="filter-select" id="filtro-subcategoria" data-filtro="subcategoria">
+                <select class="filter-select" id="filtro-subcategoria" aria-label="Subcategoria" data-filtro="subcategoria">
                     <option value="">Todas as subcategorias</option>
                     @foreach (var sub in Model.Select(s => s.Subcategoria).Distinct().OrderBy(s => s))
                     {
@@ -122,7 +124,7 @@
 
                     <!-- Chips de info -->
                     <div class="info-chips">
-                        <span aria-hidden="true" class="chip"><span class="material-symbols-outlined">folder</span> @item.Subcategoria</span>
+                        <span class="chip"><span class="material-symbols-outlined">folder</span> @item.Subcategoria</span>
 
                         @if (item.Atendimento == "Domicilio")
                         {
@@ -146,14 +148,14 @@
                         }
                        @if (item.TipoPreco == "Combinar")
                         {
-                            <span class="chip">
+                            <span class="chip chip-preco">
                                 <span aria-hidden="true" class="material-symbols-outlined">payments</span>
                                 A combinar
                             </span>
                         }
                         else
                         {
-                            <span class="chip">
+                            <span class="chip chip-preco">
                                 <span aria-hidden="true" aria-label="vai custar @item.PrecoBase" class="material-symbols-outlined">payments</span>
                                 R$ @item.PrecoBase
                             </span>

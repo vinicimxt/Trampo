@@ -1,6 +1,8 @@
 @model Profissional
 
-<link rel="stylesheet" href="~/css/perfil-publico.css" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/perfil-publico.css" asp-append-version="true" />
+}
 
 @functions {
     string GetIniciais(string nome)
@@ -82,7 +84,7 @@
                     <div class="perfil-avatar">@GetIniciais(Model.Nome)</div>
 
                     <div>
-                        <div class="perfil-verificado">✓ Profissional verificado</div>
+                        <div class="perfil-verificado">Profissional cadastrado</div>
                         <div class="perfil-hero-name">@Model.Nome</div>
 
                         @if (totalAval > 0)
@@ -95,7 +97,7 @@
                         }
                         else
                         {
-                            <span style="font-size:.78rem;color:rgba(255,255,255,0.38);">Sem avaliações ainda</span>
+                            <span class="perfil-sem-avaliacoes">Sem avaliações ainda</span>
                         }
                     </div>
 
@@ -120,7 +122,7 @@
                 </div>
                 <div class="perfil-stat">
                     <span class="perfil-stat-val">✓</span>
-                    <span class="perfil-stat-lbl">Verificado</span>
+                    <span class="perfil-stat-lbl">Cadastrado</span>
                 </div>
             </div>
 
@@ -139,7 +141,7 @@
             <div class="pcard" style="animation-delay:.04s">
                 <div class="pcard-title">Sobre o profissional</div>
                 <p style="font-size:.92rem;color:var(--text-muted);line-height:1.7;">
-                    Profissional verificado e disponível para atender você com qualidade e pontualidade.
+                    Conheça os serviços oferecidos por este profissional.
                     Entre em contato ou agende diretamente pelo Trampo.
                 </p>
             </div>
@@ -336,7 +338,7 @@
                 </a>
 
                 <p class="cta-note">
-                    Confirmação imediata · Sem taxa de cadastro
+                    Consulte os horários e solicite seu agendamento.
                 </p>
 
             </div>
@@ -366,7 +368,7 @@
 
                         <div class="scard-info-val" style="color:#166534;">
 
-                            Perfil verificado
+                            Perfil cadastrado
 
                         </div>
 

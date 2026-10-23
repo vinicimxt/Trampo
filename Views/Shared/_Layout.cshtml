@@ -17,15 +17,22 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-    <link rel="stylesheet" href="~/css/site.css?v=4" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
+    @if (!(string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Home", StringComparison.OrdinalIgnoreCase)
+        && string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Index", StringComparison.OrdinalIgnoreCase)))
+    {
+        <link rel="stylesheet" href="~/css/trampo-theme.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/navbar-original.css" asp-append-version="true" />
+    }
 
 </head>
 
 <body data-toast-sucesso="@TempData["Sucesso"]" data-toast-erro="@TempData["Erro"]">
 
     
-    <div id="toast-container"></div>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 
     <header class="navbar" id="navbar">
@@ -46,7 +53,7 @@
             }
 
             <!-- MENU -->
-            <nav class="nav-links" id="navLinks">
+            <nav class="nav-links" id="navLinks" aria-label="Navegação principal">
 
                     
                 <a href="/#home" class="nav-item">Home</a>
@@ -187,7 +194,7 @@
                 }
 
                 <!-- MOBILE BTN -->
-                <button class="menu-toggle" id="menuToggle">
+                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-controls="navLinks" aria-expanded="false">
                     ☰
                 </button>
 
@@ -198,17 +205,17 @@
     </header>
 
         
-    <main>
+    <main id="conteudo" tabindex="-1">
         @RenderBody()
     </main>
 
     @await Html.PartialAsync("_Footer")
 
-    <button id="btnTop" class="btn-top">
+    <button id="btnTop" class="btn-top" aria-label="Voltar ao início da página">
         ↑
     </button>
 
-    <script src="~/js/site.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
 
     @RenderSection("Scripts", required: false)

@@ -22,3 +22,10 @@ appsettings.Local.json
 local.properties
 *.jks
 *.keystore
+
+# Cobertura adicional de relat?rios e tempor?rios locais
+coverage/
+**/coverage/
+*.tmp
+*.temp
+*.bak

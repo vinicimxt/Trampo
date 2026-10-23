@@ -1,7 +1,7 @@
 @model List<Servico>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/MeusServicos.css" />
+    <link rel="stylesheet" href="~/css/MeusServicos.css" asp-append-version="true" />
 }
 
 @if (TempData["Sucesso"]?.ToString() == "cadastro_ok")

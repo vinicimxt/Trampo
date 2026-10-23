@@ -93,9 +93,25 @@ const menuToggle = document.getElementById("menuToggle");
 const navMenu = document.getElementById("navLinks");
 
 if (menuToggle && navMenu) {
-    menuToggle.addEventListener("click", () => {
-        navMenu.classList.toggle("active");
+    const setMenu = (open) => {
+        navMenu.classList.toggle("active", open);
+        menuToggle.setAttribute("aria-expanded", String(open));
+        menuToggle.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+    };
+    menuToggle.addEventListener("click", () => setMenu(!navMenu.classList.contains("active")));
+    navMenu.addEventListener("click", event => {
+        if (event.target.closest("a")) setMenu(false);
     });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && navMenu.classList.contains("active")) {
+            setMenu(false);
+            menuToggle.focus();
+        }
+    });
+    document.addEventListener("click", event => {
+        if (!event.target.closest("#navbar")) setMenu(false);
+    });
+    window.matchMedia("(min-width: 861px)").addEventListener("change", () => setMenu(false));
 }
 
 // =============================

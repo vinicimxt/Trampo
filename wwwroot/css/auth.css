@@ -3,25 +3,7 @@
 /* ===================================================
    TOKENS
 =================================================== */
-:root {
-    --blue: #1A6BFF;
-    --blue-dark: #1258d6;
-    --blue-soft: rgba(26, 107, 255, 0.09);
-    --accent: #00D4AA;
-    --dark: #0D1B3E;
-    --dark-2: #060F26;
-    --text-muted: #6B7A99;
-    --border: #DDE5F5;
-    --bg-input: #F7F9FF;
-    --red: #F03D3D;
-    --red-soft: rgba(240, 61, 61, 0.09);
-    --green: #00C06B;
-    --green-soft: rgba(0, 192, 107, 0.09);
-    --radius-xl: 24px;
-    --radius-lg: 16px;
-    --radius-md: 10px;
-    --transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Tokens compartilhados em trampo-theme.css. */
 
 /* ===================================================
    RESET

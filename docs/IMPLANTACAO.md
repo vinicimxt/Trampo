@@ -12,7 +12,7 @@ Executar na raiz do backend:
 powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/Test-CI.ps1
 ~~~
 
-O script restaura/compila os quatro projetos, executa quatro verificações puras,
+O script restaura/compila os quatro projetos, executa 12 verificações sem SQL,
 limpa somente artifacts/backend, publica e executa a suíte Sprint 8 contra o pacote.
 Comando de publicação utilizado:
 

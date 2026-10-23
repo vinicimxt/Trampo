@@ -10,33 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* -----------------------------------------------
-       HAMBURGER MENU
-    ----------------------------------------------- */
-    var menuToggle = document.getElementById('menuToggle');
-    var navLinks = document.getElementById('navLinks');
-    var navActions = document.getElementById('navActions');
-
-    if (menuToggle) {
-        menuToggle.addEventListener('click', function () {
-            var isOpen = menuToggle.classList.toggle('open');
-            if (navLinks) navLinks.classList.toggle('open', isOpen);
-            if (navActions) navActions.classList.toggle('open', isOpen);
-            // troca ícone
-            menuToggle.querySelector('.material-symbols-rounded').textContent =
-                isOpen ? 'close' : 'menu';
-        });
-    }
-
-    // fecha menu ao clicar num link
-    document.querySelectorAll('#navLinks a, #navActions a').forEach(function (link) {
-        link.addEventListener('click', function () {
-            if (menuToggle) menuToggle.classList.remove('open');
-            if (navLinks) navLinks.classList.remove('open');
-            if (navActions) navActions.classList.remove('open');
-            if (menuToggle) menuToggle.querySelector('.material-symbols-rounded').textContent = 'menu';
-        });
-    });
+    // O menu compartilhado é controlado somente por site.js.
 
     /* -----------------------------------------------
        EFEITO 3D no hero-visual

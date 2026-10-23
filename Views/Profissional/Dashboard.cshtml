@@ -1,7 +1,7 @@
 @model (int total, int pendentes, int confirmados, int finalizados, int cancelados)
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/dashboard.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
 }
 
 @{
@@ -287,7 +287,7 @@
                 <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--border);">
                     <div class="dash-section-title" style="margin-bottom:14px;">Indicadores</div>
 
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="dash-rates">
 
                         <div
                             style="background:var(--bg-light); border:1.5px solid var(--border); border-radius:var(--radius-md); padding:16px;">

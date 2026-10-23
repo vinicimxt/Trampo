@@ -1,184 +1,102 @@
-# Trampo
+# TRAMPO
 
-Plataforma web para agendamento de serviços entre clientes e profissionais.
+Projeto acadêmico de Análise e Desenvolvimento de Sistemas — **PIM IV**. Plataforma para aproximar clientes e profissionais, descobrir serviços e organizar agendamentos. A entrega reúne Web ASP.NET Core, API REST, aplicativo Android nativo e Desktop Windows Forms em C#.
 
----
+O problema abordado é a fragmentação entre encontrar um serviço, consultar horários e acompanhar o atendimento. TRAMPO demonstra esse fluxo num protótipo integrado; não representa operação comercial, cobrança real ou deploy cloud já realizado.
 
-## Funcionalidades
+## Funcionalidades e perfis
 
-- Cadastro e login
-- Perfil de cliente e profissional
-- Agendamento de serviços
-- Avaliações
-- Plano premium
-- Dashboard profissional
-- Histórico de agendamentos
-- Disponibilidade de horários
-- Painel administrativo visual
-- Acessibilidade com VLibras
+- **Cliente Web/Android:** cadastro, login/logout, perfil, senha, catálogo e busca, detalhe, agenda, agendamento/cancelamento, confirmação de conclusão, avaliação, notificações internas e suporte.
+- **Profissional Web:** serviços, locais, disponibilidade, dashboard e atendimento das solicitações. Plano Free/Premium com checkout simulado.
+- **Profissional Desktop (Windows Forms):** login, agendamentos, serviços e locais com consulta de CEP pela API.
+- **Admin Web:** dashboard e indicadores protegidos por perfil.
 
----
+Android tem foco Cliente; Desktop tem foco Profissional. Admin usa Web. O Android não oferece área Profissional/Admin. [Matriz completa](docs/MATRIZ-WEB-API-MOBILE.md).
 
-## Tecnologias
+## Arquitetura e tecnologias
 
-- ASP.NET MVC
-- C#
-- SQL Server
-- HTML
-- CSS
-- JavaScript
-
----
-
-## Banco de Dados
-
-O sistema utiliza SQL Server com:
-- usuários
-- profissionais
-- clientes
-- serviços
-- agendamentos
-- avaliações
-- notificações
-- assinaturas premium
-
----
-
-## Acessibilidade
-
-- Compatibilidade com VLibras
-- Labels semânticas
-- Navegação estruturada
-- Inputs acessíveis
-- ALT em imagens importantes
-
----
-
-## Imagens
-
-[screenshots]
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/26ff776d-688a-4516-98ee-2e28692dd004" />
-<img width="1896" height="868" alt="image" src="https://github.com/user-attachments/assets/f390c51f-87f4-4691-b0a0-3f9599344a4b" />
-<img width="1859" height="740" alt="image" src="https://github.com/user-attachments/assets/701661fa-1a67-43f9-87a8-865bdbac6f66" />
-<img width="1864" height="758" alt="image" src="https://github.com/user-attachments/assets/884dc120-f89c-4f8f-bfb3-33b288649f4a" />
-<img width="1860" height="864" alt="image" src="https://github.com/user-attachments/assets/6b948691-e64b-4e25-8ce3-e76d19499474" />
-<img width="1865" height="869" alt="image" src="https://github.com/user-attachments/assets/15bcc57e-12a1-4216-a23e-9a8594aa082f" />
-
----
-
-## Arquitetura
-
-O projeto foi desenvolvido utilizando o padrão MVC (Model-View-Controller), separando:
-- regras de negócio
-- interface
-- controle de fluxo
-- persistência de dados
-
----
-## Folders
-```text
-BD_TRAMPO/
-│
-├── Controllers/
-├── Models/
-├── Views/
-├── DAO/
-├── wwwroot/
-│   ├── css/
-│   ├── js/
-│   └── assets/
-│
-├── ScriptsSQL/
-├── ViewModels/
-└── Program.cs
+```mermaid
+flowchart LR
+    WEB[Browser / MVC / sessão] --> S[Application Services]
+    APP[Android Activity / ViewModel / Repository] --> REST[Retrofit / REST / JWT]
+    DESK[Windows Forms / TrampoApiClient / JWT] --> API[REST API v1]
+    REST --> API
+    API --> S
+    S --> DAO[DAO / ADO.NET]
+    DAO --> SQL[(SQL Server)]
 ```
 
----
+Backend: C#, .NET 10, MVC/Razor, API REST, ADO.NET, JWT Bearer, sessão/antiforgery, OpenAPI e health check. Alguns módulos MVC legados ainda chamam DAOs diretamente.
 
+Android: Kotlin, XML/Views, ViewModel/Repository, Retrofit/OkHttp, tema TRAMPO/DayNight. Projeto separado: [TRAMPO-APP](https://github.com/vinicimxt/TRAMPO-APP). Sem Compose ou banco local como fonte principal.
 
-## Estrutura do projeto
+Desktop: C#/.NET 10, Windows Forms e cliente HTTP assíncrono. Projeto separado: `Trampo.Desktop`. JWT somente em memória; sem SQL ou banco local. [Fechamento Desktop](docs/SPRINT-12-DESKTOP.md).
 
-- Controllers → regras e fluxo da aplicação
-- Models → entidades do sistema
-- DAO → acesso ao banco de dados
-- Views → interface do usuário
-- ViewModels → comunicação entre controller e view
-- wwwroot → arquivos estáticos (CSS, JS e imagens)
+[Arquitetura atual e proposta cloud](docs/ARQUITETURA-FINAL.md) · [API — 32 operações](docs/API-FINAL.md) · [Banco e MER](docs/BANCO-DE-DADOS.md).
 
+## Executar localmente
 
----
+Pré-requisitos: SDK .NET definido em [global.json](global.json) (10.0.401/latestPatch), SQL Server/SQL Express e, para Mobile, Android Studio/JBR compatível, SDK 37 e emulador. Os scripts de integração locais usam PowerShell/Windows e SQL com autenticação integrada.
 
-
-## Como executar
-
-1. Clone o projeto
-2. Abra no Visual Studio / VSCode
-3. Baixe a extensão do C#
-4. Configure a connection string
-5. Copie o ScriptBD e Execute o script SQL SERVER 
-6. Rode o projeto ("dotnet watch run" no terminal)
-
-## REST API V1 (Sprint 4)
-
-MVC continua com sessão; a API em `/api/v1` usa JWT Bearer e compartilha os Services. Não é necessário mudar o banco para executar esta Sprint.
-
-A chave JWT não está no repositório. Para habilitar o login API no desenvolvimento, gerar uma chave aleatória apenas na sessão PowerShell:
+1. Clone este repositório. Para banco **novo**, revise e execute [ScriptBD.txt](ScriptBD.txt), seguido de [migração 001](ScriptsSQL/001_enderecos_geolocalizacao.sql). O script base cria `Xamou` e não é idempotente. Em banco existente, não recrie: verifique/aplique somente a migração necessária.
+2. Configure `ConnectionStrings:Xamou` em User Secrets/ambiente se a instância local diferir da configuração Development. Não coloque senha SQL em arquivo versionado.
+3. Configure `Jwt:SigningKey` em User Secrets ou `Jwt__SigningKey` no ambiente, Base64 de pelo menos 32 bytes aleatórios. Não imprimir ou versionar. O script de inicialização reutiliza a chave configurada. Sem chave, login API fica indisponível.
+4. Execute na raiz:
 
 ```powershell
-$bytesJwt = New-Object byte[] 32
-$geradorJwt = [System.Security.Cryptography.RandomNumberGenerator]::Create()
-$geradorJwt.GetBytes($bytesJwt)
-$geradorJwt.Dispose()
-$env:Jwt__SigningKey = [Convert]::ToBase64String($bytesJwt)
-dotnet run --launch-profile https
+dotnet restore
+powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/Start-Dev.ps1
 ```
 
-Não imprimir, compartilhar ou salvar essa chave no Git. Sem a variável, MVC continua funcionando e login API retorna 503. `Jwt:Issuer`, `Jwt:Audience` e `Jwt:ExpirationMinutes` ficam em appsettings.json; também podem ser configurados por variáveis com `__`.
+Web/API local: `http://localhost:5165`; emulador Debug: `http://10.0.2.2:5165/`. Perfil HTTPS local também existe em launchSettings; HTTP é configuração de demonstração Debug. Abra o projeto Android separado no Android Studio e execute a variante Debug. Para o Desktop, abra `Trampo.Desktop.slnx` no Windows e execute `dotnet run --project Trampo.Desktop/Trampo.Desktop.csproj` no diretório do projeto Desktop; `TRAMPO_API_BASE_URL` permite configurar a URL da API.
 
-Em Development, acessar `/swagger/index.html` na URL da aplicação. Executar `POST /api/v1/auth/login` com uma conta existente e informar o accessToken no botão Authorize. Usar HTTPS. OpenAPI: `/openapi/v1.json`; documentação desligada em Production.
+OpenAPI/Swagger somente Development: `/openapi/v1.json` e `/swagger/index.html`. `/health` verifica apenas o processo, não o banco. Para instruções de ambiente e implantação futura, consulte [IMPLANTACAO](docs/IMPLANTACAO.md).
 
-- [Endpoints, contratos e histórico](docs/Sprint4/API.md)
-- [Autenticação, configuração e limitações](docs/Sprint4/AUTENTICACAO.md)
-- [Testes e reprodução](docs/Sprint4/TESTES.md)
-- [Relatório da Sprint 4](docs/Sprint4/RELATORIO.md)
+## Banco, endereços e segurança
 
-Regressão completa: `powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint1/Run.ps1 -Sprint4`. O runner gera sua própria chave efêmera para o processo de teste e limpa seus registros temporários no SQL Server configurado.
+15 tabelas, chaves/constraints e migração incremental para componentes de endereço/snapshots. CEP pode ser consultado via ViaCEP ou preenchido manualmente. Não há mapas/GPS/geocoder real. Scripts não contêm criação automática de conta administrativa com senha utilizável.
 
-## Endereços estruturados (Sprint 5)
+Senha com hash Identity; MVC com sessão/CSRF; API com JWT e verificação de ownership. Android guarda token privado e o exclui de backup, sem alegar criptografia por Keystore. Não há refresh token ou revogação imediata após logout/troca de senha. [Auditoria e limites](docs/SEGURANCA-FINAL.md).
 
-Antes de executar esta versão sobre banco anterior, aplicar **somente** a migração incremental `ScriptsSQL/001_enderecos_geolocalizacao.sql`; não recriar o banco com ScriptBD.txt. Ela preserva textos antigos e adiciona componentes de local e snapshots de endereço das reservas.
+## Testes, CI e cloud
 
 ```powershell
-sqlcmd -S 'localhost\SQLEXPRESS' -d Xamou -E -C -b -i ScriptsSQL/001_enderecos_geolocalizacao.sql
+powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/Test-CI.ps1
+# Integrações: somente banco local de desenvolvimento/testes, em sequência.
 powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint1/Run.ps1 -Sprint5
-```
-
-ViaCEP usa HTTPS sem chave, timeout de quatro segundos e cache em memória. Consulta e pesquisa são autenticadas e limitadas; preencher manualmente continua possível. Geocoder real não está configurado: latitude/longitude permanecem NULL e não há busca por proximidade.
-
-- [Relatório e endpoints](docs/Sprint5/RELATORIO.md)
-- [Modelo e integração](docs/Sprint5/ENDERECOS.md)
-- [Migração e modelo físico](docs/Sprint5/MIGRACAO-BANCO.md)
-- [Privacidade](docs/Sprint5/PRIVACIDADE.md)
-- [Testes](docs/Sprint5/TESTES.md)
-- [Checklist visual pendente](docs/Sprint5/CHECKLIST-MANUAL.md)
-
-
-## Sprint 6 — Android
-
-O aplicativo Android nativo está no projeto existente `C:\Users\Vinicius\AndroidStudioProjects\TRAMPO`. Ele usa Kotlin e Views/XML e consome a API por Retrofit. A documentação, os testes e o roteiro de demonstração estão em [docs/Sprint6/RELATORIO.md](docs/Sprint6/RELATORIO.md).
-
-Para iniciar a API local na porta usada pelo emulador:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File docs/Sprint6/Iniciar-Api.ps1
-```
-
-Para executar a integração Kotlin → API → SQL Server com fixtures temporárias:
-
-```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint9/Run.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint6/Run.ps1
 ```
 
-## Sprint 9 — cliente Android
+Desktop (Windows): `dotnet build Trampo.Desktop.slnx` e `dotnet run --project Tests/Trampo.Desktop.Tests/Trampo.Desktop.Tests.csproj` no repositório Desktop. Workflow Windows separado preparado para build e testes não visuais.
 
-Cadastro, perfil, senha, descoberta, conclusão, avaliação, notificações e suporte no aplicativo Kotlin/XML. [Relatório, matriz de paridade e testes](docs/SPRINT-9-MOBILE-FUNCIONALIDADES.md).
+Android: `gradlew.bat testDebugUnitTest lintDebug assembleDebug`. Os runners .NET são executáveis; `dotnet test` não substitui esses comandos. Fixtures são identificadas e removidas pelos runners.
+
+GitHub Actions existe nos repositórios backend e Android; o workflow Desktop Windows foi preparado localmente e ainda não tem execução remota confirmada. Na auditoria de 10/10/2026, o backend seguia com execução remota aprovada no commit local; o Android seguia com falha remota em setup-android antes dos testes. As suítes locais passaram. Resultados, limites e links reais estão em [Sprint 11 — prontidão final](docs/SPRINT-11-PRONTIDAO-FINAL.md), [TESTES-FINAIS](docs/TESTES-FINAIS.md) e [DEVOPS-E-CLOUD](docs/DEVOPS-E-CLOUD.md). Não houve push nesta auditoria.
+
+Backend Release foi publicado/testado localmente. **Cloud é proposta, não deploy realizado.** Android Release exige endpoint HTTPS futuro e assinatura; não há publicação Play Store. Sem CD automatizado.
+
+## Documentação da entrega
+
+| Documento | Conteúdo |
+| --- | --- |
+| [Desktop Sprint12](docs/SPRINT-12-DESKTOP.md) | Arquitetura, Forms, testes, smoke e limites da validação visual |
+| [Prontidão Sprint11](docs/SPRINT-11-PRONTIDAO-FINAL.md) | Auditoria atual, CI remoto, regressão e decisão GO/NO-GO |
+| [Fechamento Sprint10](docs/SPRINT-10-FECHAMENTO.md) | Baseline, resultados, limitações e próximos passos |
+| [Requisitos PIM](docs/PIM-REQUISITOS.md) | Implementação, evidência e situação por requisito |
+| [Arquitetura final](docs/ARQUITETURA-FINAL.md) | Web/Mobile, autenticação e proposta cloud |
+| [Banco/MER](docs/BANCO-DE-DADOS.md) | Dicionário físico, chaves, índices, constraints e scripts |
+| [API final](docs/API-FINAL.md) | Rotas, perfis e respostas |
+| [Web × API × Mobile](docs/MATRIZ-WEB-API-MOBILE.md) | Paridade e exclusividades |
+| [Ágil/backlogs/Kanban](docs/AGIL.md) | Rastreabilidade das sprints |
+| [Segurança](docs/SEGURANCA-FINAL.md) | Auditoria e limites |
+| [Roteiro de apresentação](docs/ROTEIRO-APRESENTACAO.md) | Defesa de 10–15 minutos e demo |
+| [Evidências/capturas](docs/EVIDENCIAS-CHECKLIST.md) | Checklist de privacidade e imagens |
+
+Histórico preservado em `docs/Sprint2` a `docs/Sprint6` e relatórios `SPRINT-7-*`, `SPRINT-8-*`, `SPRINT-8-5-*`, `SPRINT-9-*`. As imagens externas do README anterior continuam no histórico Git; não são apresentadas como capturas atuais validadas.
+
+## Limitações e evolução
+
+Cloud real, assinatura Play Store, mapas/GPS, chat, gateway financeiro, push, refresh/revogação, áreas Profissional/Admin Mobile, avaliação agregada, filtros avançados e observabilidade avançada são evoluções futuras. Acessibilidade tem recursos implementados, mas não certificação completa. Responsabilidade social/empreendedorismo representam proposta acadêmica, sem estudo de impacto/mercado comprovado. Confira a rubrica oficial do PIM, especialmente se exigir procedures/triggers ou cloud implantada.
+
+Capturas atuais revisadas: [Home Mobile](docs/evidencias/mobile-home.png), [Notificações](docs/evidencias/mobile-notificacoes.png) e [Suporte](docs/evidencias/mobile-suporte.png). Somente fixtures temporárias.

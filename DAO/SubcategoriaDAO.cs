@@ -23,7 +23,8 @@ namespace BD_TRAMPO
                     lista.Add(new Subcategoria
                     {
                         Id = (int)reader["Id"],
-                        Nome = reader["Nome"].ToString()
+                        Nome = reader["Nome"].ToString(),
+                        CategoriaId = (int)reader["CategoriaId"]
                     });
                 }
             }
@@ -47,7 +48,8 @@ namespace BD_TRAMPO
                     lista.Add(new Subcategoria
                     {
                         Id = (int)reader["Id"],
-                        Nome = reader["Nome"].ToString()
+                        Nome = reader["Nome"].ToString(),
+                        CategoriaId = (int)reader["CategoriaId"]
                     });
                 }
             }

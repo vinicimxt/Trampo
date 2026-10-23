@@ -23,6 +23,9 @@ public sealed class ServicoService(ServicoDAO servicos,
             throw new FalhaOperacao(TipoFalha.NaoEncontrado, "Serviço não encontrado.");
         return servico;
     }
+    public List<Servico> ListarProprios(UsuarioContexto usuario) =>
+        servicos.ListarPorProfissional(Profissional(usuario));
+
     public int Profissional(UsuarioContexto usuario)
     {
         var persistido = usuarios.BuscarPorId(usuario.UsuarioId);

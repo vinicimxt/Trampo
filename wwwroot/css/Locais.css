@@ -5,34 +5,7 @@
 /* ===================================================
    TOKENS
 =================================================== */
-:root {
-    --blue: #1A6BFF;
-    --blue-dark: #1258d6;
-    --blue-soft: rgba(26, 107, 255, 0.08);
-    --blue-mid: rgba(26, 107, 255, 0.14);
-    --accent: #00D4AA;
-    --accent-soft: rgba(0, 212, 170, 0.10);
-    --red: #ef4444;
-    --red-soft: rgba(239, 68, 68, 0.08);
-    --red-border: rgba(239, 68, 68, 0.18);
-    --dark: #0D1B3E;
-    --text-muted: #6B7A99;
-    --border: #DDE5F5;
-    --border-strong: #C2D0EC;
-    --bg-light: #F0F4FF;
-    --bg-white: #FFFFFF;
-    --radius-xl: 24px;
-    --radius-lg: 16px;
-    --radius-md: 10px;
-    --radius-sm: 8px;
-    --card-shadow: 0 4px 6px rgba(13, 27, 62, 0.04),
-        0 12px 32px rgba(26, 107, 255, 0.09),
-        0 1px 0 rgba(255, 255, 255, 0.8) inset;
-    --card-hover: 0 8px 12px rgba(13, 27, 62, 0.08),
-        0 24px 48px rgba(26, 107, 255, 0.15);
-    --transition: all 0.26s cubic-bezier(0.4, 0, 0.2, 1);
-    --navbar-h: 62px;
-}
+/* Tokens compartilhados em trampo-theme.css. */
 
 /* ===================================================
    PÁGINA

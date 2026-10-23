@@ -1,0 +1,31 @@
+/* Paleta original isolada na navbar; demais páginas mantêm o tema refinado. */
+.navbar {
+    --blue: #1A6BFF;
+    --blue-dark: #1258d6;
+    --blue-soft: rgba(26, 107, 255, 0.08);
+    --blue-mid: rgba(26, 107, 255, 0.15);
+    --accent: #00D4AA;
+    --accent-soft: rgba(0, 212, 170, 0.10);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.10);
+    --dark: #0D1B3E;
+    --dark-2: #071130;
+    --text-muted: #6B7A99;
+    --border: #E8EEF8;
+    --border-strong: #C2D0EC;
+    --bg-light: #F4F7FF;
+    --bg-white: #FFFFFF;
+    --red: #ef4444;
+    --red-soft: rgba(239, 68, 68, 0.08);
+    --green: #22c55e;
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --card-shadow: 0 8px 32px rgba(26, 107, 255, 0.10);
+    --shadow-dark: 0 24px 60px rgba(13, 27, 62, 0.22);
+    --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    --navbar-h: 64px;
+}
+.navbar .container-ap { width: 92%; }
+.navbar :is(a,span) { overflow-wrap: normal; }
