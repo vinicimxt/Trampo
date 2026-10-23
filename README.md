@@ -74,8 +74,6 @@ Android: `gradlew.bat testDebugUnitTest lintDebug assembleDebug`. Os runners .NE
 
 GitHub Actions existe nos repositórios backend e Android; o workflow Desktop Windows foi preparado localmente e ainda não tem execução remota confirmada. Na auditoria de 10/10/2026, o backend seguia com execução remota aprovada no commit local; o Android seguia com falha remota em setup-android antes dos testes. As suítes locais passaram. Resultados, limites e links reais estão em [Sprint 11 — prontidão final](docs/SPRINT-11-PRONTIDAO-FINAL.md), [TESTES-FINAIS](docs/TESTES-FINAIS.md) e [DEVOPS-E-CLOUD](docs/DEVOPS-E-CLOUD.md). Não houve push nesta auditoria.
 
-Backend Release foi publicado/testado localmente. **Cloud é proposta, não deploy realizado.** Android Release exige endpoint HTTPS futuro e assinatura; não há publicação Play Store. Sem CD automatizado.
-
 ## Documentação da entrega
 
 | Documento | Conteúdo |
@@ -93,10 +91,5 @@ Backend Release foi publicado/testado localmente. **Cloud é proposta, não depl
 | [Roteiro de apresentação](docs/ROTEIRO-APRESENTACAO.md) | Defesa de 10–15 minutos e demo |
 | [Evidências/capturas](docs/EVIDENCIAS-CHECKLIST.md) | Checklist de privacidade e imagens |
 
-Histórico preservado em `docs/Sprint2` a `docs/Sprint6` e relatórios `SPRINT-7-*`, `SPRINT-8-*`, `SPRINT-8-5-*`, `SPRINT-9-*`. As imagens externas do README anterior continuam no histórico Git; não são apresentadas como capturas atuais validadas.
 
-## Limitações e evolução
-
-Cloud real, assinatura Play Store, mapas/GPS, chat, gateway financeiro, push, refresh/revogação, áreas Profissional/Admin Mobile, avaliação agregada, filtros avançados e observabilidade avançada são evoluções futuras. Acessibilidade tem recursos implementados, mas não certificação completa. Responsabilidade social/empreendedorismo representam proposta acadêmica, sem estudo de impacto/mercado comprovado. Confira a rubrica oficial do PIM, especialmente se exigir procedures/triggers ou cloud implantada.
-
-Capturas atuais revisadas: [Home Mobile](docs/evidencias/mobile-home.png), [Notificações](docs/evidencias/mobile-notificacoes.png) e [Suporte](docs/evidencias/mobile-suporte.png). Somente fixtures temporárias.
+Capturas atuais revisadas: [Home Mobile](docs/evidencias/mobile-home.png), [Notificações](docs/evidencias/mobile-notificacoes.png) e [Suporte](docs/evidencias/mobile-suporte.png).
