@@ -749,6 +749,10 @@ EVIDENCIAS-CHECKLIST.md
 SPRINT-12-DESKTOP.md
 ```
 
+Documentos principais: [requisitos do PIM](docs/PIM-REQUISITOS.md), [arquitetura](docs/ARQUITETURA-FINAL.md), [API](docs/API-FINAL.md), [banco de dados](docs/BANCO-DE-DADOS.md), [segurança](docs/SEGURANCA-FINAL.md), [testes](docs/TESTES-FINAIS.md) e [fechamento Desktop](docs/SPRINT-12-DESKTOP.md).
+
+Capturas revisadas: [Home Mobile](docs/evidencias/mobile-home.png), [Notificações](docs/evidencias/mobile-notificacoes.png) e [Suporte](docs/evidencias/mobile-suporte.png).
+
 ---
 
 ## Limitações atuais
