@@ -14,7 +14,7 @@ public sealed class CriarAgendamentoRequest
     public string? Cidade { get; set; }
 }
 
-// O mesmo formulário de dados atende criação e edição; o caso de uso define o ID.
+// Na edição, a subcategoria vem do serviço persistido; só a criação a envia.
 public sealed class SalvarServicoRequest
 {
     public int Id { get; set; }
@@ -25,6 +25,7 @@ public sealed class SalvarServicoRequest
     public int? LocalId { get; set; }
     public string? LinkOnline { get; set; }
     public string TipoPreco { get; set; } = "";
+    [Microsoft.AspNetCore.Mvc.ModelBinder(BinderType = typeof(PrecoFormularioModelBinder))]
     public decimal? PrecoBase { get; set; }
     public string DiasSemana { get; set; } = "";
     public TimeSpan? HoraInicio { get; set; }

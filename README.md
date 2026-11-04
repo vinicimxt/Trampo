@@ -1,102 +1,795 @@
 # TRAMPO
 
-Projeto acadêmico de Análise e Desenvolvimento de Sistemas — **PIM IV**. Plataforma para aproximar clientes e profissionais, descobrir serviços e organizar agendamentos. A entrega reúne Web ASP.NET Core, API REST, aplicativo Android nativo e Desktop Windows Forms em C#.
+Plataforma integrada para contratação e gerenciamento de serviços entre clientes e profissionais.
 
-O problema abordado é a fragmentação entre encontrar um serviço, consultar horários e acompanhar o atendimento. TRAMPO demonstra esse fluxo num protótipo integrado; não representa operação comercial, cobrança real ou deploy cloud já realizado.
+O **TRAMPO** foi desenvolvido como projeto acadêmico do **PIM IV do curso de Análise e Desenvolvimento de Sistemas** e é composto por três aplicações integradas:
 
-## Funcionalidades e perfis
+| Aplicação | Tecnologia | Público principal |
+| --- | --- | --- |
+| Web | ASP.NET Core MVC / C# | Cliente, Profissional e Administrador |
+| Android | Kotlin + XML | Cliente |
+| Desktop | Windows Forms / C# | Profissional |
 
-- **Cliente Web/Android:** cadastro, login/logout, perfil, senha, catálogo e busca, detalhe, agenda, agendamento/cancelamento, confirmação de conclusão, avaliação, notificações internas e suporte.
-- **Profissional Web:** serviços, locais, disponibilidade, dashboard e atendimento das solicitações. Plano Free/Premium com checkout simulado.
-- **Profissional Desktop (Windows Forms):** login, agendamentos, serviços e locais com consulta de CEP pela API.
-- **Admin Web:** dashboard e indicadores protegidos por perfil.
+As aplicações utilizam o mesmo backend e compartilham as regras de negócio e os dados do sistema.
 
-Android tem foco Cliente; Desktop tem foco Profissional. Admin usa Web. O Android não oferece área Profissional/Admin. [Matriz completa](docs/MATRIZ-WEB-API-MOBILE.md).
+---
 
-## Arquitetura e tecnologias
+## Sobre o projeto
+
+O TRAMPO tem como objetivo facilitar a conexão entre clientes que procuram serviços e profissionais que desejam divulgar e administrar seus atendimentos.
+
+A solução permite que clientes pesquisem serviços, realizem agendamentos, acompanhem solicitações e avaliem atendimentos.
+
+Profissionais podem cadastrar serviços, informar disponibilidade, gerenciar locais de atendimento e acompanhar os agendamentos recebidos.
+
+Administradores possuem acesso à área Web para acompanhamento e administração da plataforma.
+
+---
+
+## Aplicações do ecossistema
+
+### Web
+
+A aplicação Web é a interface mais completa do TRAMPO.
+
+Atende os perfis:
+
+- Cliente;
+- Profissional;
+- Administrador.
+
+Principais recursos:
+
+- cadastro e login;
+- perfil de cliente e profissional;
+- catálogo de serviços;
+- busca de serviços;
+- agendamentos;
+- histórico de agendamentos;
+- avaliações;
+- disponibilidade de horários;
+- gerenciamento de serviços;
+- gerenciamento de locais;
+- notificações;
+- plano premium;
+- dashboard profissional;
+- painel administrativo;
+- recursos de acessibilidade.
+
+### Android
+
+O aplicativo Android é direcionado principalmente ao **Cliente**.
+
+Principais recursos:
+
+- cadastro e autenticação;
+- edição de perfil;
+- alteração de senha;
+- busca e catálogo de serviços;
+- filtros por modalidade;
+- consulta de profissionais;
+- consulta de categorias e subcategorias;
+- criação de agendamentos;
+- acompanhamento de agendamentos;
+- confirmação de conclusão;
+- avaliações;
+- notificações;
+- suporte.
+
+O aplicativo Android não acessa diretamente o banco de dados.
+
+A comunicação ocorre através da API REST do TRAMPO.
+
+### Desktop
+
+A aplicação Desktop foi desenvolvida em **Windows Forms** e é direcionada ao **Profissional**.
+
+Principais recursos:
+
+- login profissional;
+- consulta de agendamentos recebidos;
+- visualização do detalhe do atendimento;
+- confirmação de agendamento;
+- recusa de agendamento;
+- finalização de atendimento;
+- listagem de serviços próprios;
+- cadastro de serviços;
+- edição de serviços;
+- remoção/desativação de serviços;
+- gerenciamento de locais;
+- consulta de CEP.
+
+Assim como o Android, o Desktop não acessa diretamente o SQL Server.
+
+Toda comunicação é realizada através da API REST.
+
+---
+
+## Arquitetura
+
+A solução utiliza uma arquitetura integrada.
 
 ```mermaid
-flowchart LR
-    WEB[Browser / MVC / sessão] --> S[Application Services]
-    APP[Android Activity / ViewModel / Repository] --> REST[Retrofit / REST / JWT]
-    DESK[Windows Forms / TrampoApiClient / JWT] --> API[REST API v1]
-    REST --> API
-    API --> S
-    S --> DAO[DAO / ADO.NET]
-    DAO --> SQL[(SQL Server)]
+flowchart TB
+    WEB[Web MVC<br/>Cliente / Profissional / Admin]
+    ANDROID[Android<br/>Cliente]
+    DESKTOP[Windows Forms<br/>Profissional]
+
+    API[API REST v1]
+    SERVICES[Application Services]
+    DAO[DAO / ADO.NET]
+    DB[(SQL Server)]
+
+    WEB --> SERVICES
+    ANDROID --> API
+    DESKTOP --> API
+
+    API --> SERVICES
+    SERVICES --> DAO
+    DAO --> DB
 ```
 
-Backend: C#, .NET 10, MVC/Razor, API REST, ADO.NET, JWT Bearer, sessão/antiforgery, OpenAPI e health check. Alguns módulos MVC legados ainda chamam DAOs diretamente.
+A aplicação Web utiliza ASP.NET Core MVC.
 
-Android: Kotlin, XML/Views, ViewModel/Repository, Retrofit/OkHttp, tema TRAMPO/DayNight. Projeto separado: [TRAMPO-APP](https://github.com/vinicimxt/TRAMPO-APP). Sem Compose ou banco local como fonte principal.
+Android e Windows Forms funcionam como clientes da API REST.
 
-Desktop: C#/.NET 10, Windows Forms e cliente HTTP assíncrono. Projeto separado: `Trampo.Desktop`. JWT somente em memória; sem SQL ou banco local. [Fechamento Desktop](docs/SPRINT-12-DESKTOP.md).
+As regras de negócio permanecem centralizadas no backend.
 
-[Arquitetura atual e proposta cloud](docs/ARQUITETURA-FINAL.md) · [API — 32 operações](docs/API-FINAL.md) · [Banco e MER](docs/BANCO-DE-DADOS.md).
+A persistência é realizada por meio da camada DAO utilizando ADO.NET.
 
-## Executar localmente
+---
 
-Pré-requisitos: SDK .NET definido em [global.json](global.json) (10.0.401/latestPatch), SQL Server/SQL Express e, para Mobile, Android Studio/JBR compatível, SDK 37 e emulador. Os scripts de integração locais usam PowerShell/Windows e SQL com autenticação integrada.
+## Perfis de usuário
 
-1. Clone este repositório. Para banco **novo**, revise e execute [ScriptBD.txt](ScriptBD.txt), seguido de [migração 001](ScriptsSQL/001_enderecos_geolocalizacao.sql). O script base cria `Xamou` e não é idempotente. Em banco existente, não recrie: verifique/aplique somente a migração necessária.
-2. Configure `ConnectionStrings:Xamou` em User Secrets/ambiente se a instância local diferir da configuração Development. Não coloque senha SQL em arquivo versionado.
-3. Configure `Jwt:SigningKey` em User Secrets ou `Jwt__SigningKey` no ambiente, Base64 de pelo menos 32 bytes aleatórios. Não imprimir ou versionar. O script de inicialização reutiliza a chave configurada. Sem chave, login API fica indisponível.
-4. Execute na raiz:
+### Cliente
+
+Pode utilizar:
+
+- Web;
+- Android.
+
+Entre suas funcionalidades estão:
+
+- consultar serviços;
+- realizar agendamentos;
+- acompanhar solicitações;
+- confirmar conclusão;
+- avaliar profissionais;
+- editar perfil;
+- consultar notificações;
+- solicitar suporte.
+
+### Profissional
+
+Pode utilizar:
+
+- Web;
+- Desktop Windows Forms.
+
+Entre suas funcionalidades estão:
+
+- cadastrar serviços;
+- editar serviços;
+- administrar disponibilidade;
+- cadastrar locais;
+- acompanhar agendamentos recebidos;
+- confirmar solicitações;
+- recusar solicitações;
+- finalizar atendimentos.
+
+### Administrador
+
+Utiliza a aplicação Web.
+
+Possui acesso às funcionalidades administrativas e de gerenciamento da plataforma.
+
+---
+
+## Tecnologias
+
+### Backend e Web
+
+- C#
+- .NET 10
+- ASP.NET Core MVC
+- ASP.NET Core Web API
+- Razor Views
+- HTML
+- CSS
+- JavaScript
+- ADO.NET
+- JWT Bearer
+- Session
+- OpenAPI / Swagger
+
+### Banco de dados
+
+- SQL Server
+- SQL Server Express em desenvolvimento
+- scripts SQL versionados
+
+### Android
+
+- Kotlin
+- XML
+- Android Views
+- ViewModel
+- Repository
+- Retrofit
+- JWT Bearer
+
+### Desktop
+
+- C#
+- .NET 10
+- Windows Forms
+- HttpClient
+- System.Text.Json
+- async/await
+- JWT Bearer
+
+### DevOps
+
+- Git
+- GitHub
+- GitHub Actions
+- scripts PowerShell
+- build e testes automatizados
+
+---
+
+## Banco de Dados
+
+O sistema utiliza SQL Server.
+
+Entre as principais entidades estão:
+
+- usuários;
+- clientes;
+- profissionais;
+- categorias;
+- subcategorias;
+- serviços;
+- locais;
+- disponibilidades;
+- agendamentos;
+- endereços de agendamento;
+- avaliações;
+- notificações;
+- assinaturas premium.
+
+A camada de persistência utiliza DAO com ADO.NET.
+
+Android e Desktop não possuem conexão direta com o banco.
+
+---
+
+## API REST
+
+A API permite a integração das aplicações externas com o backend.
+
+Exemplos de áreas disponíveis:
+
+```text
+/api/v1/auth
+/api/v1/perfil
+/api/v1/servicos
+/api/v1/agendamentos
+/api/v1/locais
+/api/v1/enderecos
+/api/v1/categorias
+/api/v1/notificacoes
+/api/v1/suporte
+```
+
+Endpoints protegidos utilizam autenticação JWT Bearer.
+
+O backend é responsável por:
+
+- autenticação;
+- autorização;
+- validação;
+- ownership;
+- regras de negócio;
+- persistência;
+- consistência dos dados.
+
+---
+
+## Segurança
+
+Foram adotadas medidas como:
+
+- armazenamento seguro de senhas;
+- autenticação por sessão na aplicação Web;
+- JWT Bearer para Android e Desktop;
+- autorização por perfil;
+- validação de propriedade dos recursos;
+- proteção antiforgery nas operações Web;
+- validação de transições de estado;
+- rate limiting no login da API;
+- configuração de secrets fora do código-fonte;
+- tratamento centralizado de erros.
+
+O token utilizado pelas aplicações clientes não contém credenciais de banco de dados.
+
+No Desktop, o JWT é mantido apenas em memória durante a sessão.
+
+---
+
+## Acessibilidade
+
+A aplicação Web possui recursos voltados à acessibilidade, incluindo:
+
+- integração com VLibras;
+- labels semânticas;
+- navegação estruturada;
+- inputs acessíveis;
+- atributos ALT em imagens importantes;
+- melhoria de contraste e responsividade.
+
+---
+
+## Endereços e CEP
+
+O sistema possui suporte a endereços estruturados.
+
+Entre os dados utilizados estão:
+
+- CEP;
+- logradouro;
+- número;
+- complemento;
+- bairro;
+- cidade;
+- UF.
+
+A consulta de CEP é realizada pelo backend.
+
+As aplicações clientes não acessam diretamente serviços externos de CEP.
+
+---
+
+## Imagens
+
+### Aplicação Web
+
+<img width="1920" height="1080" alt="TRAMPO Web" src="https://github.com/user-attachments/assets/26ff776d-688a-4516-98ee-2e28692dd004" />
+
+<img width="1896" height="868" alt="TRAMPO Web" src="https://github.com/user-attachments/assets/f390c51f-87f4-4691-b0a0-3f9599344a4b" />
+
+<img width="1859" height="740" alt="TRAMPO Web" src="https://github.com/user-attachments/assets/701661fa-1a67-43f9-87a8-865bdbac6f66" />
+
+<img width="1864" height="758" alt="TRAMPO Web" src="https://github.com/user-attachments/assets/884dc120-f89c-4f8f-bfb3-33b288649f4a" />
+
+<img width="1860" height="864" alt="TRAMPO Web" src="https://github.com/user-attachments/assets/6b948691-e64b-4e25-8ce3-e76d19499474" />
+
+<img width="1865" height="869" alt="TRAMPO Web" src="https://github.com/user-attachments/assets/15bcc57e-12a1-4216-a23e-9a8594aa082f" />
+
+### Android
+
+As evidências do aplicativo Android ficam documentadas no repositório Mobile e na pasta de evidências do projeto principal.
+
+Exemplos:
+
+```text
+docs/evidencias/mobile-home.png
+docs/evidencias/mobile-notificacoes.png
+docs/evidencias/mobile-suporte.png
+```
+
+### Windows Forms
+
+As evidências do Desktop devem ser publicadas somente após revisão de privacidade.
+
+Exemplos de telas:
+
+```text
+Login
+Painel principal
+Agendamentos
+Serviços
+Locais
+```
+
+---
+
+## Estrutura do projeto principal
+
+```text
+Trampo/
+│
+├── Api/
+│   └── Contracts/
+│
+├── Controllers/
+│   ├── Api/
+│   └── ...
+│
+├── Models/
+├── ViewModels/
+├── Services/
+├── DAO/
+├── Views/
+│
+├── wwwroot/
+│   ├── css/
+│   ├── js/
+│   └── assets/
+│
+├── Scripts/
+├── ScriptsSQL/
+├── Tests/
+├── docs/
+├── .github/
+│   └── workflows/
+│
+├── Program.cs
+├── appsettings.json
+└── README.md
+```
+
+---
+
+## Organização das camadas
+
+### Controllers
+
+Recebem as requisições da aplicação Web ou API e encaminham as operações para as camadas responsáveis.
+
+### Services
+
+Concentram regras de aplicação e coordenam operações de negócio.
+
+### DAO
+
+Responsável pelo acesso ao SQL Server utilizando ADO.NET.
+
+### Models
+
+Representam as entidades principais do sistema.
+
+### ViewModels
+
+Transportam dados específicos entre Controllers e Views.
+
+### Views
+
+Interfaces Razor utilizadas pela aplicação Web.
+
+### API Contracts
+
+Definem os contratos utilizados na comunicação REST.
+
+---
+
+## Repositórios
+
+O TRAMPO é dividido em três repositórios.
+
+### Web / Backend / API
+
+Este é o repositório principal.
+
+Contém:
+
+- aplicação ASP.NET Core MVC;
+- API REST;
+- Services;
+- DAO;
+- SQL;
+- testes;
+- documentação principal do PIM.
+
+Repositório:
+
+```text
+https://github.com/vinicimxt/Trampo
+```
+
+### Android
+
+Aplicativo destinado principalmente ao Cliente.
+
+Repositório:
+
+```text
+https://github.com/vinicimxt/TRAMPO-APP
+```
+
+### Windows Forms
+
+Aplicação Desktop destinada ao Profissional.
+
+Repositório:
+
+```text
+https://github.com/vinicimxt/Trampo-Desktop
+```
+
+---
+
+## Como executar
+
+### 1. Clonar o projeto
+
+```bash
+git clone https://github.com/vinicimxt/Trampo.git
+cd Trampo
+```
+
+### 2. Preparar o banco
+
+Utilize os scripts disponíveis no projeto.
+
+Execute primeiro o script principal de criação do banco e depois as migrações incrementais necessárias presentes em:
+
+```text
+ScriptsSQL/
+```
+
+Utilize um banco local de desenvolvimento.
+
+> Atenção: scripts de reconstrução de banco devem ser executados apenas em ambiente local/descartável.
+
+### 3. Configurar a conexão
+
+Durante o desenvolvimento é possível utilizar SQL Server Express com autenticação integrada do Windows.
+
+Exemplo:
+
+```text
+Server=localhost\SQLEXPRESS;
+Database=Xamou;
+Trusted_Connection=True;
+TrustServerCertificate=True;
+```
+
+Não armazene credenciais reais no repositório.
+
+### 4. Configurar JWT para desenvolvimento
+
+A chave JWT deve ficar fora do código-fonte.
+
+Utilize .NET User Secrets ou variável de ambiente.
+
+Exemplo:
 
 ```powershell
-dotnet restore
-powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/Start-Dev.ps1
+dotnet user-secrets set "Jwt:SigningKey" "SUA_CHAVE_LOCAL"
 ```
 
-Web/API local: `http://localhost:5165`; emulador Debug: `http://10.0.2.2:5165/`. Perfil HTTPS local também existe em launchSettings; HTTP é configuração de demonstração Debug. Abra o projeto Android separado no Android Studio e execute a variante Debug. Para o Desktop, abra `Trampo.Desktop.slnx` no Windows e execute `dotnet run --project Trampo.Desktop/Trampo.Desktop.csproj` no diretório do projeto Desktop; `TRAMPO_API_BASE_URL` permite configurar a URL da API.
+### 5. Executar
 
-OpenAPI/Swagger somente Development: `/openapi/v1.json` e `/swagger/index.html`. `/health` verifica apenas o processo, não o banco. Para instruções de ambiente e implantação futura, consulte [IMPLANTACAO](docs/IMPLANTACAO.md).
-
-## Banco, endereços e segurança
-
-15 tabelas, chaves/constraints e migração incremental para componentes de endereço/snapshots. CEP pode ser consultado via ViaCEP ou preenchido manualmente. Não há mapas/GPS/geocoder real. Scripts não contêm criação automática de conta administrativa com senha utilizável.
-
-Senha com hash Identity; MVC com sessão/CSRF; API com JWT e verificação de ownership. Android guarda token privado e o exclui de backup, sem alegar criptografia por Keystore. Não há refresh token ou revogação imediata após logout/troca de senha. [Auditoria e limites](docs/SEGURANCA-FINAL.md).
-
-## Testes, CI e cloud
+Uma opção é utilizar o script de desenvolvimento:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/Test-CI.ps1
-# Integrações: somente banco local de desenvolvimento/testes, em sequência.
-powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint1/Run.ps1 -Sprint5
-powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint9/Run.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Sprint6/Run.ps1
+powershell -ExecutionPolicy Bypass -File Scripts/Start-Dev.ps1
 ```
 
-Desktop (Windows): `dotnet build Trampo.Desktop.slnx` e `dotnet run --project Tests/Trampo.Desktop.Tests/Trampo.Desktop.Tests.csproj` no repositório Desktop. Workflow Windows separado preparado para build e testes não visuais.
+Ou:
 
-Android: `gradlew.bat testDebugUnitTest lintDebug assembleDebug`. Os runners .NET são executáveis; `dotnet test` não substitui esses comandos. Fixtures são identificadas e removidas pelos runners.
+```bash
+dotnet run --urls "http://0.0.0.0:5165"
+```
 
-GitHub Actions existe nos repositórios backend e Android; o workflow Desktop Windows foi preparado localmente e ainda não tem execução remota confirmada. Na auditoria de 10/10/2026, o backend seguia com execução remota aprovada no commit local; o Android seguia com falha remota em setup-android antes dos testes. As suítes locais passaram. Resultados, limites e links reais estão em [Sprint 11 — prontidão final](docs/SPRINT-11-PRONTIDAO-FINAL.md), [TESTES-FINAIS](docs/TESTES-FINAIS.md) e [DEVOPS-E-CLOUD](docs/DEVOPS-E-CLOUD.md). Não houve push nesta auditoria.
+A URL local padrão utilizada durante o desenvolvimento é:
 
-Backend Release foi publicado/testado localmente. **Cloud é proposta, não deploy realizado.** Android Release exige endpoint HTTPS futuro e assinatura; não há publicação Play Store. Sem CD automatizado.
+```text
+http://localhost:5165/
+```
 
-## Documentação da entrega
+Swagger está disponível somente quando habilitado no ambiente de desenvolvimento.
 
-| Documento | Conteúdo |
-| --- | --- |
-| [Desktop Sprint12](docs/SPRINT-12-DESKTOP.md) | Arquitetura, Forms, testes, smoke e limites da validação visual |
-| [Prontidão Sprint11](docs/SPRINT-11-PRONTIDAO-FINAL.md) | Auditoria atual, CI remoto, regressão e decisão GO/NO-GO |
-| [Fechamento Sprint10](docs/SPRINT-10-FECHAMENTO.md) | Baseline, resultados, limitações e próximos passos |
-| [Requisitos PIM](docs/PIM-REQUISITOS.md) | Implementação, evidência e situação por requisito |
-| [Arquitetura final](docs/ARQUITETURA-FINAL.md) | Web/Mobile, autenticação e proposta cloud |
-| [Banco/MER](docs/BANCO-DE-DADOS.md) | Dicionário físico, chaves, índices, constraints e scripts |
-| [API final](docs/API-FINAL.md) | Rotas, perfis e respostas |
-| [Web × API × Mobile](docs/MATRIZ-WEB-API-MOBILE.md) | Paridade e exclusividades |
-| [Ágil/backlogs/Kanban](docs/AGIL.md) | Rastreabilidade das sprints |
-| [Segurança](docs/SEGURANCA-FINAL.md) | Auditoria e limites |
-| [Roteiro de apresentação](docs/ROTEIRO-APRESENTACAO.md) | Defesa de 10–15 minutos e demo |
-| [Evidências/capturas](docs/EVIDENCIAS-CHECKLIST.md) | Checklist de privacidade e imagens |
+---
 
-Histórico preservado em `docs/Sprint2` a `docs/Sprint6` e relatórios `SPRINT-7-*`, `SPRINT-8-*`, `SPRINT-8-5-*`, `SPRINT-9-*`. As imagens externas do README anterior continuam no histórico Git; não são apresentadas como capturas atuais validadas.
+## Executando o Android
 
-## Limitações e evolução
+Clone o repositório Android:
 
-Cloud real, assinatura Play Store, mapas/GPS, chat, gateway financeiro, push, refresh/revogação, áreas Profissional/Admin Mobile, avaliação agregada, filtros avançados e observabilidade avançada são evoluções futuras. Acessibilidade tem recursos implementados, mas não certificação completa. Responsabilidade social/empreendedorismo representam proposta acadêmica, sem estudo de impacto/mercado comprovado. Confira a rubrica oficial do PIM, especialmente se exigir procedures/triggers ou cloud implantada.
+```bash
+git clone https://github.com/vinicimxt/TRAMPO-APP.git
+```
 
-Capturas atuais revisadas: [Home Mobile](docs/evidencias/mobile-home.png), [Notificações](docs/evidencias/mobile-notificacoes.png) e [Suporte](docs/evidencias/mobile-suporte.png). Somente fixtures temporárias.
+Abra o projeto no Android Studio.
+
+Durante o desenvolvimento com o Android Emulator, o endereço utilizado para acessar a API local é:
+
+```text
+http://10.0.2.2:5165/
+```
+
+A configuração Release exige uma URL HTTPS válida.
+
+---
+
+## Executando o Desktop
+
+Clone o repositório Windows Forms.
+
+Abra a solução no Visual Studio ou execute:
+
+```powershell
+dotnet restore Trampo.Desktop.slnx
+dotnet build Trampo.Desktop.slnx
+dotnet run --project Trampo.Desktop/Trampo.Desktop.csproj
+```
+
+Por padrão, o Desktop utiliza:
+
+```text
+http://localhost:5165/
+```
+
+A URL também pode ser configurada através da variável:
+
+```text
+TRAMPO_API_BASE_URL
+```
+
+---
+
+## Testes
+
+O projeto possui verificações automatizadas para diferentes partes da solução.
+
+São avaliados aspectos como:
+
+- autenticação;
+- autorização;
+- ownership;
+- contratos da API;
+- agendamentos;
+- serviços;
+- locais;
+- endereços;
+- segurança;
+- integração;
+- comportamento do Desktop;
+- comportamento do Android.
+
+O Desktop possui também um projeto próprio de testes não visuais.
+
+---
+
+## Integração Contínua
+
+O projeto utiliza GitHub Actions.
+
+Existem workflows separados para:
+
+- Backend / Web;
+- Android;
+- Windows Forms.
+
+Cada aplicação possui necessidades diferentes de ambiente.
+
+O Desktop utiliza runner Windows devido ao uso de Windows Forms.
+
+O backend não depende do pipeline do aplicativo Android ou Desktop.
+
+---
+
+## Cloud
+
+A arquitetura foi preparada para configuração por ambiente e futura implantação em Cloud.
+
+Foram realizadas melhorias como:
+
+- externalização de configuração;
+- endpoint de health check;
+- build Release;
+- documentação de implantação;
+- separação entre Development e Production.
+
+Não é afirmado neste projeto que exista um deploy público de produção caso ele não tenha sido efetivamente realizado.
+
+---
+
+## DevOps
+
+Foram utilizados:
+
+- Git;
+- GitHub;
+- GitHub Actions;
+- branches e commits;
+- workflows de build;
+- testes automatizados;
+- scripts locais;
+- documentação de implantação.
+
+---
+
+## Desenvolvimento acadêmico
+
+O projeto foi desenvolvido de forma incremental.
+
+Entre as principais evoluções realizadas estão:
+
+- revisão de segurança e autorização;
+- melhoria de integridade dos agendamentos;
+- separação das regras em Application Services;
+- criação da API REST;
+- autenticação JWT;
+- estruturação de endereços;
+- integração de CEP;
+- desenvolvimento do aplicativo Android;
+- implantação de workflows de CI;
+- preparação para Cloud;
+- melhorias de interface Web e Mobile;
+- ampliação das funcionalidades Mobile;
+- desenvolvimento da aplicação Windows Forms;
+- documentação e testes finais.
+
+---
+
+## Documentação
+
+A documentação técnica e acadêmica está disponível em:
+
+```text
+docs/
+```
+
+Entre os documentos estão:
+
+```text
+PIM-REQUISITOS.md
+ARQUITETURA-FINAL.md
+BANCO-DE-DADOS.md
+API-FINAL.md
+MATRIZ-WEB-API-MOBILE.md
+DEVOPS-E-CLOUD.md
+AGIL.md
+SEGURANCA-FINAL.md
+TESTES-FINAIS.md
+ROTEIRO-APRESENTACAO.md
+EVIDENCIAS-CHECKLIST.md
+SPRINT-12-DESKTOP.md
+```
+
+---
+
+## Limitações atuais
+
+A solução acadêmica possui algumas limitações conhecidas.
+
+Entre elas:
+
+- não há publicação oficial na Play Store;
+- não há deploy Cloud público confirmado;
+- Desktop é destinado ao perfil Profissional;
+- Android é destinado principalmente ao Cliente;
+- Administrador utiliza a aplicação Web;
+- não há pagamento online implementado;
+- não há chat em tempo real;
+- não há mapas/GPS integrados;
+- Desktop não possui banco local;
+- Android e Desktop dependem da API.
+
+---
+
+## Contexto acadêmico
+
+O TRAMPO foi desenvolvido como parte do **Projeto Integrado Multidisciplinar (PIM IV)** do curso de **Análise e Desenvolvimento de Sistemas**.
+
+O projeto demonstra a integração entre:
+
+- desenvolvimento Web;
+- desenvolvimento Mobile;
+- desenvolvimento Desktop;
+- APIs REST;
+- banco de dados;
+- orientação a objetos;
+- segurança;
+- acessibilidade;
+- metodologia ágil;
+- DevOps;
+- preparação para Cloud.
+
+---
+
+## Autores
+
+Projeto acadêmico desenvolvido pelos integrantes do grupo do PIM IV.

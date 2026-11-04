@@ -215,9 +215,9 @@
                                 <div class="servico-actions">
                                     <button aria-label="Editar serviço" type="button" class="btn-edit" @(s.Ativo ? "" : "disabled") data-id="@s.Id"
                                             data-nome="@s.Nome" data-local="@s.LocalId" data-desc="@s.Descricao"
-                                            data-atendimento="@s.Atendimento" data-link="@s.LinkOnline" data-sub="@s.SubcategoriaId"
+                                            data-atendimento="@s.Atendimento" data-link="@s.LinkOnline"
                                             data-hora-inicio="@s.HoraInicio" data-hora-fim="@s.HoraFim" data-dias="@s.DiasTexto"
-                                            data-tipo-preco="@s.TipoPreco" data-preco="@s.PrecoBase">
+                                            data-tipo-preco="@s.TipoPreco" data-preco="@(s.PrecoBase?.ToString(System.Globalization.CultureInfo.InvariantCulture))">
                                         <span aria-hidden="true" class="material-symbols-rounded">edit</span>
                                         Editar
                                     </button>
@@ -279,16 +279,14 @@
             <input type="hidden" name="id" id="servicoId" />
 
             <div class="drawer-body">
-                <input type="hidden" name="SubcategoriaId" id="editSubcategoriaId" />
-
                 <div class="form-group">
                     <label class="form-label">Nome</label>
-                    <input type="text" name="nome" id="editNome" class="form-input" required />
+                    <input type="text" name="nome" id="editNome" class="form-input" maxlength="100" required />
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Descrição</label>
-                    <textarea name="descricao" id="editDesc" class="form-textarea"></textarea>
+                    <textarea name="descricao" id="editDesc" class="form-textarea" maxlength="255"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -326,7 +324,7 @@
                         Preço do serviço
                     </label>
 
-                    <input type="number" step="0.01" min="0" name="PrecoBase" id="editPreco" class="form-input"
+                    <input type="number" step="0.01" min="0.01" max="99999999.99" name="PrecoBase" id="editPreco" class="form-input"
                            placeholder="Ex: 80.00" />
 
                 </div>
@@ -476,6 +474,7 @@
                 'hidden',
                 tipoPreco !== 'Fixo'
             );
+            document.getElementById('editPreco').required = tipoPreco === 'Fixo';
         }
         document.getElementById('editAtendimento')
             ?.addEventListener('change', atualizarCamposDinamicos);

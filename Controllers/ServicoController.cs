@@ -38,8 +38,15 @@ public class ServicoController(ServicoService service) : BaseController
 
     [HttpPost]
     public IActionResult Editar(SalvarServicoRequest dados) => ExecutarAplicacao(() => {
-        if (!ModelState.IsValid) return BadRequest("Dados do serviço inválidos.");
-        service.Editar(Usuario, dados);
+        if (!ModelState.IsValid) {
+            TempData["Erro"] = "Não foi possível salvar. Atualize a página e confira os campos do serviço.";
+            return RedirectToAction("MeusServicos", "Profissional");
+        }
+        try { service.Editar(Usuario, dados); }
+        catch (FalhaOperacao ex) when (ex.Tipo == TipoFalha.Validacao) {
+            TempData["Erro"] = ex.Message;
+            return RedirectToAction("MeusServicos", "Profissional");
+        }
         TempData["Sucesso"] = "Serviço atualizado com sucesso ✏️";
         return RedirectToAction("MeusServicos", "Profissional");
     });
