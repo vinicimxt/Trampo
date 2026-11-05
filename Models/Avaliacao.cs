@@ -13,5 +13,6 @@ namespace BD_TRAMPO
         public DateTime Data { get; set; }
 
         public string NomeUsuario { get; set; }
+        public string ServicoNome { get; set; } = "";
     }
 }

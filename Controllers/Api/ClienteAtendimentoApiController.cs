@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 namespace BD_TRAMPO.Controllers.Api;
-[Route("api/v1/notificacoes"), Authorize(Roles="cliente")]
+[Route("api/v1/notificacoes"), Authorize(Roles="cliente,profissional")]
 public sealed class NotificacoesApiController(ClienteAtendimentoService service) : ApiControllerBase
 {
     [HttpGet]
@@ -13,7 +13,7 @@ public sealed class NotificacoesApiController(ClienteAtendimentoService service)
     [HttpPost("{id:int}/ler")]
     public IActionResult Ler(int id) { service.Ler(Usuario,id); return NoContent(); }
 }
-[Route("api/v1/suporte"), Authorize(Roles="cliente")]
+[Route("api/v1/suporte"), Authorize(Roles="cliente,profissional")]
 public sealed class SuporteApiController(ClienteAtendimentoService service) : ApiControllerBase
 {
     [HttpPost, EnableRateLimiting("api-login")]

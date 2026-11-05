@@ -33,6 +33,7 @@ builder.Services.AddScoped<LocalDAO>();
 builder.Services.AddScoped<SubcategoriaDAO>();
 builder.Services.AddScoped<CategoriaDAO>();
 builder.Services.AddScoped<AvaliacaoDAO>();
+builder.Services.AddScoped<AvaliacaoService>();
 builder.Services.AddScoped<UsuarioDAO>();
 builder.AdicionarApi();
 builder.AdicionarEnderecos();

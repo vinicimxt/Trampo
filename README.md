@@ -7,7 +7,7 @@ O **TRAMPO** foi desenvolvido como projeto acadêmico do **PIM IV do curso de An
 | Aplicação | Tecnologia | Público principal |
 | --- | --- | --- |
 | Web | ASP.NET Core MVC / C# | Cliente, Profissional e Administrador |
-| Android | Kotlin + XML | Cliente |
+| Android | Kotlin + XML | Cliente e Profissional |
 | Desktop | Windows Forms / C# | Profissional |
 
 As aplicações utilizam o mesmo backend e compartilham as regras de negócio e os dados do sistema.
@@ -58,7 +58,7 @@ Principais recursos:
 
 ### Android
 
-O aplicativo Android é direcionado principalmente ao **Cliente**.
+O aplicativo Android atende **Cliente** e **Profissional**, com homes separadas após identificação do perfil pela API.
 
 Principais recursos:
 
@@ -75,6 +75,8 @@ Principais recursos:
 - avaliações;
 - notificações;
 - suporte.
+
+O profissional também pode acompanhar e confirmar/recusar/finalizar agendamentos, gerir serviços, horários semanais e locais, consultar avaliações recebidas e acessar perfil, notificações e suporte. O fluxo está descrito em [Android multiperfil](docs/ANDROID-MULTIPERFIL.md).
 
 O aplicativo Android não acessa diretamente o banco de dados.
 
@@ -280,6 +282,8 @@ Exemplos de áreas disponíveis:
 /api/v1/categorias
 /api/v1/notificacoes
 /api/v1/suporte
+/api/v1/servicos/{servicoId}/avaliacoes
+/api/v1/profissionais/me/avaliacoes
 ```
 
 Endpoints protegidos utilizam autenticação JWT Bearer.

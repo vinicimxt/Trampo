@@ -34,9 +34,11 @@ namespace BD_TRAMPO
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                SELECT a.*, u.Nome
+                SELECT a.*, u.Nome, s.Nome AS ServicoNome
                 FROM Avaliacoes a
                 INNER JOIN Usuarios u ON a.UsuarioId = u.Id
+                INNER JOIN Agendamentos ag ON ag.Id = a.AgendamentoId
+                INNER JOIN Servicos s ON s.Id = ag.ServicoId
                 WHERE a.ProfissionalId = @id
                 ORDER BY a.Data DESC";
 
@@ -53,6 +55,7 @@ namespace BD_TRAMPO
                         Nota = (int)reader["Nota"],
                         Comentario = reader["Comentario"]?.ToString(),
                         NomeUsuario = reader["Nome"].ToString(),
+                        ServicoNome = reader["ServicoNome"].ToString() ?? "",
                         Data = (DateTime)reader["Data"]
                     });
                 }

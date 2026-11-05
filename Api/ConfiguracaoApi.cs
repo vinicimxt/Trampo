@@ -83,7 +83,8 @@ public static class ConfiguracaoApi
                     foreach (var operation in path.Value.Operations ?? []) {
                         bool publico = path.Key == "/api/v1/auth/login" || path.Key == "/api/v1/auth/register" ||
                             (operation.Key == HttpMethod.Get &&
-                             (path.Key == "/api/v1/servicos" || path.Key == "/api/v1/servicos/{id}"));
+                             (path.Key == "/api/v1/servicos" || path.Key == "/api/v1/servicos/{id}" ||
+                              path.Key == "/api/v1/servicos/{servicoId}/avaliacoes"));
                         if (!publico) operation.Value.Security = [new OpenApiSecurityRequirement {
                             [new OpenApiSecuritySchemeReference("Bearer", document)] = []
                         }];

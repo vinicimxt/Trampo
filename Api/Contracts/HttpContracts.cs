@@ -26,10 +26,21 @@ public sealed record AgendamentoResponse(int Id, int ServicoId, int Profissional
     DateOnly Data, TimeSpan Hora, string Status, string Descricao, string? EnderecoCliente,
     decimal? ValorFinal, string OrigemValorFinal, EnderecoAtendimentoResponse? EnderecoAtendimento)
 {
+    public string ServicoNome { get; init; } = "";
+    public string ProfissionalNome { get; init; } = "";
+    public string ClienteNome { get; init; } = "";
+    public string Atendimento { get; init; } = "";
+    public string? Local { get; init; }
+    public string TipoPreco { get; init; } = "";
+    public decimal? PrecoBase { get; init; }
     // Somente valor efetivamente persistido. Não expõe preço atual como preço contratado.
     public static AgendamentoResponse De(Agendamento a) => new(a.Id, a.ServicoId, a.ProfissionalId,
         DateOnly.FromDateTime(a.Data), a.Hora, a.StatusAtual(), a.Descricao, a.EnderecoCliente,
-        a.ValorFinal, "finalizacao_sem_snapshot_da_oferta", EnderecoAtendimentoResponse.De(a.EnderecoAtendimento));
+        a.ValorFinal, "finalizacao_sem_snapshot_da_oferta", EnderecoAtendimentoResponse.De(a.EnderecoAtendimento)) {
+            ServicoNome = a.Servico ?? "", ProfissionalNome = a.NomeProfissional ?? "",
+            ClienteNome = a.NomeCliente ?? "", Atendimento = a.Atendimento ?? "",
+            Local = a.EnderecoLocal, TipoPreco = a.TipoPreco ?? "", PrecoBase = a.PrecoBase
+        };
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]

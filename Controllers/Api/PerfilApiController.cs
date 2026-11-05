@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 namespace BD_TRAMPO.Controllers.Api;
-[Route("api/v1/perfil"), Authorize(Roles="cliente")]
+[Route("api/v1/perfil"), Authorize(Roles="cliente,profissional")]
 public sealed class PerfilApiController(ContaService service) : ApiControllerBase
 {
     [HttpGet]
