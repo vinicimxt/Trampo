@@ -475,9 +475,6 @@ namespace BD_TRAMPO
                 string query = @"SELECT 
                     A.*,
                     C.UsuarioId,
-                    S.Nome AS ServicoNome,
-                    UProf.Nome AS ProfissionalNome,
-                    UCli.Nome AS ClienteNome,
                     COALESCE(AE.Modalidade,S.Atendimento) AS Atendimento,
                     S.TipoPreco,
                     S.PrecoBase,
@@ -521,11 +518,6 @@ namespace BD_TRAMPO
                         Id = (int)reader["Id"],
                         ClienteId = (int)reader["ClienteId"],
                         ServicoId = (int)reader["ServicoId"],
-                        Servico = reader["ServicoNome"]?.ToString() ?? "",
-                        NomeProfissional = reader["ProfissionalNome"]?.ToString() ?? "",
-                        NomeCliente = reader["ClienteNome"]?.ToString() ?? "",
-                        Atendimento = reader["Atendimento"]?.ToString() ?? "",
-                        EnderecoLocal = reader["EnderecoLocal"]?.ToString() ?? "",
                         UsuarioId = reader["UsuarioId"] != DBNull.Value
                         ? (int)reader["UsuarioId"]
                         : 0,
