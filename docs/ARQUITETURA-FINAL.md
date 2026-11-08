@@ -1,6 +1,6 @@
 # Arquitetura final — TRAMPO
 
-Baseline inspecionado em 26/09/2026: backend `71f16ce`, Android `ba0064b`. Projeto acadêmico ADS/PIM IV. Atualização Desktop em 11/10/2026. Esta descrição representa o código; implantação cloud é uma proposta.
+Baseline inspecionado em 26/09/2026: backend `71f16ce`, Android `ba0064b`. Projeto acadêmico ADS/PIM IV. Atualizações Desktop nas Sprints 12 e 13. Esta descrição representa o código; implantação cloud é uma proposta.
 
 ## Arquitetura atual
 
@@ -8,7 +8,7 @@ Baseline inspecionado em 26/09/2026: backend `71f16ce`, Android `ba0064b`. Proje
 flowchart LR
     B[Browser / Razor] --> M[MVC Controller / sessão]
     A[Android Activity / XML] --> V[ViewModel]
-    W[Windows Forms / Profissional] --> C[TrampoApiClient / JWT]
+    W[Windows Forms / Cliente e Profissional] --> C[TrampoApiClient / JWT]
     C --> API
     V --> R[Repository]
     R --> T[Retrofit / OkHttp / JWT]
@@ -37,7 +37,7 @@ O MVC chama os Services no mesmo processo, sem requisições HTTP à própria AP
 
 MVC usa sessão e antiforgery global em mutações. API usa exclusivamente JWT Bearer; não usa a sessão MVC como autenticação. Assinatura HS256, issuer, audience, expiração e identidade persistida são validados. Cadastro API cria somente cliente. Os Services verificam participante/proprietário; trocar o ID na URL não concede acesso.
 
-Desktop mantém o JWT somente em memória e o limpa no logout ou após 401. A área Windows Forms atende apenas Profissional; Android foca Cliente; Web atende Cliente, Profissional e Admin.
+Desktop mantém o JWT somente em memória e o limpa no logout ou após 401. O login consulta `auth/me` e abre painel Cliente ou Profissional; Admin permanece na Web. O Desktop Cliente e Profissional usam exclusivamente a API REST, sem acesso direto ao SQL. O Android também contém áreas Cliente e Profissional. As consultas de avaliações públicas e recebidas, antes ausentes, agora passam por `AvaliacaoConsultaService` e `AvaliacaoDAO`; notificações, suporte e perfil aceitam os dois perfis e derivam a identidade do JWT. A validação visual dessas telas ainda depende de ambiente apropriado.
 
 Android guarda apenas o token em SharedPreferences privado, excluído de backup; isso **não equivale a criptografia por Keystore**. Logout remove a sessão local. Não existe refresh token ou revogação imediata por logout/troca de senha.
 
@@ -74,4 +74,4 @@ flowchart TD
 
 Uma instância é a proposta inicial. Mais instâncias exigem sessão compartilhada e persistência/compartilhamento de chaves Data Protection. `/health` não mede readiness do SQL nem disponibilidade de CEP/JWT. Proxy, TLS, backups/restauração, identidade de deploy, assinatura Android e endpoint real devem ser validados numa implantação futura. Não houve deploy cloud nesta sprint.
 
-Fontes: [Program.cs](../Program.cs), [Services](../Services), [DAOs](../DAO), [Android](https://github.com/vinicimxt/TRAMPO-APP), [Desktop Sprint12](SPRINT-12-DESKTOP.md), [histórico da extração](Sprint3/ARQUITETURA.md), [implantação](IMPLANTACAO.md).
+Fontes: [Program.cs](../Program.cs), [Services](../Services), [DAOs](../DAO), [Android](https://github.com/vinicimxt/TRAMPO-APP), [Desktop Sprint12](SPRINT-12-DESKTOP.md), [Desktop Sprint13](SPRINT-13-DESKTOP-MULTIPERFIL.md), [histórico da extração](Sprint3/ARQUITETURA.md), [implantação](IMPLANTACAO.md).

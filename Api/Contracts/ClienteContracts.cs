@@ -11,3 +11,5 @@ public sealed record PerfilResponse(string Nome, string Email, string? Telefone)
 public sealed record SuporteRequest(string Tipo, string Assunto, string Mensagem);
 public sealed record NotificacaoResponse(int Id, string Titulo, string Mensagem, DateTime DataCriacao, bool Lida);
 public sealed record EstadoAvaliacaoResponse(bool PodeAvaliar, bool JaAvaliado);
+public sealed record ChamadoSuporteResponse(int Id, string Tipo, string Assunto, string Mensagem,
+    string Status, DateTime DataCriacao);

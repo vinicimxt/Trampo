@@ -7,13 +7,17 @@ public sealed class ServicoService(ServicoDAO servicos,
     ProfissionalDAO profissionais, LocalDAO locais, SubcategoriaDAO subcategorias,
     CategoriaDAO categorias, AgendamentoDAO agendamentos, UsuarioDAO usuarios)
 {
-    public List<Servico> ListarPublicos(int pagina, int tamanho, string? busca = null, string? atendimento = null)
+    public List<Servico> ListarPublicos(int pagina, int tamanho, string? busca = null, string? atendimento = null,
+        int? categoriaId = null, int? subcategoriaId = null, string? profissional = null)
     {
         if (pagina < 1 || pagina > 1000000 || tamanho < 1 || tamanho > 100)
             throw new FalhaOperacao(TipoFalha.Validacao, "Paginação inválida.");
-        if ((busca?.Length ?? 0)>100 || (atendimento != null && !new[]{"Online","Local","Domicilio"}.Contains(atendimento)))
+        if ((busca?.Length ?? 0)>100 || (profissional?.Length ?? 0)>100 ||
+            categoriaId is <= 0 || subcategoriaId is <= 0 ||
+            (atendimento != null && !new[]{"Online","Local","Domicilio"}.Contains(atendimento)))
             throw new FalhaOperacao(TipoFalha.Validacao,"Filtro inválido.");
-        return servicos.ListarPublicos(pagina, tamanho, busca?.Trim(), atendimento);
+        return servicos.ListarPublicos(pagina, tamanho, busca?.Trim(), atendimento,
+            categoriaId: categoriaId, subcategoriaId: subcategoriaId, profissional: profissional?.Trim());
     }
 
     public Servico BuscarPublico(int id)

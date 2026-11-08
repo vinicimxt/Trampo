@@ -68,8 +68,6 @@ namespace BD_TRAMPO.DAO
 
             using (SqlConnection conn = conexao.Conectar())
             {
-                conn.Open();
-
                 string sql = @"
                     SELECT * FROM ContatoSuporte
                     WHERE UsuarioId = @UsuarioId

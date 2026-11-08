@@ -25,6 +25,8 @@ namespace BD_TRAMPO
         public string TipoPreco { get; set; }
 
         public decimal? PrecoBase { get; set; }
+        public double? MediaAvaliacoes { get; set; }
+        public int TotalAvaliacoes { get; set; }
     }
 
 }

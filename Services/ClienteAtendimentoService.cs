@@ -22,4 +22,8 @@ public sealed class ClienteAtendimentoService(NotificacaoDAO notificacoes, Supor
             throw new FalhaOperacao(TipoFalha.Validacao,"Confira os dados do chamado.");
         suporte.Inserir(new Suporte { UsuarioId=usuario.UsuarioId, Tipo=tipo, Assunto=assunto, Mensagem=mensagem, Status="Aberto" });
     }
+    public List<Suporte> Chamados(UsuarioContexto usuario) {
+        auth.Atual(usuario);
+        return suporte.ListarPorUsuario(usuario.UsuarioId);
+    }
 }

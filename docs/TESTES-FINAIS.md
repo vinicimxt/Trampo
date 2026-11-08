@@ -1,5 +1,7 @@
 # Testes finais — Sprint10
 
+> **Nota para o checkout de 08/11/2026:** as contagens abaixo são resultados históricos das Sprints 10/11, não uma execução atual. `Tests/Sprint1`, `Tests/Sprint6`, `Tests/Sprint8` e `Tests/Sprint9` não existem neste checkout; `Scripts/Test-CI.ps1` ainda aponta para alguns deles e não é reproduzível sem restaurar esses projetos. Os runners presentes são `Tests/binding-check`, `Tests/booking-contract` e `Tests/stabilization-contract`. A regressão atual e suas contagens estão no [relatório final V2](HOMOLOGACAO-FINAL-2026-V2.md). Não se recriaram testes fictícios para repetir números históricos.
+
 Execução em 26/09/2026, Windows, .NET SDK 10.0.401, SQL Express local e Android JBR/Gradle existentes. Baselines: backend `71f16ce`, Android `ba0064b`. Saídas completas em `artifacts/sprint10/`, ignoradas pelo Git; este documento consolida resultados, não expõe credenciais.
 
 ## Regressão executada

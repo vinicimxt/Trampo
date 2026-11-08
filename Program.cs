@@ -20,6 +20,7 @@ builder.Services.AddSession();
 
 builder.Services.AddScoped<ContaService>();
 builder.Services.AddScoped<ClienteAtendimentoService>();
+builder.Services.AddScoped<AvaliacaoConsultaService>();
 builder.Services.AddScoped<NotificacaoDAO>();
 builder.Services.AddScoped<SuporteDAO>();
 builder.Services.AddScoped<AgendamentoService>();

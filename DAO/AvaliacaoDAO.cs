@@ -27,21 +27,24 @@ namespace BD_TRAMPO
             }
         }
 
-        public List<Avaliacao> ListarPorProfissional(int profissionalId)
+        public List<Avaliacao> ListarPorProfissional(int profissionalId, int? servicoId = null)
         {
             List<Avaliacao> lista = new List<Avaliacao>();
 
             using (SqlConnection conn = conexao.Conectar())
             {
                 string query = @"
-                SELECT a.*, u.Nome
+                SELECT a.*, u.Nome, ag.ServicoId, s.Nome AS ServicoNome
                 FROM Avaliacoes a
                 INNER JOIN Usuarios u ON a.UsuarioId = u.Id
-                WHERE a.ProfissionalId = @id
-                ORDER BY a.Data DESC";
+                LEFT JOIN Agendamentos ag ON ag.Id = a.AgendamentoId
+                LEFT JOIN Servicos s ON s.Id = ag.ServicoId
+                WHERE a.ProfissionalId = @id AND (@servicoId IS NULL OR ag.ServicoId = @servicoId)
+                ORDER BY a.Data DESC, a.Id DESC";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@id", profissionalId);
+                cmd.Parameters.AddWithValue("@servicoId", servicoId.HasValue ? servicoId.Value : DBNull.Value);
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -50,6 +53,11 @@ namespace BD_TRAMPO
                     lista.Add(new Avaliacao
                     {
                         Id = (int)reader["Id"],
+                        AgendamentoId = (int)reader["AgendamentoId"],
+                        ProfissionalId = (int)reader["ProfissionalId"],
+                        UsuarioId = (int)reader["UsuarioId"],
+                        ServicoId = reader["ServicoId"] == DBNull.Value ? null : (int)reader["ServicoId"],
+                        ServicoNome = reader["ServicoNome"] == DBNull.Value ? null : reader["ServicoNome"].ToString(),
                         Nota = (int)reader["Nota"],
                         Comentario = reader["Comentario"]?.ToString(),
                         NomeUsuario = reader["Nome"].ToString(),

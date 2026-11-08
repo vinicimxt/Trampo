@@ -475,6 +475,9 @@ namespace BD_TRAMPO
                 string query = @"SELECT 
                     A.*,
                     C.UsuarioId,
+                    S.Nome AS Servico,
+                    UProf.Nome AS ProfissionalNome,
+                    UCli.Nome AS ClienteNome,
                     COALESCE(AE.Modalidade,S.Atendimento) AS Atendimento,
                     S.TipoPreco,
                     S.PrecoBase,
@@ -522,6 +525,10 @@ namespace BD_TRAMPO
                         ? (int)reader["UsuarioId"]
                         : 0,
                         ProfissionalId = (int)reader["ProfissionalId"],
+                        Servico = reader.GetString(reader.GetOrdinal("Servico")),
+                        NomeProfissional = reader.IsDBNull(reader.GetOrdinal("ProfissionalNome")) ? "" : reader.GetString(reader.GetOrdinal("ProfissionalNome")),
+                        NomeCliente = reader.IsDBNull(reader.GetOrdinal("ClienteNome")) ? "" : reader.GetString(reader.GetOrdinal("ClienteNome")),
+                        Atendimento = reader.GetString(reader.GetOrdinal("Atendimento")),
                         Data = (DateTime)reader["Data"],
                         Hora = (TimeSpan)reader["Hora"],
                         EnderecoAtendimento = reader.IsDBNull(reader.GetOrdinal("EnderecoFormatado")) ? null : EnderecoSql.Ler(reader,reader.GetString(reader.GetOrdinal("EnderecoFormatado"))),

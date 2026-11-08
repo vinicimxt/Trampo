@@ -7,12 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace BD_TRAMPO.Controllers.Api;
 
 [Route("api/v1/servicos")]
-public sealed class ServicosApiController(ServicoService service, AgendamentoService agenda) : ApiControllerBase
+public sealed class ServicosApiController(ServicoService service, AgendamentoService agenda,
+    AvaliacaoConsultaService avaliacoes) : ApiControllerBase
 {
     [HttpGet, AllowAnonymous]
     [ProducesResponseType(typeof(List<ServicoResponse>), 200)]
-    public ActionResult<List<ServicoResponse>> Listar([FromQuery] int pagina = 1, [FromQuery] int tamanho = 20, [FromQuery] string? busca = null, [FromQuery] string? atendimento = null) =>
-        Ok(service.ListarPublicos(pagina, tamanho, busca, atendimento).Select(ServicoResponse.De).ToList());
+    public ActionResult<List<ServicoResponse>> Listar([FromQuery] int pagina = 1, [FromQuery] int tamanho = 20,
+        [FromQuery] string? busca = null, [FromQuery] string? atendimento = null,
+        [FromQuery] int? categoriaId = null, [FromQuery] int? subcategoriaId = null,
+        [FromQuery] string? profissional = null) =>
+        Ok(service.ListarPublicos(pagina, tamanho, busca, atendimento, categoriaId, subcategoriaId, profissional)
+            .Select(ServicoResponse.De).ToList());
 
     [HttpGet("me"), Authorize(Roles = "profissional")]
     [ProducesResponseType(typeof(List<ServicoProprioResponse>), 200)]
@@ -26,6 +31,11 @@ public sealed class ServicosApiController(ServicoService service, AgendamentoSer
     [HttpGet("{id:int}"), AllowAnonymous]
     [ProducesResponseType(typeof(ServicoResponse), 200)]
     public ActionResult<ServicoResponse> Buscar(int id) => Ok(ServicoResponse.De(service.BuscarPublico(id)));
+
+    [HttpGet("{id:int}/avaliacoes"), AllowAnonymous]
+    [ProducesResponseType(typeof(AvaliacoesPublicasResponse), 200)]
+    public ActionResult<AvaliacoesPublicasResponse> Avaliacoes(int id) =>
+        Ok(AvaliacoesPublicasResponse.De(avaliacoes.Publicas(id)));
 
     [HttpGet("{id:int}/agenda")]
     [Authorize(Roles = "cliente,profissional")]

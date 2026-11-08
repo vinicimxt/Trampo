@@ -8,6 +8,8 @@ namespace BD_TRAMPO
         public int UsuarioId { get; set; }
 
         public int AgendamentoId { get; set; }
+        public int? ServicoId { get; set; }
+        public string? ServicoNome { get; set; }
         public int Nota { get; set; }
         public string Comentario { get; set; }
         public DateTime Data { get; set; }

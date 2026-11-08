@@ -1,6 +1,6 @@
 ﻿# API final — TRAMPO
 
-Inventário do código em 26/09/2026: **32 operações REST**, prefixo `/api/v1`. Fonte: [controllers](../Controllers/Api) e [Services](../Services). Swagger `/swagger/index.html` e OpenAPI `/openapi/v1.json` somente em Development.
+Inventário atual: **37 operações REST**, prefixo `/api/v1`. O inventário de 26/09/2026 registrava 32; versões posteriores acrescentaram a consulta de chamados, a lista de serviços próprios, categorias e as duas consultas de avaliações desta estabilização. Fonte: [controllers](../Controllers/Api) e [Services](../Services). Swagger `/swagger/index.html` e OpenAPI `/openapi/v1.json` somente em Development.
 
 ## Convenções
 
@@ -13,15 +13,19 @@ Erros comuns às rotas protegidas: 401 (token ausente/inválido), 403 (perfil/ow
 | Auth | POST | `/auth/login` | Público | Entrar e emitir JWT | 200, 400, 401, 429, 503 |
 | Auth | POST | `/auth/register` | Público | Criar cliente e autenticar | 201, 400, 409, 429, 503 |
 | Auth | GET | `/auth/me` | JWT, usuário válido | Identidade atual | 200, 401 |
-| Perfil | GET | `/perfil` | JWT cliente | Nome/email/telefone próprios | 200 |
-| Perfil | PUT | `/perfil` | JWT cliente | Editar nome/telefone; email não editável | 204, 400 |
-| Perfil | PUT | `/perfil/senha` | JWT cliente | Senha atual/nova/confirmação | 204, 400, 429 |
-| Serviços | GET | `/servicos` | Público | Catálogo ativo paginado | 200, 400 |
+| Perfil | GET | `/perfil` | JWT cliente/profissional | Nome/email/telefone próprios | 200 |
+| Perfil | PUT | `/perfil` | JWT cliente/profissional | Editar nome/telefone; email não editável | 204, 400 |
+| Perfil | PUT | `/perfil/senha` | JWT cliente/profissional | Senha atual/nova/confirmação | 204, 400, 429 |
+| Serviços | GET | `/servicos` | Público | Catálogo ativo paginado, com filtros opcionais | 200, 400 |
+| Serviços | GET | `/servicos/me` | JWT profissional | Serviços próprios, inclusive inativos | 200 |
 | Serviços | GET | `/servicos/{id}` | Público | Detalhe público | 200, 404 |
+| Avaliações | GET | `/servicos/{id}/avaliacoes` | Público | Avaliações do serviço ativo, média e total | 200, 404 |
+| Avaliações | GET | `/profissionais/me/avaliacoes` | JWT profissional | Avaliações recebidas pelo profissional do token | 200, 401, 403 |
 | Serviços | GET | `/servicos/{id}/agenda?data=AAAA-MM-DD` | JWT C/P | Horários disponíveis | 200, 400, 404 |
 | Serviços | POST | `/servicos` | JWT profissional | Criar serviço próprio | 201, 400, 409 |
 | Serviços | PUT | `/servicos/{id}` | JWT profissional proprietário | Editar serviço | 204, 400, 404, 409 |
 | Serviços | DELETE | `/servicos/{id}` | JWT profissional proprietário | Excluir ou desativar preservando histórico | 200, 404, 409 |
+| Categorias | GET | `/categorias` | Público | Categorias e subcategorias disponíveis | 200 |
 | Endereços | GET | `/enderecos/cep/{cep}` | JWT, sem restrição adicional de perfil | Consultar CEP | 200, 400, 404, 429, 502, 503, 504 |
 | Endereços | GET | `/enderecos/pesquisar?uf=&cidade=&logradouro=` | JWT, sem restrição adicional de perfil | Pesquisar CEP | 200, 400, 429, 502, 503, 504 |
 | Locais | GET | `/locais` | JWT profissional | Listar locais próprios | 200 |
@@ -39,13 +43,16 @@ Erros comuns às rotas protegidas: 401 (token ausente/inválido), 403 (perfil/ow
 | Agendamentos | POST | `/agendamentos/{id}/confirmar-conclusao` | JWT C/P contratante | Confirmar conclusão | 204, 404, 409 |
 | Avaliações | GET | `/agendamentos/{id}/avaliacao` | JWT C/P contratante | Elegibilidade/já avaliado | 200, 404 |
 | Avaliações | POST | `/agendamentos/{id}/avaliacao` | JWT C/P contratante | Avaliar atendimento concluído | 204, 400, 404, 409 |
-| Notificações | GET | `/notificacoes?pagina=1&tamanho=20` | JWT cliente | Listagem própria paginada | 200, 400 |
-| Notificações | POST | `/notificacoes/{id}/ler` | JWT cliente proprietário | Marcar como lida | 204, 404 |
-| Suporte | POST | `/suporte` | JWT cliente | Gravar chamado próprio | 204, 400, 429 |
+| Notificações | GET | `/notificacoes?pagina=1&tamanho=20` | JWT cliente/profissional | Listagem própria paginada | 200, 400 |
+| Notificações | POST | `/notificacoes/{id}/ler` | JWT cliente/profissional proprietário | Marcar como lida | 204, 404 |
+| Suporte | POST | `/suporte` | JWT cliente/profissional | Gravar chamado próprio | 204, 400, 429 |
+| Suporte | GET | `/suporte` | JWT cliente/profissional | Listar chamados do usuário autenticado | 200 |
 
 ## Contratos e limites
 
-Catálogo: `pagina`, `tamanho`, `busca`, `atendimento` (Online, Local, Domicilio). Pesquisa inclui nome do serviço, profissional, categoria e subcategoria; não há endpoints específicos de filtros avançados ou nota agregada. O detalhe público não expõe contato privado, link de reunião ou coordenadas.
+Catálogo: `pagina`, `tamanho`, `busca`, `atendimento` (Online, Local, Domicilio), `categoriaId`, `subcategoriaId` e `profissional`. Pesquisa textual inclui nome do serviço, profissional, categoria e subcategoria; os três filtros novos são aplicados no SQL antes da paginação. Lista e detalhe incluem `mediaAvaliacoes` (nula quando sem avaliação) e `totalAvaliacoes`, agregados do profissional, sem nomes ou comentários individuais. O detalhe público não expõe contato privado, link de reunião ou coordenadas.
+
+Agendamentos de participante incluem `servicoNome`, `profissionalNome`, `clienteNome` e `atendimento`, além dos campos existentes. O nome vem da associação persistida do pedido com o serviço, inclusive quando a oferta foi desativada. O contrato não apresenta preço atual como valor histórico contratado. `GET /suporte` deriva o proprietário do JWT; a tabela atual contém mensagem e status, mas não contém texto de resposta. As duas consultas de avaliações retornam `media` (nula quando vazia), `total` e `avaliacoes` com nota, comentário, data, nome público do cliente e nome do serviço quando disponível. A consulta pública exige serviço ativo e filtra avaliações desse serviço; a consulta profissional deriva o proprietário do JWT e inclui avaliações históricas de serviços inativos. Não há listagem REST de avaliações enviadas pelo cliente.
 
 Cadastro não aceita papel/ID escolhido pelo cliente. Perfil permite nome e telefone. Senha exige senha atual, nova e confirmação. Endereço estruturado recebe CEP, logradouro, número, complemento opcional, bairro, cidade e UF; coordenadas enviadas pelo cliente são recusadas. CEP aceita oito dígitos ou máscara; consulta indisponível permite preenchimento manual. Avaliação exige nota 1–5, comentário até 500 caracteres e apenas uma por agendamento.
 

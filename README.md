@@ -7,8 +7,8 @@ O **TRAMPO** foi desenvolvido como projeto acadêmico do **PIM IV do curso de An
 | Aplicação | Tecnologia | Público principal |
 | --- | --- | --- |
 | Web | ASP.NET Core MVC / C# | Cliente, Profissional e Administrador |
-| Android | Kotlin + XML | Cliente |
-| Desktop | Windows Forms / C# | Profissional |
+| Android | Kotlin + XML | Cliente e Profissional (com integrações pendentes) |
+| Desktop | Windows Forms / C# | Cliente e Profissional |
 
 As aplicações utilizam o mesmo backend e compartilham as regras de negócio e os dados do sistema.
 
@@ -58,7 +58,7 @@ Principais recursos:
 
 ### Android
 
-O aplicativo Android é direcionado principalmente ao **Cliente**.
+O código Android atual possui áreas **Cliente** e **Profissional**. As rotas de avaliações públicas/recebidas, notificações, suporte e perfil usadas pelas telas existentes estão disponíveis na API; consulte a [matriz de plataformas](docs/MATRIZ-WEB-API-MOBILE.md) e o [relatório final V2](docs/HOMOLOGACAO-FINAL-2026-V2.md).
 
 Principais recursos:
 
@@ -82,11 +82,16 @@ A comunicação ocorre através da API REST do TRAMPO.
 
 ### Desktop
 
-A aplicação Desktop foi desenvolvida em **Windows Forms** e é direcionada ao **Profissional**.
+A aplicação Desktop foi desenvolvida em **Windows Forms**. A área Profissional nasceu na Sprint 12; a Sprint 13 acrescentou o perfil Cliente.
 
 Principais recursos:
 
-- login profissional;
+- login com roteamento para painéis Cliente e Profissional;
+- busca de serviços por texto, categoria, subcategoria, modalidade e profissional;
+- consulta de detalhes e horários disponíveis;
+- criação, acompanhamento, cancelamento e confirmação de conclusão de agendamentos do Cliente;
+- avaliação de atendimentos elegíveis;
+- perfil, senha, notificações e suporte do Cliente;
 - consulta de agendamentos recebidos;
 - visualização do detalhe do atendimento;
 - confirmação de agendamento;
@@ -112,8 +117,8 @@ A solução utiliza uma arquitetura integrada.
 ```mermaid
 flowchart TB
     WEB[Web MVC<br/>Cliente / Profissional / Admin]
-    ANDROID[Android<br/>Cliente]
-    DESKTOP[Windows Forms<br/>Profissional]
+    ANDROID[Android<br/>Cliente / Profissional]
+    DESKTOP[Windows Forms<br/>Cliente / Profissional]
 
     API[API REST v1]
     SERVICES[Application Services]
@@ -489,7 +494,7 @@ https://github.com/vinicimxt/Trampo
 
 ### Android
 
-Aplicativo destinado principalmente ao Cliente.
+Aplicativo com áreas Cliente e Profissional; consulte a matriz para limites das integrações.
 
 Repositório:
 
@@ -499,7 +504,7 @@ https://github.com/vinicimxt/TRAMPO-APP
 
 ### Windows Forms
 
-Aplicação Desktop destinada ao Profissional.
+Aplicação Desktop para Cliente e Profissional. Admin permanece na Web.
 
 Repositório:
 
@@ -749,7 +754,7 @@ EVIDENCIAS-CHECKLIST.md
 SPRINT-12-DESKTOP.md
 ```
 
-Documentos principais: [requisitos do PIM](docs/PIM-REQUISITOS.md), [arquitetura](docs/ARQUITETURA-FINAL.md), [API](docs/API-FINAL.md), [banco de dados](docs/BANCO-DE-DADOS.md), [segurança](docs/SEGURANCA-FINAL.md), [testes](docs/TESTES-FINAIS.md) e [fechamento Desktop](docs/SPRINT-12-DESKTOP.md).
+Documentos principais: [requisitos do PIM](docs/PIM-REQUISITOS.md), [arquitetura](docs/ARQUITETURA-FINAL.md), [API](docs/API-FINAL.md), [banco de dados](docs/BANCO-DE-DADOS.md), [segurança](docs/SEGURANCA-FINAL.md), [testes](docs/TESTES-FINAIS.md), [Desktop Sprint 12](docs/SPRINT-12-DESKTOP.md) e [Desktop Sprint 13](docs/SPRINT-13-DESKTOP-MULTIPERFIL.md).
 
 Capturas revisadas: [Home Mobile](docs/evidencias/mobile-home.png), [Notificações](docs/evidencias/mobile-notificacoes.png) e [Suporte](docs/evidencias/mobile-suporte.png).
 
@@ -763,8 +768,8 @@ Entre elas:
 
 - não há publicação oficial na Play Store;
 - não há deploy Cloud público confirmado;
-- Desktop é destinado ao perfil Profissional;
-- Android é destinado principalmente ao Cliente;
+- Desktop atende Cliente e Profissional; Admin permanece na Web;
+- Android tem áreas Cliente e Profissional, com integrações REST pendentes descritas na matriz;
 - Administrador utiliza a aplicação Web;
 - não há pagamento online implementado;
 - não há chat em tempo real;

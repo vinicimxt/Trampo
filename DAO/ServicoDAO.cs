@@ -573,22 +573,32 @@ namespace BD_TRAMPO
             return desativado;
         }
 
-        public List<Servico> ListarPublicos(int pagina, int tamanho, string? busca = null, string? atendimento = null, int? id = null)
+        public List<Servico> ListarPublicos(int pagina, int tamanho, string? busca = null, string? atendimento = null,
+            int? id = null, int? categoriaId = null, int? subcategoriaId = null, string? profissional = null)
         {
             using var conn = conexao.Conectar();
             using var cmd = new SqlCommand(@"SELECT s.Id,s.ProfissionalId,s.SubcategoriaId,s.Nome,s.Descricao,
-                s.Atendimento,s.TipoPreco,s.PrecoBase,s.Ativo,u.Nome,c.Nome,sc.Nome
+                s.Atendimento,s.TipoPreco,s.PrecoBase,s.Ativo,u.Nome,c.Nome,sc.Nome,
+                av.Media,av.Total
                 FROM Servicos s JOIN Profissionais p ON p.Id=s.ProfissionalId
                 JOIN Usuarios u ON u.Id=p.UsuarioId JOIN Subcategorias sc ON sc.Id=s.SubcategoriaId
                 JOIN Categorias c ON c.Id=sc.CategoriaId
+                OUTER APPLY (SELECT AVG(CAST(Nota AS float)) AS Media, COUNT(*) AS Total
+                    FROM Avaliacoes WHERE ProfissionalId=s.ProfissionalId) av
                 WHERE s.Ativo=1 AND (@Id IS NULL OR s.Id=@Id)
                 AND (@Modalidade IS NULL OR s.Atendimento=@Modalidade)
+                AND (@CategoriaId IS NULL OR c.Id=@CategoriaId)
+                AND (@SubcategoriaId IS NULL OR sc.Id=@SubcategoriaId)
+                AND (@Profissional IS NULL OR CHARINDEX(@Profissional,u.Nome)>0)
                 AND (@Busca IS NULL OR CHARINDEX(@Busca,s.Nome)>0 OR CHARINDEX(@Busca,u.Nome)>0
                     OR CHARINDEX(@Busca,c.Nome)>0 OR CHARINDEX(@Busca,sc.Nome)>0)
                 ORDER BY s.Id OFFSET @Inicio ROWS FETCH NEXT @Tamanho ROWS ONLY", conn);
             cmd.Parameters.AddWithValue("@Id", (object?)id ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Busca", (object?)busca ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Modalidade", (object?)atendimento ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CategoriaId", (object?)categoriaId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SubcategoriaId", (object?)subcategoriaId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Profissional", (object?)profissional ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Inicio", (pagina - 1) * tamanho);
             cmd.Parameters.AddWithValue("@Tamanho", tamanho);
             using var reader = cmd.ExecuteReader();
@@ -598,7 +608,8 @@ namespace BD_TRAMPO
                 Nome=reader.GetString(3), Descricao=reader.IsDBNull(4) ? "" : reader.GetString(4),
                 Atendimento=reader.GetString(5), TipoPreco=reader.GetString(6),
                 PrecoBase=reader.IsDBNull(7) ? null : reader.GetDecimal(7), Ativo=reader.GetBoolean(8),
-                NomeProfissional=reader.GetString(9), Categoria=reader.GetString(10), Subcategoria=reader.GetString(11)
+                NomeProfissional=reader.GetString(9), Categoria=reader.GetString(10), Subcategoria=reader.GetString(11),
+                MediaAvaliacoes=reader.IsDBNull(12) ? null : reader.GetDouble(12), TotalAvaliacoes=reader.GetInt32(13)
             });
             return lista;
         }

@@ -15,21 +15,25 @@ public sealed record RecursoCriadoResponse(int Id);
 public sealed record RemocaoResponse(int Id, string Resultado);
 public sealed record AgendaResponse(int ServicoId, DateOnly Data, IReadOnlyList<TimeSpan> Horarios);
 public sealed record ServicoResponse(int Id, int ProfissionalId, int SubcategoriaId,
-    string Nome, string Descricao, string Atendimento, string TipoPreco, decimal? PrecoBase, bool Ativo, string? NomeProfissional, string? Categoria, string? Subcategoria)
+    string Nome, string Descricao, string Atendimento, string TipoPreco, decimal? PrecoBase, bool Ativo,
+    string? NomeProfissional, string? Categoria, string? Subcategoria, double? MediaAvaliacoes, int TotalAvaliacoes)
 {
     // Link de reunião e endereço não fazem parte do catálogo público.
     public static ServicoResponse De(Servico s) => new(s.Id, s.ProfissionalId, s.SubcategoriaId,
-        s.Nome, s.Descricao, s.Atendimento, s.TipoPreco, s.PrecoBase, s.Ativo, s.NomeProfissional, s.Categoria, s.Subcategoria);
+        s.Nome, s.Descricao, s.Atendimento, s.TipoPreco, s.PrecoBase, s.Ativo, s.NomeProfissional,
+        s.Categoria, s.Subcategoria, s.MediaAvaliacoes, s.TotalAvaliacoes);
 }
 
 public sealed record AgendamentoResponse(int Id, int ServicoId, int ProfissionalId,
     DateOnly Data, TimeSpan Hora, string Status, string Descricao, string? EnderecoCliente,
-    decimal? ValorFinal, string OrigemValorFinal, EnderecoAtendimentoResponse? EnderecoAtendimento)
+    decimal? ValorFinal, string OrigemValorFinal, EnderecoAtendimentoResponse? EnderecoAtendimento,
+    string? ServicoNome, string? ProfissionalNome, string? ClienteNome, string? Atendimento)
 {
     // Somente valor efetivamente persistido. Não expõe preço atual como preço contratado.
     public static AgendamentoResponse De(Agendamento a) => new(a.Id, a.ServicoId, a.ProfissionalId,
         DateOnly.FromDateTime(a.Data), a.Hora, a.StatusAtual(), a.Descricao, a.EnderecoCliente,
-        a.ValorFinal, "finalizacao_sem_snapshot_da_oferta", EnderecoAtendimentoResponse.De(a.EnderecoAtendimento));
+        a.ValorFinal, "finalizacao_sem_snapshot_da_oferta", EnderecoAtendimentoResponse.De(a.EnderecoAtendimento),
+        a.Servico, a.NomeProfissional, a.NomeCliente, a.Atendimento);
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
