@@ -44,7 +44,10 @@ namespace BD_TRAMPO.Controllers
                 string.IsNullOrWhiteSpace(senha) || senha.Length < 8 ||
                 (telefone?.Length ?? 0) > 20 || (documento?.Length ?? 0) > 20 ||
                 (contato?.Length ?? 0) > 255)
-                return BadRequest("Confira os dados. A senha deve ter ao menos 8 caracteres.");
+            {
+                TempData["Erro"] = "Confira os dados. A senha deve ter ao menos 8 caracteres.";
+                return RedirectToAction("Cadastro");
+            }
             UsuarioDAO usuarioDAO = new UsuarioDAO();
 
             if (usuarioDAO.EmailExiste(email))
@@ -56,7 +59,10 @@ namespace BD_TRAMPO.Controllers
 
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha) ||
                 email.Length > 100 || senha.Length > 1024)
-                return BadRequest("Email ou senha inválidos.");
+            {
+                TempData["Erro"] = "Email ou senha inválidos.";
+                return RedirectToAction("Cadastro");
+            }
             string senhaHash = Seguranca.GerarHash(senha);
 
             // segurança
@@ -141,7 +147,10 @@ namespace BD_TRAMPO.Controllers
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha) ||
                 email.Length > 100 || senha.Length > 1024)
-                return BadRequest("Email ou senha inválidos.");
+            {
+                TempData["Erro"] = "Email ou senha inválidos.";
+                return RedirectToAction("Login");
+            }
 
 
             UsuarioDAO dao = new UsuarioDAO();
@@ -292,7 +301,10 @@ namespace BD_TRAMPO.Controllers
 
             try {
                 BD_TRAMPO.Services.ContaService.ValidarPerfil(nome, telefone);
-                if ((contatoPublico?.Length ?? 0) > 255) return BadRequest("Contato muito longo.");
+                if ((contatoPublico?.Length ?? 0) > 255) {
+                    TempData["Erro"] = "Contato muito longo.";
+                    return RedirectToAction("Perfil");
+                }
                 var contexto = new BD_TRAMPO.Contracts.UsuarioContexto(usuarioId, tipo);
                 if (!string.IsNullOrWhiteSpace(novaSenha))
                     contas.ValidarSenha(usuarioId, senhaAtual, novaSenha, confirmarSenha);

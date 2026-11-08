@@ -32,16 +32,18 @@ public class AgendamentoController(AgendamentoService service) : BaseController
     });
 
     [HttpPost]
-    public IActionResult Salvar(CriarAgendamentoRequest dados) => ExecutarAplicacao(() =>
+    public IActionResult Salvar(CriarAgendamentoRequest dados) => ExecutarPost(() =>
     {
-        if (!ModelState.IsValid) return BadRequest("Dados do agendamento inválidos.");
+        if (!ModelState.IsValid) {
+            ModelState.AddModelError("", "Confira os dados do agendamento.");
+            return Novo(dados.ServicoId, dados.Data);
+        }
         int id = service.Criar(Usuario, dados);
         TempData["Sucesso"] = $"Pedido #{id} enviado para confirmação.";
         return RedirectToAction("Meus");
-    });
+    }, "Novo", valoresRota: new { servicoId = dados.ServicoId, data = dados.Data });
 
     public IActionResult Meus(string? sucesso) => ExecutarAplicacao(() => {
-        ViewBag.Sucesso = TempData["Sucesso"];
         return View(service.Meus(Usuario));
     });
 
@@ -49,34 +51,46 @@ public class AgendamentoController(AgendamentoService service) : BaseController
     public IActionResult Recebidos() => ExecutarAplicacao(() => View(service.Recebidos(Usuario)));
 
     [HttpPost]
-    public IActionResult Confirmar(int id) => ExecutarAplicacao(() => {
-        service.Confirmar(Usuario, id); return RedirectToAction("Recebidos");
-    });
+    public IActionResult Confirmar(int id) => ExecutarPost(() => {
+        service.Confirmar(Usuario, id);
+        TempData["Sucesso"] = "Agendamento confirmado com sucesso.";
+        return RedirectToAction("Recebidos");
+    }, "Recebidos");
 
     [HttpPost]
-    public IActionResult Recusar(int id) => ExecutarAplicacao(() => {
-        service.Recusar(Usuario, id); return RedirectToAction("Recebidos");
-    });
+    public IActionResult Recusar(int id) => ExecutarPost(() => {
+        service.Recusar(Usuario, id);
+        TempData["Sucesso"] = "Agendamento recusado.";
+        return RedirectToAction("Recebidos");
+    }, "Recebidos");
 
     [HttpPost]
-    public IActionResult Finalizar(int id, decimal valorFinal) => ExecutarAplicacao(() => {
-        if (!ModelState.IsValid) return BadRequest("Valor inválido.");
-        service.Finalizar(Usuario, id, valorFinal); return RedirectToAction("Recebidos");
-    });
+    public IActionResult Finalizar(int id, decimal valorFinal) => ExecutarPost(() => {
+        if (!ModelState.IsValid) {
+            TempData["Erro"] = "Informe um valor válido para finalizar o atendimento.";
+            return RedirectToAction("Recebidos");
+        }
+        service.Finalizar(Usuario, id, valorFinal);
+        TempData["Sucesso"] = "Atendimento finalizado com sucesso.";
+        return RedirectToAction("Recebidos");
+    }, "Recebidos");
 
     [HttpPost]
     public IActionResult FinalizarProfissional(int id) => Finalizar(id, 0);
 
     [HttpPost]
-    public IActionResult ConfirmarCliente(int id) => ExecutarAplicacao(() => {
-        service.ConfirmarConclusao(Usuario, id); return RedirectToAction("Meus");
-    });
+    public IActionResult ConfirmarCliente(int id) => ExecutarPost(() => {
+        service.ConfirmarConclusao(Usuario, id);
+        TempData["Sucesso"] = "Conclusão confirmada com sucesso.";
+        return RedirectToAction("Meus");
+    }, "Meus");
 
     [HttpPost]
-    public IActionResult Cancelar(int id) => ExecutarAplicacao(() => {
+    public IActionResult Cancelar(int id) => ExecutarPost(() => {
         service.Cancelar(Usuario, id);
+        TempData["Sucesso"] = "Agendamento cancelado.";
         return RedirectToAction(Usuario.Tipo == "profissional" ? "Recebidos" : "Meus");
-    });
+    }, Usuario.Tipo == "profissional" ? "Recebidos" : "Meus");
 
     public IActionResult DetalhesModal(int id) => ExecutarAplicacao(() => {
         var ag = service.BuscarParticipante(Usuario, id);

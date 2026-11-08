@@ -24,12 +24,15 @@ public class ServicoController(ServicoService service) : BaseController
     public JsonResult GetSubcategorias(int categoriaId) => Json(service.Subcategorias(categoriaId));
 
     [HttpPost]
-    public IActionResult Salvar(SalvarServicoRequest dados) => ExecutarAplicacao(() => {
-        if (!ModelState.IsValid) return BadRequest("Dados do serviço inválidos.");
+    public IActionResult Salvar(SalvarServicoRequest dados) => ExecutarPost(() => {
+        if (!ModelState.IsValid) {
+            ModelState.AddModelError("", "Confira os campos do serviço.");
+            return Criar();
+        }
         service.Criar(Usuario, dados);
         TempData["Sucesso"] = "Serviço criado com sucesso ✔";
         return RedirectToAction("MeusServicos", "Profissional");
-    });
+    }, "Criar");
 
     public IActionResult Editar(int id) => ExecutarAplicacao(() => {
         service.BuscarProprio(Usuario, id);
@@ -37,7 +40,7 @@ public class ServicoController(ServicoService service) : BaseController
     });
 
     [HttpPost]
-    public IActionResult Editar(SalvarServicoRequest dados) => ExecutarAplicacao(() => {
+    public IActionResult Editar(SalvarServicoRequest dados) => ExecutarPost(() => {
         if (!ModelState.IsValid) {
             TempData["Erro"] = "Não foi possível salvar. Atualize a página e confira os campos do serviço.";
             return RedirectToAction("MeusServicos", "Profissional");
@@ -49,21 +52,21 @@ public class ServicoController(ServicoService service) : BaseController
         }
         TempData["Sucesso"] = "Serviço atualizado com sucesso ✏️";
         return RedirectToAction("MeusServicos", "Profissional");
-    });
+    }, "MeusServicos", "Profissional");
 
     [HttpPost]
-    public IActionResult Excluir(int id) => ExecutarAplicacao(() => {
+    public IActionResult Excluir(int id) => ExecutarPost(() => {
         service.Remover(Usuario, id);
         TempData["Sucesso"] = "Serviço removido da oferta. O histórico existente foi preservado.";
         return RedirectToAction("MeusServicos", "Profissional");
-    });
+    }, "MeusServicos", "Profissional");
 
     [HttpPost]
-    public IActionResult Desativar(int id) => ExecutarAplicacao(() => {
+    public IActionResult Desativar(int id) => ExecutarPost(() => {
         service.Desativar(Usuario, id);
         TempData["Sucesso"] = "Serviço removido da oferta. O histórico existente foi preservado.";
         return RedirectToAction("MeusServicos", "Profissional");
-    });
+    }, "MeusServicos", "Profissional");
 
     [AllowAnonymous]
     public JsonResult Subcategorias(int categoriaId) => GetSubcategorias(categoriaId);

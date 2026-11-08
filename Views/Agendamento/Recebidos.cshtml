@@ -9,28 +9,6 @@
     int usuarioId = int.Parse(Context.Session.GetString("UsuarioId"));
 }
 
-@if (TempData["Sucesso"] != null)
-{
-    <div class="alert-sucesso">
-        <span aria-hidden="true" class="material-symbols-rounded">check_circle</span>
-        @TempData["Sucesso"]
-    </div>
-}
-@if (TempData["Erro"] != null)
-{
-    <div class="alert-erro">
-        <span aria-hidden="true" class="material-symbols-rounded">error</span>
-        @TempData["Erro"]
-    </div>
-}
-@if (TempData["Info"] != null)
-{
-    <div class="alert-info">
-        <span aria-hidden="true" class="material-symbols-rounded">info</span>
-        @TempData["Info"]
-    </div>
-}
-
 @functions {
     string GetStatusClass(string status)
     {

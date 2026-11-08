@@ -37,6 +37,7 @@
             </div>
 
             <form asp-antiforgery="true" method="post" action="/Servico/Salvar" id="formServico" class="form-body">
+                <div asp-validation-summary="All" class="text-danger" role="alert" tabindex="-1" data-validation-summary></div>
 
                 <!-- SEÇÃO: Classificação -->
                 <div class="form-section-label">Classificação</div>

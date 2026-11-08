@@ -1143,11 +1143,14 @@ DROPDROWN NOTIFICAÇÕES
     flex-direction: column;
     gap: 12px;
     align-items: center;
+    width: min(420px, calc(100vw - 24px));
+    pointer-events: none;
 }
 
 .toast {
-    min-width: 280px;
-    max-width: 420px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     padding: 14px 18px;
     border-radius: 14px;
     display: flex;
@@ -1159,6 +1162,8 @@ DROPDROWN NOTIFICAÇÕES
     animation: toastIn 0.4s ease;
     position: relative;
     overflow: hidden;
+    pointer-events: auto;
+    overflow-wrap: anywhere;
 }
 
 .toast-icon {
@@ -1173,6 +1178,10 @@ DROPDROWN NOTIFICAÇÕES
     cursor: pointer;
     font-size: 16px;
     opacity: 0.6;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    padding: 4px 8px;
 }
 
 .toast-close:hover {
@@ -1188,7 +1197,7 @@ DROPDROWN NOTIFICAÇÕES
     width: 100%;
     background: currentColor;
     opacity: 0.3;
-    animation: toastTimer 3.5s linear forwards;
+    animation: toastTimer var(--toast-duration, 6s) linear forwards;
 }
 
 .toast-success {
@@ -1208,9 +1217,23 @@ DROPDROWN NOTIFICAÇÕES
     color: #1e3a8a;
     border-left: 5px solid #3b82f6;
 }
+.toast-warning {
+    background: #fffbeb;
+    color: #78350f;
+    border-left: 5px solid #d97706;
+}
 
 .toast-hide {
     animation: toastOut .3s ease forwards;
+}
+
+[data-validation-summary].validation-summary-errors {
+    margin: 0 0 1rem;
+    padding: .75rem 1rem;
+    border-left: 4px solid #dc2626;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #7f1d1d;
 }
 
 /* ===================================================

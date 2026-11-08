@@ -72,13 +72,6 @@
 <div class="meus-agend-page">
     <div class="meus-agend-page">
 
-        @if (TempData["Erro"] != null)
-        {
-            <div class="alert-erro">
-                @TempData["Erro"]
-            </div>
-        }
-
         <!-- resto da página -->
         <!-- HERO -->
         <div class="meus-agend-hero">
@@ -537,9 +530,8 @@
                            CONFIRMAR CONCLUSÃO
                         ----------------------------------------------- */
                         function confirmarConclusao(id) {
-                            if (confirm('Confirmar que o serviço foi concluído?')) {
-                                enviarPost('/Agendamento/ConfirmarCliente/' + id);
-                            }
+                            confirmarPost('/Agendamento/ConfirmarCliente/' + id,
+                                'Confirmar conclusão?', 'Confirme apenas se o atendimento foi concluído.');
                         }
 
                         /* -----------------------------------------------

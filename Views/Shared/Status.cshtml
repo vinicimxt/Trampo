@@ -1,0 +1,15 @@
+@{
+    var status = Context.Response.StatusCode;
+    var titulo = status switch {
+        403 => "Acesso não permitido",
+        404 => "Página não encontrada",
+        _ => "Não foi possível concluir a solicitação"
+    };
+    ViewData["Title"] = titulo;
+}
+<section class="container-ap" style="max-width: 700px; padding: 5rem 1rem; text-align: center;">
+    <span class="material-symbols-rounded" aria-hidden="true" style="font-size: 3rem; color: #b45309;">info</span>
+    <h1>@titulo</h1>
+    <p role="alert">@(ViewData["StatusMessage"] ?? "Tente novamente ou volte para a página inicial.")</p>
+    <a href="/" class="btn btn-primary">Voltar ao início</a>
+</section>

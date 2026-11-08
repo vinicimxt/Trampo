@@ -47,6 +47,8 @@ if (!app.Environment.IsDevelopment())
     app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api"), branch => branch.UseExceptionHandler("/Home/Error"));
     app.UseHsts();
 }
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api"),
+    branch => branch.UseStatusCodePagesWithReExecute("/Home/Status", "?code={0}"));
 
 app.UseHttpsRedirection();
 

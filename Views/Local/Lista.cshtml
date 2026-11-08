@@ -139,6 +139,7 @@
                     </div>
 
                     <form asp-antiforgery="true" method="post" id="formLocal" action="/Local/Salvar">
+                        <div asp-validation-summary="All" class="text-danger" role="alert" tabindex="-1" data-validation-summary></div>
                         <input type="hidden" name="id" id="localId" value="0" />
 
                         <div class="drawer-body">

@@ -148,22 +148,31 @@ function showToast(message, type = "success") {
     const icons = {
         success: "✅",
         error: "⚠️",
-        info: "ℹ️"
+        info: "ℹ️",
+        warning: "⚠️"
     };
 
     const toast = document.createElement("div");
-    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("role", type === "error" || type === "warning" ? "alert" : "status");
     toast.className = `toast toast-${type}`;
+    toast.style.setProperty("--toast-duration", type === "error" || type === "warning" ? "12s" : "6s");
 
+    const titulo = type === "error" ? "Não foi possível concluir" : type === "warning" ? "Atenção" : type === "success" ? "Operação concluída" : "Informação";
     for (const [classe, texto] of [
         ["toast-icon", icons[type] || "ℹ️"],
-        ["toast-text", message],
-        ["toast-close", "×"]]) {
+        ["toast-text", message]]) {
         const span = document.createElement("span");
         span.className = classe;
         span.textContent = texto;
         toast.appendChild(span);
     }
+    toast.querySelector(".toast-text").prepend(Object.assign(document.createElement("strong"), { textContent: titulo + ": " }));
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "toast-close";
+    close.setAttribute("aria-label", "Fechar mensagem");
+    close.textContent = "×";
+    toast.appendChild(close);
     container.appendChild(toast);
 
     // fechar manual
@@ -174,10 +183,12 @@ function showToast(message, type = "success") {
     // auto remove
     setTimeout(() => {
         removeToast(toast);
-    }, 3500);
+    }, type === "error" || type === "warning" ? 12000 : 6000);
 }
 
 function removeToast(toast) {
+    if (!toast.isConnected || toast.dataset.closing) return;
+    toast.dataset.closing = "true";
     toast.style.animation = "toastOut 0.3s ease forwards";
     setTimeout(() => toast.remove(), 300);
 }
@@ -185,9 +196,13 @@ function removeToast(toast) {
 document.addEventListener("DOMContentLoaded", () => {
 
     const body = document.body;
+    const resumo = document.querySelector('[data-validation-summary].validation-summary-errors');
+    if (resumo) resumo.focus();
 
     const sucesso = body.dataset.toastSucesso;
     const erro = body.dataset.toastErro;
+    const info = body.dataset.toastInfo;
+    const aviso = body.dataset.toastAviso;
 
     if (sucesso) {
         showToast(sucesso, "success");
@@ -196,6 +211,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (erro) {
         showToast(erro, "error");
     }
+    if (info) showToast(info, "info");
+    if (aviso) showToast(aviso, "warning");
 
 });
 
@@ -324,6 +341,19 @@ function enviarPost(url) {
     form.appendChild(input);
     document.body.appendChild(form);
     form.submit();
+}
+
+function confirmarPost(url, titulo, texto) {
+    const modal = document.getElementById("modalConfirmacao");
+    if (!modal) return;
+    document.getElementById("tituloConfirmacao").textContent = titulo;
+    document.getElementById("textoConfirmacao").textContent = texto;
+    const botao = document.getElementById("executarConfirmacao");
+    botao.onclick = () => {
+        botao.disabled = true;
+        enviarPost(url);
+    };
+    modal.classList.add("open");
 }
 
 document.addEventListener("click", function (event) {

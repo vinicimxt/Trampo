@@ -110,7 +110,9 @@ namespace BD_TRAMPO.Controllers
             //  valida segurança
             if (profissionalId == 0)
             {
-                return Content("Erro: profissional não encontrado.");
+                Response.StatusCode = 403;
+                ViewData["StatusMessage"] = "Você não possui permissão para acessar esta página.";
+                return View("~/Views/Shared/Status.cshtml");
             }
 
             // só os serviços dele
@@ -142,7 +144,9 @@ namespace BD_TRAMPO.Controllers
 
             if (profissional == null)
             {
-                return Content("Profissional não encontrado.");
+                Response.StatusCode = 404;
+                ViewData["StatusMessage"] = "Profissional não encontrado.";
+                return View("~/Views/Shared/Status.cshtml");
             }
 
             ViewBag.Servicos = servicos;

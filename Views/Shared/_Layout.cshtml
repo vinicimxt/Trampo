@@ -28,7 +28,7 @@
 
 </head>
 
-<body data-toast-sucesso="@TempData["Sucesso"]" data-toast-erro="@TempData["Erro"]">
+<body data-toast-sucesso="@(TempData["Sucesso"]?.ToString() == "cadastro_ok" ? "Conta criada! Agora cadastre seu primeiro serviço." : (TempData["Sucesso"] ?? TempData["SuccessMessage"]))" data-toast-erro="@(TempData["Erro"] ?? TempData["ErrorMessage"])" data-toast-info="@(TempData["Info"] ?? TempData["InfoMessage"])" data-toast-aviso="@(TempData["Aviso"] ?? TempData["WarningMessage"])" >
 
     
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -228,6 +228,17 @@
             </div>
 
             <div class="modal-body"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalConfirmacao">
+        <div class="modal-box">
+            <h3 id="tituloConfirmacao">Confirmar ação?</h3>
+            <p id="textoConfirmacao"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="fecharModal('modalConfirmacao')">Voltar</button>
+                <button type="button" id="executarConfirmacao" class="btn-modal-confirm">Confirmar</button>
+            </div>
         </div>
     </div>
 

@@ -15,10 +15,13 @@ public class AvaliacaoController(AgendamentoService service) : BaseController
     });
 
     [HttpPost]
-    public IActionResult Salvar(AvaliarAgendamentoRequest dados) => ExecutarAplicacao(() => {
-        if (!ModelState.IsValid) return BadRequest("Avaliação inválida.");
+    public IActionResult Salvar(AvaliarAgendamentoRequest dados) => ExecutarPost(() => {
+        if (!ModelState.IsValid) {
+            TempData["Erro"] = "Confira os dados da avaliação.";
+            return RedirectToAction("Meus", "Agendamento");
+        }
         service.Avaliar(Usuario, dados);
         TempData["Sucesso"] = "Obrigado pela avaliação.⭐";
         return RedirectToAction("Meus", "Agendamento");
-    });
+    }, "Meus", "Agendamento");
 }

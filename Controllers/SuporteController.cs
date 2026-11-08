@@ -22,7 +22,7 @@ namespace BD_TRAMPO.Controllers
 
             if (string.IsNullOrEmpty(usuarioIdStr))
             {
-                TempData["Erro"] = "VocÃª precisa estar logado para enviar uma mensagem de suporte.";
+                TempData["Erro"] = "Você precisa estar logado para enviar uma mensagem de suporte.";
                 return RedirectToAction("Login", "Usuario");
             }
 
@@ -31,9 +31,17 @@ namespace BD_TRAMPO.Controllers
             try {
                 service.Enviar(new BD_TRAMPO.Contracts.UsuarioContexto(usuarioId,
                     HttpContext.Session.GetString("UsuarioTipo") ?? ""), tipo, assunto, mensagem);
-            } catch (BD_TRAMPO.Contracts.FalhaOperacao ex) { return BadRequest(ex.Message); }
+            } catch (BD_TRAMPO.Contracts.FalhaOperacao ex) {
+                TempData["Erro"] = ex.Message;
+                return RedirectToAction("Index");
+            } catch (Exception ex) {
+                HttpContext.RequestServices.GetRequiredService<ILogger<SuporteController>>().LogError(ex,
+                    "Erro ao enviar suporte; requisição {RequestId}", HttpContext.TraceIdentifier);
+                TempData["Erro"] = "Ocorreu um erro inesperado. Tente novamente.";
+                return RedirectToAction("Index");
+            }
 
-            TempData["Sucesso"] = "Mensagem enviada com sucesso! Nossa equipe jÃ¡ recebeu seu chamado.";
+            TempData["Sucesso"] = "Mensagem enviada com sucesso! Nossa equipe já recebeu seu chamado.";
 
             return RedirectToAction("Index");
         }

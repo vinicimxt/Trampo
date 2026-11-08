@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BD_TRAMPO.DAO;
 using Microsoft.AspNetCore.Authorization;
+using BD_TRAMPO.Contracts;
 
 
 namespace BD_TRAMPO.Controllers
@@ -59,17 +60,46 @@ namespace BD_TRAMPO.Controllers
         protected IActionResult ExecutarAplicacao(Func<IActionResult> operacao)
         {
             try { return operacao(); }
-            catch (BD_TRAMPO.Contracts.FalhaOperacao ex)
+            catch (FalhaOperacao ex)
             {
-                int status = ex.Tipo switch {
-                    BD_TRAMPO.Contracts.TipoFalha.Validacao => 400,
-                    BD_TRAMPO.Contracts.TipoFalha.NaoAutenticado => 401,
-                    BD_TRAMPO.Contracts.TipoFalha.SemPermissao => 403,
-                    BD_TRAMPO.Contracts.TipoFalha.NaoEncontrado => 404,
-                    _ => 409
-                };
-                return StatusCode(status, ex.Message);
+                return ExibirFalha(ex);
             }
+        }
+
+        protected IActionResult ExecutarPost(Func<IActionResult> operacao, string destino, string? controller = null, object? valoresRota = null)
+        {
+            try { return operacao(); }
+            catch (FalhaOperacao ex) when (ex.Tipo is TipoFalha.Validacao or TipoFalha.Conflito)
+            {
+                TempData["Erro"] = ex.Message;
+                return RedirectToAction(destino, controller, valoresRota);
+            }
+            catch (FalhaOperacao ex) { return ExibirFalha(ex); }
+            catch (Exception ex)
+            {
+                HttpContext.RequestServices.GetRequiredService<ILogger<BaseController>>()
+                    .LogError(ex, "Erro inesperado em {Controller}/{Action}; requisição {RequestId}",
+                        RouteData.Values["controller"], RouteData.Values["action"], HttpContext.TraceIdentifier);
+                TempData["Erro"] = "Ocorreu um erro inesperado. Tente novamente.";
+                return RedirectToAction(destino, controller, valoresRota);
+            }
+        }
+
+        protected IActionResult ExibirFalha(FalhaOperacao ex)
+        {
+            if (ex.Tipo == TipoFalha.NaoAutenticado) return RedirectToAction("Login", "Usuario");
+            Response.StatusCode = ex.Tipo switch {
+                TipoFalha.SemPermissao => 403,
+                TipoFalha.NaoEncontrado => 404,
+                TipoFalha.Conflito => 409,
+                _ => 400
+            };
+            ViewData["StatusMessage"] = ex.Tipo switch {
+                TipoFalha.SemPermissao => "Você não possui permissão para acessar esta página.",
+                TipoFalha.NaoEncontrado => "Página ou recurso não encontrado.",
+                _ => ex.Message
+            };
+            return View("~/Views/Shared/Status.cshtml");
         }
         public override void OnActionExecuting(
                    Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)

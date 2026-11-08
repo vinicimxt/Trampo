@@ -3,31 +3,6 @@
     <link rel="stylesheet" href="~/css/agendamento.css" asp-append-version="true" />
 }
 
-@if (TempData["Sucesso"] != null)
-{
-    <div class="toast-sucesso" id="toastSucesso">
-        @TempData["Sucesso"]
-    </div>
-
-    <div class="alert-sucesso">
-        @TempData["Sucesso"]
-    </div>
-}
-
-@if (TempData["Erro"] != null)
-{
-    <div class="alert-erro">
-        @TempData["Erro"]
-    </div>
-}
-
-@if (TempData["Info"] != null)
-{
-    <div class="alert-info">
-        @TempData["Info"]
-    </div>
-}
-
 <div class="agendamento-page" id="pagina" data-atendimento="@ViewBag.Atendimento">
 
     <!-- =============================================
@@ -45,6 +20,7 @@
          LAYOUT PRINCIPAL
     ============================================= -->
     <form asp-antiforgery="true" method="post" action="/Agendamento/Salvar" id="formAgendamento">
+        <div asp-validation-summary="All" class="text-danger" role="alert" tabindex="-1" data-validation-summary></div>
 
         <input type="hidden" name="servicoId" value="@ViewBag.ServicoId" />
         <input type="hidden" name="hora" id="horaSelecionada" />

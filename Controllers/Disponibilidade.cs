@@ -36,7 +36,10 @@ namespace BD_TRAMPO.Controllers
             if (diaSemana < 0 || diaSemana > 6 || horaInicio < TimeSpan.Zero ||
                 horaFim < TimeSpan.Zero || horaInicio >= TimeSpan.FromDays(1) ||
                 horaFim >= TimeSpan.FromDays(1) || horaInicio == horaFim)
-                return BadRequest("Disponibilidade inválida.");
+            {
+                TempData["Erro"] = "Disponibilidade inválida. Confira dia e horários.";
+                return RedirectToAction("MeusServicos", "Profissional");
+            }
             int usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId"));
 
             ProfissionalDAO profDAO = new ProfissionalDAO();
@@ -44,13 +47,18 @@ namespace BD_TRAMPO.Controllers
 
             DisponibilidadeDAO dao = new DisponibilidadeDAO();
 
-            dao.Inserir(new Disponibilidade
+            try { dao.Inserir(new Disponibilidade
             {
                 ProfissionalId = profissionalId, ServicoId = servicoId,
                 DiaSemana = diaSemana,
                 HoraInicio = horaInicio,
                 HoraFim = horaFim
-            });
+            }); }
+            catch (BD_TRAMPO.Contracts.FalhaOperacao ex) when (ex.Tipo is BD_TRAMPO.Contracts.TipoFalha.Validacao or BD_TRAMPO.Contracts.TipoFalha.Conflito)
+            {
+                TempData["Erro"] = ex.Message;
+                return RedirectToAction("MeusServicos", "Profissional");
+            }
 
             TempData["Sucesso"] = "Disponibilidade cadastrada!";
             return RedirectToAction("Index");
@@ -60,7 +68,10 @@ namespace BD_TRAMPO.Controllers
         public IActionResult Desativar(int id)
         {
             DisponibilidadeDAO dao = new DisponibilidadeDAO();
-            if (!dao.Desativar(id, ProfissionalAtualId)) return NotFound();
+            if (!dao.Desativar(id, ProfissionalAtualId)) {
+                TempData["Erro"] = "Horário não encontrado ou já removido.";
+                return RedirectToAction("MeusServicos", "Profissional");
+            }
 
             TempData["Sucesso"] = "Horário removido!";
             return RedirectToAction("Index");
