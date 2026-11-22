@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <Compile Remove="Usuario.cs" />
-    <Compile Remove="Tests/**/*.cs" />
+    <Compile Remove="Tests/**/*.cs;artifacts/**/*.cs" />
     <Content Remove="Tests/**;artifacts/**;docs/**;Scripts/**;.github/**" />
     <None Remove="Tests/**" />
     <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
