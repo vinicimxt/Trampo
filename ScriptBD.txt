@@ -2,7 +2,7 @@ USE master;
 GO
 
 --dotnet run --urls "http://0.0.0.0:5165"
-
+--power shell restaurar adb : & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" -d reverse tcp:5165 tcp:5165
 /*
 IF DB_ID('Xamou') IS NOT NULL
 BEGIN
