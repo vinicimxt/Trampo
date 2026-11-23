@@ -2,15 +2,21 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Push-Location $projectRoot
 try {
-    foreach ($project in @('BD-TRAMPO.csproj', 'Tests/Sprint1/Sprint1.csproj', 'Tests/Sprint6/Sprint6.csproj', 'Tests/Sprint8/Sprint8.csproj')) {
+    $testProjects = @('Tests/binding-check/binding-check.csproj',
+        'Tests/booking-contract/booking-contract.csproj',
+        'Tests/ux-feedback/ux-feedback.csproj')
+    foreach ($project in @('BD-TRAMPO.csproj') + $testProjects) {
         dotnet restore $project
         if ($LASTEXITCODE -ne 0) { throw "Restore falhou: $project" }
         dotnet build $project -c Release --no-restore --nologo -p:RunAnalyzersDuringBuild=true
         if ($LASTEXITCODE -ne 0) { throw "Build falhou: $project" }
     }
-    # Runners existentes sao executaveis; dotnet test nao executaria as verificacoes.
-    dotnet run --project Tests/Sprint1/Sprint1.csproj -c Release --no-build --no-launch-profile -- --unit
-    if ($LASTEXITCODE -ne 0) { throw 'Testes sem banco falharam.' }
+    # Estes runners sao executaveis e nao exigem banco/credenciais.
+    # stabilization-contract exige API local e contas de teste; nao pertence ao CI sem fixtures.
+    foreach ($project in $testProjects) {
+        dotnet run --project $project -c Release --no-build --no-launch-profile
+        if ($LASTEXITCODE -ne 0) { throw "Verificacao falhou: $project" }
+    }
     # Limpa somente a saida conhecida; logs e demais artefatos permanecem.
     $publishPath = [IO.Path]::GetFullPath((Join-Path $projectRoot 'artifacts/backend'))
     $expected = [IO.Path]::GetFullPath((Join-Path $projectRoot 'artifacts')) + [IO.Path]::DirectorySeparatorChar
@@ -20,6 +26,11 @@ try {
     if (Test-Path -LiteralPath $publishPath) { Remove-Item -LiteralPath $publishPath -Recurse -Force }
     dotnet publish BD-TRAMPO.csproj -c Release --no-restore --self-contained false -p:UseAppHost=false -o $publishPath
     if ($LASTEXITCODE -ne 0) { throw 'Publish falhou.' }
-    dotnet run --project Tests/Sprint8/Sprint8.csproj -c Release --no-build --no-launch-profile
-    if ($LASTEXITCODE -ne 0) { throw 'Verificacoes de hospedagem falharam.' }
+    if (Test-Path -LiteralPath (Join-Path $publishPath 'appsettings.Development.json')) {
+        throw 'Configuração Development não pode acompanhar o publish.'
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $publishPath 'BD-TRAMPO.dll')) -or
+        -not (Test-Path -LiteralPath (Join-Path $publishPath 'wwwroot'))) {
+        throw 'Publish incompleto: DLL ou arquivos estáticos ausentes.'
+    }
 } finally { Pop-Location }

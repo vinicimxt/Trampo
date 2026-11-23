@@ -1,0 +1,506 @@
+-- TRAMPO: esquema inicial e catalogo para um banco Azure SQL Xamou NOVO e VAZIO.
+-- Banco e tier gratuitos devem ser criados e confirmados antes desta etapa.
+-- Conectar diretamente ao banco Xamou; nao executa CREATE DATABASE nem USE.
+-- Derivado de ScriptBD.txt, do primeiro CREATE TABLE ate o ultimo INSERT do catalogo.
+-- Nao reexecutar em banco com dados. Aplicar 001_enderecos_geolocalizacao.sql depois.
+
+IF DB_NAME() <> N'Xamou'
+    THROW 52001, 'Conecte diretamente ao banco Xamou antes do bootstrap.', 1;
+IF EXISTS (SELECT 1 FROM sys.tables WHERE schema_id = SCHEMA_ID(N'dbo'))
+    THROW 52002, 'O bootstrap exige banco dbo vazio.', 1;
+
+CREATE TABLE Usuarios (
+    Id INT PRIMARY KEY IDENTITY,
+
+    Nome NVARCHAR(100) NOT NULL,
+
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+
+    Senha NVARCHAR(255) NOT NULL,
+
+    Tipo NVARCHAR(20) NOT NULL
+        CHECK (Tipo IN ('cliente', 'profissional', 'admin')),
+
+    Telefone NVARCHAR(20) NULL
+);
+
+CREATE TABLE Clientes (
+    Id INT PRIMARY KEY IDENTITY,
+
+    UsuarioId INT NOT NULL UNIQUE,
+
+    BloqueadoAte DATETIME2 NULL,
+
+    CONSTRAINT FK_Clientes_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Profissionais (
+    Id INT PRIMARY KEY IDENTITY,
+
+    UsuarioId INT NOT NULL UNIQUE,
+
+    TipoDocumento NVARCHAR(10) NULL,
+
+    Documento NVARCHAR(20) NULL,
+
+    Contato NVARCHAR(255) NULL,
+
+    Plano NVARCHAR(20) NOT NULL DEFAULT 'Free'
+        CHECK (Plano IN ('Free', 'Premium')),
+
+    StatusAssinatura NVARCHAR(20) NOT NULL DEFAULT 'Ativo'
+        CHECK (StatusAssinatura IN ('Ativo', 'Cancelado', 'Pendente')),
+
+    DataAssinatura DATETIME2 NULL,
+
+    CONSTRAINT FK_Profissionais_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX UX_Profissionais_CPF
+ON Profissionais(Documento)
+WHERE TipoDocumento = 'CPF';
+
+
+/* =========================================================
+   CATEGORIAS
+========================================================= */
+
+CREATE TABLE Categorias (
+    Id INT PRIMARY KEY IDENTITY,
+
+    Nome NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Subcategorias (
+    Id INT PRIMARY KEY IDENTITY,
+
+    Nome NVARCHAR(100) NOT NULL,
+
+    CategoriaId INT NOT NULL,
+
+    CONSTRAINT FK_Subcategorias_Categorias
+        FOREIGN KEY (CategoriaId)
+        REFERENCES Categorias(Id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
+   ESTRUTURA DO PROFISSIONAL
+========================================================= */
+
+CREATE TABLE Locais (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ProfissionalId INT NOT NULL,
+
+    Nome NVARCHAR(100) NULL,
+
+    Endereco NVARCHAR(255) NOT NULL,
+
+    CONSTRAINT FK_Locais_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Servicos (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ProfissionalId INT NOT NULL,
+
+    SubcategoriaId INT NOT NULL,
+
+    Nome NVARCHAR(100) NOT NULL,
+
+    Descricao NVARCHAR(255) NULL,
+
+    LocalId INT NULL,
+
+    Atendimento NVARCHAR(50) NOT NULL
+        CHECK (Atendimento IN ('Domicilio', 'Local', 'Online')),
+
+    TipoPreco NVARCHAR(20) NOT NULL DEFAULT 'Fixo'
+        CHECK (TipoPreco IN ('Fixo', 'Combinar')),
+
+    PrecoBase DECIMAL(10,2) NULL,
+
+    LinkOnline NVARCHAR(255) NULL,
+
+    Ativo BIT NOT NULL DEFAULT 1,
+
+    CONSTRAINT FK_Servicos_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_Servicos_Subcategorias
+        FOREIGN KEY (SubcategoriaId)
+        REFERENCES Subcategorias(Id)
+);
+
+CREATE TABLE Disponibilidade (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ProfissionalId INT NOT NULL,
+
+    ServicoId INT NOT NULL,
+
+    DiaSemana INT NOT NULL
+        CHECK (DiaSemana BETWEEN 0 AND 6),
+
+    HoraInicio TIME NOT NULL,
+
+    HoraFim TIME NOT NULL,
+
+    Ativo BIT NOT NULL DEFAULT 1,
+
+    CONSTRAINT FK_Disponibilidade_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE NO ACTION,
+
+    CONSTRAINT FK_Disponibilidade_Servicos
+        FOREIGN KEY (ServicoId)
+        REFERENCES Servicos(Id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE BloqueiosAgenda (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ProfissionalId INT NOT NULL,
+
+    Data DATE NOT NULL,
+
+    HoraInicio TIME NOT NULL,
+
+    HoraFim TIME NOT NULL,
+
+    Motivo NVARCHAR(255) NULL,
+
+    CONSTRAINT FK_BloqueiosAgenda_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
+   AGENDAMENTOS
+========================================================= */
+
+CREATE TABLE Agendamentos (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ClienteId INT NOT NULL,
+
+    ProfissionalId INT NOT NULL,
+
+    ServicoId INT NOT NULL,
+
+    LocalId INT NULL,
+
+    Data DATE NOT NULL,
+
+    Hora TIME NOT NULL,
+
+    Status NVARCHAR(30) NOT NULL DEFAULT 'Pendente'
+        CHECK (Status IN (
+            'Pendente',
+            'Confirmado',
+            'Finalizado',
+            'Cancelado',
+            'CanceladoCliente',
+            'CanceladoProfissional',
+            'AguardandoCliente'
+        )),
+
+    Descricao NVARCHAR(255) NULL,
+
+    EnderecoCliente NVARCHAR(255) NULL,
+
+    DataCancelamento DATETIME2 NULL,
+
+    ValorFinal DECIMAL(10,2) NULL,
+
+    Taxa DECIMAL(10,2) NULL,
+
+    ValorLiquido DECIMAL(10,2) NULL,
+
+    ConfirmadoProfissional BIT NOT NULL DEFAULT 0,
+
+    FinalizadoProfissional BIT NOT NULL DEFAULT 0,
+
+    ConfirmadoCliente BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_Agendamentos_Clientes
+        FOREIGN KEY (ClienteId)
+        REFERENCES Clientes(Id),
+
+    CONSTRAINT FK_Agendamentos_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id),
+
+    CONSTRAINT FK_Agendamentos_Servicos
+        FOREIGN KEY (ServicoId)
+        REFERENCES Servicos(Id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_Agendamentos_Locais
+        FOREIGN KEY (LocalId)
+        REFERENCES Locais(Id)
+);
+
+
+
+/* =========================================================
+   AVALIAÇÕES
+========================================================= */
+
+CREATE TABLE Avaliacoes (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ProfissionalId INT NOT NULL,
+
+    UsuarioId INT NOT NULL,
+
+    AgendamentoId INT NOT NULL,
+
+    Nota INT NOT NULL
+        CHECK (Nota BETWEEN 1 AND 5),
+
+    Comentario NVARCHAR(500) NULL,
+
+    Data DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_Avaliacoes_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id),
+
+    CONSTRAINT FK_Avaliacoes_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id),
+
+    CONSTRAINT FK_Avaliacoes_Agendamentos
+        FOREIGN KEY (AgendamentoId)
+        REFERENCES Agendamentos(Id)
+);
+
+CREATE UNIQUE INDEX UX_Avaliacoes_Agendamento
+ON Avaliacoes(AgendamentoId);
+
+
+/* =========================================================
+   SUPORTE
+========================================================= */
+
+CREATE TABLE ContatoSuporte (
+    Id INT PRIMARY KEY IDENTITY,
+
+    UsuarioId INT NOT NULL,
+
+    Tipo NVARCHAR(50) NOT NULL,
+
+    Assunto NVARCHAR(150) NOT NULL,
+
+    Mensagem NVARCHAR(MAX) NOT NULL,
+
+    Status NVARCHAR(30) NOT NULL DEFAULT 'Aberto'
+        CHECK (Status IN ('Aberto', 'Respondido', 'Fechado')),
+
+    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_ContatoSuporte_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
+);
+
+
+/* =========================================================
+   NOTIFICAÇÕES
+========================================================= */
+
+CREATE TABLE Notificacoes (
+    Id INT PRIMARY KEY IDENTITY,
+
+    UsuarioId INT NOT NULL,
+
+    Titulo NVARCHAR(100) NOT NULL,
+
+    Mensagem NVARCHAR(255) NOT NULL,
+
+    Tipo NVARCHAR(50) NULL,
+
+    ReferenciaId INT NULL,
+
+    Lida BIT NOT NULL DEFAULT 0,
+
+    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_Notificacoes_Usuarios
+        FOREIGN KEY (UsuarioId)
+        REFERENCES Usuarios(Id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
+   ASSINATURAS
+========================================================= */
+
+CREATE TABLE Assinaturas (
+    Id INT PRIMARY KEY IDENTITY,
+
+    ProfissionalId INT NOT NULL,
+
+    Plano NVARCHAR(20) NOT NULL
+        CHECK (Plano IN ('Free', 'Premium')),
+
+    Valor DECIMAL(10,2) NOT NULL,
+
+    StatusPagamento NVARCHAR(20) NOT NULL
+        CHECK (StatusPagamento IN (
+            'Pendente',
+            'Pago',
+            'Cancelado'
+        )),
+
+    MetodoPagamento NVARCHAR(20) NULL,
+
+    DataCriacao DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+    CONSTRAINT FK_Assinaturas_Profissionais
+        FOREIGN KEY (ProfissionalId)
+        REFERENCES Profissionais(Id)
+        ON DELETE CASCADE
+);
+
+
+
+/* =========================================================
+   DADOS INICIAIS
+========================================================= */
+
+INSERT INTO Categorias (Nome)
+VALUES
+('Manutenção'),
+('Beleza'),
+('Tecnologia'),
+('Aulas'),
+('Eventos'),
+('Saúde'),
+('Automotivo'),
+('Pets'),
+('Fitness'),
+('Limpeza'),
+('Consultoria'),
+('Design'),
+('Moda'),
+('Gastronomia'),
+('Marketing');
+
+
+INSERT INTO Subcategorias (Nome, CategoriaId)
+VALUES
+
+-- MANUTENÇÃO
+('Elétrica', 1),
+('Hidráulica', 1),
+('Construção', 1),
+('Jardinagem', 1),
+('Pintura', 1),
+('Marcenaria', 1),
+
+-- BELEZA
+('Cabelo', 2),
+('Estética', 2),
+('Barbearia', 2),
+('Manicure', 2),
+('Maquiagem', 2),
+
+-- TECNOLOGIA
+('Informática', 3),
+('Desenvolvimento', 3),
+('Suporte Técnico', 3),
+('Redes', 3),
+('Design de Sites', 3),
+
+-- AULAS
+('Idiomas', 4),
+('Música', 4),
+('Reforço Escolar', 4),
+('Programação', 4),
+('Dança', 4),
+
+-- EVENTOS
+('Fotografia', 5),
+('Buffet', 5),
+('Decoração', 5),
+('DJ', 5),
+('Filmagem', 5),
+
+-- SAÚDE
+('Psicologia', 6),
+('Fisioterapia', 6),
+('Nutrição', 6),
+('Massoterapia', 6),
+
+-- AUTOMOTIVO
+('Lava Rápido', 7),
+('Mecânica', 7),
+('Funilaria', 7),
+('Troca de Óleo', 7),
+
+-- PETS
+('Banho e Tosa', 8),
+('Adestramento', 8),
+('Pet Sitter', 8),
+('Veterinário', 8),
+
+-- FITNESS
+('Personal Trainer', 9),
+('Yoga', 9),
+('Pilates', 9),
+('Cross Training', 9),
+
+-- LIMPEZA
+('Faxina Residencial', 10),
+('Limpeza Pós-Obra', 10),
+('Limpeza Comercial', 10),
+('Passadeira', 10),
+
+-- CONSULTORIA
+('Financeira', 11),
+('Jurídica', 11),
+('RH', 11),
+('Empresarial', 11),
+
+-- DESIGN
+('Design Gráfico', 12),
+('UX/UI Design', 12),
+('Modelagem 3D', 12),
+('Edição de Vídeo', 12),
+
+-- MODA
+('Costura', 13),
+('Personal Stylist', 13),
+('Ajustes de Roupa', 13),
+
+-- GASTRONOMIA
+('Chef Particular', 14),
+('Confeitaria', 14),
+('Marmitas', 14),
+('Churrasqueiro', 14),
+
+-- MARKETING
+('Social Media', 15),
+('Tráfego Pago', 15),
+('Copywriting', 15),
+('SEO', 15);
