@@ -590,6 +590,8 @@ Swagger está disponível somente quando habilitado no ambiente de desenvolvimen
 
 ## Executando o Android
 
+O [APK online de prévia](https://github.com/vinicimxt/TRAMPO-APP/releases/tag/v2026.11.23-online-preview) está disponível na release do Android. Ele é um build Debug assinado com chave de desenvolvimento; consulte as ressalvas da release antes de instalar.
+
 Clone o repositório Android:
 
 ```bash
@@ -609,6 +611,8 @@ A configuração Release exige uma URL HTTPS válida.
 ---
 
 ## Executando o Desktop
+
+O [executável Windows de prévia](https://github.com/vinicimxt/Trampo-Desktop/releases/tag/v2026.11.23-online-preview) está disponível na release do Desktop. Ele não possui assinatura digital de editor; consulte as ressalvas da release antes de executar.
 
 Clone o repositório Windows Forms.
 

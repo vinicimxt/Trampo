@@ -18,6 +18,10 @@ A API publica `https://trampo.tryasp.net/health` respondeu HTTP 200 com `Healthy
 
 A pasta `dist/` foi ignorada pelo Git para evitar commit acidental dos binarios grandes.
 
+## Publicacao dos binarios
+
+Os arquivos verificados acima foram publicados como anexos de releases de previa nos respectivos repositorios: [APK Android](https://github.com/vinicimxt/TRAMPO-APP/releases/tag/v2026.11.23-online-preview) e [executavel Desktop](https://github.com/vinicimxt/Trampo-Desktop/releases/tag/v2026.11.23-online-preview). As ressalvas de assinatura e testes continuam validas.
+
 ## Android
 
 - Comando do APK entregue: `assembleDebug -PtrampoApiUrl=https://trampo.tryasp.net/`. A URL exata com barra final aparece no `BuildConfig` gerado e em um dos arquivos DEX do APK. As strings DEX nao contem os literais locais `http://127.0.0.1:5165/` ou `http://10.0.2.2:5165/`.
