@@ -29,3 +29,6 @@ coverage/
 *.tmp
 *.temp
 *.bak
+
+# Pacotes locais de distribuicao
+/dist/

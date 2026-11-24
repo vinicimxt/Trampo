@@ -620,13 +620,13 @@ dotnet build Trampo.Desktop.slnx
 dotnet run --project Trampo.Desktop/Trampo.Desktop.csproj
 ```
 
-Por padrão, o Desktop utiliza:
+O build Debug do Desktop utiliza por padrão:
 
 ```text
 http://localhost:5165/
 ```
 
-A URL também pode ser configurada através da variável:
+A versão Release usa `https://trampo.tryasp.net/` quando a variável abaixo não está definida. A URL de qualquer build também pode ser configurada através de:
 
 ```text
 TRAMPO_API_BASE_URL
@@ -675,9 +675,11 @@ O backend não depende do pipeline do aplicativo Android ou Desktop.
 
 ---
 
-## Cloud
+## Cloud e integração online
 
-A arquitetura foi preparada para configuração por ambiente e futura implantação em Cloud.
+A API publicada em `https://trampo.tryasp.net/` respondeu ao endpoint `/health` na verificação de 23/11/2026. O build Android configurado com essa URL e o cliente HTTP Desktop foram validados com ressalvas. A instalação e o login no Android, o login pela janela Desktop e um agendamento compartilhado entre as três aplicações ainda não foram comprovados. Consulte o [relatório de integração online](docs/INTEGRACAO-ONLINE-CLIENTES.md).
+
+A arquitetura foi preparada para configuração por ambiente e implantação em Cloud.
 
 Foram realizadas melhorias como:
 
@@ -687,7 +689,7 @@ Foram realizadas melhorias como:
 - documentação de implantação;
 - separação entre Development e Production.
 
-Não é afirmado neste projeto que exista um deploy público de produção caso ele não tenha sido efetivamente realizado.
+O endereço publicado é um ambiente online verificado na data acima; esta documentação não o classifica como produção definitiva.
 
 ---
 
@@ -754,7 +756,7 @@ EVIDENCIAS-CHECKLIST.md
 SPRINT-12-DESKTOP.md
 ```
 
-Documentos principais: [requisitos do PIM](docs/PIM-REQUISITOS.md), [arquitetura](docs/ARQUITETURA-FINAL.md), [API](docs/API-FINAL.md), [banco de dados](docs/BANCO-DE-DADOS.md), [segurança](docs/SEGURANCA-FINAL.md), [testes](docs/TESTES-FINAIS.md), [Desktop Sprint 12](docs/SPRINT-12-DESKTOP.md) e [Desktop Sprint 13](docs/SPRINT-13-DESKTOP-MULTIPERFIL.md).
+Documentos principais: [requisitos do PIM](docs/PIM-REQUISITOS.md), [arquitetura](docs/ARQUITETURA-FINAL.md), [API](docs/API-FINAL.md), [banco de dados](docs/BANCO-DE-DADOS.md), [segurança](docs/SEGURANCA-FINAL.md), [testes](docs/TESTES-FINAIS.md), [Desktop Sprint 12](docs/SPRINT-12-DESKTOP.md), [Desktop Sprint 13](docs/SPRINT-13-DESKTOP-MULTIPERFIL.md), [integração online](docs/INTEGRACAO-ONLINE-CLIENTES.md) e [distribuição local](docs/DISTRIBUICAO-FINAL.md).
 
 Capturas revisadas: [Home Mobile](docs/evidencias/mobile-home.png), [Notificações](docs/evidencias/mobile-notificacoes.png) e [Suporte](docs/evidencias/mobile-suporte.png).
 
@@ -767,7 +769,9 @@ A solução acadêmica possui algumas limitações conhecidas.
 Entre elas:
 
 - não há publicação oficial na Play Store;
-- não há deploy Cloud público confirmado;
+- a API online foi verificada em 23/11/2026, mas não há confirmação de operação como produção definitiva;
+- o APK local é Debug assinado com chave de desenvolvimento; um Release para distribuição definitiva requer chave própria;
+- o executável Desktop local não tem assinatura de editor e ainda não foi testado em uma máquina limpa;
 - Desktop atende Cliente e Profissional; Admin permanece na Web;
 - Android tem áreas Cliente e Profissional, com integrações REST pendentes descritas na matriz;
 - Administrador utiliza a aplicação Web;
